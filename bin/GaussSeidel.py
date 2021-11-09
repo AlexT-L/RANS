@@ -112,29 +112,89 @@ def border_zero(dw):
     
     return dw
 
-def res_cons_to_sym(dw):
+def res_cons_to_sym(params, dw):
     '''
     conservative residuals dw changed to nonconservative residuals
 
     Parameters
     ----------
-    dw : TYPE
-        DESCRIPTION.
+    dw : 3D float array 
 
     Returns
     -------
-    dw : TYPE
-        DESCRIPTION.
+    dw : 3D float array
 
     '''
+    ilower = params['ilower']
+    jlower = params['jlower']
+    w = params['w']
+    gm1 = params['gm1']
+    gamma = params['gamma']
+    p = params['p']
     
-    for i in range(ilower):
-        for j in range(jlower):
-            # Do somethings
-    
+    for i in range(2, ilower):
+        for j in range(2, jlower):
+            # Unpack dw for ease
+            r0 = dw[i,j,0]
+            r1 = dw[i,j,1]
+            r2 = dw[i,j,2]
+            r3 = dw[i,j,3]
+            
+            ua = w[i,j,1] / w[i,j,0]
+            va = w[i,j,2] / w[i,j,0]
+            qq = 0.5*(ua**2 + va**2)
+            cc = gamma*p[i,j] / w[i,j,0]
+            c  = np.sqrt(cc)
+            
+            dw[i,j,0] = gm1*(r3 + qq*r0 - ua*r1 - va*r2) / cc
+            dw[i,j,1] = (r1 - ua*r0) / c
+            dw[i,j,2] = (r2 - va*r0) / c
+            dw[i,j,3] = dw[i,j,0] - r0
     
     return dw
     
+def res_sym_to_cons(params, rs, dw):
+    '''
+    nonconservative residuals dw changed to conservative residuals
+
+    Parameters
+    ----------
+    params : Dict of parameters
+    rs : 3D float array
+    dw : 3D float array
+
+    Returns
+    -------
+    dw : 3D float array
+
+    '''
+    
+    ilower = params['ilower']
+    jlower = params['jlower']
+    w = params['w']
+    p = params['p']
+    gamma = params['gamma']
     
     
+    for j in range(2, jlower):
+        for i in range(2, ilower):
+            # Unpack
+            r0 = rs[i,j,0]
+            r1 = rs[i,j,1]
+            r2 = rs[i,j,2]
+            r3 = rs[i,j,3]
+            
+            ua = w[i,j,1] / w[i,j,0]
+            va = w[i,j,2] / w[i,j,0]
+            ha = (w[i,j,3] + p[i,j]) / w[i,j,0]
+            qq = 0.5*(ua**2 + va**2)
+            cc = gamma*p[i,j] / w[i,j,0]
+            c = np.sqrt(cc)
+            
+            dw[i,j,0] = r0 - r3
+            dw[i,j,1] = ua*(r0-r3) + c*r1
+            dw[i,j,2] = va*(r0-r3) + c*r2
+            dw[i,j,3] = ha*r0 + c*(ua*r1 + va*r2) - qq*r3
     
+    
+    return dw
