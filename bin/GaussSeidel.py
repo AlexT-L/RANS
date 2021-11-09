@@ -3,8 +3,158 @@ import numpy as np
 class GaussSeidel():        
     # Smooth method to perform Gauss-Seidel method
     def smooth(grid, params):
-        xx = np.zeros((4,4))
-        rhs = np.zeros(4)
+        # Maybe these are actually params
+        ie = params['ie'] # Mesh dimension
+        je = params['je'] # Mesh dimension
+        kvis = params['kvis']
+        gamma = params['gamma']
+        rm = params['rm']
+        re = params['re']
+        nstage = params['nstage']
+        il = params['il']
+        jl = params['jl']
+        eps = params['eps']
+        cfl = params['cfl']
+        dtl = params['dtl']
+        
+        # Very incorrect ones I think
+        dw = params['dw']
+        rs = params['rs']
+        x = params['x'] 
+        vol = params['vol']
+        rlv = params['rlv']
+        rev = params['rev']
+        w = params['w']
+        p = params['p']
+        
+        
+        
+        r00 = np.zeros((ie, je))
+        u00 = np.zeros((ie, je))
+        v00 = np.zeros((ie, je))
+        p00 = np.zeros((ie, je))
+        
+        sgrmrei = 0
+        if (kvis > 0):
+            sgrmrei = np.sqrt(gamma)*rm/re
+        
+        niter = 2
+        
+        # save the velocities, density, and pressure
+        
+        if (nstage == 1):
+            for i in range(ie):
+                for j in range(je):
+                    r00[i,j] = w[i,j,0]
+                    u00[i,j] = w[i,j,1]/w[i,j,0]
+                    v00[i,j] = w[i,j,2]/w[i,j,0]
+                    p00[i,j] = p[i,j]
+                    
+        ### Setup and solve linear implicit system
+        
+        # Transform the residuals to the symmetrizing variables
+        dw = res_cons_to_sym(params, dw)
+        
+        # set the residuals to zero at the boundaries
+        dw = bcdw(params, dw)
+        
+        # set the modified residuals to zero
+        for i in range(ie):
+            for j in range(je):
+                rs[i,j,:] = np.zeros(4)
+        
+        ### Solution by symmetric gauss-seidel iteration
+        idir = -1
+        
+        for i in range(niter):
+            idir = -idir
+            jdir = idir
+            
+            rs = bcrs(params, rs)
+            
+            if (idir -- 1):
+                ia = 2
+                ja = 2
+                ibf = il
+                jbf = jl
+            else:
+                ia = il
+                ja = jl
+                ibf = 2
+                jbf = 2
+            
+            for ja in range(ja, jbf, jdir):
+                for i in range(ia, ibf, idir):
+                    xx = np.zeros((4,4))
+                    
+                    dtv2 = eps*cfl*dtl[i,j]
+                    
+                    # Left variables
+                    rl = r00[i,j]
+                    pl = p00[i,j]
+                    ul = u00[i,j]
+                    vl = v00[i,j]
+                    
+                    # Left i interface
+                    a_vec = rs[i-1,j,:]
+                    
+                    sxa = x[i-1,j-1,1] - x[i-1,j,1]
+                    sya = x[i-1,j,0] - x[i-1,j-1,0]
+                    sar2 = sxa**2 + sya**2
+                    sar = np.sqrt(sar2)
+                    vnx = sxa/sar
+                    vny = sya/sar
+                    
+                    # Right variables
+                    
+                    rr = r00[i-1,j]
+                    pr = p00[i-1,j]
+                    ur = u00[i-1,j]
+                    vr = v00[i-1,j]
+                    
+                    # Viscous Coefficients
+                    rhoa = 0.5*(rl + rr)
+                    svol = 0.5*(vol[i-1,j] + vol[i,j])
+                    scale = sgrmrei*sar2/(svol*rhoa)
+                    if (kvis == 0):
+                        scale = 0
+                    rmuel = 0.5*scale*(rlv[i-1,j] + rlv[i,j])
+                    rmuet = 0.5*scale*(rev[i-1,j] + rev[i,j])
+                    
+                    (xx, rhs_left) = rhs_face(params, vnx, vny, sar, dtv2, rmuel, 
+                                         rmuet, rl, pl, ul, vl, 
+                                         rr, pr, ur, vr, a_vec, xx)
+                    
+                    # right i interface
+                    a_vec = rs[i+1,j,:]
+                    
+                    sxa = x[i,j,1] - x[i,j-1,1]
+                    sya = x[i,j-1,0] - x[i,j,0]
+                    sar2 = sxa**2 + sya**2
+                    sar = np.sqrt(sar2)
+                    vnx = sxa/sar
+                    vny = sya/sar
+                    
+                    # right variables
+                    rr = r00[i+1,j]
+                    pr = p00[i+1,j]
+                    ur = u00[i+1,j]
+                    pr = p00[i+1,j]
+                    
+                    # Viscous coefficients
+                    rhoa = 0.5*(rl + rr)
+                    svol = 0.5*(vol[i,j] + vol[i+1,j])
+                    scale = sgrmrei*sar2/(svol*rhoa)
+                    if (kvis == 0):
+                        scale = 0
+                    rmuel = 0.5*scale*(rlv[i,j] + rlv[i+1,j])
+                    rmuet = 0.5*scale*(rev[i,j] + rev[i+1,j])
+                    
+                    (xx, rhs_right) = rhs_face(params, vnx, vny, sar, dtv2, 
+                                               rmuel, rmuet, rl, pl, ul, vl, 
+                                               rr, pr, ur, vr, a_vec, xx)
+            
+        
         
 
 def rhs_face(params, vnx, vny, sar, dtv2, rmuel, rmuet, rl, pl, ul, vl, rr, pr,
@@ -113,7 +263,7 @@ def rhs_face(params, vnx, vny, sar, dtv2, rmuel, rmuet, rl, pl, ul, vl, rr, pr,
     
     return xx, rhs
     
-def bcdw(dw, itl, itu):
+def bcdw(params, dw):
     '''
     Set the residuals to zero at the boundaries and 
     match the residuals across the cut in the c-mesh
@@ -121,11 +271,6 @@ def bcdw(dw, itl, itu):
     Parameters
     ----------
     dw : 3D float array
-        DESCRIPTION.
-    itl : TYPE
-        DESCRIPTION.
-    itu : TYPE
-        DESCRIPTION.
 
     Returns
     -------
@@ -133,6 +278,9 @@ def bcdw(dw, itl, itu):
         boundaries that get set to 0.
 
     '''
+    itl = params['itl']
+    itu = params['itu']
+    
     dw = border_zero(dw)
     xlen = np.shape(dw)[0]
     
@@ -144,26 +292,14 @@ def bcdw(dw, itl, itu):
             dw[i,0,:] = dw[i,1,:]
     return dw
 
-def bcrs(rs, itl, itu):
+def bcrs(params, rs):
     '''
     set the modified residuals to zero at the boundaries
     and match the modified residuals across the cut in the c-mesh
-
-    Parameters
-    ----------
-    rs : TYPE
-        DESCRIPTION.
-    itl : TYPE
-        DESCRIPTION.
-    itu : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    rs : TYPE
-        DESCRIPTION.
-
     '''
+    itl = params['itl']
+    itu = params['itu']
+    
     rs = border_zero(rs)
     xlen = np.shape(rs)[0]
     
