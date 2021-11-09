@@ -153,7 +153,83 @@ class GaussSeidel():
                     (xx, rhs_right) = rhs_face(params, vnx, vny, sar, dtv2, 
                                                rmuel, rmuet, rl, pl, ul, vl, 
                                                rr, pr, ur, vr, a_vec, xx)
-            
+                    
+                    # Bottom j interface
+                    a_vec = rs[i,j-1,:]
+                    
+                    sxa = x[i,j-1,1] - x[i-1,j-1,1]
+                    sya = x[i-1,j-1,0] - x[i,j-1,0]
+                    sar2 = sxa**2 + sya**2
+                    sar = np.sqrt(sar2)
+                    vnx = sxa/sar
+                    vny = sya/sar
+                    
+                    # Right variables
+                    rr = r00[i,j-1]
+                    pr = p00[i,j-1]
+                    ur = u00[i,j-1]
+                    vr = v00[i,j-1]
+                    
+                    # Viscous coefficients
+                    rhoa = 0.5*(rl + rr)
+                    svol = 0.5*(vol[i,j-1]+vol[i,j])
+                    scale = sgrmrei*sar2/(svol*rhoa)
+                    if (kvis == 0):
+                        scale = 0
+                    rmuel = 0.5*scale*(rlv[i,j-1] + rlv[i,j])
+                    rmuet = 0.5*scale*(rev[i,j-1] + rev[i,j])
+                    
+                    (xx, rhs_bot) = rhs_face(params, vnx, vny, sar, dtv2,
+                                             rmuel, rmuet, rl ,pl, ul, vl, 
+                                             rr, pr, ur ,vr, a_vec, xx)
+                    
+                    # Top j interface
+                    a_vec = rs[i,j+1,:]
+                    
+                    sxa = x[i-1,j,1] - x[i,j,1]
+                    sya = x[i,j,0] - x[i-1,j,0]
+                    sar2 = sxa**2 + sya**2
+                    sar = np.sqrt(sar2)
+                    vnx = sxa/sar
+                    vny = sya/sar
+                    
+                    # right variables
+                    rr = r00[i,j+1]
+                    pr = p00[i,j+1]
+                    ur = u00[i,j+1]
+                    vr = v00[i,j+1]
+                    
+                    # Viscous Coefficients
+                    rhoa = 0.5*(rl + rr)
+                    svol = 0.5*(vol[i,j] + vol[i,j+1])
+                    scale = sgrmrei*sar2/(svol*rhoa)
+                    if (kvis == 0):
+                        scale = 0
+                    rmuel = 0.5*scale*(rlv[i,j] + rlv[i,j+1])
+                    rmuet = 0.5*scale*(rev[i,j] + rev[i,j+1])
+                    
+                    (xx, rhs_top) = rhs_face(params, vnx, vny, sar, dtv2,
+                                             rmuel, rmuet, rl, pl, ul, vl,
+                                             rr, pr, ur, vr, a_vec, xx)
+                    
+                    # Assemble complete right hand side
+                    rhs = np.zeros(len(rhs_left))
+                    for k in range(len(rhs_left)):
+                        rhs[i] = dw[i,j,k] - rhs_left[k] - rhs_right[k] \
+                                - rhs_bot[k] - rhs_top[k]
+                    
+                    for k in range(4):
+                        xx[k,k] += 1
+                        
+                    
+                    binv = np.linalg.inv(xx)
+                    x = np.matmul(binv, rhs)
+                    
+                    # Save x in residual?
+                    rs[i,j,:] = x
+    
+        # Not sure what to do with rs now
+        return rs
         
         
 
