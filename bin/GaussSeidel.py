@@ -1,8 +1,15 @@
 import numpy as np
+from numpy.linalg import inv
 
 class GaussSeidel():        
     # Smooth method to perform Gauss-Seidel method
     def smooth(grid, params):
+        '''
+        I think there should be a neat way to combine main loop into 4 function
+        calls, 1 for each left, right, top, and bottom face. But will require 
+        some thinking about the correct indexing on things. 
+        '''
+        
         # Maybe these are actually params
         ie = params['ie'] # Mesh dimension
         je = params['je'] # Mesh dimension
@@ -222,7 +229,7 @@ class GaussSeidel():
                         xx[k,k] += 1
                         
                     
-                    binv = np.linalg.inv(xx)
+                    binv = inv(xx)
                     x = np.matmul(binv, rhs)
                     
                     # Save x in residual?
