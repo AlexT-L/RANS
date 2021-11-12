@@ -1,9 +1,10 @@
 import numpy as np
 from numpy.linalg import inv
+from Grid import Grid
 
 class GaussSeidel():        
     # Smooth method to perform Gauss-Seidel method
-    def smooth(grid, params):
+    def smooth(grid: Grid, params):
         '''
         I think there should be a neat way to combine main loop into 4 function
         calls, 1 for each left, right, top, and bottom face. But will require 
@@ -25,10 +26,11 @@ class GaussSeidel():
         dtl = params['dtl']
         
         # Very incorrect ones I think
-        dw = params['dw']
+        dw = grid.dw
+        w = grid.w
+        
         rs = params['rs']
         x = params['x'] 
-        w = params['w']
         p = params['p']
         
         # Used in inner functions so this has to get here somehow
