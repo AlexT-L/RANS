@@ -1,7 +1,9 @@
 import numpy as np
+from Grid import Grid
 
 class Viscosity():        
 #  from subroutine viscf.f
+    def compute_viscosity(grid: Grid, params):
           
 
 #     ******************************************************************
@@ -16,10 +18,10 @@ class Viscosity():
     # flo_var, mesh_var
     # flo_param, solv_param, mg_param
 
-      real, dimension(ie,je)            :: u,v,astr,rev0
+real, dimension(ie,je)            :: u,v,astr,rev0
 
 # useful constants
-pi        = np.pi 
+pi        = np.pi
 # ckr       = (.062/(2.*pi)**4)
 # ckr       = .01915
 ckr       = .0256
@@ -53,7 +55,8 @@ if (kvis.le.1.or.mode.ne.0):
 
 
         # call turbbl
-        call turb2
+        #   to add: 
+        # call turb2
         for j in range (1,je):
             for i in range (1,ie):
                     rev(i,j) = aturb*rev(i,j)  +(1.  -aturb)*rev0(i,j)
@@ -92,7 +95,8 @@ for j in range (1,jl):
          astr(i,j) = (dudy+dvdx)**2. +2.*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.)
 
 
-      call delt
+    #   to add: 
+    # call delt
 
 
     #   do 30 j=2,jl
