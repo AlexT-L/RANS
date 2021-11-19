@@ -3,59 +3,46 @@ import numpy as np
 class Viscosity():        
 #  from subroutine viscf.f
           
-c
-c     ******************************************************************
-c     *                                                                *
-c     *   computes viscosity coefficients                              *
-c     *                                                                *
-c     ******************************************************************
-c
-      use dims
-c
-c     ******************************************************************
-c
-      use flo_var
-      use mesh_var
-c
-c     ******************************************************************
-c
-      use flo_param
-      use solv_param
-      use mg_param
-c
-c     ******************************************************************
-c
+
+#     ******************************************************************
+#     *                                                                *
+#     *   computes viscosity coefficients                              *
+#     *                                                                *
+#     ******************************************************************
+
+
+# subroutines / modules "used"
+    # dims
+    # flo_var, mesh_var
+    # flo_param, solv_param, mg_param
+
       real, dimension(ie,je)            :: u,v,astr,rev0
-c
-c     ******************************************************************
-c
-c     following are some useful constants
-c
-      pi        = 4.*atan(1.)
-c     ckr       = (.062/(2.*pi)**4)
-c     ckr       = .01915
-      ckr       = .0256
-c     cwk       = .225
-      cwk       = 0.
-c     scf       = re/(sqrt(gamma)*rm)
-      scf       = (scal*re/chord)/(sqrt(gamma)*rm)
-c
-c     compute the molecular viscosity
-c
+
+# useful constants
+pi        = np.pi 
+# ckr       = (.062/(2.*pi)**4)
+# ckr       = .01915
+ckr       = .0256
+# cwk       = .225
+cwk       = 0.
+#  scf       = re/(sqrt(gamma)*rm)
+scf       = (scal*re/chord)/(sqrt(gamma)*rm)
+
+# compute the molecular viscosity
+
       do j=1,je
       do i=1,ie
          tt       = p(i,j)/w(i,j,1)*t0
          rlv(i,j) = 1.461e-06*tt*sqrt(tt)/((tt+110.3)*rmu0)
       end do
       end do
-c
-c     for laminar flows we are done.
-c     for turbulent flows we are also done on the coarser grids.
-c
+
+# for laminar flows we are done.
+# for turbulent flows we are also done on the coarser grids.
+
       if (kvis.le.1.or.mode.ne.0) return
-c
-c     if we are using the baldwin and lomax model call turbbl and return
-c
+# if we are using the baldwin and lomax model call turbbl and return
+
       aturb     = 1.
       if (ncyc.gt.25) aturb = .5
       if (kturb.eq.1) then
@@ -64,7 +51,7 @@ c
             rev0(i,j) = rev(i,j)
          end do
          end do
-c        call turbbl
+#        call turbbl
          call turb2
          do j=1,je
          do i=1,ie
@@ -73,9 +60,9 @@ c        call turbbl
          end do
          return
       end if
-c
-c     else start the rng algebraic model
-c
+
+#  else start the rng algebraic model
+
       do j=1,je
       do i=1,ie
          u(i,j)   = w(i,j,2)/w(i,j,1)
@@ -87,9 +74,7 @@ c
          u(i,1)   = -u(i,2)
          v(i,1)   = -v(i,2)
       end do
-c
-c
-c
+
       do j=1,jl
       do i=1,il
          dx13      = xc(i,j,1)   - xc(i+1,j+1,1)
@@ -111,13 +96,11 @@ c
      .               +2.*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.)
       end do
       end do
-c
-c
-c
+
+
       call delt
-c
-c
-c
+
+
       do 30 j=2,jl
       do 20 i=2,il
 
@@ -133,9 +116,10 @@ c
       else
          csc       = (cwk*ynot(i))**2
       end if
-c
-c     set some parameters
-c
+
+
+#     set some parameters
+
       rnul      = rlv(i,j)/w(i,j,1)
       rnut0     = rev(i,j)/w(i,j,1)
       rnul3     = rnul**3
@@ -143,9 +127,9 @@ c
       a2        = 75.
       a1        = a11*(astra)
       rnut0     = rnul+rnut0
-c
-c     solve for the eddy viscosity
-c
+
+#     solve for the eddy viscosity
+
       if (dim(rnut0*a1,a2).eq.0.) then
          rev(i,j)  = 0.
          go to 20
@@ -176,9 +160,9 @@ c
 
    20 continue
    30 continue
-c
-c     adjust the near wake
-c
+
+#     adjust the near wake
+
       ii        = ie
       do i=2,itl+1
       ii        = ii  -1
