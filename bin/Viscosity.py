@@ -30,53 +30,49 @@ scf       = (scal*re/chord)/(sqrt(gamma)*rm)
 
 # compute the molecular viscosity
 
-      do j=1,je
-      do i=1,ie
+for j in range (1,je):
+      for i in range (1,ie):
          tt       = p(i,j)/w(i,j,1)*t0
          rlv(i,j) = 1.461e-06*tt*sqrt(tt)/((tt+110.3)*rmu0)
-      end do
-      end do
+
 
 # for laminar flows we are done.
 # for turbulent flows we are also done on the coarser grids.
 
-      if (kvis.le.1.or.mode.ne.0) return
+if (kvis.le.1.or.mode.ne.0) return
 # if we are using the baldwin and lomax model call turbbl and return
 
       aturb     = 1.
       if (ncyc.gt.25) aturb = .5
       if (kturb.eq.1) then
-         do j=1,je
-         do i=1,ie
+for j in range (1,je):
+      for i in range (1,ie):
             rev0(i,j) = rev(i,j)
-         end do
-         end do
+
+
 #        call turbbl
          call turb2
-         do j=1,je
-         do i=1,ie
+for j in range (1,je):
+      for i in range (1,ie):
             rev(i,j) = aturb*rev(i,j)  +(1.  -aturb)*rev0(i,j)
-         end do
-         end do
+
          return
       end if
 
 #  else start the rng algebraic model
 
-      do j=1,je
-      do i=1,ie
+for j in range (1,je):
+      for i in range (1,ie):
          u(i,j)   = w(i,j,2)/w(i,j,1)
          v(i,j)   = w(i,j,3)/w(i,j,1)
-      end do
-      end do
 
-      do i=itl+1,itu
+
+      for i in range (itl+1,itu):
          u(i,1)   = -u(i,2)
          v(i,1)   = -v(i,2)
-      end do
+for j in range (1,jl):
+      for i in range (1,il):
 
-      do j=1,jl
-      do i=1,il
          dx13      = xc(i,j,1)   - xc(i+1,j+1,1)
          dy13      = xc(i,j,2)   - xc(i+1,j+1,2)
          dx24      = xc(i+1,j,1) - xc(i,j+1,1)
@@ -92,17 +88,18 @@ scf       = (scal*re/chord)/(sqrt(gamma)*rm)
          dudy      = -dsij * (du13*dx24 - du24*dx13)
          dudx      =  dsij * (du13*dy24 - du24*dy13)
          dvdy      = -dsij * (dv13*dx24 - dv24*dx13)
-         astr(i,j) = (dudy+dvdx)**2
-     .               +2.*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.)
-      end do
-      end do
+         astr(i,j) = (dudy+dvdx)**2. +2.*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.)
 
 
       call delt
 
 
-      do 30 j=2,jl
-      do 20 i=2,il
+    #   do 30 j=2,jl
+    #   do 20 i=2,il
+    # what do the 30 and 20 do?
+    # also they did not have a corresponding end do?
+for j in range (2,jl):
+      for i in range (2,il):
 
       xbi       = .5*(x(i-1,1,1)  +x(i,1,1))
       ybi       = .5*(x(i-1,1,2)  +x(i,1,2))
@@ -164,35 +161,30 @@ scf       = (scal*re/chord)/(sqrt(gamma)*rm)
 #     adjust the near wake
 
       ii        = ie
-      do i=2,itl+1
+
+for i in range (2,itl+1):
       ii        = ii  -1
-      do j=2,jl
+      for j in range (2,jl):
          pex       = -(xc(i,2,1)  -xc(itl+1,2,1))/(20.*dsti(itl+1))
          rev(i,j)  = rev(i,j)  +(rev(itl+1,j)  -rev(i,j))*exp(pex)
          pex       = -(xc(ii,2,1)  -xc(itu,2,1))/(20.*dsti(itu))
          rev(ii,j) = rev(ii,j)  +(rev(itu,j)  -rev(ii,j))*exp(pex)
-      end do
-      end do
 
-      do i=2,il
+for i in range (2,il):
          ii        = ib  -i
          rev(i,je) = rev(i,jl)
          rev(i,1)  = rev(ii,2)
-      end do
 
-      do i=itl+1,itu
+for i in range (itl+1,itu):
          if (xc(i,2,1).le.xtran) then
-            do j=1,jl
+         for j in range (1,jl):
                rev(i,j)  = 0
-            end do
          end if
          rev(i,1)  = -rev(i,2)
-      end do
 
-      do j=1,je
+for j in range (1,je):
          rev(1,j)  = rev(2,j)
          rev(ie,j) = rev(il,j)
-      end do
 
       return
 
