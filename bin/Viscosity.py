@@ -39,25 +39,26 @@ for j in range (1,je):
 # for laminar flows we are done.
 # for turbulent flows we are also done on the coarser grids.
 
-if (kvis.le.1.or.mode.ne.0) return
+if (kvis.le.1.or.mode.ne.0):
+    return
 # if we are using the baldwin and lomax model call turbbl and return
 
       aturb     = 1.
-      if (ncyc.gt.25) aturb = .5
-      if (kturb.eq.1) then
-for j in range (1,je):
-      for i in range (1,ie):
-            rev0(i,j) = rev(i,j)
+      if (ncyc.gt.25):
+        aturb = .5
+      if (kturb.eq.1): 
+          for j in range (1,je):
+              for i in range (1,ie):
+                  rev0(i,j) = rev(i,j)
 
 
-#        call turbbl
-         call turb2
-for j in range (1,je):
-      for i in range (1,ie):
-            rev(i,j) = aturb*rev(i,j)  +(1.  -aturb)*rev0(i,j)
+        # call turbbl
+        call turb2
+        for j in range (1,je):
+            for i in range (1,ie):
+                    rev(i,j) = aturb*rev(i,j)  +(1.  -aturb)*rev0(i,j)
 
-         return
-      end if
+                return
 
 #  else start the rng algebraic model
 
@@ -105,14 +106,13 @@ for j in range (2,jl):
       ybi       = .5*(x(i-1,1,2)  +x(i,1,2))
       astra     = .25*(astr(i-1,j-1)  +astr(i-1,j)
      .                +astr(i,j-1)    +astr(i,j))
-      if (i.ge.itl.and.i.le.itu+1) then
-         a3        = 1./(.225*abs(ynot(i)))
-         ysci      = sqrt((xc(i,j,1)  -xbi)**2  +(xc(i,j,2)  -ybi)**2)
-         ysc       = w(i,2,1)/(ysci*w(i,j,1))
-         csc       = 1./(ysc+a3)**2
-      else
+      if (i.ge.itl.and.i.le.itu+1):
+          a3        = 1./(.225*abs(ynot(i)))
+          ysci      = sqrt((xc(i,j,1)  -xbi)**2  +(xc(i,j,2)  -ybi)**2)
+          ysc       = w(i,2,1)/(ysci*w(i,j,1))
+          csc       = 1./(ysc+a3)**2
+      elif
          csc       = (cwk*ynot(i))**2
-      end if
 
 
 #     set some parameters
@@ -127,40 +127,42 @@ for j in range (2,jl):
 
 #     solve for the eddy viscosity
 
-      if (dim(rnut0*a1,a2).eq.0.) then
-         rev(i,j)  = 0.
-         go to 20
-      else
-         rnut      = sqrt(a1)
-      end if
+      if (dim(rnut0*a1,a2).eq.0.):
+          rev(i,j)  = 0.
+          #  go to 20? 
+      elif:
+          rnut      = sqrt(a1)
+      
 
-      k      = 0
-      fac    = a2 - 1.
+k      = 0
+fac    = a2 - 1.
 
-   11 den    = 1./(4.*rnut*rnut*rnut + fac)
-      rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
 
-      if (abs((rnut1  -rnut)).le.1.e-3) then
-         rev(i,j) = w(i,j,1)*dim(rnut1,rnul)
-         go to 20
-      else
+# 11?
+den    = 1./(4.*rnut*rnut*rnut + fac)
+rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
+
+      if (abs((rnut1  -rnut)).le.1.e-3):
+          rev(i,j) = w(i,j,1)*dim(rnut1,rnul)
+         # go to 20
+      elif
          k      = k  +1
-         if (k.gt.200) then
+         if (k.gt.200):
             write (6,*) ' iteration not converged ',i,j
             write (6,*) ' rnut = ',rnut,' rnut1 =',rnut1
             rev(i,j)  = w(i,j,1)*dim(rnut1,rnul)
-            go to 20
-         end if
-         rnut   = rnut1
-         go to 11
-      end if
+            # go to 20
 
-   20 continue
-   30 continue
+         rnut   = rnut1
+         # go to 11
+
+# those would 'go' here, and then just continue?
+#    20 continue
+#    30 continue
 
 #     adjust the near wake
 
-      ii        = ie
+ii        = ie
 
 for i in range (2,itl+1):
       ii        = ii  -1
@@ -176,10 +178,9 @@ for i in range (2,il):
          rev(i,1)  = rev(ii,2)
 
 for i in range (itl+1,itu):
-         if (xc(i,2,1).le.xtran) then
-         for j in range (1,jl):
+         if (xc(i,2,1).le.xtran):
+            for j in range (1,jl):
                rev(i,j)  = 0
-         end if
          rev(i,1)  = -rev(i,2)
 
 for j in range (1,je):
@@ -187,5 +188,3 @@ for j in range (1,je):
          rev(ie,j) = rev(il,j)
 
       return
-
-      end
