@@ -6,7 +6,7 @@ class Field:
     def __init__(self,init_vals):
 
         # assign dims and vals
-        self.dims = np.size(init_vals)
+        self.dims = np.shape(init_vals)
         self.vals = np.array(init_vals, copy = True)
 
     # Allow fields to be indexed like numpy arrays
