@@ -24,18 +24,30 @@ class BaldwinLomax():
     tauw = []
     yscal = []
     scalf = []
+    vor = []
     avor = []
     avorm = []
-
-      dimension       (il),(il),
-     .                (il),(il),amuto(il),amuti(il),yvor(il),
-     .                yvorm(il),utotm(il),ylenm(il),fkleb(il),jedge(il)
-      dimension       utmin(il),utmax(il),utot1(il),fcros(il)
-      dimension       amu(ib,jb),u(ib,jb),v(ib,jb),vor(ib,jb),
-     .                rinv(ib,jb),utot(ib,jb),vola(ib,jb),
-     .                t(ib,jb),ylen(ib,jb)
-      dimension       amut(ie,je)
-      dimension       test(10)
+    ravg = []
+    amut = []
+    amuto = []
+    amuti = []
+    yvor = []
+    yvorm = []
+    utot = []
+    utotm = []
+    utot1 = []
+    ylenm1 = []
+    utmin = []
+    fkleb = []
+    jedge = []
+    utmax = []
+    amu = []
+    u = []
+    t = []
+    fcros = []
+    rinv = []
+    vola = []
+    ylen = []
 
       i2        = ie
       j2        = je
