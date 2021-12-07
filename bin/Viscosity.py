@@ -147,53 +147,54 @@ class Viscosity():
                     csc       = (cwk*ynot(i))**2
 
 
-        #     set some parameters
+            #     set some parameters
 
-            rnul      = rlv[i,j]/w[i,j,1]
-            rnut0     = rev[i,j]/w[i,j,1]
-            # rnul3     = rnul**3
-            a11       = ckr*(csc*csc*scf*scf)/rnul**2
-            a2        = 75.
-            a1        = a11*(astra)
-            rnut0     = rnul+rnut0
+                rnul      = rlv[i,j]/w[i,j,1]
+                rnut0     = rev[i,j]/w[i,j,1]
+                # rnul3     = rnul**3
+                a11       = ckr*(csc*csc*scf*scf)/rnul**2
+                a2        = 75.
+                a1        = a11*(astra)
+                rnut0     = rnul+rnut0
 
-        #     solve for the eddy viscosity
-            # DIM(X,Y) function in fortran: returns the difference X-Y if the result is positive; otherwise returns zero.
-            # Replacing with: max(X-Y, 0) for python
+            #     solve for the eddy viscosity
+                # DIM(X,Y) function in fortran: returns the difference X-Y if the result is positive; otherwise returns zero.
+                # Replacing with: max(X-Y, 0) for python
 
-            if (max(rnut0*a1-a2,0) == 0.):
-                rev[i,j]  = 0.
-                #  go to 20? 
-            else:
-                rnut      = np.sqrt(a1)
-            
+                if (max(rnut0*a1-a2,0) == 0.):
+                    rev[i,j]  = 0.
+                    continue #  go to 20, so continue
+                else:
+                    rnut      = np.sqrt(a1)
+                
 
-        k      = 0
-        fac    = a2 - 1.
+                k      = 0
+                fac    = a2 - 1.
 
 
-        # 11?
-        den    = 1./(4.*rnut*rnut*rnut + fac)
-        rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
+                # 11?
+                while k<201: # this is instead of the 'go to 11'
+                    den    = 1./(4.*rnut*rnut*rnut + fac)
+                    rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
 
-        if (abs((rnut1  -rnut))<=1.e-3):
-            rev[i,j] = w[i,j,1]*max(rnut1-rnul,0)
-            # go to 20
-        else:
-            k      = k  +1
-            if (k>200):
-                print(*[' iteration not converged ',i,j])
-                print(*[' rnut = ',rnut,' rnut1 =',rnut1])
+                    if (abs((rnut1  -rnut))<=1.e-3):
+                        rev[i,j] = w[i,j,1]*max(rnut1-rnul,0)
+                        continue # go to 20
+                    else:
+                        k      = k  +1
+                        if (k>200):
+                            print(*[' iteration not converged ',i,j])
+                            print(*[' rnut = ',rnut,' rnut1 =',rnut1])
 
-                rev[i,j]  = w[i,j,1]*max(rnut1-rnul,0)
-                # go to 20
+                            rev[i,j]  = w[i,j,1]*max(rnut1-rnul,0)
+                            continue # go to 20
 
-            rnut   = rnut1
-            # go to 11, which is above this loop, so repeat until that condition is no longer satisfied?
+                        rnut   = rnut1
+                        # go to 11, which is above this loop, so repeat until that condition is no longer satisfied?
 
-        # those would 'go' here, and then just continue?
-        #    20 continue
-        #    30 continue
+                    # those would 'go' here, and then just continue?
+                    #    20 continue
+                    #    30 continue
 
         #     adjust the near wake
 
