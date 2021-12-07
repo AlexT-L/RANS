@@ -32,9 +32,11 @@ class Grid:
         y_vec = np.linspace(y_bound[0],y_bound[1],self.jb)
         xg,yg = np.meshgrid(x_vec,y_vec)
         dims = np.array([self.ib, self.jb, 2])
-
+        
         # physical vertex locations
-        self.X = Field(np.stack((xg,yg),2) ) 
+        self.X = Field(np.zeros(dims)) 
+        self.X.vals[:,:,0] = xg.T
+        self.X.vals[:,:,1] = yg.T
 
         # cell volumes, porosity, and far field mask
         self.Vol = Field( np.ones([self.ib, self.jb]) )
