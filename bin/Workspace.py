@@ -13,15 +13,20 @@ class Workspace:
         # make a dictionary of fields
         self.flds = {}
         init_vals = np.zeros(self.grd.dims)
-
-        for i in range(0,len(self.mdl.reqFields)):
+        for i in range(0,len(self.mdl.reqFields)): # loop over required fields
             self.flds[self.mdl.reqFields[i]] = Field(init_vals)
         
         
     def add_field(self, new_field):
-        # Adds a new field to workspace 
-        init_vals = np.zeros(self.grd.dims)
-        self.flds[new_field] = Field(init_vals)
+
+        # check if we already have it
+        if new_field in self.flds:
+            print("Field already exists")
+            
+        else: 
+            # Add a new field to workspace 
+            init_vals = np.zeros(self.grd.dims)
+            self.flds[new_field] = Field(init_vals)
         
         return 0
     
