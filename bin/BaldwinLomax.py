@@ -16,9 +16,19 @@ class BaldwinLomax():
     # "uses:" 
     # dims, flo_var, solv_var, mesh_var, psm_var, flo_param, solv_param
 
+    # inputs
 
-      dimension       uedge(il),tauw(il),yscal(il),scalf(il),avor(il),
-     .                avorm(il),ravg(il),amuto(il),amuti(il),yvor(il),
+
+    # initializing, defined later
+    uedge = []
+    tauw = []
+    yscal = []
+    scalf = []
+    avor = []
+    avorm = []
+
+      dimension       (il),(il),
+     .                (il),(il),amuto(il),amuti(il),yvor(il),
      .                yvorm(il),utotm(il),ylenm(il),fkleb(il),jedge(il)
       dimension       utmin(il),utmax(il),utot1(il),fcros(il)
       dimension       amu(ib,jb),u(ib,jb),v(ib,jb),vor(ib,jb),
@@ -34,7 +44,7 @@ class BaldwinLomax():
       jlm       = jl- 1
 
       jstop     = 3* (j2- 2)/5
-    if (cmesh .lt. 0.0) jstop = jl- 1
+    if (cmesh   < 0.0) jstop = jl- 1
       itlp      = itl+ 1
       iwrit     = 6
 
@@ -59,7 +69,7 @@ class BaldwinLomax():
 # c     **********************************************************************
 
      ncyct     = 10
-     if (ncyc .gt. ncyct) return
+     if (ncyc > ncyct) return
 
       do 5 j=1,j2
       do 5 i=1,i2
@@ -141,7 +151,7 @@ class BaldwinLomax():
       itr2      = 0
       j         = 1
       do i=1,il
-        if (x(i,j,1) .le. xtran) then
+        if (x(i,j,1) <= xtran) then
           itr1      = i - 1
           go to 21
         end if
@@ -150,7 +160,7 @@ class BaldwinLomax():
 
       itr1p     = itr1 + 1
       do i=itr1p,il
-        if (x(i,j,1) .ge. xtran) then
+        if (x(i,j,1) >= xtran) then
           itr2      = i
           go to 22
         end if
@@ -169,7 +179,7 @@ class BaldwinLomax():
 c
 c       jmaxv     = ismax(jstop,avor,1)
         jmaxv     = ismax(jlm,avor,1)
-        if (jmaxv .eq. 0) jmaxv = 1
+        if (jmaxv == 0) jmaxv = 1
 
         jminut    = ismin(jlm,utot1,1)
 
@@ -182,11 +192,11 @@ c       jmaxv     = ismax(jstop,avor,1)
         yscal(i)  = 1000000.
    30 continue
 
-      if (modbl .eq. 1) then
+      if (modbl == 1) then
         tur1    = 1.0
         tur2    = 0.
         tur3    = 0.
-      else if (modbl .eq. 2) then
+      else if (modbl == 2) then
         tur1    = 0.
         tur2    = 1.0
         tur3    = 0.
@@ -216,7 +226,7 @@ c       jmaxv     = ismax(jstop,avor,1)
         # *   (yvor = y* vorticity)                                            *
         # **********************************************************************
 
-    if (ncyc .eq. ncyci1) then
+    if (ncyc == ncyci1) then
         do 39 i=2,il
           ylen(i,1) = 0.0
           do 37 j=2,jl
@@ -250,15 +260,15 @@ c       jmaxv     = ismax(jstop,avor,1)
         yvorm(i)  = max(yvor(jmaxyv),1.e-6)
         ylenm(i)  = max(ylen(i,jmaxyv),ylen1)
 
-        if (jedge(i) .lt. jstop) then
+        if (jedge(i)   < jstop) then
           ylenm1  = ylenm(i)
 
-          if (ncyc.ge.10 .or. restarr.eq.1.0) then
+          if (ncyc>=10 or restarr==1.0) then
             jmyv    = jedge(i)
             dyvm    = yvor(jmyv)-yvor(jmyv-1)
             dyvp    = yvor(jmyv)-yvor(jmyv+1)
 
-            if (yvor(jmyv-1) .lt. yvor(jmyv+1)) then
+            if (yvor(jmyv-1)   < yvor(jmyv+1)) then
               ylenm(i) = ylen(i,jmyv)+ .5*(ylen(i,jmyv+1)- ylen(i,jmyv))
      .                   *(1.- dyvp/dyvm)
             else
@@ -311,18 +321,18 @@ c       jmaxv     = ismax(jstop,avor,1)
           amuti(j)   = abs(amuti(j))
    70   continue
         amuti(1)  = 0.0
-        if (i.le.itl .or. i.gt.itu) amuti(1) = amuti(2)
+        if (i<=itl or i>itu) amuti(1) = amuti(2)
 
         # load viscosity coeffs. into array, use inner value until
         # match point is reached
         # scalar coding
 
         ivect     = 1
-        if (ivect .eq. 0) then
+        if (ivect == 0) then
           icross    = 0
           amut(i,1) = amuti(1)
           do 75 j=2,jstop
-            if (amuti(j).le.amuto(j) .and. icross.eq.0) then
+            if (amuti(j)<=amuto(j) and icross==0) then
               amut(i,j) = amuti(j)
             else
               icross    = 1
@@ -338,7 +348,7 @@ c
             fcros(j)  = cvmgp(float(j),1000.,amudif)
    80     continue
           jcros    = ismin(jstop,fcros,1)
-          if (jcros .eq. 1) jcros = 2
+          if (jcros == 1) jcros = 2
           jcrosm   = jcros- 1
 c
           do 90 j=1,jcrosm
@@ -363,7 +373,7 @@ c
           amut(i,j) = amu(i,j)
   120   continue
 
-        if (i.gt.itr1 .and. i.le.itr2) then
+        if (i>itr1 and i<=itr2) then
           do 130 j=2,jstop
             amut(i,j) = 0.
   130     continue
@@ -374,7 +384,7 @@ c
 # **********************************************************************
 
         jwrit     = 0
-        if (jwrit .eq. 1) then
+        if (jwrit == 1) then
           write(6,8000) i
  8000     format(5x,'i = ',i5)
           write(6,8050)
@@ -409,15 +419,15 @@ c
 
       nturbw = 5000
 
-      if (mod(ncyc,nturbw) .eq. 0) then
+      if (mod(ncyc,nturbw) == 0) then
         do 250 i=2,il
-          if(i .eq. 2) write(iwrit,840)
+          if(i == 2) write(iwrit,840)
           write (iwrit,850) i,jedge(i),ylenm(i),utotm(i),yvorm(i),
      .                      yscal(i)
   250   continue
 
         do 300 i=itlp,itu
-          if(i.eq.itlp) write(6,860)
+          if(i==itlp) write(6,860)
           je      = jedge(i)
           delta1  = ylenm(i)
           dstar1  = 1.0
@@ -435,7 +445,7 @@ c
         atauw   = abs(tauw(iloc))
         atauwr  = atauw* rinv(iloc,2)
         ustar   = sqrt(rein* rm* sgam* atauwr)
-        if(ustar.eq.0.0) ustar = 1.0
+        if(ustar==0.0) ustar = 1.0
         ustari  = 1.0/ustar
 c
         do 310 j=2,j2
@@ -455,7 +465,7 @@ c
         # **********************************************************************
 
       kwrite1   = 0
-      if (kwrite1.eq.1 .and. ncyc.eq.mcyc) then
+      if (kwrite1==1 and ncyc==mcyc) then
         do i=itl,itl-4,-4
         do j=1,10
           write(970,971) i,j,amut(i,j)
