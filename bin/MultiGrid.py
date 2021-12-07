@@ -1,7 +1,5 @@
 import numpy as np
-import CycleFactory
-import Workspace
-import IntegratorFactory
+import CycleFactory, Workspace, IntegratorFactory, ExpandinatorFactory, ContractinatorFactory
 
 
 class MultiGrid:
@@ -17,8 +15,8 @@ class MultiGrid:
             self.workspaces.append(Workspace(self.workspaces[-1]))
         
         self.integrator = IntegratorFactory(input)
-        self.expandinator = 0
-        self.contractinator = 0
+        self.expandinator = ExpandinatorFactory(input)
+        self.contractinator = ContractinatorFactory(input)
         self.res = 1
     
     def loop(self):
