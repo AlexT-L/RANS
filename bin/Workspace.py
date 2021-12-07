@@ -16,7 +16,7 @@ class Workspace:
         for i in range(0,len(self.mdl.reqFields)): # loop over required fields
             self.flds[self.mdl.reqFields[i]] = Field(init_vals)
         
-        
+    # add field method
     def add_field(self, new_field):
 
         # check if we already have it
