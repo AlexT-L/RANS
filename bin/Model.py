@@ -3,7 +3,10 @@ from abc import ABC, abstractmethod
 class Model(ABC):
     
     def __init__(self, input):
-        # Save some vars
+
+        # get the fields required by the model
+        self.reqFields = input.mdl.Fields 
+
         pass
     
     @abstractmethod
