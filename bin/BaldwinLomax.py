@@ -24,6 +24,7 @@ class BaldwinLomax():
         rm = params['rm']
         re = params['re']
         ncyc = params['ncyc']
+        rev = params['rev']
         cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
         ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
         il = dims['il']
@@ -394,118 +395,118 @@ class BaldwinLomax():
     # **********************************************************************
     # *   debugging check (activate with jwrit = 1)                        *
     # **********************************************************************
+            # since jwrit is set to 0 anyways, just commenting this out for now
+            #         jwrit     = 0
+            #         if (jwrit == 1) then
+            #         write(6,8000) i
+            # 8000     format(5x,'i = ',i5)
+            #         write(6,8050)
+            # 8050     format(5x,'j,y1,fkleb,ravg,muti,muto,mut')
+            # 8100     format(i5,6e15.5)
+            #         do 195 j=2,jstop
+            #             y1        = yscal[i]*ylen[i,j]
+            #             cmuti     = amuti[j]
+            #             cmuto     = amuto[j]
+            #             write(6,8100) j,y1,fkleb[j],ravg[j],cmuti,cmuto,amut[i,j]
+            # 195     continue
+            #         end if
 
-            jwrit     = 0
-            if (jwrit == 1) then
-            write(6,8000) i
-    8000     format(5x,'i = ',i5)
-            write(6,8050)
-    8050     format(5x,'j,y1,fkleb,ravg,muti,muto,mut')
-    8100     format(i5,6e15.5)
-            do 195 j=2,jstop
-                y1        = yscal[i]*ylen[i,j]
-                cmuti     = amuti[j]
-                cmuto     = amuto[j]
-                write(6,8100) j,y1,fkleb[j],ravg[j],cmuti,cmuto,amut[i,j]
-    195     continue
-            end if
-
-        # finish of outer i loop #####################
-    200 continue
+        # end of outer i loop #####################
 
         # copy amut to rev
-
         scale     = 1.
-        do j=1,je
-        do i=1,ie
-            rev[i,j]  = scale*amut[i,j]
-        end do
-        end do
-        return
-
-        # **********************************************************************
-        # *   printout for boundary layer details                              *
-        # *   nturbw  -  input for frequency of printing b.l. data             *
-        # *              (currently set at large value)                        *
-        # **********************************************************************
-
-        nturbw = 5000
-
-        if (mod(ncyc,nturbw) == 0) then
-            do 250 i=2,il
-            if(i == 2) write(iwrit,840)
-            write (iwrit,850) i,jedge[i],ylenm[i],utotm[i],yvorm[i],
-        .                      yscal[i]
-    250   continue
-
-            do 300 i=itlp,itu
-            if(i==itlp) write(6,860)
-            je      = jedge[i]
-            delta1  = ylenm[i]
-            dstar1  = 1.0
-            uedge[i]= w(i,je,2)/w(i,je,1)
-            ue1     = uedge[i]* sgrmi
-            tauw1   = abs(tauw[i])
-            aylen   = abs(ylen[i,2])
-            yplus   = yscal[i]* aylen* 26.
-            yplus   = 0.5* yplus
-            cf1     = 2.0* rein* sgrmi* tauw1
-            write(6,870) i,je,ue1,delta1,dstar1,tauw1,cf1,yplus
-    300   continue
-
-            iloc    = itu
-            atauw   = abs(tauw(iloc))
-            atauwr  = atauw* rinv(iloc,2)
-            ustar   = sqrt(rein* rm* sgam* atauwr)
-            if(ustar==0.0) ustar = 1.0
-            ustari  = 1.0/ustar
-    c
-            do 310 j=2,j2
-            yval    = 0.5* (ylen(iloc,j-1)+ ylen(iloc,j))
-            ayval   = abs(yval)
-            yplus   = yscal(iloc)* ayval* 26.
-            uval    = w(iloc,j,2)* rinv(iloc,j)
-            uplus   = uval* ustari
-            write(6,880) j,yplus,uplus,ylen(iloc,j),ylen(iloc,j-1),yval,
-        .                 yscal(iloc),yplus
-    310   continue
-        end if
-
-
-            # **********************************************************************
-            # *   additional checks of routine (activate with kwrite = 1)          *
-            # **********************************************************************
-
-        kwrite1   = 0
-        if (kwrite1==1 and ncyc==mcyc) then
-            do i=itl,itl-4,-4
-            do j=1,10
-            write(970,971) i,j,amut[i,j]
-    971     format (5x,'i,j,amut = ',2i5,e15.6)
-            end do
-            end do
-
-            itup      = itu + 1
-            do i=itup,itup+4,4
-            do j=1,10
-            write(970,971) i,j,amut[i,j]
-            end do
-            end do
-
-    # ---->    finish of kwrite if
-            end if
+        for j in range(1,je):
+            for i in range(1,ie):
+                rev[i,j]  = scale*amut[i,j]
 
         return
 
-    800 format(1h ,'ylen,ravg,amuto1,amuto2,amuto,udiff,fkleb')
-    810 format(1h ,5x,i5,7e15.6)
-    820 format(1h ,'ylen,utot,vor,yvor,amuti,amuto,fkleb')
-    830 format(1h ,5x,i5,7e15.6)
-    840 format(1h ,'ylenm,utotm,yvorm,yscal')
-    850 format(1h ,5x,2i5,4e15.6)
-    860 format(1h ,1x,4h  i ,4h je ,1x,
-        .  10h    ue    ,10h   delta  ,10h   dstar  ,
-        .  10h   tauw   ,12h     cf     ,10h   yplus  )
-    870 format(1x,2i4,3f10.6,2e15.6,f10.6)
-    880 format(1h ,5x,i5,7f12.4)
-        end
+        # 'return' statement here in turb2. So with current implementation, would end after this
+        # therefore, commenting out rest for now
+
+    #     # **********************************************************************
+    #     # *   printout for boundary layer details                              *
+    #     # *   nturbw  -  input for frequency of printing b.l. data             *
+    #     # *              (currently set at large value)                        *
+    #     # **********************************************************************
+
+    #     nturbw = 5000
+
+    #     if (mod(ncyc,nturbw) == 0) then
+    #         do 250 i=2,il
+    #         if(i == 2) write(iwrit,840)
+    #         write (iwrit,850) i,jedge[i],ylenm[i],utotm[i],yvorm[i],
+    #     .                      yscal[i]
+    # 250   continue
+
+    #         do 300 i=itlp,itu
+    #         if(i==itlp) write(6,860)
+    #         je      = jedge[i]
+    #         delta1  = ylenm[i]
+    #         dstar1  = 1.0
+    #         uedge[i]= w(i,je,2)/w(i,je,1)
+    #         ue1     = uedge[i]* sgrmi
+    #         tauw1   = abs(tauw[i])
+    #         aylen   = abs(ylen[i,2])
+    #         yplus   = yscal[i]* aylen* 26.
+    #         yplus   = 0.5* yplus
+    #         cf1     = 2.0* rein* sgrmi* tauw1
+    #         write(6,870) i,je,ue1,delta1,dstar1,tauw1,cf1,yplus
+    # 300   continue
+
+    #         iloc    = itu
+    #         atauw   = abs(tauw(iloc))
+    #         atauwr  = atauw* rinv(iloc,2)
+    #         ustar   = sqrt(rein* rm* sgam* atauwr)
+    #         if(ustar==0.0) ustar = 1.0
+    #         ustari  = 1.0/ustar
+    # c
+    #         do 310 j=2,j2
+    #         yval    = 0.5* (ylen(iloc,j-1)+ ylen(iloc,j))
+    #         ayval   = abs(yval)
+    #         yplus   = yscal(iloc)* ayval* 26.
+    #         uval    = w(iloc,j,2)* rinv(iloc,j)
+    #         uplus   = uval* ustari
+    #         write(6,880) j,yplus,uplus,ylen(iloc,j),ylen(iloc,j-1),yval,
+    #     .                 yscal(iloc),yplus
+    # 310   continue
+    #     end if
+
+
+    #         # **********************************************************************
+    #         # *   additional checks of routine (activate with kwrite = 1)          *
+    #         # **********************************************************************
+
+    #     kwrite1   = 0
+    #     if (kwrite1==1 and ncyc==mcyc) then
+    #         do i=itl,itl-4,-4
+    #         do j=1,10
+    #         write(970,971) i,j,amut[i,j]
+    # 971     format (5x,'i,j,amut = ',2i5,e15.6)
+    #         end do
+    #         end do
+
+    #         itup      = itu + 1
+    #         do i=itup,itup+4,4
+    #         do j=1,10
+    #         write(970,971) i,j,amut[i,j]
+    #         end do
+    #         end do
+
+    # # ---->    finish of kwrite if
+    #         end if
+
+    #     return
+
+    # 800 format(1h ,'ylen,ravg,amuto1,amuto2,amuto,udiff,fkleb')
+    # 810 format(1h ,5x,i5,7e15.6)
+    # 820 format(1h ,'ylen,utot,vor,yvor,amuti,amuto,fkleb')
+    # 830 format(1h ,5x,i5,7e15.6)
+    # 840 format(1h ,'ylenm,utotm,yvorm,yscal')
+    # 850 format(1h ,5x,2i5,4e15.6)
+    # 860 format(1h ,1x,4h  i ,4h je ,1x,
+    #     .  10h    ue    ,10h   delta  ,10h   dstar  ,
+    #     .  10h   tauw   ,12h     cf     ,10h   yplus  )
+    # 870 format(1x,2i4,3f10.6,2e15.6,f10.6)
+    # 880 format(1h ,5x,i5,7f12.4)
+    #     end
