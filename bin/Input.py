@@ -19,7 +19,8 @@ import pandas as pd
 #               hmesh     = the number of meshes used in the multigrid sequence
 
 #               cflf      = the courant number for the time step on the fine mesh
-#                           (cflf.lt.0. selects the use of a variable local step)
+#                           (cflf<0 selects the use of a variable local step)
+#               cflim     = ?
 #               bc        = optional  far field boundary conditions
 #               vis2      = the coefficient for the adaptive dissipation
 #               vis4      = the coefficient for the background dissipation
@@ -33,7 +34,23 @@ import pandas as pd
 #               ksmoop    = 0. for no residual averaging
 #               ksmoop    = 1. for residual averaging at all stages
 #               ksmoop    = -1. for residual averaging at alternate stages
-#               vt        = local time step (0=same local step, 1=variable local step)
+#               vt        = local time step (1=same local step, 0=variable local step)
+#               iprec     = ?
+#               epsf      = ?
+#               epsc      = ?
+#               diag      = ?
+#               cflc      = the courant number for time steps on the coarse meshes
+#               hmc       = the enthalpy damping factor for the coarse meshes
+#               fbc         controls the far field boundary condition
+#               fbc       = 0. to freeze the far field on the coarse meshes
+#               fbc       = 1. to update the far field on the coarse meshes
+#               fcoll     = a relaxation factor for the collected residuals
+#               fadd        controls the smoothing of the interpolated corrections
+#               vis0      = the dissipative coefficient for the coarse meshes
+#               lcyc        controls the multigrid cycle
+#               lcyc      = 1. for a v cycle
+#               lcyc      = 2. for a w cycle
+
 
 
 class Input:
@@ -42,20 +59,30 @@ class Input:
     solv_p=[["fcyc","fprnt","fout","ftim","gprnt","hprnt","hmesh"],
            ["cflf","cflim","vis2","vis4","adis","qdis","bc","hmf"],
             "cstp","cdis","mstage",["smoopi","smoopj","ksmoop","vt"],
-            ["cflc","fcoll","fadd","vis0","hmc","fbc","hcyc"]]
+            ["iprec","epsf","epsc","diag"],
+            ["cflc","fcoll","fadd","vis0","hmc","fbc","lcyc"]]
+    flow_p=[[]]
 
     
     # Constructor
     def __init__(self, filename):
+        #Reading in file
         self.max_cols=0
         self.df=pd.DataFrame()
         self.max_no_cols(filename)
         self.read(filename,self.max_cols)
         
+        #Param dictionaries
         self.dims={}
         self.solv_param={}
+        self.flo_param={}
+        
+        #Updating dictionaries
 
+        #dims
         self.update_dict(self.dims,self.dim_p,self.df.iloc[2,0:2])
+
+        #solv_param
         self.update_dict(self.solv_param,self.solv_p[0],self.df.iloc[4,0:8])
         self.update_dict(self.solv_param,self.solv_p[1],self.df.iloc[6,0:8])
         self.solv_param[self.solv_p[2]]=np.array(self.df.iloc[8,0:6])
@@ -63,13 +90,16 @@ class Input:
         cstp=self.solv_param["cstp"]
         mstage=np.count_nonzero(cstp)
         self.solv_param[self.solv_p[4]]=mstage
-        self.solv_param[self.solv_p[5]]=np.array(self.df.iloc[12,0:4])
-        self.solv_param[self.solv_p[6]]=np.array(self.df.iloc[14,0:7])
+        self.update_dict(self.solv_param,self.solv_p[5],self.df.iloc[12,0:4])
+        self.update_dict(self.solv_param,self.solv_p[6],self.df.iloc[14,0:4])
+        self.update_dict(self.solv_param,self.solv_p[7],self.df.iloc[16,0:7])
 
+        if self.solv_param["cflc"]==0.0:
+            self.solv_param["cflc"]=self.solv_param["cflf"]
 
-        
+        #flow_param
 
-        
+    #Methods
 
     #Get max number of columns in a row
     def max_no_cols(self,file):
