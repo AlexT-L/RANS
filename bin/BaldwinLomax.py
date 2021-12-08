@@ -25,6 +25,7 @@ class BaldwinLomax():
         re = params['re']
         ncyc = params['ncyc']
         cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
+        ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
         il = dims['il']
         jl = dims['jl']
         itl = params['itl']
@@ -35,6 +36,7 @@ class BaldwinLomax():
         xtran = params['xtran'] # needs to be from flo_param
 
         vol = params['vol'] # new
+        
 
 
         # initializing, defined later
@@ -67,6 +69,7 @@ class BaldwinLomax():
         rinv = []
         vola = []
         ylen = []
+        ylenm = []
 
         i2        = ie
         j2        = je
@@ -75,7 +78,7 @@ class BaldwinLomax():
         jlm       = jl- 1
 
         jstop     = 3* (j2- 2)/5
-        if (cmesh   < 0.0):
+        if (cmesh < 0.0):
             jstop = jl- 1
         itlp      = itl+ 1
         iwrit     = 6
@@ -178,138 +181,120 @@ class BaldwinLomax():
         itr1      = 0
         itr2      = 0
         j         = 1
-        do i=1,il
-            if (x(i,j,1) <= xtran) then
-            itr1      = i - 1
-            go to 21
-            end if
-        end do
-    21 continue
+        for i in range(1,il):
+            if (x(i,j,1) <= xtran):
+                itr1      = i - 1
+                break # seems like it might continue, 
+                    # but if it continues then it changes nothing, so break?
 
         itr1p     = itr1 + 1
-        do i=itr1p,il
-            if (x(i,j,1) >= xtran) then
-            itr2      = i
-            go to 22
-            end if
-        end do
-    22 continue
+        for i in range(itr1p,il):
+            if (x(i,j,1) >= xtran):
+                itr2      = i
+                break
 
-        do 30 i=2,il
+        for i in range(2,il):
+            for j in range(1,jlm):
+                avor[j]   = vor[i,j]
+                utot1[j]  = utot[i,j]
+            # j loop ends here
 
-            do 25 j=1,jlm
-            avor(j)   = vor[i,j]
-            utot1(j)  = utot[i,j]
-    25   continue
+            # effect of using jlm or jstop needs to be checked;
+            # it does not seem to make a difference
+            # jmaxv     = ismax(jstop,avor,1)
+            jmaxv     = np.argmax(avor) # replacing ismax with np.argmax.
+            if (jmaxv == 0): 
+                jmaxv = 1 # Seems weird to me
 
-    # c     effect of using jlm or jstop needs to be checked;
-    # c     it does not seem to make a difference
-    c
-    c       jmaxv     = ismax(jstop,avor,1)
-            jmaxv     = ismax(jlm,avor,1)
-            if (jmaxv == 0) jmaxv = 1
+            jminut    = np.argmin(utot1)
+            jmaxut    = np.argmax(utot1)
 
-            jminut    = ismin(jlm,utot1,1)
+            avorm[i]  = avor(jmaxv)
+            utmin[i]  = utot1(jminut)
+            utmax[i]  = max(utot1(jmaxut),1.e-3)
+            utotm[i]  = utmax[i]
+            yscal[i]  = 1000000.
+        # i loop ends here
 
-            jmaxut    = ismax(jstop,utot1,1)
-
-            avorm(i)  = avor(jmaxv)
-            utmin(i)  = utot1(jminut)
-            utmax(i)  = max(utot1(jmaxut),1.e-3)
-            utotm(i)  = utmax(i)
-            yscal(i)  = 1000000.
-    30 continue
-
-        if (modbl == 1) then
+        if (modbl == 1):
             tur1    = 1.0
             tur2    = 0.
             tur3    = 0.
-        else if (modbl == 2) then
+        elif (modbl == 2):
             tur1    = 0.
             tur2    = 1.0
             tur3    = 0.
-        else
+        else:
             tur1    = 0.
             tur2    = 0.
             tur3    = 1.0
-        end if
 
-        do 35 i=itlp,itu
+        for i in range(itlp,itu):
             xxa       = x(i,1,1)- x(i-1,1,1)
             yxa       = x(i,1,2)- x(i-1,1,2)
             volai     = 1.0/vola[i,1]
             uy        = 2.0* u[i,2]
             amub      = .5* (amu[i,1]+ amu[i,2])
-            tauw(i)   = amub* (xxa* uy)* volai
+            tauw[i]   = amub* (xxa* uy)* volai
             avor1     = vor[i,1]
             avora     = avor1
-            avorb     = 0.5* (avor1+ avorm(i))
-            avorc     = avorm(i)
+            avorb     = 0.5* (avor1+ avorm[i])
+            avorc     = avorm[i]
             avor2     = tur1*avora + tur2*avorb + tur3*avorc
-            yscal(i)  = sqrt(rey* sgrmi* amub* avor2* w(i,2,1))/(26.*amub)
-    35 continue
+            yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w(i,2,1))/(26.*amub)
 
             # **********************************************************************
             # *   compute normal distance ylen[i,j] and function  yvor             *
             # *   (yvor = y* vorticity)                                            *
             # **********************************************************************
 
-        if (ncyc == ncyci1) then
-            do 39 i=2,il
-            ylen[i,1] = 0.0
-            do 37 j=2,jl
-                xc2       = .50* (x(i,j,1)+ x(i-1,j,1)
-        1                       -x(i,j-1,1)- x(i-1,j-1,1))
-                yc2       = .50* (x(i,j,2)+ x(i-1,j,2)
-        1                       -x(i,j-1,2)- x(i-1,j-1,2))
-                xyc       = xc2
-                yyc       = yc2
-                scalf(j)  = sqrt(xyc*xyc + yyc*yyc)
-                ylen[i,j] = ylen(i,j-1)+ scalf(j)
-    37     continue
-    39   continue
-        end if
+        if (ncyc == ncyci1):
+            for i in range(2,il):
+                ylen[i,1] = 0.0
+                for j in range(2,jl):
+                    xc2       = .50* (x(i,j,1)+ x(i-1,j,1)-x(i,j-1,1)- x(i-1,j-1,1))
+                    yc2       = .50* (x(i,j,2)+ x(i-1,j,2)-x(i,j-1,2)- x(i-1,j-1,2))
+                    xyc       = xc2
+                    yyc       = yc2
+                    scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
+                    ylen[i,j] = ylen(i,j-1)+ scalf[j]
 
-        do 50 i=2,il
+        for i in range(2,il):
             ylen1     = 0.5* ylen[i,2]
-            do 40 j=1,jstop
-            y1        = yscal(i)* ylen[i,j]
-            damp      = 1.0- exp(-y1)
-            yvor(j)   = ylen[i,j]* vor[i,j]* damp
-    40   continue
+            for j in range(1,jstop):
+                y1        = yscal[i]* ylen[i,j]
+                damp      = 1.0- np.exp(-y1)
+                yvor[j]   = ylen[i,j]* vor[i,j]* damp
+            # end j loop
 
-            jmaxyv    = ismax(jstop,yvor,1)
+            # i loop continues
+            jmaxyv    = np.argmax(yvor)
             jmaxyv    = max(jmaxyv,2)
-            jedge(i)  = jmaxyv
+            jedge[i]  = jmaxyv
 
             # next line of code replaced because it caused convergence
             # stall when m = 0.001 - 12/10/05 (check this further !!!!)
 
-            yvorm(i)  = max(yvor(jmaxyv),1.e-6)
-            ylenm(i)  = max(ylen(i,jmaxyv),ylen1)
+            yvorm[i]  = max(yvor(jmaxyv),1.e-6)
+            ylenm[i]  = max(ylen(i,jmaxyv),ylen1)
 
-            if (jedge(i)   < jstop) then
-            ylenm1  = ylenm(i)
+            if (jedge[i] < jstop):
+                ylenm1  = ylenm[i]
 
-            if (ncyc>=10 or restarr==1.0) then
-                jmyv    = jedge(i)
+            if (ncyc>=10 or restarr==1.0):
+                jmyv    = jedge[i]
                 dyvm    = yvor(jmyv)-yvor(jmyv-1)
                 dyvp    = yvor(jmyv)-yvor(jmyv+1)
 
-                if (yvor(jmyv-1)   < yvor(jmyv+1)) then
-                ylenm(i) = ylen(i,jmyv)+ .5*(ylen(i,jmyv+1)- ylen(i,jmyv))
-        .                   *(1.- dyvp/dyvm)
-                else
-                ylenm(i) = ylen(i,jmyv)- .5*(ylen(i,jmyv)- ylen(i,jmyv-1))
-        .                   *(1.- dyvm/dyvp)
-                end if
+                if (yvor(jmyv-1) < yvor(jmyv+1)):
+                    ylenm[i] = ylen(i,jmyv)+ .5*(ylen(i,jmyv+1)- ylen(i,jmyv))*(1.- dyvp/dyvm)
+                else:
+                    ylenm[i] = ylen(i,jmyv)- .5*(ylen(i,jmyv)- ylen(i,jmyv-1))*(1.- dyvm/dyvp)
+            
+            else:
+                ylenm[i]  = ylenm1
 
-            else
-                ylenm(i)  = ylenm1
-            end if
-
-            end if
-    50 continue
+            # end i loop
 
             # **********************************************************************
             # *   compute outer eddy viscosity                                     *
@@ -317,95 +302,94 @@ class BaldwinLomax():
             # *   outer do loop                                                    *
             # **********************************************************************
 
-        do 200 i=2,il
-
-            udiff     = abs(utmax(i)- utmin(i))
+        for i in range(2,il): #start of outer i loop #####################
+            udiff     = abs(utmax[i]- utmin[i])
             udiff1    = cwk1* udiff
-            do 60 j=2,jstop
-            ravg(j)   = 0.5* (w(i,j,1)+ w(i,j+1,1))
-            coeff     = 0.0168* ccp
-            fwake1    = coeff* yvorm(i)* ylenm(i)
-            coeff2    = coeff* cwk1* cwk1
-            fwake2    = coeff2* ylenm(i)* udiff* udiff/yvorm(i)
-            fwake     = min(fwake1,fwake2)
-            fkleb0    = ckleb* ylen[i,j]/ylenm(i)
-            fkleb1    = min(fkleb0,1.e5)
-            fkleb(j)  = 1.0/(1.0+ 5.5* fkleb1**6)
-            amuto(j)  = rey* sgrmi* ravg(j)* fwake* fkleb(j)
-            amuto(j)  = abs(amuto(j))
-    60   continue
-            amuto(1)  = amuto(2)
+            for j in range(2,jstop): # loop 60
+                ravg[j]   = 0.5* (w(i,j,1)+ w(i,j+1,1))
+                coeff     = 0.0168* ccp
+                fwake1    = coeff* yvorm[i]* ylenm[i]
+                coeff2    = coeff* cwk1* cwk1
+                fwake2    = coeff2* ylenm[i]* udiff* udiff/yvorm[i]
+                fwake     = min(fwake1,fwake2)
+                fkleb0    = ckleb* ylen[i,j]/ylenm[i]
+                fkleb1    = min(fkleb0,1.e5)
+                fkleb[j]  = 1.0/(1.0+ 5.5* fkleb1**6)
+                amuto[j]  = rey* sgrmi* ravg[j]* fwake* fkleb[j]
+                amuto[j]  = abs(amuto[j])
+            # end loop 60
+            amuto[1]  = amuto[2]
 
             # **********************************************************************
             # *   compute inner eddy viscosity                                     *
             # **********************************************************************
 
-            do 70 j=2,jstop
-            y1        = yscal(i)* ylen[i,j]
-            damp      = 1.0- exp(-y1)
-            tscali    = 0.4* ylen[i,j]* damp
-            amuti1    = tscali* tscali* vor[i,j]
-            amuti(j)   = rey* sgrmi* ravg(j)* amuti1
-            amuti(j)   = abs(amuti(j))
-    70   continue
-            amuti(1)  = 0.0
-            if (i<=itl or i>itu) amuti(1) = amuti(2)
+            for j in range(2,jstop): # loop 70
+                y1        = yscal[i]* ylen[i,j]
+                damp      = 1.0- np.exp(-y1)
+                tscali    = 0.4* ylen[i,j]* damp
+                amuti1    = tscali* tscali* vor[i,j]
+                amuti[j]   = rey* sgrmi* ravg[j]* amuti1
+                amuti[j]   = abs(amuti[j])
+            # end of loop 70
+            amuti[1]  = 0.0
+            if (i<=itl or i>itu):
+                amuti[1] = amuti[2]
 
             # load viscosity coeffs. into array, use inner value until
             # match point is reached
             # scalar coding
 
             ivect     = 1
-            if (ivect == 0) then
-            icross    = 0
-            amut[i,1] = amuti(1)
-            do 75 j=2,jstop
-                if (amuti(j)<=amuto(j) and icross==0) then
-                amut[i,j] = amuti(j)
-                else
-                icross    = 1
-                amut[i,j] = amuto(j)
-                end if
-    75     continue
-            else
-    c
-            amut[i,1] = amuti(1)
-            ystop     = jstop
-            do 80 j=1,jstop
-                amudif    = amuti(j)- amuto(j)
-                fcros(j)  = cvmgp(float(j),1000.,amudif)
-    80     continue
-            jcros    = ismin(jstop,fcros,1)
-            if (jcros == 1) jcros = 2
-            jcrosm   = jcros- 1
-    c
-            do 90 j=1,jcrosm
-                amut[i,j] = amuti(j)
-    90     continue
-    c
-            do 100 j=jcros,jstop
-                amut[i,j] = amuto(j)
-    100     continue
-            end if
+            if (ivect == 0): # start of big if statement
+                icross    = 0
+                amut[i,1] = amuti[1]
+                for j in range(2,jstop): # loop 75
+                    if (amuti[j]<=amuto[j] and icross==0): # nested if
+                        amut[i,j] = amuti[j]
+                    else:
+                        icross    = 1
+                        amut[i,j] = amuto[j]
+                    # end nested if
+                # end loop 75
+            else: # else from the big if statement
+                amut[i,1] = amuti[1]
+                ystop     = jstop
+                for j in range(1,jstop): # loop 80
+                    amudif    = amuti[j]- amuto[j]
+                    if (amudif >= 0): # if statement instead of cvmgp function
+                        fcros[j] = float[j]
+                    else: 
+                        fcros[j] = 1000
+                # end loop 80
+                jcros    = np.argmin(fcros)
+                if (jcros == 1):
+                    jcros = 2
+                jcrosm   = jcros- 1
+        
+                for j in range(1,jcrosm): # loop 90
+                    amut[i,j] = amuti[j]
+                # end loop 90
+        
+                for j in range(jcros,jstop): # loop 100
+                    amut[i,j] = amuto[j]
+                # end loop 100
+            # end of big if statement
 
             # **********************************************************************
             # *   compute turbulent viscosity at cell center                       *
             # **********************************************************************
 
-            do 110 j=2,jstop
-            amutc     = 0.5* (amut[i,j]+ amut(i,j-1))
-            amu[i,j]  = amutc
-    110   continue
+            for j in range(2,jstop):
+                amutc     = 0.5* (amut[i,j]+ amut(i,j-1))
+                amu[i,j]  = amutc
 
-            do 120 j=2,jstop
-            amut[i,j] = amu[i,j]
-    120   continue
+            for j in range(2,jstop):
+                amut[i,j] = amu[i,j]
 
-            if (i>itr1 and i<=itr2) then
-            do 130 j=2,jstop
-                amut[i,j] = 0.
-    130     continue
-            end if
+            if (i>itr1 and i<=itr2):
+                for j in range(2,jstop):
+                    amut[i,j] = 0.
 
     # **********************************************************************
     # *   debugging check (activate with jwrit = 1)                        *
@@ -419,14 +403,14 @@ class BaldwinLomax():
     8050     format(5x,'j,y1,fkleb,ravg,muti,muto,mut')
     8100     format(i5,6e15.5)
             do 195 j=2,jstop
-                y1        = yscal(i)*ylen[i,j]
-                cmuti     = amuti(j)
-                cmuto     = amuto(j)
-                write(6,8100) j,y1,fkleb(j),ravg(j),cmuti,cmuto,amut[i,j]
+                y1        = yscal[i]*ylen[i,j]
+                cmuti     = amuti[j]
+                cmuto     = amuto[j]
+                write(6,8100) j,y1,fkleb[j],ravg[j],cmuti,cmuto,amut[i,j]
     195     continue
             end if
 
-        # finish of outer loop
+        # finish of outer i loop #####################
     200 continue
 
         # copy amut to rev
@@ -450,20 +434,20 @@ class BaldwinLomax():
         if (mod(ncyc,nturbw) == 0) then
             do 250 i=2,il
             if(i == 2) write(iwrit,840)
-            write (iwrit,850) i,jedge(i),ylenm(i),utotm(i),yvorm(i),
-        .                      yscal(i)
+            write (iwrit,850) i,jedge[i],ylenm[i],utotm[i],yvorm[i],
+        .                      yscal[i]
     250   continue
 
             do 300 i=itlp,itu
             if(i==itlp) write(6,860)
-            je      = jedge(i)
-            delta1  = ylenm(i)
+            je      = jedge[i]
+            delta1  = ylenm[i]
             dstar1  = 1.0
-            uedge(i)= w(i,je,2)/w(i,je,1)
-            ue1     = uedge(i)* sgrmi
-            tauw1   = abs(tauw(i))
+            uedge[i]= w(i,je,2)/w(i,je,1)
+            ue1     = uedge[i]* sgrmi
+            tauw1   = abs(tauw[i])
             aylen   = abs(ylen[i,2])
-            yplus   = yscal(i)* aylen* 26.
+            yplus   = yscal[i]* aylen* 26.
             yplus   = 0.5* yplus
             cf1     = 2.0* rein* sgrmi* tauw1
             write(6,870) i,je,ue1,delta1,dstar1,tauw1,cf1,yplus
