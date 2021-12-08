@@ -17,7 +17,6 @@ class MultiGrid:
         self.integrator = IntegratorFactory(input)
         self.expandinator = ExpandinatorFactory(input)
         self.contractinator = ContractinatorFactory(input)
-        self.res = 1
     
     def loop(self):
         level = 0
@@ -26,13 +25,16 @@ class MultiGrid:
             # It don't go down
             if dir < 0: 
                 # It do, it do go down
-                self.contractinator.contract(self.workspace[level+1], self.workspace[level])
-                # Find residuals, state field
+                self.contractinator.contract(self.workspaces[level-dir], self.workspaces[level])
+                self.workspaces[level].w1 = self.workspaces[level].w
+                self.integrator.step(self.workspaces[level])
+                wc = self.workspace[level].w - self.workspaces[level].w1
             elif dir > 0:
                 # It don't go down
+                self.expandinator(self.workspaces[level-dir], self.workspaces[level])
+                
+                
                 # apply corrections, get state, and get residuals
-                pass
-    
     def res(self):
         dw = self.workspaces[-1].dw
         return np.max(dw)
