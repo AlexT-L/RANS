@@ -131,8 +131,8 @@ class BaldwinLomax():
                 vola[i,j] = 0.5* (vol[i,j]+ vol[i,j+1])
 
         for i in range(1,il):
-            xxa       = x(i,1,1)-x(i-1,1,1)
-            yxa       = x(i,1,2)-x(i-1,1,2)
+            xxa       = x[i,1,1]-x[i-1,1,1]
+            yxa       = x[i,1,2]-x[i-1,1,2]
             uy        = u[i,2]- u[i,1]
             vy        = v[i,2]- v[i,1]
             uavg      = .5* (u[i,1]+u[i,2])
@@ -147,10 +147,10 @@ class BaldwinLomax():
 
         for j in range(1,jlm):
             for i in range( 1,il):
-                xxa       = x(i,j,1)-x(i-1,j,1)
-                yxa       = x(i,j,2)-x(i-1,j,2)
-                uy        = u(i,j+1)- u[i,j]
-                vy        = v(i,j+1)- v[i,j]
+                xxa       = x[i,j,1]-x[i-1,j,1]
+                yxa       = x[i,j,2]-[i-1,j,2]
+                uy        = u[i,j+1]- u[i,j]
+                vy        = v[i,j+1]- v[i,j]
                 uavg      = 0.5* (u[i,j]+ u(i,j+1))
                 vavg      = 0.5* (v[i,j]+ v(i,j+1))
 
@@ -231,8 +231,8 @@ class BaldwinLomax():
             tur3    = 1.0
 
         for i in range(itlp-1,itu):
-            xxa       = x(i,1,1)- x(i-1,1,1)
-            yxa       = x(i,1,2)- x(i-1,1,2)
+            xxa       = x[i,1,1]- x[i-1,1,1]
+            yxa       = x[i,1,2]- x[i-1,1,2]
             volai     = 1.0/vola[i,1]
             uy        = 2.0* u[i,2]
             amub      = .5* (amu[i,1]+ amu[i,2])
@@ -242,7 +242,7 @@ class BaldwinLomax():
             avorb     = 0.5* (avor1+ avorm[i])
             avorc     = avorm[i]
             avor2     = tur1*avora + tur2*avorb + tur3*avorc
-            yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w(i,2,1))/(26.*amub)
+            yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w[i,2,1])/(26.*amub)
 
             # **********************************************************************
             # *   compute normal distance ylen[i,j] and function  yvor             *
@@ -253,8 +253,8 @@ class BaldwinLomax():
             for i in range(1,il):
                 ylen[i,1] = 0.0
                 for j in range(1,jl):
-                    xc2       = .50* (x(i,j,1)+ x(i-1,j,1)-x(i,j-1,1)- x(i-1,j-1,1))
-                    yc2       = .50* (x(i,j,2)+ x(i-1,j,2)-x(i,j-1,2)- x(i-1,j-1,2))
+                    xc2       = .50* (x[i,j,1]+ x[i-1,j,1]-x[i,j-1,1]- x[i-1,j-1,1])
+                    yc2       = .50* (x[i,j,2]+ x[i-1,j,2]-x[i,j-1,2]- x[i-1,j-1,2])
                     xyc       = xc2
                     yyc       = yc2
                     scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
@@ -288,9 +288,9 @@ class BaldwinLomax():
                 dyvp    = yvor(jmyv)-yvor(jmyv+1)
 
                 if (yvor(jmyv-1) < yvor(jmyv+1)):
-                    ylenm[i] = ylen(i,jmyv)+ .5*(ylen(i,jmyv+1)- ylen(i,jmyv))*(1.- dyvp/dyvm)
+                    ylenm[i] = ylen[i,jmyv]+ .5*(ylen[i,jmyv+1]- ylen[i,jmyv])*(1.- dyvp/dyvm)
                 else:
-                    ylenm[i] = ylen(i,jmyv)- .5*(ylen(i,jmyv)- ylen(i,jmyv-1))*(1.- dyvm/dyvp)
+                    ylenm[i] = ylen[i,jmyv]- .5*(ylen[i,jmyv]- ylen[i,jmyv-1])*(1.- dyvm/dyvp)
             
             else:
                 ylenm[i]  = ylenm1
@@ -307,7 +307,7 @@ class BaldwinLomax():
             udiff     = abs(utmax[i]- utmin[i])
             udiff1    = cwk1* udiff
             for j in range(1,jstop): # loop 60
-                ravg[j]   = 0.5* (w(i,j,1)+ w(i,j+1,1))
+                ravg[j]   = 0.5* (w[i,j,1]+ w[i,j+1,1])
                 coeff     = 0.0168* ccp
                 fwake1    = coeff* yvorm[i]* ylenm[i]
                 coeff2    = coeff* cwk1* cwk1
@@ -382,7 +382,7 @@ class BaldwinLomax():
             # **********************************************************************
 
             for j in range(1,jstop):
-                amutc     = 0.5* (amut[i,j]+ amut(i,j-1))
+                amutc     = 0.5* (amut[i,j]+ amut[i,j-1])
                 amu[i,j]  = amutc
 
             for j in range(1,jstop):
