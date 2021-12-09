@@ -54,6 +54,9 @@ import pandas as pd
 #
 # flo_param:    rm        = the mach number
 #               al        = the angle of attack in degrees
+#               alpha     = the angle of attack in radians
+#               ca        = cos(alpha)
+#               sa        = sin(alpha)
 #               fcl         controls the option to fix the lift coefficient
 #               fcl       = 0. for fixed angle of attack
 #               fcl       = 1. for fixed lift coefficient
@@ -68,8 +71,36 @@ import pandas as pd
 #               kvis      = 0 for inviscid flow
 #               kvis      = 1  for laminar flow
 #               kvis      = 2  for turbulent flow
+#               gamma     = ratio of specific heats ?
+#               rho0      = initial density 
+#               p0        = ???
+#               c0        = speed of sound ??
+#               ei0       = ???
+#               u0        = ??? flow speed?
+#               v0        = ??? flow speed ? 
+#               h0        = ???
+#               mu0       = ??? 
+# 
+# geo_param:    boundx    = ??
+#               boundy    = ??
+#               bunch     = ??
+#               xte       = ??
+#               ylim1     = ??
+#               ylim2     = ??
+#               ax        = ??
+#               ay        = ??
+#               sy        = ??
+#               aplus     = ??
+#               ncut      = ??
+#               isym      = ??
+#               nn        = ??
+#               trail     = ??
+#               slopt     = ??
+#               xsing     = ??
+#               ysing     = ??
 
-
+# in_var:       xn        =x-coordinate of airfoil geometry in physical space
+#               yn        =y-coordinate of airfoil geometry in physical space
 class Input:
 
     dim_p=[["nx","ny"]]
@@ -79,6 +110,9 @@ class Input:
             ["iprec","epsf","epsc","diag"],
             ["cflc","fcoll","fadd","vis0","hmc","fbc","lcyc"]]
     flo_p=[["rm","al","fcl","clt","cd0"],["re","prn","prt","t0","xtran","kvis"]]
+    geo_p=[["boundx","boundy","bunch"],["xte","ylim1","ylim2","ax","ay","sy"],
+           ["aplus","ncut"],["isym","nu","nl"],["trail","slopt","xsing","ysing"]]
+    in_v=["xn","yn"]
 
     
     # Constructor
@@ -93,6 +127,8 @@ class Input:
         self.dims={}
         self.solv_param={}
         self.flo_param={}
+        self.geo_param={}
+        self.in_var={}
         
         #Updating dictionaries
 
@@ -110,7 +146,36 @@ class Input:
         
         #flow_param
         self.update_dict(self.df,self.flo_param,self.flo_p,18)
+        flo=self.flo_param
+        t0=flo["t0"]
+        rm=flo["rm"]
+        alpha = flo["alpha"] = flo["al"]*np.pi/180 #convert to radians
+        ca = flo["ca"] = np.cos(flo["alpha"])
+        sa = flo["sa"] = np.sin(flo["alpha"])
         
+        kvis=flo["kvis"]
+        if kvis > 1:
+            flo["re"]=flo["re"]*1e-6 #??????????
+        
+        #set constants and far-field values
+        gamma = flo["gamma"] = 1.4
+        rho0 = flo["rho0"]  = 1.
+        p0 = flo["p0"]    = 1.
+        c0 = flo["c0"]    = np.sqrt(gamma*p0/rho0)
+        ei0 = flo["ei0"]  = p0/((gamma  -1.)*rho0)
+        u0 = flo["u0"]    = rm*c0*ca
+        v0 = flo["v0"]    = rm*c0*sa
+        h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
+        mu0 = flo["mu0"]  = 1.461e-06*t0*np.sqrt(t0)/(t0+110.3)
+
+        #geoparam
+        self.update_dict(self.df,self.geo_param,self.geo_p,22)
+        geo=self.geo_param
+        geo["nn"]=geo["nu"] + geo["nl"] -1
+
+        #airfoil coordinated (in_var)
+        self.update_geom(self.df,self.in_var,self.in_v,32)
+
 
     #Methods
 
@@ -142,7 +207,18 @@ class Input:
                 dict.update(zip(params[i],df.iloc[row,0:no_nan[row]]))
             else:
                 dict[params[i][0]]=np.array(df.iloc[row,0:no_nan[row]])
-                
+        return
+
+    # Update aerfoil geometry
+    def update_geom(self,df,dict,params,strt_row):
+        no_nan_r=np.array(df.count(axis=1))
+        no_nan_c=np.array(df.count())
+        for i in range(len(params)):
+            upper=np.array(df.iloc[strt_row:96,i])
+            print(upper)
+            lower=np.array(df.iloc[98:162,i])
+            print(lower)
+            dict[params[i]]=np.concatenate((upper,lower),axis=0)
         return
      
 
@@ -152,7 +228,6 @@ class Input:
 
 
 
-input=Input("rae9e-s3.data")
-#print(input.dims["nx"])
-print(input.flo_param["rm"])
+#input=Input("rae9e-s3.data")
+
 
