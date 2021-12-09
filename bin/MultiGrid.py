@@ -32,11 +32,11 @@ class MultiGrid:
 
         # set up objects
         self.Grids[n_levels-1] = grid
-        self.Models[n_levels-1] = ModelFactory(modelName, grid, input.flo_params, coarse=False).get()
+        self.Models[n_levels-1] = ModelFactory(modelName, grid, input.flo_params, False).get()
 
         for lev in range(n_levels-2, -1, -1):
             newGrid = Grid(self.Grids[lev+1])
-            newModel = ModelFactory(modelName, newGrid, input.flo_params, coarse=True).get()
+            newModel = ModelFactory(modelName, newGrid, input.flo_params, True).get()
             self.Grids[lev] = newGrid
             self.Models[lev] = newModel
             self.Integrators[lev] = IntegratorFactory(integratorName, newModel, input.integrator_params).get()
