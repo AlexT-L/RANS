@@ -67,8 +67,8 @@ class Viscosity():
 
         # compute the molecular viscosity
 
-        for j in range(1,je):
-            for i in range(1,ie):
+        for j in range(0,je):
+            for i in range(0,ie):
                 tt       = p[i,j]/w[i,j,1]*t0
                 rlv[i,j] = 1.461e-06*tt*np.sqrt(tt)/((tt+110.3)*rmu0)
 
@@ -84,28 +84,28 @@ class Viscosity():
         if (ncyc > 25):
             aturb = .5
         if (kturb == 1): # if kturb is one, else  
-            for j in range(1,je):
-                for i in range(1,ie):
+            for j in range(0,je):
+                for i in range(0,ie):
                     rev0[i,j] = rev[i,j]
             # call turbbl
             #   to add: 
             # call turb2
-            for j in range(1,je):
-                for i in range(1,ie):
+            for j in range(0,je):
+                for i in range(0,ie):
                         rev[i,j] = aturb*rev[i,j]  +(1.  -aturb)*rev0[i,j]
         #  else start the rng algebraic model
         else:
-            for j in range(1,je):
-                for i in range(1,ie):
+            for j in range(0,je):
+                for i in range(0,ie):
                     u[i,j]   = w[i,j,2]/w[i,j,1]
                     v[i,j]   = w(i,j,3)/w[i,j,1]
 
 
-                for i in range(itl+1,itu):
+                for i in range(itl,itu):
                     u[i,1]   = -u[i,2]
                     v[i,1]   = -v[i,2]
-            for j in range(1,jl):
-                for i in range(1,il):
+            for j in range(0,jl):
+                for i in range(0,il):
 
                     dx13      = xc[i,j,1]   - xc[i+1,j+1,1]
                     dy13      = xc[i,j,2]   - xc[i+1,j+1,2]
@@ -133,8 +133,8 @@ class Viscosity():
             #   do 20 i=2,il
             # what do the 30 and 20 do?
             # also they did not have a corresponding end do?
-        for j in range(2,jl):
-            for i in range(2,il):
+        for j in range(1,jl):
+            for i in range(1,il):
                 xbi       = .5*(x[i-1,1,1]  +x[i,1,1])
                 ybi       = .5*(x[i-1,1,2]  +x[i,1,2])
                 astra     = .25*(astr(i-1,j-1)  +astr(i-1,j)+astr(i,j-1)    +astr[i,j])
@@ -200,26 +200,26 @@ class Viscosity():
 
         ii        = ie
 
-        for i in range(2,itl+1):
+        for i in range(1,itl+1):
             ii        = ii  -1
-            for j in range(2,jl):
+            for j in range(1,jl):
                 pex       = -(xc[i,2,1]  -xc[itl+1,2,1])/(20.*dsti[itl+1])
                 rev[i,j]  = rev[i,j]  +(rev[itl+1,j]  -rev[i,j])*np.exp(pex)
                 pex       = -(xc[ii,2,1]  -xc[itu,2,1])/(20.*dsti[itu])
                 rev[ii,j] = rev[ii,j]  +(rev[itu,j]  -rev[ii,j])*np.exp(pex)
 
-        for i in range(2,il):
+        for i in range(1,il):
                 ii        = ib  -i
                 rev[i,je] = rev[i,jl]
                 rev[i,1]  = rev[ii,2]
 
-        for i in range(itl+1,itu):
+        for i in range(itl,itu):
                 if (xc[i,2,1] <= xtran):
-                    for j in range(1,jl):
+                    for j in range(0,jl):
                         rev[i,j]  = 0
                 rev[i,1]  = -rev[i,2]
 
-        for j in range(1,je):
+        for j in range(0,je):
                 rev[1,j]  = rev[2,j]
                 rev[ie,j] = rev[il,j]
                 
