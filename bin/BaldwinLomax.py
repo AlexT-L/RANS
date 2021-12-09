@@ -25,8 +25,8 @@ def turbulent_viscosity(params, dims):
     re = params['re']
     ncyc = params['ncyc']
     rev = params['rev']
-    cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
-    ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
+    # cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
+    # ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
     il = dims['il']
     jl = dims['jl']
     itl = params['itl']
@@ -77,13 +77,13 @@ def turbulent_viscosity(params, dims):
 
     i2        = ie
     j2        = je
-    il        = i2- 1
-    jl        = j2- 1
+    # il        = i2- 1
+    # jl        = j2- 1
     jlm       = jl- 1
 
     jstop     = 3* (j2- 2)/5
-    if (cmesh < 0.0):
-        jstop = jl- 1
+    # if (cmesh < 0.0):
+        # jstop = jl- 1
     itlp      = itl+ 1
     iwrit     = 6
 
@@ -255,16 +255,16 @@ def turbulent_viscosity(params, dims):
         # *   (yvor = y* vorticity)                                            *
         # **********************************************************************
 
-    if (ncyc == ncyci1):
-        for i in range(1,il):
-            ylen[i,1] = 0.0
-            for j in range(1,jl):
-                xc2       = .50* (x[i,j,0]+ x[i-1,j,0]-x[i,j-1,0]- x[i-1,j-1,0])
-                yc2       = .50* (x[i,j,1]+ x[i-1,j,1]-x[i,j-1,1]- x[i-1,j-1,1])
-                xyc       = xc2
-                yyc       = yc2
-                scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
-                ylen[i,j] = ylen[i,j-1]+ scalf[j]
+    # if (ncyc == ncyci1):
+    for i in range(1,il):
+        ylen[i,1] = 0.0
+        for j in range(1,jl):
+            xc2       = .50* (x[i,j,0]+ x[i-1,j,0]-x[i,j-1,0]- x[i-1,j-1,0])
+            yc2       = .50* (x[i,j,1]+ x[i-1,j,1]-x[i,j-1,1]- x[i-1,j-1,1])
+            xyc       = xc2
+            yyc       = yc2
+            scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
+            ylen[i,j] = ylen[i,j-1]+ scalf[j]
 
     for i in range(1,il):
         ylen1     = 0.5* ylen[i,1]
@@ -543,8 +543,8 @@ params = {
   
 }
 dims = {
-    "il": dim_var, 
-    "jl": dim_var,
+    "il": dim_var - 1, 
+    "jl": dim_var - 1,
 }
 
 turbulent_viscosity(params, dims)
