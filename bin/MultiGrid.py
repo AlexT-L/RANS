@@ -53,6 +53,7 @@ class MultiGrid:
             self.Fluxes[l] = Field(grid, stateDim)
 
         
+
         self.res = 1
     
     def performCycle(self):
@@ -105,7 +106,7 @@ class MultiGrid:
                 
                 # Update Correction
                 wc.storeDifference(w, w1)
-    
+                
     def res(self):
         dw = self.Workspaces[-1].dw
         return np.max(dw)

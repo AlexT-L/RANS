@@ -7,10 +7,13 @@ from Field import Field
 
 class Grid:
     
-    def __init__(self,x_bound,y_bound,nx,ny):
+    def __init__(self, input):
 
         # let Grid contain the variables in dims.f
-
+        dims = input.dims        
+        nx = dims['nx']
+        ny = dims['ny']
+        
         # defining things to be consistent with gmesh.f
         self.nx = nx
         self.ny = ny
@@ -28,9 +31,9 @@ class Grid:
         # even know how to spell conformal mapping so I leave that to someone else
 
         # rectangular cartesian grid for now
-        x_vec = np.linspace(x_bound[0],x_bound[1],self.ib)
-        y_vec = np.linspace(y_bound[0],y_bound[1],self.jb)
-        xg,yg = np.meshgrid(x_vec,y_vec)
+        x_vec = np.linspace(dims['x_bound'][0], dims['x_bound'][1], self.ib)
+        y_vec = np.linspace(dims['y_bound'][0], dims['y_bound'][1], self.jb)
+        xg, yg = np.meshgrid(x_vec, y_vec)
         dims = np.array([self.ib, self.jb, 2])
         
         # physical vertex locations
