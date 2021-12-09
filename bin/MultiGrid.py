@@ -46,11 +46,12 @@ class MultiGrid:
         # initialize state variables
         for lev in range(n_levels):
             grid             = self.Grids[lev]
-            self.W[lev]      = Field(grid, stateDim)
-            self.W1st[lev]   = Field(grid, stateDim)
-            self.WCorr[lev]  = Field(grid, stateDim)
-            self.Res[lev]    = Field(grid, stateDim)
-            self.Fluxes[lev] = Field(grid, stateDim)
+            gs = grid.get_size()
+            self.W[lev]      = Field(gs, stateDim)
+            self.W1st[lev]   = Field(gs, stateDim)
+            self.WCorr[lev]  = Field(gs, stateDim)
+            self.Res[lev]    = Field(gs, stateDim)
+            self.Fluxes[lev] = Field(gs, stateDim)
     
     
     def performCycle(self):

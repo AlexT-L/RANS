@@ -34,15 +34,17 @@ class Grid:
         x_vec = np.linspace(dims['x_bound'][0], dims['x_bound'][1], self.ib)
         y_vec = np.linspace(dims['y_bound'][0], dims['y_bound'][1], self.jb)
         xg, yg = np.meshgrid(x_vec, y_vec)
-        dims = np.array([self.ib, self.jb, 2])
         
         # physical vertex locations
-        self.X = Field(np.zeros(dims)) 
+        self.X = Field(self.get_size(), stateDim=2) 
         self.X.vals[:,:,0] = xg.T
         self.X.vals[:,:,1] = yg.T
 
         # cell volumes, porosity, and far field mask
-        self.Vol = Field( np.ones([self.ib, self.jb]) )
-        self.PorJ = Field( np.ones([self.ib, self.jb]) )
-        self.PorI = Field( np.ones([self.ib, self.jb]) )
-        self.Fint = Field( np.ones([self.ib, self.jb]) )
+        self.Vol = Field(self.get_size())
+        self.PorJ = Field(self.get_size())
+        self.PorI = Field(self.get_size())
+        self.Fint = Field(self.get_size())
+
+    def get_size(self):
+        return [self.ib, self.jb]
