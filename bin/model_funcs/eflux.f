@@ -26,15 +26,16 @@ c
       implicit none
 
 c     inputs
-      integer, intent(in) :: il,jl
+      integer, intent(inout) :: il,jl
 c      integer ib = il + 3
 c      integer jb = jl + 3
-      real(8), intent(in), dimension(il+3,jl+3,4) :: w
-      real(8), intent(in), dimension(il+3,jl+3,2) :: x
-      real(8), intent(in), dimension(il+3,jl+3) :: p, porj
+      real(8), intent(in), dimension(:,:,:) :: w
+      real(8), intent(in), dimension(:,:,:) :: x
+      real(8), intent(in), dimension(:,:) :: p, porj
 
 
-      real(8), intent(inout), dimension(il+3,jl+3,4) :: dw
+      real(8), intent(inout), dimension(:,:,:)  :: dw
+
       
       
       
