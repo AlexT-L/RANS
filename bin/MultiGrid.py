@@ -1,6 +1,5 @@
 import numpy as np
-import CycleFactory, Model, Integrator,  ModelFactory, IntegratorFactory, ExpandinatorFactory, ContractinatorFactory, Grid, Field
-
+import Cycle, ModelFactory, IntegratorFactory, Expandinator, Contractinator, Grid, Field
 
 class MultiGrid:
 
@@ -10,9 +9,9 @@ class MultiGrid:
         self.f_relax = input.fcoll
 
         # Objects
-        self.cycle = CycleFactory(input).get()
-        self.expandinator = ExpandinatorFactory(input).get()
-        self.contractinator = ContractinatorFactory(input).get()
+        self.cycle          = Cycle(input)
+        self.expandinator   = Expandinator(input)
+        self.contractinator = Contractinator(input)
 
         # Number of Cycles
         n_levels = self.cycle.levels
@@ -31,7 +30,7 @@ class MultiGrid:
         n_levels = self.cycle.levels
 
         # set up objects
-        self.Grids[n_levels-1] = grid
+        self.Grids[n_levels-1]  = grid
         self.Models[n_levels-1] = ModelFactory(modelName, grid, input.flo_params, False).get()
 
         for lev in range(n_levels-2, -1, -1):
