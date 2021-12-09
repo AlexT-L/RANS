@@ -15,7 +15,7 @@ class Workspace:
         for i in range(0,len(self.mdl.reqFields)): # loop over required fields
             self.flds.Grid[self.mdl.reqFields[i]] = Field(init_vals)
 
-        self.isFinest = isFinest
+        self.isFinest = bool(isFinest)
 
     # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
