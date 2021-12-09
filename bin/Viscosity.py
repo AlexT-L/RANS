@@ -98,7 +98,7 @@ class Viscosity():
             for j in range(0,je):
                 for i in range(0,ie):
                     u[i,j]   = w[i,j,2]/w[i,j,1]
-                    v[i,j]   = w(i,j,3)/w[i,j,1]
+                    v[i,j]   = w[i,j,3]/w[i,j,1]
 
 
                 for i in range(itl,itu):
@@ -137,7 +137,7 @@ class Viscosity():
             for i in range(1,il):
                 xbi       = .5*(x[i-1,1,1]  +x[i,1,1])
                 ybi       = .5*(x[i-1,1,2]  +x[i,1,2])
-                astra     = .25*(astr(i-1,j-1)  +astr(i-1,j)+astr(i,j-1)    +astr[i,j])
+                astra     = .25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])
                 if (i>=itl) and (i<=itu+1):
                     a3        = 1./(.225*abs(ynot(i)))
                     ysci      = np.sqrt((xc[i,j,1]  -xbi)**2  +(xc[i,j,2]  -ybi)**2)
