@@ -1,5 +1,8 @@
 # convective flux calculation wrapping fortran file eflux.f
 
+import sys
+sys.path.append("../")
+
 # class dependencies
 from Workspace import Workspace
 from Grid import Grid
