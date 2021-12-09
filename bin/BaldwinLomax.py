@@ -44,35 +44,36 @@ def turbulent_viscosity(params, dims):
 
     # initializing, defined later
     uedge = []
-    tauw = np.ones(10)
-    yscal = np.ones(10)
-    scalf = np.ones(10)
-    vor = np.ones((10,10))
-    avor = np.ones(10)
-    avorm = np.ones(10)
-    ravg = np.ones(10)
-    amut = np.ones((10,10))
-    amuto = np.ones(10)
-    amuti = np.ones(10)
-    yvor = np.ones(10)
-    yvorm = np.ones(10)
-    utot = np.ones((10,10))
-    utotm = np.ones(10)
-    utot1 = np.ones(10)
-    ylenm1 = 10
-    utmin = np.ones(10)
-    fkleb = np.ones(10)
-    jedge = np.ones(10)
-    utmax = np.ones(10)
-    amu = np.ones((10,10))
-    u = np.ones((10,10))
-    v = np.ones((10,10))
-    t = np.ones((10,10))
-    fcros = np.ones(10)
-    rinv = np.ones((10,10))
-    vola = np.ones((10,10))
-    ylen = np.ones((10,10))
-    ylenm = np.ones(10)
+    dim_var = 100
+    tauw = np.ones(dim_var)
+    yscal = np.ones(dim_var)
+    scalf = np.ones(dim_var)
+    vor = np.ones((dim_var,dim_var))
+    avor = np.ones(dim_var)
+    avorm = np.ones(dim_var)
+    ravg = np.ones(dim_var)
+    amut = np.ones((dim_var,dim_var))
+    amuto = np.ones(dim_var)
+    amuti = np.ones(dim_var)
+    yvor = np.ones(dim_var)
+    yvorm = np.ones(dim_var)
+    utot = np.ones((dim_var,dim_var))
+    utotm = np.ones(dim_var)
+    utot1 = np.ones(dim_var)
+    ylenm1 = dim_var
+    utmin = np.ones(dim_var)
+    fkleb = np.ones(dim_var)
+    jedge = np.ones(dim_var)
+    utmax = np.ones(dim_var)
+    amu = np.ones((dim_var,dim_var))
+    u = np.ones((dim_var,dim_var))
+    v = np.ones((dim_var,dim_var))
+    t = np.ones((dim_var,dim_var))
+    fcros = np.ones(dim_var)
+    rinv = np.ones((dim_var,dim_var))
+    vola = np.ones((dim_var,dim_var))
+    ylen = np.ones((dim_var,dim_var))
+    ylenm = np.ones(dim_var)
 
     i2        = ie
     j2        = je
@@ -289,12 +290,10 @@ def turbulent_viscosity(params, dims):
 
         if (ncyc>=10 or restarr==1.0):
             jmyv    = int(jedge[i])
-            print(jedge[i])
             dyvm    = yvor[jmyv]-yvor[jmyv-1]
             dyvp    = yvor[jmyv]-yvor[jmyv+1]
 
             if (yvor[jmyv-1] < yvor[jmyv+1]):
-                print(dyvm)
                 ylenm[i] = ylen[i,jmyv]+ 0.5*(ylen[i,jmyv+1]- ylen[i,jmyv])*(1- dyvp/dyvm)
             else:
                 if dyvp == 0.0:
@@ -428,7 +427,7 @@ def turbulent_viscosity(params, dims):
         for i in range(0,ie):
             rev[i,j]  = scale*amut[i,j]
 
-    print(rev)
+    print(np.mean(rev))
     return
 
     # 'return' statement here in turb2. So with current implementation, would end after this
@@ -520,30 +519,32 @@ def turbulent_viscosity(params, dims):
 # 870 format(1x,2i4,3f10.6,2e15.6,f10.6)
 # 880 format(1h ,5x,i5,7f12.4)
 #     end
+
+dim_var = 100
 params = {
-  "ie": 10,
-  "je": 10,
+  "ie": dim_var,
+  "je": dim_var,
   "kvis": -1,
   "gamma": 1,
   "rm": 1,
   "re": 1,
-  "ncyc": 10,
-  "rev": np.ones((10,10)),
+  "ncyc": dim_var,
+  "rev": np.ones((dim_var,dim_var)),
   "cmesh": 1,
   "ncyci1": -1,
-  "itl": 10, 
-  "itu": 10,
-  "x": np.ones((10,10,3)),
-  "w": np.ones((10,10,3)),
-  "p": np.ones((10,10)),
-  "vol": np.ones((10,10)),
+  "itl": dim_var, 
+  "itu": dim_var,
+  "x": np.ones((dim_var,dim_var,3)),
+  "w": np.ones((dim_var,dim_var,3)),
+  "p": np.ones((dim_var,dim_var)),
+  "vol": np.ones((dim_var,dim_var)),
   "xtran": 0,
 
   
 }
 dims = {
-    "il": 10, 
-    "jl": 10,
+    "il": dim_var, 
+    "jl": dim_var,
 }
 
 turbulent_viscosity(params, dims)
