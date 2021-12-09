@@ -69,7 +69,7 @@ class Viscosity():
 
         for j in range(0,je):
             for i in range(0,ie):
-                tt       = p[i,j]/w[i,j,1]*t0
+                tt       = p[i,j]/w[i,j,0]*t0
                 rlv[i,j] = 1.461e-06*tt*np.sqrt(tt)/((tt+110.3)*rmu0)
 
 
@@ -97,20 +97,20 @@ class Viscosity():
         else:
             for j in range(0,je):
                 for i in range(0,ie):
-                    u[i,j]   = w[i,j,2]/w[i,j,1]
-                    v[i,j]   = w[i,j,3]/w[i,j,1]
+                    u[i,j]   = w[i,j,1]/w[i,j,0]
+                    v[i,j]   = w[i,j,2]/w[i,j,0]
 
 
                 for i in range(itl,itu):
-                    u[i,1]   = -u[i,2]
-                    v[i,1]   = -v[i,2]
+                    u[i,0]   = -u[i,1]
+                    v[i,0]   = -v[i,1]
             for j in range(0,jl):
                 for i in range(0,il):
 
-                    dx13      = xc[i,j,1]   - xc[i+1,j+1,1]
-                    dy13      = xc[i,j,2]   - xc[i+1,j+1,2]
-                    dx24      = xc[i+1,j,1] - xc[i,j+1,1]
-                    dy24      = xc[i+1,j,2] - xc[i,j+1,2]
+                    dx13      = xc[i,j,0]   - xc[i+1,j+1,0]
+                    dy13      = xc[i,j,1]   - xc[i+1,j+1,1]
+                    dx24      = xc[i+1,j,0] - xc[i,j+1,0]
+                    dy24      = xc[i+1,j,1] - xc[i,j+1,1]
                     du13      = u[i,j] - u[i+1,j+1]
                     dv13      = v[i,j] - v[i+1,j+1]
                     du24      = u[i+1,j] - u[i,j+1]
@@ -135,13 +135,13 @@ class Viscosity():
             # also they did not have a corresponding end do?
         for j in range(1,jl):
             for i in range(1,il):
-                xbi       = .5*(x[i-1,1,1]  +x[i,1,1])
-                ybi       = .5*(x[i-1,1,2]  +x[i,1,2])
+                xbi       = .5*(x[i-1,0,0]  +x[i,0,0])
+                ybi       = .5*(x[i-1,0,1]  +x[i,0,1])
                 astra     = .25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])
                 if (i>=itl) and (i<=itu+1):
                     a3        = 1./(.225*abs(ynot(i)))
-                    ysci      = np.sqrt((xc[i,j,1]  -xbi)**2  +(xc[i,j,2]  -ybi)**2)
-                    ysc       = w[i,2,1]/(ysci*w[i,j,1])
+                    ysci      = np.sqrt((xc[i,j,0]  -xbi)**2  +(xc[i,j,1]  -ybi)**2)
+                    ysc       = w[i,2,0]/(ysci*w[i,j,0])
                     csc       = 1./(ysc+a3)**2
                 else:
                     csc       = (cwk*ynot(i))**2
@@ -149,8 +149,8 @@ class Viscosity():
 
             #     set some parameters
 
-                rnul      = rlv[i,j]/w[i,j,1]
-                rnut0     = rev[i,j]/w[i,j,1]
+                rnul      = rlv[i,j]/w[i,j,0]
+                rnut0     = rev[i,j]/w[i,j,0]
                 # rnul3     = rnul**3
                 a11       = ckr*(csc*csc*scf*scf)/rnul**2
                 a2        = 75.
@@ -186,7 +186,7 @@ class Viscosity():
                             print(*[' iteration not converged ',i,j])
                             print(*[' rnut = ',rnut,' rnut1 =',rnut1])
 
-                            rev[i,j]  = w[i,j,1]*max(rnut1-rnul,0)
+                            rev[i,j]  = w[i,j,0]*max(rnut1-rnul,0)
                             continue # go to 20
 
                         rnut   = rnut1
@@ -203,24 +203,24 @@ class Viscosity():
         for i in range(1,itl+1):
             ii        = ii  -1
             for j in range(1,jl):
-                pex       = -(xc[i,2,1]  -xc[itl+1,2,1])/(20.*dsti[itl+1])
+                pex       = -(xc[i,1,0]  -xc[itl+1,1,0])/(20.*dsti[itl+1])
                 rev[i,j]  = rev[i,j]  +(rev[itl+1,j]  -rev[i,j])*np.exp(pex)
-                pex       = -(xc[ii,2,1]  -xc[itu,2,1])/(20.*dsti[itu])
+                pex       = -(xc[ii,1,0]  -xc[itu,1,0])/(20.*dsti[itu])
                 rev[ii,j] = rev[ii,j]  +(rev[itu,j]  -rev[ii,j])*np.exp(pex)
 
         for i in range(1,il):
                 ii        = ib  -i
                 rev[i,je] = rev[i,jl]
-                rev[i,1]  = rev[ii,2]
+                rev[i,0]  = rev[ii,1]
 
         for i in range(itl,itu):
-                if (xc[i,2,1] <= xtran):
+                if (xc[i,1,0] <= xtran):
                     for j in range(0,jl):
                         rev[i,j]  = 0
                 rev[i,1]  = -rev[i,2]
 
         for j in range(0,je):
-                rev[1,j]  = rev[2,j]
+                rev[0,j]  = rev[1,j]
                 rev[ie,j] = rev[il,j]
                 
         return
