@@ -6,6 +6,7 @@ import pandas as pd
 ######################################################################
 # dims:         nx = number of cells in i direction
 #               ny = number of cells in j direction
+#
 # solv_param:   fcyc      = the number of cycles
 #               fprnt     = the interval at which the solution is printed
 #               fout      = the interval at which convergence is monitored
@@ -50,18 +51,34 @@ import pandas as pd
 #               lcyc        controls the multigrid cycle
 #               lcyc      = 1. for a v cycle
 #               lcyc      = 2. for a w cycle
-
+#
+# flo_param:    rm        = the mach number
+#               al        = the angle of attack in degrees
+#               fcl         controls the option to fix the lift coefficient
+#               fcl       = 0. for fixed angle of attack
+#               fcl       = 1. for fixed lift coefficient
+#               clt       = the target lift coefficient
+#               cd0       = the parasite drag coefficient
+#               re        = the reynolds number
+#               prn       = the prandtl number
+#               prt       = the turbulent prandtl number
+#               xtran     = the transition point
+#               t0        = ?
+#               kvis        selects the mathematical model
+#               kvis      = 0 for inviscid flow
+#               kvis      = 1  for laminar flow
+#               kvis      = 2  for turbulent flow
 
 
 class Input:
 
-    dim_p=["nx","ny"]
+    dim_p=[["nx","ny"]]
     solv_p=[["fcyc","fprnt","fout","ftim","gprnt","hprnt","hmesh"],
            ["cflf","cflim","vis2","vis4","adis","qdis","bc","hmf"],
-            "cstp","cdis","mstage",["smoopi","smoopj","ksmoop","vt"],
+            ["cstp"],["cdis"],["smoopi","smoopj","ksmoop","vt"],
             ["iprec","epsf","epsc","diag"],
             ["cflc","fcoll","fadd","vis0","hmc","fbc","lcyc"]]
-    flow_p=[[]]
+    flo_p=[["rm","al","fcl","clt","cd0"],["re","prn","prt","t0","xtran","kvis"]]
 
     
     # Constructor
@@ -80,24 +97,20 @@ class Input:
         #Updating dictionaries
 
         #dims
-        self.update_dict(self.dims,self.dim_p,self.df.iloc[2,0:2])
-
+        self.update_dict(self.df,self.dims,self.dim_p,2)
+    
         #solv_param
-        self.update_dict(self.solv_param,self.solv_p[0],self.df.iloc[4,0:8])
-        self.update_dict(self.solv_param,self.solv_p[1],self.df.iloc[6,0:8])
-        self.solv_param[self.solv_p[2]]=np.array(self.df.iloc[8,0:6])
-        self.solv_param[self.solv_p[3]]=np.array(self.df.iloc[10,0:6])
+        self.update_dict(self.df,self.solv_param,self.solv_p,4)
+
         cstp=self.solv_param["cstp"]
-        mstage=np.count_nonzero(cstp)
-        self.solv_param[self.solv_p[4]]=mstage
-        self.update_dict(self.solv_param,self.solv_p[5],self.df.iloc[12,0:4])
-        self.update_dict(self.solv_param,self.solv_p[6],self.df.iloc[14,0:4])
-        self.update_dict(self.solv_param,self.solv_p[7],self.df.iloc[16,0:7])
+        self.solv_param["mstage"]=len(cstp)
 
         if self.solv_param["cflc"]==0.0:
             self.solv_param["cflc"]=self.solv_param["cflf"]
-
+        
         #flow_param
+        self.update_dict(self.df,self.flo_param,self.flo_p,18)
+        
 
     #Methods
 
@@ -114,19 +127,32 @@ class Input:
     def read(self,file,max_cols):
         dfs = pd.read_csv(file, header=None, delimiter="\s+|;|:", names=range(max_cols),engine="python")
         #convert string to float
-        dfs=dfs.apply(pd.to_numeric, errors='coerce')
-        #convert nan to 0
-        self.df=dfs.fillna(0)
+        self.df=dfs.apply(pd.to_numeric, errors='coerce')
+    
         return
 
     # Update param dictionaries
-    def update_dict(self,dict,params,vals):
-        dict.update(zip(params,vals))
+    def update_dict(self,df,dict,params,strt_row):
+        no_nan=np.array(df.count(axis=1))
+        for i in range(len(params)):
+            row=strt_row +2*i
+            row_len=len(params[i])#lenth of row
+            
+            if row_len > 1:
+                dict.update(zip(params[i],df.iloc[row,0:no_nan[row]]))
+            else:
+                dict[params[i][0]]=np.array(df.iloc[row,0:no_nan[row]])
+                
         return
+     
+
+    
+
+    
 
 
 
 input=Input("rae9e-s3.data")
 #print(input.dims["nx"])
-print(input.solv_param["mstage"])
+print(input.flo_param["rm"])
 
