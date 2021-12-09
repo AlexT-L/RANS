@@ -1,6 +1,6 @@
 import Integrator
 
-class ExplicitEuler(Integrator):
+class ImplicitEuler(Integrator):
     # Constructor
     def __init__(self, grid, input):
         pass
