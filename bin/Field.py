@@ -2,6 +2,9 @@ import numpy as np
 
 class Field:
 
+    def __init__(self, grid, stateDim=1):
+        pass
+
     # constructor
     def __init__(self,init_vals):
 

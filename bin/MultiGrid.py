@@ -10,51 +10,48 @@ class MultiGrid:
         self.f_relax = input.fcoll
 
         # Objects
-        self.cycle = CycleFactory(input)
-        self.Models = {}
-        self.Integrators = {}
-        self.expandinator = ExpandinatorFactory(input)
-        self.contractinator = ContractinatorFactory(input)
+        self.cycle = CycleFactory(input).get()
+        self.expandinator = ExpandinatorFactory(input).get()
+        self.contractinator = ContractinatorFactory(input).get()
 
         # Number of Cycles
         n_levels = self.cycle.levels
 
         # Direct storage of variables
-        self.Grids = {}
-        self.W = {}
-        self.W1st = {}
-        self.WCorrections = {}
-        self.Residuals = {}
-        self.Fluxes = {}
-        self.visits = np.zeros(n_levels, dtype=int)
+        self.Grids       = [None] * n_levels
+        self.Models      = [None] * n_levels
+        self.Integrators = [None] * n_levels
+        self.W           = [None] * n_levels
+        self.W1st        = [None] * n_levels
+        self.WCorr       = [None] * n_levels
+        self.Res         = [None] * n_levels
+        self.Fluxes      = [None] * n_levels
+        self.visits      = np.zeros(n_levels, dtype=int)
 
         n_levels = self.cycle.levels
 
         # set up objects
-        self.Grids[n_levels] = grid
-        self.Models[n_levels] = ModelFactory(modelName, grid, input.flo_params, coarse=False)
+        self.Grids[n_levels-1] = grid
+        self.Models[n_levels-1] = ModelFactory(modelName, grid, input.flo_params, coarse=False).get()
 
-        for l in range(n_levels-1, 1):
-            newGrid = Grid(self.Grids[l+1])
-            newModel = ModelFactory(modelName, newGrid, input.flo_params, coarse=True)
-            self.Grids[l] = newGrid
-            self.Models[l] = newModel
-            self.Integrators[l] = IntegratorFactory(integratorName, newModel, input.integrator_params)
+        for lev in range(n_levels-2, -1, -1):
+            newGrid = Grid(self.Grids[lev+1])
+            newModel = ModelFactory(modelName, newGrid, input.flo_params, coarse=True).get()
+            self.Grids[lev] = newGrid
+            self.Models[lev] = newModel
+            self.Integrators[lev] = IntegratorFactory(integratorName, newModel, input.integrator_params).get()
         
         
-        stateDim = self.Models[1].dim()
+        stateDim = self.Models[0].dim()
         # initialize state variables
-        for l in range(1, n_levels):
-            grid = self.Grids[l]
-            self.W[l] = Field(grid, stateDim)
-            self.W1st[l] = Field(grid, stateDim)
-            self.WCorrections = Field(grid, stateDim)
-            self.Residuals[l] = Field(grid, stateDim)
-            self.Fluxes[l] = Field(grid, stateDim)
-
-        
-
-        self.res = 1
+        for lev in range(n_levels):
+            grid             = self.Grids[lev]
+            self.W[lev]      = Field(grid, stateDim)
+            self.W1st[lev]   = Field(grid, stateDim)
+            self.WCorr[lev]  = Field(grid, stateDim)
+            self.Res[lev]    = Field(grid, stateDim)
+            self.Fluxes[lev] = Field(grid, stateDim)
+    
     
     def performCycle(self):
         level = self.cycle.levels
@@ -70,8 +67,8 @@ class MultiGrid:
             integrator = self.Integrators[level]
             w = self.W[level]
             w1 = self.W1st[level]
-            wc = self.WCorrections[level]
-            wr = self.Residuals[level]
+            wc = self.WCorr[level]
+            wr = self.Res[level]
             Rw = self.Fluxes[level]
 
             if dir < 0: # go down a level
@@ -108,7 +105,7 @@ class MultiGrid:
                 wc.storeDifference(w, w1)
                 
     def res(self):
-        dw = self.Workspaces[-1].dw
+        dw = self.Res[-1]
         return np.max(dw)
         
         
