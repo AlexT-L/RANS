@@ -64,7 +64,7 @@ class MultiGrid:
             prev = level-dir
             self.visits[level] += 1
 
-            # set pointers to working variables
+            # set working variables
             grid = self.Grids[level]
             model = self.Models[level]
             integrator = self.Integrators[level]
