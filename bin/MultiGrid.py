@@ -1,14 +1,14 @@
 import numpy as np
 import Expandinator as expand
 import Contractinator as contract
-import CycleFactory, Model, Integrator,  ModelFactory, IntegratorFactory, Grid, Field
+import CycleFactory, Model, Integrator, Grid, Field
 from bin.Workspace import Workspace
 
 
 class MultiGrid:
 
     # Constructor
-    def __init__(self, grid, model, integrator, input):
+    def __init__(self, workspace, model, integrator, input):
         # Parameters
         self.f_relax = input.fcoll
 
@@ -34,9 +34,9 @@ class MultiGrid:
         stateDim = self.Model.dim()
 
         # set up grids
-        self.Workspaces[n_levels] = Workspace(grid, True)
+        self.Workspaces[n_levels] = workspace
         for l in range(n_levels-1, 1):
-            newGrid = Grid(self.Workspaces[l+1].getGrid())
+            newGrid = Grid(self.Workspaces[l+1].grid())
             self.Workspaces[l] = Workspace(newGrid, False)
         
         # initialize state variables
@@ -93,7 +93,7 @@ class MultiGrid:
 
             elif dir > 0: # go up a level
                 # Transer correction(s) from coarser mesh(es)
-                self.expandinator.standard4way(self.WCorrections[prev], wc)
+                expand.standard4way(self.WCorrections[prev], wc)
 
                 # Update state
                 w.add(wc)
@@ -105,8 +105,8 @@ class MultiGrid:
                 wc.storeDifference(w, w1)
                 
     def res(self):
-        n_levels = self.cycle.levels()
-        dw = self.Workspaces[n_levels].dw
+        dw = self.Workspaces[-1].dw
         return np.max(dw)
         
-        
+    def solution(self):
+        return self.W[-1]

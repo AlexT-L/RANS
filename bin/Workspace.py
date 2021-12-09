@@ -17,6 +17,10 @@ class Workspace:
 
         self.isFinest = bool(isFinest)
 
+    # return grid object
+    def grid(self):
+        return self.grd
+
     # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
 

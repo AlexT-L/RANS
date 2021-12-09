@@ -2,7 +2,7 @@ import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor
-    def __init__(self, grid, input):
+    def __init__(self, input):
         pass
 
     
