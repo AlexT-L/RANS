@@ -107,12 +107,12 @@ class BaldwinLomax():
         # ncyct     = 10 # commented out in turb2
         # if (ncyc > ncyct) return
 
-        for j in range(1,j2):
-            for i in range(1,i2):
-                rinv[i,j] = 1.0/w(i,j,1)
+        for j in range(0,j2):
+            for i in range(0,i2):
+                rinv[i,j] = 1.0/w(i,j,0)
                 t[i,j]    = p[i,j]* rinv[i,j]
-                u[i,j]    = w(i,j,2)* rinv[i,j]
-                v[i,j]    = w(i,j,3)* rinv[i,j]
+                u[i,j]    = w[i,j,1]* rinv[i,j]
+                v[i,j]    = w[i,j,2]* rinv[i,j]
                 amu[i,j]  = t[i,j]
                 amut[i,j] = 0.0
 
@@ -126,13 +126,13 @@ class BaldwinLomax():
     # c     *   calculate vorticity and total velocity                           *
     # c     **********************************************************************
 
-        for j in range(1,jl):
-            for i in range (1,i2):
+        for j in range(0,jl):
+            for i in range (0,i2):
                 vola[i,j] = 0.5* (vol[i,j]+ vol[i,j+1])
 
-        for i in range(2,il):
-            xxa       = x(i,1,1)-x(i-1,1,1)
-            yxa       = x(i,1,2)-x(i-1,1,2)
+        for i in range(1,il):
+            xxa       = x[i,1,1]-x[i-1,1,1]
+            yxa       = x[i,1,2]-x[i-1,1,2]
             uy        = u[i,2]- u[i,1]
             vy        = v[i,2]- v[i,1]
             uavg      = .5* (u[i,1]+u[i,2])
@@ -145,12 +145,12 @@ class BaldwinLomax():
             utotal    = uavg*uavg + vavg*vavg
             utot[i,1] = np.sqrt(utotal)
 
-        for j in range(2,jlm):
-            for i in range( 2,il):
-                xxa       = x(i,j,1)-x(i-1,j,1)
-                yxa       = x(i,j,2)-x(i-1,j,2)
-                uy        = u(i,j+1)- u[i,j]
-                vy        = v(i,j+1)- v[i,j]
+        for j in range(1,jlm):
+            for i in range( 1,il):
+                xxa       = x[i,j,0]-x[i-1,j,0]
+                yxa       = x[i,j,1]-[i-1,j,1]
+                uy        = u[i,j+1]- u[i,j]
+                vy        = v[i,j+1]- v[i,j]
                 uavg      = 0.5* (u[i,j]+ u(i,j+1))
                 vavg      = 0.5* (v[i,j]+ v(i,j+1))
 
@@ -160,10 +160,10 @@ class BaldwinLomax():
 
             #  additional contributions to vorticity
 
-                xyw       = 0.5* (x[i-1,j+1,1]- x[i-1,j-1,1])
-                xye       = 0.5* (x[i,j+1,1]- x[i,j-1,1])
-                yyw       = 0.5* (x[i-1,j+1,2]- x[i-1,j-1,2])
-                yye       = 0.5* (x[i,j+1,2]- x[i,j-1,2])
+                xyw       = 0.5* (x[i-1,j+1,0]- x[i-1,j-1,0])
+                xye       = 0.5* (x[i,j+1,0]- x[i,j-1,0])
+                yyw       = 0.5* (x[i-1,j+1,1]- x[i-1,j-1,1])
+                yye       = 0.5* (x[i,j+1,1]- x[i,j-1,1])
                 volawi    = 2.0/(vola[i,j]+ vola[i-1,j])
                 volaei    = 2.0/(vola[i,j]+ vola[i+1,j])
                 uxe       = 0.5* (u[i+1,j]+u[i+1,j+1]) - uavg
@@ -182,20 +182,20 @@ class BaldwinLomax():
         itr1      = 0
         itr2      = 0
         j         = 1
-        for i in range(1,il):
+        for i in range(0,il):
             if (x(i,j,1) <= xtran):
                 itr1      = i - 1
                 break # seems like it might continue, 
                     # but if it continues then it changes nothing, so break?
 
         itr1p     = itr1 + 1
-        for i in range(itr1p,il):
+        for i in range(itr1p-1,il):
             if (x(i,j,1) >= xtran):
                 itr2      = i
                 break
 
-        for i in range(2,il):
-            for j in range(1,jlm):
+        for i in range(1,il):
+            for j in range(0,jlm):
                 avor[j]   = vor[i,j]
                 utot1[j]  = utot[i,j]
             # j loop ends here
@@ -230,19 +230,19 @@ class BaldwinLomax():
             tur2    = 0.
             tur3    = 1.0
 
-        for i in range(itlp,itu):
-            xxa       = x(i,1,1)- x(i-1,1,1)
-            yxa       = x(i,1,2)- x(i-1,1,2)
-            volai     = 1.0/vola[i,1]
-            uy        = 2.0* u[i,2]
-            amub      = .5* (amu[i,1]+ amu[i,2])
+        for i in range(itlp-1,itu):
+            xxa       = x[i,0,0]- x[i-1,0,0]
+            yxa       = x[i,0,1]- x[i-1,0,1]
+            volai     = 1.0/vola[i,0]
+            uy        = 2.0* u[i,1]
+            amub      = .5* (amu[i,0]+ amu[i,1])
             tauw[i]   = amub* (xxa* uy)* volai
-            avor1     = vor[i,1]
+            avor1     = vor[i,0]
             avora     = avor1
             avorb     = 0.5* (avor1+ avorm[i])
             avorc     = avorm[i]
             avor2     = tur1*avora + tur2*avorb + tur3*avorc
-            yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w(i,2,1))/(26.*amub)
+            yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w[i,1,0])/(26.*amub)
 
             # **********************************************************************
             # *   compute normal distance ylen[i,j] and function  yvor             *
@@ -250,19 +250,19 @@ class BaldwinLomax():
             # **********************************************************************
 
         if (ncyc == ncyci1):
-            for i in range(2,il):
+            for i in range(1,il):
                 ylen[i,1] = 0.0
-                for j in range(2,jl):
-                    xc2       = .50* (x(i,j,1)+ x(i-1,j,1)-x(i,j-1,1)- x(i-1,j-1,1))
-                    yc2       = .50* (x(i,j,2)+ x(i-1,j,2)-x(i,j-1,2)- x(i-1,j-1,2))
+                for j in range(1,jl):
+                    xc2       = .50* (x[i,j,0]+ x[i-1,j,0]-x[i,j-1,0]- x[i-1,j-1,0])
+                    yc2       = .50* (x[i,j,1]+ x[i-1,j,1]-x[i,j-1,1]- x[i-1,j-1,1])
                     xyc       = xc2
                     yyc       = yc2
                     scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
                     ylen[i,j] = ylen(i,j-1)+ scalf[j]
 
-        for i in range(2,il):
-            ylen1     = 0.5* ylen[i,2]
-            for j in range(1,jstop):
+        for i in range(1,il):
+            ylen1     = 0.5* ylen[i,1]
+            for j in range(0,jstop):
                 y1        = yscal[i]* ylen[i,j]
                 damp      = 1.0- np.exp(-y1)
                 yvor[j]   = ylen[i,j]* vor[i,j]* damp
@@ -288,9 +288,9 @@ class BaldwinLomax():
                 dyvp    = yvor(jmyv)-yvor(jmyv+1)
 
                 if (yvor(jmyv-1) < yvor(jmyv+1)):
-                    ylenm[i] = ylen(i,jmyv)+ .5*(ylen(i,jmyv+1)- ylen(i,jmyv))*(1.- dyvp/dyvm)
+                    ylenm[i] = ylen[i,jmyv]+ .5*(ylen[i,jmyv+1]- ylen[i,jmyv])*(1.- dyvp/dyvm)
                 else:
-                    ylenm[i] = ylen(i,jmyv)- .5*(ylen(i,jmyv)- ylen(i,jmyv-1))*(1.- dyvm/dyvp)
+                    ylenm[i] = ylen[i,jmyv]- .5*(ylen[i,jmyv]- ylen[i,jmyv-1])*(1.- dyvm/dyvp)
             
             else:
                 ylenm[i]  = ylenm1
@@ -303,11 +303,11 @@ class BaldwinLomax():
             # *   outer do loop                                                    *
             # **********************************************************************
 
-        for i in range(2,il): #start of outer i loop #####################
+        for i in range(1,il): #start of outer i loop #####################
             udiff     = abs(utmax[i]- utmin[i])
             udiff1    = cwk1* udiff
-            for j in range(2,jstop): # loop 60
-                ravg[j]   = 0.5* (w(i,j,1)+ w(i,j+1,1))
+            for j in range(1,jstop): # loop 60
+                ravg[j]   = 0.5* (w[i,j,0]+ w[i,j+1,0])
                 coeff     = 0.0168* ccp
                 fwake1    = coeff* yvorm[i]* ylenm[i]
                 coeff2    = coeff* cwk1* cwk1
@@ -325,7 +325,7 @@ class BaldwinLomax():
             # *   compute inner eddy viscosity                                     *
             # **********************************************************************
 
-            for j in range(2,jstop): # loop 70
+            for j in range(1,jstop): # loop 70
                 y1        = yscal[i]* ylen[i,j]
                 damp      = 1.0- np.exp(-y1)
                 tscali    = 0.4* ylen[i,j]* damp
@@ -344,8 +344,8 @@ class BaldwinLomax():
             ivect     = 1
             if (ivect == 0): # start of big if statement
                 icross    = 0
-                amut[i,1] = amuti[1]
-                for j in range(2,jstop): # loop 75
+                amut[i,0] = amuti[0]
+                for j in range(1,jstop): # loop 75
                     if (amuti[j]<=amuto[j] and icross==0): # nested if
                         amut[i,j] = amuti[j]
                     else:
@@ -354,9 +354,9 @@ class BaldwinLomax():
                     # end nested if
                 # end loop 75
             else: # else from the big if statement
-                amut[i,1] = amuti[1]
+                amut[i,0] = amuti[0]
                 ystop     = jstop
-                for j in range(1,jstop): # loop 80
+                for j in range(0,jstop): # loop 80
                     amudif    = amuti[j]- amuto[j]
                     if (amudif >= 0): # if statement instead of cvmgp function
                         fcros[j] = float[j]
@@ -368,11 +368,11 @@ class BaldwinLomax():
                     jcros = 2
                 jcrosm   = jcros- 1
         
-                for j in range(1,jcrosm): # loop 90
+                for j in range(0,jcrosm): # loop 90
                     amut[i,j] = amuti[j]
                 # end loop 90
         
-                for j in range(jcros,jstop): # loop 100
+                for j in range(jcros-1,jstop): # loop 100
                     amut[i,j] = amuto[j]
                 # end loop 100
             # end of big if statement
@@ -381,15 +381,15 @@ class BaldwinLomax():
             # *   compute turbulent viscosity at cell center                       *
             # **********************************************************************
 
-            for j in range(2,jstop):
-                amutc     = 0.5* (amut[i,j]+ amut(i,j-1))
+            for j in range(1,jstop):
+                amutc     = 0.5* (amut[i,j]+ amut[i,j-1])
                 amu[i,j]  = amutc
 
-            for j in range(2,jstop):
+            for j in range(1,jstop):
                 amut[i,j] = amu[i,j]
 
             if (i>itr1 and i<=itr2):
-                for j in range(2,jstop):
+                for j in range(1,jstop):
                     amut[i,j] = 0.
 
     # **********************************************************************
@@ -415,8 +415,8 @@ class BaldwinLomax():
 
         # copy amut to rev
         scale     = 1.
-        for j in range(1,je):
-            for i in range(1,ie):
+        for j in range(0,je):
+            for i in range(0,ie):
                 rev[i,j]  = scale*amut[i,j]
 
         return

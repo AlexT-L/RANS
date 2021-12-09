@@ -2,22 +2,17 @@ import numpy as np
 
 class Field:
 
-    # constructor
-    def __init__(self,init_vals):
-
-        # assign dims and vals
-        self.dims = np.shape(init_vals)
-        self.vals = np.array(init_vals, copy = True)
+    def __init__(self, grid_size, stateDim=1):
+        grid_size.append(stateDim)
+        self.dims = grid_size
+        self.vals = np.ones(grid_size)
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx): 
         return self.vals[indx]
-
-class VectorField(Field):
-    pass
-
-class ScalarField(Field):
-    pass
+    
+    def set_init_vals(self, vals):
+        self.vals = vals
 
 
 
