@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
 import numpy as np
 from Field import Field
 from Grid import Grid
 from Model import Model
 
-class Workspace:
+class Workspace(ABC):
     
     # Constructor
     def __init__(self, grid, isFinest=True):
@@ -16,6 +17,15 @@ class Workspace:
             self.flds['Grid'][self.mdl.reqFields[i]] = Field(dim_vals)
 
         self.isFinest = bool(isFinest)
+
+    # Return another instance of a workspace
+    @abstractmethod
+    def MakeNew(self, grid, isFinest=True):
+        return Workspace(grid, isFinest)
+
+    # return grid object
+    def grid(self):
+        return self.grd
 
     # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
@@ -63,3 +73,22 @@ class Workspace:
 
     def isFinest(self):
         return self.isFinest
+
+    
+
+# Methods for returning control volume edges
+    @abstractmethod
+    def center(self, i, j):
+        pass
+
+    @abstractmethod
+    def volume(self, i, j):
+        pass
+
+    @abstractmethod
+    def edge(self, i, j, side):
+        pass
+
+    @abstractmethod
+    def edgeNormal(self, i, j, side):
+        pass

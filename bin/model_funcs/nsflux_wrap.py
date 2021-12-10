@@ -13,7 +13,7 @@ import numpy as np
 # fortran module
 import nsflux_fort 
 
-def nsflux(self,ws,dw):
+def visc_flux(self,ws,dw):
 
     # calculate viscous fluxes given a workspace
 
@@ -26,7 +26,7 @@ def nsflux(self,ws,dw):
     itl = G.dims['itl']
     itu = G.dims['itu']
 
-    # flow related vars
+    # flow related variabless
     w = ws.getField['w'] # state
     P = ws.getField['P'] # pressure
     rlv = ws.getField['rlv'] # laminar viscocity
@@ -37,10 +37,10 @@ def nsflux(self,ws,dw):
     xc = ws.getField['xc'] # mesh centers
 
     # solver related vars
-    vw = ws.getField['vw']
+    vw = ws.getField['vw'] # storage for viscous residuals?
 
 
-    # residuals returned in Field dw
+    # residuals returned in Field vw
     nsflux_fort.nsflux(il,jl,ie,je,itl,itu, \
                         w.vals,P.vals,rlv.vals,rev.vals, \
                         x.vals,xc.vals, \

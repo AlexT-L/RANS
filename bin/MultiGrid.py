@@ -35,7 +35,7 @@ class MultiGrid:
         self.Workspaces[n_levels-1] = workspace
         for l in range(n_levels-2, -1, -1):
             newGrid = Grid(self.Workspaces[l+1].grid())
-            self.Workspaces[l] = Workspace(newGrid, False)
+            self.Workspaces[l] = workspace.MakeNew(newGrid, False)
         
         # initialize state variables
         for l in range(n_levels):

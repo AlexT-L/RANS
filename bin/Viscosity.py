@@ -1,5 +1,6 @@
 import numpy as np
 from Grid import Grid
+from BaldwinLomax import BaldwinLomax
 
 class Viscosity():        
 #  from subroutine viscf.f
@@ -88,8 +89,10 @@ class Viscosity():
                 for i in range(0,ie):
                     rev0[i,j] = rev[i,j]
             # call turbbl
-            #   to add: 
             # call turb2
+            # runs the tubr visc calculations
+            BaldwinLomax.turbulent_viscosity(params, dims)
+
             for j in range(0,je):
                 for i in range(0,ie):
                         rev[i,j] = aturb*rev[i,j]  +(1.  -aturb)*rev0[i,j]
@@ -262,3 +265,4 @@ dims = {
     "jl": dim_var - 1,
 }
 Viscosity.compute_viscosity(params,dims)
+
