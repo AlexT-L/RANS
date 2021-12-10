@@ -42,13 +42,16 @@ class MultiGrid:
         # initialize state variables
         for l in range(1, n_levels):
             grid = self.Grids[l]
-            self.W[l] = Field(grid, stateDim)
-            self.W1st[l] = Field(grid, stateDim)
-            self.WCorrections = Field(grid, stateDim)
-            self.Residuals[l] = Field(grid, stateDim)
-            self.Fluxes[l] = Field(grid, stateDim)
+            gridSize = grid.get_size()
 
-        
+            def newStateField():
+                return Field(gridSize, stateDim)
+
+            self.W[l] = newStateField()
+            self.W1st[l] = newStateField()
+            self.WCorrections = newStateField()
+            self.Residuals[l] = newStateField()
+            self.Fluxes[l] = newStateField()
 
         self.res = 1
     
@@ -82,7 +85,8 @@ class MultiGrid:
                     w.copyTo(w1)
                 
                 # Find residuals at this grid level and calculate "forcing term"
-                model.getFlux(workspace, w, Rw)
+                Cdis = integrator.getCdis()
+                model.getFlux(workspace, w, Rw, Cdis)
                 Rw.storeDifference(wr, Rw)
 
                 # Perform integration to get new state
