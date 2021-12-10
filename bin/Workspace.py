@@ -39,6 +39,15 @@ class Workspace:
             classWorkspace = self.flds[className]
             field = classWorkspace[fieldName]
         return field
+    
+    def set_field(self, fieldName, fieldVal, className='Grid'):
+        # Sets value of a field if field already exists
+        if fieldName not in list(self.flds[className].keys()):
+            raise ValueError('Field does not exist: ' + fieldName) 
+        else: 
+            # Return field
+            classWorkspace = self.flds[className]
+            classWorkspace[fieldName].set_val(fieldVal)
 
     def exists(self, fieldName, className='Grid'):
 
