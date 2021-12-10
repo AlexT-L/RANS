@@ -1,21 +1,30 @@
 import numpy as np
 from Field import Field
+from coord_stretch import coord_stretch
 
-class Grid:
+class Sqrt_Grid:
     
     def __init__(self, input):
+        #
 
-        # let Grid contain the variables in input.dims and input.geo_param
+        # let Grid contain the variables in input.dims and input.geo_param and input.flo_param
         self.dims = input.dims        
         nx = self.dims['nx']
         ny = self.dims['ny']
+        self.nx = nx 
+        self.ny = ny
         self.geo=input.geo_param
         xte=self.geo['xte']
         self.flo=input.flo_param
         kvis=self.flo["kvis"]
 
-        self.nx = nx 
-        self.ny = ny 
+        #geo_var (array of variables required for sqrt mapping)
+        self.a0 = np.zeros(nx)
+        self.a1 = np.zeros(ny)
+        self.b0 = np.zeros(ny)
+        self.s0 = np.zeros(nx)
+
+         
         # set mesh dimensions
         self.il = nx + 1 # number of points/edges in i dir of computational grid
         self.jl = ny + 1 # number of points/edges in j dir of computational grid
@@ -35,10 +44,13 @@ class Grid:
         #set the limits of the outer mesh for a viscous simulation (kvis>1)
         if kvis > 1:
             nbl       = self.jl/2
-            self.ny        = ny  -nbl
-            self.jl        = self.jl  -nbl
+            self.ny   = ny  -nbl
+            self.jl   = self.jl  -nbl
         
-        #define point distributions in each coordinate direction
+        #define point distributions in each coordinate direction (coordinate stretching)
+        self.coord_stretch()
+
+         
 
 
 
