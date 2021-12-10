@@ -1,14 +1,20 @@
 import numpy as np
 
+################################
+# Coordinate stretching function
+################################
+
 def coord_stretch(self):
     #use parameters from geo_param in input
     geo    = self.geo
     xte    = geo["xte"]
     boundx = geo["boundx"]
+    boundy = geo["boundy"]
     bunch  = geo["bunch"]
     ylim1  = geo["ylim1"]
     ylim2  = geo["ylim2"]
     ax     = geo["ax"]
+    ay     = geo["ay"]
     sy     = geo["sy"]
 
     #geo_var
@@ -19,9 +25,11 @@ def coord_stretch(self):
 
     #parameters defined in sqrtgrid class
     il     = self.il
+    jl     = self.jl
     nx     = self.nx
     ny     = self.ny
-
+    
+    #coord stretching
     ile    = self.ile
     pi     = np.pi
     xlim   = xte*boundx
@@ -30,10 +38,10 @@ def coord_stretch(self):
     px     = pi/xlim
     bp     = bunch/px
 
-    a2     = 3.0*ylim1  -4.0*ylim2
-    a3     = 2.0*ylim1  -3.0*ylim2
+    a2     = 3.0*ylim1 - 4.0*ylim2
+    a3     = 2.0*ylim1 - 3.0*ylim2
 
-    for i in range(0,nx):
+    for i in range(il):
         d  = (i  -ile)*dx
         if abs(d) <= xlim:
             d = d  +bp*np.sin(px*d)
@@ -51,7 +59,14 @@ def coord_stretch(self):
         else:
             a1[i]     = ylim1  -d*d*(a2  -a3*d)
 
-        d = a0(i)*a1(i)
+ #       d = a0[i]*a1[i]
+
+    dy        = boundy/float(jl  -1)
+    for i in range(jl):
+        d         = float(i  -1)*dy
+        a         = 1.  -d*d
+        c         = a**ay
+        b0[i]     = sy*d/c
     return
       
       
