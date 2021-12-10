@@ -234,7 +234,7 @@ class Input:
             dict[params[i]]=np.concatenate((upper,lower),axis=0)
         return
 
-    def add_dicts(dict1,dict2):
+    def add_dicts(self,dict1,dict2):
         sum_dict= {**dict1, **dict2}
         return sum
      
