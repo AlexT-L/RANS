@@ -15,7 +15,24 @@ class Field:
         self.vals = vals
 
 
+#############################
+#       Math Methods        #
+#############################
 
+    def storeSum(self, var1, var2):
+        pass
+
+    def storeDifference(self, var1, var2):
+        pass
+
+    def storeProduct(self, var1, var2):
+        pass
+
+    def copyTo(self, copy):
+        pass
+
+    def scale(self, k):
+        pass
 
 
 

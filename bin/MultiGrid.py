@@ -76,19 +76,14 @@ class MultiGrid:
 
             if dir < 0: # go down a level
                 # Transfer state and residuals (fluxes) down to coarse mesh
+                contract.conservative4way(self.W[prev], self.Grids[prev], w)
                 contract.sum4way(self.Fluxes[prev], wr)
                 wr.scale(self.f_relax)
-                contract.conservative4way(self.W[prev], self.Grids[prev], w)
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
                     w.copyTo(w1)
                 
-                # Find residuals at this grid level and calculate "forcing term"
-                Cdis = integrator.getCdis()
-                model.getFlux(workspace, w, Rw, Cdis)
-                Rw.storeDifference(wr, Rw)
-
                 # Perform integration to get new state
                 integrator.step(workspace, w, Rw)
 
@@ -100,7 +95,7 @@ class MultiGrid:
                 expand.bilinear4way(self.WCorrections[prev], wc)
 
                 # Update state
-                w.add(wc)
+                w.storeSum(wc, w)
 
                 # Update residuals
                 model.getFlux(workspace, w, Rw)
