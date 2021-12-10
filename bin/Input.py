@@ -18,7 +18,7 @@ import pandas as pd
 #               gprnt     = 2 gives printouts of the mesh and the initial flow
 #               hprnt     = the interval used in printing the solution
 #               hmesh     = the number of meshes used in the multigrid sequence
-
+#
 #               cflf      = the courant number for the time step on the fine mesh
 #                           (cflf<0 selects the use of a variable local step)
 #               cflim     = ?
@@ -28,6 +28,9 @@ import pandas as pd
 #               adis      = exponent for directional scaling of the dissipation
 #                           (adis = 1. for isotropic dissipation)
 #               hmf       = the enthalpy damping factor for the fine mesh
+#               cstp(k)   = fraction of the time step at each stage
+#               cdis(k)   = fraction of the dissipative terms to be replaced
+#                           (no evaluation if cdis(k).eq.0.)
 #               mstage    = number of stages in the integration scheme
 #               smoopi    = smoothing coefficient for the i direction
 #               smoopj    = smoothing coefficient for the j direction
@@ -66,20 +69,20 @@ import pandas as pd
 #               prn       = the prandtl number
 #               prt       = the turbulent prandtl number
 #               xtran     = the transition point
-#               t0        = ?
+#               t0        = stagnation temperature of the free-stream
 #               kvis        selects the mathematical model
 #               kvis      = 0 for inviscid flow
 #               kvis      = 1  for laminar flow
 #               kvis      = 2  for turbulent flow
-#               gamma     = ratio of specific heats ?
-#               rho0      = initial density 
-#               p0        = ???
-#               c0        = speed of sound ??
+#               gamma     = ratio of specific heats (C_p & C_v) for air at STP
+#               rho0      = density of free-stream
+#               p0        = pressure of the free-stream
+#               c0        = speed of sound for the the free-stream
 #               ei0       = ???
-#               u0        = ??? flow speed?
-#               v0        = ??? flow speed ? 
-#               h0        = ???
-#               mu0       = ??? 
+#               u0        = x-velocity for the free-stream
+#               v0        = y-velocity for the free-stream
+#               h0        = enthalpy for the free-stream
+#               mu0       = kinematic viscosity of the free-stream
 # 
 # geo_param:    boundx    = ??
 #               boundy    = ??
@@ -92,7 +95,8 @@ import pandas as pd
 #               sy        = ??
 #               aplus     = ??
 #               ncut      = ??
-#               isym      = ??
+#               isym      tells us if the airfoil is symmetric about the x-axis
+#               isym      = 
 #               nn        = ??
 #               trail     = ??
 #               slopt     = ??
@@ -139,7 +143,13 @@ class Input:
         self.update_dict(self.df,self.solv_param,self.solv_p,4)
 
         cstp=self.solv_param["cstp"]
+        cdis=self.solv_param["cdis"]
+
         self.solv_param["mstage"]=len(cstp)
+
+        #making cdis and cstp on length 6 by adding zeros
+        self.solv_param["cdis"]=np.append(cdis,np.zeros(6-len(cdis)))
+        self.solv_param["cstp"]=np.append(cstp,np.zeros(6-len(cstp)))
 
         if self.solv_param["cflc"]==0.0:
             self.solv_param["cflc"]=self.solv_param["cflf"]
@@ -155,7 +165,7 @@ class Input:
         
         kvis=flo["kvis"]
         if kvis > 1:
-            flo["re"]=flo["re"]*1e-6 #??????????
+            flo["re"]=flo["re"]*1e-6 
         
         #set constants and far-field values
         gamma = flo["gamma"] = 1.4
@@ -166,7 +176,8 @@ class Input:
         u0 = flo["u0"]    = rm*c0*ca
         v0 = flo["v0"]    = rm*c0*sa
         h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
-        mu0 = flo["mu0"]  = 1.461e-06*t0*np.sqrt(t0)/(t0+110.3)
+        mu_air= 1.461e-06 #kinematic viscosity of air at sea-level at STP
+        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3)
 
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
@@ -215,11 +226,13 @@ class Input:
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
             upper=np.array(df.iloc[strt_row:96,i])
-            print(upper)
             lower=np.array(df.iloc[98:162,i])
-            print(lower)
             dict[params[i]]=np.concatenate((upper,lower),axis=0)
         return
+
+    def add_dicts(dict1,dict2):
+        sum_dict= {**dict1, **dict2}
+        return sum
      
 
     
@@ -229,5 +242,6 @@ class Input:
 
 
 #input=Input("rae9e-s3.data")
+#print(input.solv_param["cstp"])
 
 
