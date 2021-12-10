@@ -18,7 +18,7 @@ import pandas as pd
 #               gprnt     = 2 gives printouts of the mesh and the initial flow
 #               hprnt     = the interval used in printing the solution
 #               hmesh     = the number of meshes used in the multigrid sequence
-
+#
 #               cflf      = the courant number for the time step on the fine mesh
 #                           (cflf<0 selects the use of a variable local step)
 #               cflim     = ?
@@ -28,6 +28,9 @@ import pandas as pd
 #               adis      = exponent for directional scaling of the dissipation
 #                           (adis = 1. for isotropic dissipation)
 #               hmf       = the enthalpy damping factor for the fine mesh
+#               cstp(k)   = fraction of the time step at each stage
+#               cdis(k)   = fraction of the dissipative terms to be replaced
+#                           (no evaluation if cdis(k).eq.0.)
 #               mstage    = number of stages in the integration scheme
 #               smoopi    = smoothing coefficient for the i direction
 #               smoopj    = smoothing coefficient for the j direction
@@ -92,7 +95,8 @@ import pandas as pd
 #               sy        = ??
 #               aplus     = ??
 #               ncut      = ??
-#               isym      = ??
+#               isym      tells us if the airfoil is symmetric about the x-axis
+#               isym      = 
 #               nn        = ??
 #               trail     = ??
 #               slopt     = ??
@@ -139,7 +143,13 @@ class Input:
         self.update_dict(self.df,self.solv_param,self.solv_p,4)
 
         cstp=self.solv_param["cstp"]
+        cdis=self.solv_param["cdis"]
+
         self.solv_param["mstage"]=len(cstp)
+
+        #making cdis and cstp on length 6 by adding zeros
+        self.solv_param["cdis"]=np.append(cdis,np.zeros(6-len(cdis)))
+        self.solv_param["cstp"]=np.append(cstp,np.zeros(6-len(cstp)))
 
         if self.solv_param["cflc"]==0.0:
             self.solv_param["cflc"]=self.solv_param["cflf"]
@@ -216,9 +226,7 @@ class Input:
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
             upper=np.array(df.iloc[strt_row:96,i])
-            print(upper)
             lower=np.array(df.iloc[98:162,i])
-            print(lower)
             dict[params[i]]=np.concatenate((upper,lower),axis=0)
         return
 
@@ -234,5 +242,6 @@ class Input:
 
 
 #input=Input("rae9e-s3.data")
+#print(input.solv_param["cstp"])
 
 
