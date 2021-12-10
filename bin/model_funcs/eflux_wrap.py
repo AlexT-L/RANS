@@ -11,7 +11,7 @@ from Field import Field
 # fortran module
 import eflux_fort 
 
-def eflux(ws,dw):
+def eflux(self,ws,dw):
 
     # calculate convective fluxes given a workspace
     G = ws.grd
