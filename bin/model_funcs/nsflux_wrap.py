@@ -8,16 +8,17 @@ sys.path.append("../")
 from Workspace import Workspace
 from Grid import Grid
 from Field import Field
+import numpy as np
 
 # fortran module
 import nsflux_fort 
 
-def nsflux(ws,dw):
+def nsflux(self,ws,dw):
 
     # calculate viscous fluxes given a workspace
 
     # grab grid related parameters
-    G = ws.grd
+    G = ws.grid
     il = G.dims['il']
     jl = G.dims['jl']
     ie = G.dims['ie']
@@ -26,19 +27,23 @@ def nsflux(ws,dw):
     itu = G.dims['itu']
 
     # flow related vars
-    w = ws.flds['w'] # state
-    P = ws.flds['P'] # pressure
+    w = ws.getField['w'] # state
+    P = ws.getField['P'] # pressure
+    rlv = ws.getField['rlv'] # laminar viscocity
+    rev = ws.getField['rev'] # eddy viscocity
 
     # mesh related vars
+    x = ws.getField['x'] # mesh vertices
+    xc = ws.getField['xc'] # mesh centers
 
     # solver related vars
+    vw = ws.getField['vw']
 
-    # flow 
 
     # residuals returned in Field dw
     nsflux_fort.nsflux(il,jl,ie,je,itl,itu, \
-                        w,p,rlv,rev, \
-                        x,xc, \
-                        vw, \
-                        gamma,rm,scal,re,chord,prn,prt, \
-                        mode, rfil)
+                        w.vals,P.vals,rlv.vals,rev.vals, \
+                        x.vals,xc.vals, \
+                        vw.vals, \
+                        self.gamma,self.rm,self.scal,self.re,self.chord, \
+                        self.prn,self.prt, self.mode, self.rfil)
