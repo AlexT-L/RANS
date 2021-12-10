@@ -23,6 +23,7 @@ class ImplicitEuler(Integrator):
         wn = workspace.get_field("wn", self.className)
         Rw = workspace.get_field("Rw", self.className)
         dw = workspace.get_field("Rw", self.className)
+        dt = workspace.get_field("dt", self.className)
 
         # subtract baseline residuals from forcing
         model.getFlux(workspace, w, Rw, 1)
@@ -37,7 +38,8 @@ class ImplicitEuler(Integrator):
             Rw.add(forcing)
 
             # set timestep
-            dt.storeProduct(self.kn[stage], dtl)
+            model.get_safe_timestep(workspace, dt)
+            dt.scale(self.kn[stage])
 
             # take step
             dw.storeProduct(Rw, dt)
@@ -45,20 +47,22 @@ class ImplicitEuler(Integrator):
             # update state
             w.storeDifference(wn, dw)
 
-
-    def updateStability(self):
-        pass
-
     def __checkVars(self, workspace):
-        grid = workspace.getGrid()
-        gridSize = grid.getSize()
+        field_size = workspace.get_dim()
         stateDim = self.Model.dim()
         className = self.className
 
         def exist(var):
             return workspace.exist(var, className)
 
+        # fields storing information with dimesion of the state
         for stateName in enumerate(["wn", "Rw", "dw"]):
             if ~exist(stateField):
-                stateField = Field(gridSize, stateDim)
+                stateField = Field(field_size, stateDim)
                 workspace.add_field(stateField, stateName, className)
+
+        # scalar fields
+        for varName in enumerate(["dt"]):
+            if ~exist(varName):
+                scalarField = Field(field_size, 1)
+                workspace.add_field(scalarField, varName, className)

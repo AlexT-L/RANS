@@ -3,13 +3,11 @@ from Input import Input
 
 class Integrator(ABC):
     
-    def __init__(self, input):
-
+    @abstractmethod
+    def __init__(self, model, input):
         pass
     
     @abstractmethod
-    def do_thing(self):
+    def step(self, workspace, state, forcing):
         pass
-
-
     

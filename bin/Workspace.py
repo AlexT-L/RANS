@@ -74,11 +74,17 @@ class Workspace(ABC):
     def isFinest(self):
         return self.isFinest
 
-    
-
-# Methods for returning control volume edges
+# Methods for getting geometric info
     @abstractmethod
-    def center(self, i, j):
+    def get_dim(self):
+        pass
+
+    @abstractmethod
+    def get_x(self, i, j):
+        pass
+
+    @abstractmethod
+    def get_y(self, i, j):
         pass
 
     @abstractmethod

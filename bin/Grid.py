@@ -7,12 +7,13 @@ from Field import Field
 
 class Grid:
     
-    def __init__(self, input):
+    # Test Constructor --> ignore
+    """ def __init__(self, input):
 
         # let Grid contain the variables in dims.f
         dims = input.dims        
-        nx = dims['nx']
-        ny = dims['ny']
+        nx = input['nx']
+        ny = in['ny']
         
         # defining things to be consistent with gmesh.f
         self.nx = nx
@@ -44,7 +45,23 @@ class Grid:
         self.Vol = Field(self.get_size())
         self.PorJ = Field(self.get_size())
         self.PorI = Field(self.get_size())
-        self.Fint = Field(self.get_size())
+        self.Fint = Field(self.get_size()) """
 
-    def get_size(self):
-        return [self.ib, self.jb]
+    # get number of vertices
+    def get_dim(self):
+        return [self.nx+1, self.ny+1]
+
+    def get_x(self, i, j):
+        return self.Y[i,j]
+
+    def get_y(self, i, j):
+        return self.Y[i,j]
+
+    def get_xc(self, i, j):
+        return self.Xc[i,j]
+
+    def get_yc(self, i, j):
+        return self.Yc[i,j]
+
+    def get_volume(self, i, j):
+        return self.Vol[i,j]
