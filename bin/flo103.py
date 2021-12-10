@@ -11,7 +11,7 @@ if __name__ == '__main__':
     grid = SqrtGrid(input.grid)
     workspace = Workspace(grid)
     model = NavierStokes(input.model)
-    integrator = ImplicitEuler(input.integrator)
+    integrator = ImplicitEuler(model, input.integrator)
     mg = MultiGrid(workspace, model, integrator, input.multigrid)
     
     while mg.res() < TOLERANCE:

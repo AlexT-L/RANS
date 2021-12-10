@@ -93,7 +93,7 @@ class MultiGrid:
 
             elif dir > 0: # go up a level
                 # Transer correction(s) from coarser mesh(es)
-                expand.standard4way(self.WCorrections[prev], wc)
+                expand.bilinear4way(self.WCorrections[prev], wc)
 
                 # Update state
                 w.add(wc)
