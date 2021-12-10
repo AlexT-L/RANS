@@ -1,6 +1,7 @@
 
 
-class Contractinator:
-    
-    def __init__(self):
-        pass
+def sum4way():
+    pass
+
+def conservative4way():
+    pass

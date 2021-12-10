@@ -3,7 +3,8 @@ import numpy as np
 class Field:
 
     def __init__(self, grid_size, stateDim=1):
-        grid_size.append(stateDim)
+        if stateDim != 1:
+            grid_size.append(stateDim)
         self.dims = grid_size
         self.vals = np.ones(grid_size, order = 'F') # set fortran ordering for f2py
 
@@ -13,6 +14,14 @@ class Field:
     
     def set_init_vals(self, vals):
         self.vals = vals
+        
+    def set_val(self, vals):
+        if np.shape(vals) != np.shape(self.vals):
+            raise ValueError('Dimensions of field do not match expected dimensions')
+        self.vals = vals        
+    
+    def get_for_array(self):
+        return np.array(self.vals, order = 'F')
 
 
 #############################
