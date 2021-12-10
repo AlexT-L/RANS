@@ -66,20 +66,20 @@ import pandas as pd
 #               prn       = the prandtl number
 #               prt       = the turbulent prandtl number
 #               xtran     = the transition point
-#               t0        = ?
+#               t0        = stagnation temperature of the free-stream
 #               kvis        selects the mathematical model
 #               kvis      = 0 for inviscid flow
 #               kvis      = 1  for laminar flow
 #               kvis      = 2  for turbulent flow
-#               gamma     = ratio of specific heats ?
-#               rho0      = initial density 
-#               p0        = ???
-#               c0        = speed of sound ??
+#               gamma     = ratio of specific heats (C_p & C_v) for air at STP
+#               rho0      = density of free-stream
+#               p0        = pressure of the free-stream
+#               c0        = speed of sound for the the free-stream
 #               ei0       = ???
-#               u0        = ??? flow speed?
-#               v0        = ??? flow speed ? 
-#               h0        = ???
-#               mu0       = ??? 
+#               u0        = x-velocity for the free-stream
+#               v0        = y-velocity for the free-stream
+#               h0        = enthalpy for the free-stream
+#               mu0       = kinematic viscosity of the free-stream
 # 
 # geo_param:    boundx    = ??
 #               boundy    = ??
@@ -155,7 +155,7 @@ class Input:
         
         kvis=flo["kvis"]
         if kvis > 1:
-            flo["re"]=flo["re"]*1e-6 #??????????
+            flo["re"]=flo["re"]*1e-6 
         
         #set constants and far-field values
         gamma = flo["gamma"] = 1.4
@@ -166,7 +166,8 @@ class Input:
         u0 = flo["u0"]    = rm*c0*ca
         v0 = flo["v0"]    = rm*c0*sa
         h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
-        mu0 = flo["mu0"]  = 1.461e-06*t0*np.sqrt(t0)/(t0+110.3)
+        mu_air= 1.461e-06 #kinematic viscosity of air at sea-level at STP
+        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3)
 
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
@@ -220,6 +221,10 @@ class Input:
             print(lower)
             dict[params[i]]=np.concatenate((upper,lower),axis=0)
         return
+
+    def add_dicts(dict1,dict2):
+        sum_dict= {**dict1, **dict2}
+        return sum
      
 
     
