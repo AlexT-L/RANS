@@ -97,11 +97,15 @@ import pandas as pd
 #               ncut      = ??
 #               isym      tells us if the airfoil is symmetric about the x-axis
 #               isym      = 
-#               nn        = ??
-#               trail     = ??
-#               slopt     = ??
-#               xsing     = ??
-#               ysing     = ??
+#               nu        = total number of points on the upper airfoil surface
+#               nl        = total number of points on the lower airfoil surface
+#               nn        = total number of points on the airfoil surface
+#               trail     = trailing edge angle in degrees
+#               slopt     = trailing edge slope
+#               xsing     = x-coordinate in physical space that 
+#                           becomes origin after square root mapping
+#               ysing     = y-coordinate in physical space that 
+#                           becomes origin after square root mapping
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space
@@ -238,10 +242,14 @@ class Input:
     
 
     
+##plot airfoil
+# import matplotlib.pyplot as plt
 
-
-
-#input=Input("rae9e-s3.data")
-#print(input.solv_param["cstp"])
+# input=Input("rae9e-s3.data")
+# x=input.in_var["xn"]
+# y=input.in_var["yn"]
+# plt.plot(x,y,"+")
+# plt.show()
+# #print(input.solv_param["cstp"])
 
 
