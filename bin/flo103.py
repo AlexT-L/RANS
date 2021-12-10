@@ -1,4 +1,5 @@
 import Input, SqrtGrid, NavierStokes, Workspace, MultiGrid
+from bin.ImplicitEuler import ImplicitEuler
 
 if __name__ == '__main__':
     # Comment later
@@ -7,14 +8,15 @@ if __name__ == '__main__':
     
     # Command line inputs: Cycle type, Integrator type
     input = Input(filename) # Will actually take all command line inputs
-    grid = SqrtGrid(input)
-    model = NavierStokes(input.flo_params)
-    workspace = Workspace(grid, model, input)
-    mg = MultiGrid(model, workspace, input)
+    grid = SqrtGrid(input.grid)
+    workspace = Workspace(grid)
+    model = NavierStokes(input.model)
+    integrator = ImplicitEuler(model, input.integrator)
+    mg = MultiGrid(workspace, model, integrator, input.multigrid)
     
     while mg.res() < TOLERANCE:
         mg.loop()
     
-    sol = mg.workspace
+    sol = mg.solution()
     
     # Take solution and plot and save info

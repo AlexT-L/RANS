@@ -14,5 +14,6 @@ class Model(ABC):
     def do_thing(self):
         pass
 
-
-    
+    # return state dimesions
+    def dim(self):
+        return self.dim
