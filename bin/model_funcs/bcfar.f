@@ -40,8 +40,8 @@ c     dims
       integer, intent(in) :: il, jl, ie, je, itl, itu
 
 c     flo_var
-      real(8), intent(inout), dimension(:,:,:), allocatable :: w
-      real(8), intent(inout), dimension(:,:), allocatable :: p
+      real(8), intent(inout), dimension(:,:,:) :: w
+      real(8), intent(inout), dimension(:,:) :: p
       real(8), intent(inout), dimension(:,:)   :: rlv, rev
 
 c     mesh_var
