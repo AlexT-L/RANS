@@ -30,6 +30,7 @@ class BoundaryThickness():
 
         # js        = 2*jl/3  -2
         js        = .75*(ny  -4)
+        js = int(np.round(js))
 
         # one big loop 
         for i in range(1,il):
@@ -78,9 +79,10 @@ class BoundaryThickness():
                 ssmax[i]  = ssmax[i] + ra*ut[j]*uinf*(dn[j]-qs[j]*uinf)
 
             dsti[i]   = dsti[i]*uinf
-            dsti [i]  = np.max(dsti[i],1.e-6)
+            
+            dsti[i]  = max(dsti[i],1.e-6)
             ra        = w[i,lend,0]/w[i,1,0]
-            ssmax[i]  = np.max(ssmax[i],ra*qs[1]*uinf)
+            ssmax[i]  = max(ssmax[i],ra*qs[1]*uinf)
             fc        = .95*ut[lend]
 
             jse       = lend
@@ -109,7 +111,7 @@ params = {
   "ncyci1": -1,
   "itl": dim_var-2, 
   "itu": dim_var-2,
-  "x": np.ones((dim_var,dim_var,3)),
+  "x": np.random.rand(dim_var,dim_var,3),
   "w": np.ones((dim_var,dim_var,3)),
   "p": np.ones((dim_var,dim_var)),
   "vol": np.ones((dim_var,dim_var)),
@@ -132,4 +134,6 @@ params = {
 dims = {
     "il": dim_var - 1, 
     "jl": dim_var - 1,
+    "ny": dim_var,
 }
+BoundaryThickness.boundary_thickness(params, dims)
