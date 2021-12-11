@@ -1,4 +1,6 @@
 import numpy as np
+import math
+from math import fmod as mod
 import Expandinator as expand
 import Contractinator as contract
 import Model, Integrator, Grid, Field, Cycle
@@ -11,6 +13,7 @@ class MultiGrid:
     def __init__(self, workspace, model, integrator, input):
         # Parameters
         self.f_relax = input.fcoll
+        self.num_cycles = 0
 
         # Objects
         self.cycle = Cycle(input)
@@ -51,10 +54,16 @@ class MultiGrid:
             self.Residuals[l] = newStateField()
             self.Fluxes[l]    = newStateField()
     
+
+    # perform one iteration of the given cycle
     def performCycle(self):
         n_levels = self.cycle.levels()
         model = self.Model
         integrator = self.Integrator
+        cycleIndex = self.num_cycles + 1
+
+        # toggle for updating stability
+        UPDATE_STABILITY = ( mod(self.num_cycles, self.stabilityUpdateFrequency) == 0 )
 
         level = n_levels
         for dir in self.cycle.pattern:
@@ -101,6 +110,10 @@ class MultiGrid:
                 
                 # Update Correction
                 wc.storeDifference(w, w1)
+
+        # update number of cycles
+        self.num_cycles += 1
+
                 
     def res(self):
         dw = self.Workspaces[-1].dw
