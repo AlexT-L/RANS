@@ -4,20 +4,27 @@ from scipy.interpolate import griddata
 
 def billenear4way(coarse, fine):
     # Combines fine grid by summing over 4 blocks 
-    if type(fine) != Field or type(coarse) != Field:
-        raise TypeError('Fine or coarse field is not a field')
     
     x_coarse = np.shape(coarse)[0]
-    x_step = 1.0/x_coarse
     y_coarse = np.shape(coarse)[1]
-    y_step = 1.0/y_coarse
-    grid_x, grid_y = np.mgrid[0:x_step:1j, 1:y_step:1j]
     
+    x_fine = np.shape(fine)[0]
+    y_fine = np.shape(fine)[1]
+    grid_x, grid_y = np.mgrid[0:1:1j*x_fine, 0:1:1j*y_fine]
     
-    
-    newField = np.zeros(np.shape(fine))
+    x_c_line = np.linspace(0, 1, num=x_coarse)
+    y_c_line = np.linspace(0, 1, num=y_coarse)
+    points = np.array([[x_c_line[0], y_c_line[0]]])
+    values = np.array([])
     for x in range(x_coarse):
         for y in range(y_coarse):
-            # Set corners to coarse grid
-            pass
+            # Get point coords and value at that point
+            if not(x == 0 and y == 0):
+                points = np.append(points, [[x_c_line[x], y_c_line[y]]], axis=0)
+            values = np.append(values, coarse[x,y])
     
+    temp = griddata(points, values, (grid_x, grid_y), method='linear')
+    for i in range(x_fine):
+        for j in range(y_fine):
+            fine[i,j] = temp[i,j]
+            
