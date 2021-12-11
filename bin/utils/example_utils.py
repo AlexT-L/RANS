@@ -1,4 +1,5 @@
 import tanhinator
+import metricinator
 import numpy as np
 
 
@@ -12,3 +13,7 @@ tanhinator.tanhds(sp1,sp2,s,status)
 print(s)
 # we dont need to give ns = len(s) because the wrapper automatically 
 # realized it was optional
+
+
+
+print(metricinator.__doc__)
