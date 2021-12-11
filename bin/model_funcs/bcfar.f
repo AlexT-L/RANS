@@ -70,14 +70,14 @@ c     local variables
 c
 c     ******************************************************************
 c
-      integer  :: i,j,l
+      integer  :: i,j
 c
 c     ******************************************************************
 c
       real(8)     :: pi,gm,gmg,gmm,s0,x0,beta,circ
-      real(8)     :: xx,yx,xy,yy,d,xa,ya,r,angl,c,s
+      real(8)     :: xx,yx,d,xa,ya,r,angl,c,s
       real(8)     :: qn,qv,u,v,ufr,vfr,cfr
-      real(8)     :: er,fr,qt,qq,cc,a,b,t
+      real(8)     :: er,fr,qt,cc,a,b,t
       real(8)     :: rmax2,omega,omega1,rq2
 
 c
@@ -85,8 +85,8 @@ c     ******************************************************************
 c
       real(8)     :: dx,dy,dcl,dcd
       real(8)     :: gm1,gpm,scf,clvis,cdvis
-      real(8)     :: rho1,ru1,rv1,p1,u1,v1,t1
-      real(8)     :: rho2,ru2,rv2,p2,u2,v2,t2
+      real(8)     :: rho1,ru1,rv1,p1,u1,v1
+      real(8)     :: rho2,ru2,rv2,p2,u2,v2
       real(8)     :: dxi,dxj,dyi,dyj,dui,duj,dvi,dvj,dsj
       real(8)     :: dux,duy,dvx,dvy
       real(8)     :: rlva,reva,rmu,rlam,rk,term
@@ -96,7 +96,7 @@ c     ******************************************************************
 c
 
       real(8), dimension(ie,je)            :: u_forcf,v_forcf
-      real(8), dimension(il)               :: gs2,gs3,gs4
+      real(8), dimension(il)               :: gs2,gs3
 
       real(8) :: cl,cd,cm,cdv,clv
 c
@@ -257,10 +257,6 @@ c     gs3(i)    = ( sigy*dxi  -tauxy*dyi)*scf
 
 c     cd        = cd +clvis*sa  +cdvis*ca
 c     cl        = cl +clvis*ca  -cdvis*sa
-
-      return
-
-      end
 
 
       if (rm.ge.1.) go to 31
