@@ -39,7 +39,7 @@ c     dims
 
 c     flo_var
       real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:)   :: p
+      real(8), intent(inout), dimension(:,:) :: p
       real(8), intent(inout), dimension(:,:)   :: rlv, rev
 
 c     mesh_var

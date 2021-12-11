@@ -1,4 +1,4 @@
-import bcfar_fort
+import bcfar_fort, bcwall_fort
 
 class NS_AirfoilBC_imp():
 
@@ -65,6 +65,35 @@ class NS_AirfoilBC_imp():
     def bc_wall(self, this, workspace, state, p, vol, rev):
         # get geometry dictionary
         geom = workspace.get_geom()
+        
+        # dims
+        ny = 0
+        il = 0
+        ie = 0
+        ib = 0
+        itl = 0
+        itu = 0
+        
+        # flo_var
+        w = 0
+        p = 0
+        
+        # mesh_var
+        x = 0
+        
+        # flo_param
+        rm = 0
+        sa = 0
+        kvis = 0
+        
+        # solv_param
+        isym = 0
+        
+        bcwall_fort.bcwall(ny, il, ie, ib, itl, itu, 
+                           w, p,
+                           x,
+                           rm, sa, kvis,
+                           isym)
 
 
     def halo(self, this, workspace, state, p, vol):
