@@ -27,4 +27,3 @@ def billenear4way(coarse, fine):
     for i in range(x_fine):
         for j in range(y_fine):
             fine[i,j] = temp[i,j]
-            
