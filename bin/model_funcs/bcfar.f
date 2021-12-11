@@ -1,7 +1,7 @@
       subroutine bcfar(il, jl, ie, je, itl, itu,
      & w, p, rlv, rev, 
      & x, xc,
-     & cp, cf,
+     & 
      & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,
      & ym,kvis,
      & bc,
@@ -46,10 +46,6 @@ c     flo_var
 
 c     mesh_var
       real(8), intent(in), dimension(:,:,:) :: x,xc
-
-c     out_var
-      real(8), intent(inout), dimension(:)     :: cp
-      real(8), intent(inout), dimension(:)     :: cf
 
 c     flo_param
       real(8), intent(in)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
@@ -96,7 +92,7 @@ c     ******************************************************************
 c
 
       real(8), dimension(ie,je)            :: u_forcf,v_forcf
-      real(8), dimension(il)               :: gs2,gs3
+      real(8), dimension(il)               :: gs2,gs3,cp
 
       real(8) :: cl,cd,cm,cdv,clv
 c
@@ -243,7 +239,7 @@ c     gs3(i)    = ( sigy*dxi  -tauxy*dyi)*scf
       cdvis     = cdvis  +gs2(i)
       clvis     = clvis  +gs3(i)
 
-      cf(i)     = tauxy*scf*gpm
+c      cf(i)     = tauxy*scf*gpm (dont need skin friction)
 
    10 continue
 
