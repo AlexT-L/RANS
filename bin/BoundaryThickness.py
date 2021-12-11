@@ -36,17 +36,17 @@ class BoundaryThickness():
             qs[0]     = 0.
             ut[0]     = 0.
             j         = js
-            xy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
-            yy        = .5*(x[i,j,2]  -x[i,j-1,2]+x[i-1,j,2]  -x[i-1,j-1,2])
-            qs[j]     = (yy*w[i,j,2]  -xy*w[i,j,3])/(w[i,j,1])
+            xy        = .5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
+            yy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
+            qs[j]     = (yy*w[i,j,1]  -xy*w[i,j,2])/(w[i,j,0])
             # replacing sign function in fortran with np.copysign, should be the same
             si        = np.copysign(1,qs[js])
 
             for j in range(1,js):
-                xy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
-                yy        = .5*(x[i,j,2]  -x[i,j-1,2]+x[i-1,j,2]  -x[i-1,j-1,2])
+                xy        = .5*(x[i,j,0]  -x[i,j-1,1]+x[i-1,j,0]  -x[i-1,j-1,0])
+                yy        = .5*(x[i,j,1]  -x[i,j-1,2]+x[i-1,j,1]  -x[i-1,j-1,1])
                 dsi       = 1./np.sqrt(xy**2  +yy**2)
-                qs[j]     = si*(yy*w[i,j,2]  -xy*w[i,j,3])
+                qs[j]     = si*(yy*w[i,j,1]  -xy*w[i,j,2])
                 dn[j]     = 1./dsi
                 ut[j]     = qs[j]*dsi
 
@@ -74,13 +74,13 @@ class BoundaryThickness():
             uinf      = 1./ut[lend]
             for j in range(lbig-1,lend):
                 dsti [i]  = dsti[i] + (ut[lend]*dn[j] - qs[j])
-                ra        = w[i,lend,1]/w[i,j,1]
+                ra        = w[i,lend,0]/w[i,j,0]
                 ssmax[i]  = ssmax[i] + ra*ut[j]*uinf*(dn[j]-qs[j]*uinf)
 
             dsti[i]   = dsti[i]*uinf
             dsti [i]  = np.max(dsti[i],1.e-6)
-            ra        = w[i,lend,1]/w[i,2,1]
-            ssmax[i]  = np.max(ssmax[i],ra*qs[2]*uinf)
+            ra        = w[i,lend,0]/w[i,1,0]
+            ssmax[i]  = np.max(ssmax[i],ra*qs[1]*uinf)
             fc        = .95*ut[lend]
 
             jse       = lend
@@ -89,9 +89,9 @@ class BoundaryThickness():
                 if (ut[j] > fc):
                     break
 
-            xbi       = .5*(x[i,1,1]+x[i-1,1,1])
-            ybi       = .5*(x[i,1,2]+x[i-1,1,2])
-            ycorr     = np.sqrt((xc[i,lend,1] - xbi)**2+(xc[i,lend,2]-ybi)**2)
+            xbi       = .5*(x[i,0,0]+x[i-1,0,0])
+            ybi       = .5*(x[i,0,1]+x[i-1,0,1])
+            ycorr     = np.sqrt((xc[i,lend,0] - xbi)**2+(xc[i,lend,1]-ybi)**2)
             ynot[i]   = 1.5*(ycorr  +dn[lend]*(fc  -ut[lend])/(ut[lend+1]  -ut[lend]))
 
         return
