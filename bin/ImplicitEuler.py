@@ -1,4 +1,5 @@
 import Integrator, Field
+from bin.Workspace import Workspace
 
 class ImplicitEuler(Integrator):
     # Constructor
@@ -18,12 +19,13 @@ class ImplicitEuler(Integrator):
         # make sure necessary variables exist in workspace
         self.__checkVars(workspace)
 
-
-        w = state
-        wn = workspace.get_field("wn", self.className)
-        Rw = workspace.get_field("Rw", self.className)
-        dw = workspace.get_field("Rw", self.className)
-        dt = workspace.get_field("dt", self.className)
+        def get(varName):
+            return workspace.get_field(varName, self.className)
+        w =  get("w")
+        wn = get("wn")
+        Rw = get("Rw")
+        dw = get("dw")
+        dt = get("dt")
 
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
@@ -49,7 +51,7 @@ class ImplicitEuler(Integrator):
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
-        if ~workspace.has_dict(self.className):
+        if not workspace.has_dict(self.className):
             self.__init_vars(workspace)
 
     # initialize class workspace fields
