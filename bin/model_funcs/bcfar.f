@@ -34,12 +34,14 @@ c      use flo_param
 c      use solv_param
 c
 c     ******************************************************************
+
+      implicit none
 c     dims
       integer, intent(in) :: il, jl, ie, je, itl, itu
 
 c     flo_var
-      real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:) :: p
+      real(8), intent(inout), dimension(:,:,:), allocatable :: w
+      real(8), intent(inout), dimension(:,:), allocatable :: p
       real(8), intent(inout), dimension(:,:)   :: rlv, rev
 
 c     mesh_var
@@ -61,8 +63,6 @@ c     solv_param
 
 c     mg_param
       integer, intent(in)   :: mode
-
-      implicit none
 c
 c     ******************************************************************
 c
@@ -94,6 +94,8 @@ c
 c
 c     ******************************************************************
 c
+
+      real(8), dimension(ie,je)            :: u_forcf,v_forcf
       real(8), dimension(il)               :: gs2,gs3,gs4
 
       real(8) :: cl,cd,cm,cdv,clv
@@ -159,8 +161,8 @@ c
 
       do j=1,2
       do i=1,ie
-         u(i,j)    = w(i,j,2)/w(i,j,1)
-         v(i,j)    = w(i,j,3)/w(i,j,1)
+         u_forcf(i,j)    = w(i,j,2)/w(i,j,1)
+         v_forcf(i,j)    = w(i,j,3)/w(i,j,1)
 c        t(i,j)     = p(i,j)/(gm1*w(i,j,1))
       end do
       end do
@@ -168,8 +170,8 @@ c        t(i,j)     = p(i,j)/(gm1*w(i,j,1))
       if (mode.ne.0) then
          do i=itl+1,itu
             rev(i,1)  = -rev(i,2)
-            u(i,1)    = -u(i,2)
-            v(i,1)    = -v(i,2)
+            u_forcf(i,1)    = -u_forcf(i,2)
+            v_forcf(i,1)    = -v_forcf(i,2)
          end do
       end if
 c
@@ -202,8 +204,8 @@ c     t2      = p2/(gm1*rho2)
       dui       = u1  -u2
       dvi       = v1  -v2
 c     dti       = t1  -t2
-      duj       = u(i,2)  -u(i,1)
-      dvj       = v(i,2)  -v(i,1)
+      duj       = u_forcf(i,2)  -u_forcf(i,1)
+      dvj       = v_forcf(i,2)  -v_forcf(i,1)
 c     dtj       = t(i,2)  -t(i,1)
 
       dux       = (dui*dyj  -duj*dyi)*dsj
