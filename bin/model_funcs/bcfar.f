@@ -2,8 +2,8 @@
      & w, p, rlv, rev, 
      & x, xc,
      & cp, cf,
-     & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,cl,cd,
-     & cm,clv,cdv,scal,chord,xm,ym,kvis,
+     & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,
+     & ym,kvis,
      & bc,
      & mode)
 c
@@ -34,36 +34,35 @@ c      use flo_param
 c      use solv_param
 c
 c     ******************************************************************
+
+      implicit none
 c     dims
-      integer :: il, jl, ie, je, itl, itu
+      integer, intent(in) :: il, jl, ie, je, itl, itu
 
 c     flo_var
       real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:)   :: p
+      real(8), intent(inout), dimension(:,:) :: p
       real(8), intent(inout), dimension(:,:)   :: rlv, rev
 
 c     mesh_var
-      real(8), intent(inout), dimension(:,:,:) :: x,xc
+      real(8), intent(in), dimension(:,:,:) :: x,xc
 
 c     out_var
       real(8), intent(inout), dimension(:)     :: cp
       real(8), intent(inout), dimension(:)     :: cf
 
 c     flo_param
-      real(8), intent(inout)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
-      real(8), intent(inout)      :: re,prn,prt
-      real(8), intent(inout)      :: cl,cd,cm,clv,cdv
-      real(8), intent(inout)      :: scal,chord,xm,ym
+      real(8), intent(in)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
+      real(8), intent(in)      :: re,prn,prt
+      real(8), intent(in)      :: scal,chord,xm,ym
 
-      integer, intent(inout)   :: kvis
+      integer, intent(in)   :: kvis
 
 c     solv_param
-      real(8), intent(inout)      :: bc
+      real(8), intent(in)      :: bc
 
 c     mg_param
       integer, intent(in)   :: mode
-
-      implicit none
 c
 c     ******************************************************************
 c
@@ -71,14 +70,14 @@ c     local variables
 c
 c     ******************************************************************
 c
-      integer  :: i,j,l
+      integer  :: i,j
 c
 c     ******************************************************************
 c
       real(8)     :: pi,gm,gmg,gmm,s0,x0,beta,circ
-      real(8)     :: xx,yx,xy,yy,d,xa,ya,r,angl,c,s
+      real(8)     :: xx,yx,d,xa,ya,r,angl,c,s
       real(8)     :: qn,qv,u,v,ufr,vfr,cfr
-      real(8)     :: er,fr,qt,qq,cc,a,b,t
+      real(8)     :: er,fr,qt,cc,a,b,t
       real(8)     :: rmax2,omega,omega1,rq2
 
 c
@@ -86,8 +85,8 @@ c     ******************************************************************
 c
       real(8)     :: dx,dy,dcl,dcd
       real(8)     :: gm1,gpm,scf,clvis,cdvis
-      real(8)     :: rho1,ru1,rv1,p1,u1,v1,t1
-      real(8)     :: rho2,ru2,rv2,p2,u2,v2,t2
+      real(8)     :: rho1,ru1,rv1,p1,u1,v1
+      real(8)     :: rho2,ru2,rv2,p2,u2,v2
       real(8)     :: dxi,dxj,dyi,dyj,dui,duj,dvi,dvj,dsj
       real(8)     :: dux,duy,dvx,dvy
       real(8)     :: rlva,reva,rmu,rlam,rk,term
@@ -95,7 +94,11 @@ c
 c
 c     ******************************************************************
 c
-      real(8), dimension(il)               :: gs2,gs3,gs4
+
+      real(8), dimension(ie,je)            :: u_forcf,v_forcf
+      real(8), dimension(il)               :: gs2,gs3
+
+      real(8) :: cl,cd,cm,cdv,clv
 c
 c     ******************************************************************
 c
@@ -158,8 +161,8 @@ c
 
       do j=1,2
       do i=1,ie
-         u(i,j)    = w(i,j,2)/w(i,j,1)
-         v(i,j)    = w(i,j,3)/w(i,j,1)
+         u_forcf(i,j)    = w(i,j,2)/w(i,j,1)
+         v_forcf(i,j)    = w(i,j,3)/w(i,j,1)
 c        t(i,j)     = p(i,j)/(gm1*w(i,j,1))
       end do
       end do
@@ -167,8 +170,8 @@ c        t(i,j)     = p(i,j)/(gm1*w(i,j,1))
       if (mode.ne.0) then
          do i=itl+1,itu
             rev(i,1)  = -rev(i,2)
-            u(i,1)    = -u(i,2)
-            v(i,1)    = -v(i,2)
+            u_forcf(i,1)    = -u_forcf(i,2)
+            v_forcf(i,1)    = -v_forcf(i,2)
          end do
       end if
 c
@@ -201,8 +204,8 @@ c     t2      = p2/(gm1*rho2)
       dui       = u1  -u2
       dvi       = v1  -v2
 c     dti       = t1  -t2
-      duj       = u(i,2)  -u(i,1)
-      dvj       = v(i,2)  -v(i,1)
+      duj       = u_forcf(i,2)  -u_forcf(i,1)
+      dvj       = v_forcf(i,2)  -v_forcf(i,1)
 c     dtj       = t(i,2)  -t(i,1)
 
       dux       = (dui*dyj  -duj*dyi)*dsj
@@ -254,10 +257,6 @@ c     gs3(i)    = ( sigy*dxi  -tauxy*dyi)*scf
 
 c     cd        = cd +clvis*sa  +cdvis*ca
 c     cl        = cl +clvis*ca  -cdvis*sa
-
-      return
-
-      end
 
 
       if (rm.ge.1.) go to 31

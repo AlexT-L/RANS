@@ -530,8 +530,6 @@ params = {
   "re": 1,
   "ncyc": dim_var,
   "rev": np.ones((dim_var,dim_var)),
-  "cmesh": 1,
-  "ncyci1": -1,
   "itl": dim_var, 
   "itu": dim_var,
   "x": np.ones((dim_var,dim_var,3)),
