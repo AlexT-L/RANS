@@ -1,5 +1,5 @@
       subroutine bcwall(ny, il, ie, ib, itl, itu,
-     & w, p,
+     & w, p, rev,
      & x,
      & rm, sa, kvis,
      & isym)
@@ -151,6 +151,14 @@ c
          w(i,1,4)  = w(i,2,4)  +p(i,2)  -p(i,1)
       end do
 
+      end if
+c
+c     update eddy viscosity boundary conditions
+c   
+      if (mode.ne.0) then
+         do i=itl+1,itu
+            rev(i,1)  = -rev(i,2)
+         end do
       end if
 
       return

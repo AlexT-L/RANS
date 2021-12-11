@@ -62,7 +62,7 @@ class NS_AirfoilBC_imp():
                          mode)
 
 
-    def bc_wall(self, this, workspace, state, p, vol, rev):
+    def bc_wall(self, this, workspace, state, pressure, eddyViscosity):
         # get geometry dictionary
         geom = workspace.get_geom()
         
@@ -75,8 +75,9 @@ class NS_AirfoilBC_imp():
         itu = 0
         
         # flo_var
-        w = 0
-        p = 0
+        w = state.vals
+        p = pressure.vals
+        rev = eddyViscosity.vals
         
         # mesh_var
         x = 0
@@ -90,13 +91,13 @@ class NS_AirfoilBC_imp():
         isym = 0
         
         bcwall_fort.bcwall(ny, il, ie, ib, itl, itu, 
-                           w, p,
+                           w, p, rev,
                            x,
                            rm, sa, kvis,
                            isym)
 
 
-    def halo(self, this, workspace, state, p, vol):
+    def halo(self, this, workspace, state, pressure, volume):
         # get geometry dictionary
         geom = workspace.get_geom()
         
@@ -111,12 +112,12 @@ class NS_AirfoilBC_imp():
         itu = 0
         
         # flo_var
-        w = 0
-        # also p
-        
+        w = state.vals
+        p = pressure.vals
+
         # mesh_var
         x = 0
-        # also vol
+        vol = volume.vals
         
         halo_fort.halo(il, jl, ie, je, ib, jb, itl, itu,
              w, p,

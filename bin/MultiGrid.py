@@ -88,6 +88,10 @@ class MultiGrid:
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
                     w.copyTo(w1)
+
+                # Check if stability needs to be updated
+                if UPDATE_STABILITY:
+                    model.update_stability(workspace, w)
                 
                 # Perform integration to get new state
                 integrator.step(workspace, w, Rw)

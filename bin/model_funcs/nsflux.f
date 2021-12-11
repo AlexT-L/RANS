@@ -1,4 +1,4 @@
-      subroutine nsflux(il,jl,ie,je,itl,itu,
+      subroutine nsflux(il,jl,ie,je,
      & w,p,rlv,rev,
      & x,xc,
      & vw,
@@ -112,13 +112,6 @@ c
       end do
       end do
 
-      if (mode.ne.0) then
-         do i=itl+1,itu
-            rev(i,1)  = -rev(i,2)
-            u(i,1,1)  = -u(i,2,1)
-            u(i,1,2)  = -u(i,2,2)
-         end do
-      end if
 c
 c     evaluate the viscous terms
 c

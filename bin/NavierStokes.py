@@ -63,6 +63,9 @@ class NavierStokes(Model):
         dtl = get("dtl")
         rfli = get("rfli")
         rflj = get("rflj")
+
+
+        ##### NEED TO FINISH #####
         
 
         # set boundary values
