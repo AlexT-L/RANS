@@ -107,8 +107,6 @@ params = {
   "re": 1,
   "ncyc": dim_var,
   "rev": np.ones((dim_var+1,dim_var+1)),
-  "cmesh": 1,
-  "ncyci1": -1,
   "itl": dim_var-2, 
   "itu": dim_var-2,
   "x": np.random.rand(dim_var,dim_var,3),
