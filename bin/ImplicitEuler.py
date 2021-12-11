@@ -47,22 +47,20 @@ class ImplicitEuler(Integrator):
             # update state
             w.storeDifference(wn, dw)
 
-    def __checkVars(self, workspace):
+    # check if dictionary has been initialized
+    def __check_vars(self, workspace):
+        if ~workspace.has_dict(self.className):
+            self.__init_vars(workspace)
+
+    # initialize class workspace fields
+    def __init_vars(self, workspace):
         field_size = workspace.get_size()
         stateDim = self.Model.dim()
         className = self.className
 
-        def exist(var):
-            return workspace.exist(var, className)
+        vars = dict()
+        vars["dt"] = [field_size, stateDim]
+        for stateName in ["wn", "Rw", "dw"]:
+            vars[stateName] = [field_size, stateDim]
 
-        # fields storing information with dimesion of the state
-        for stateName in enumerate(["wn", "Rw", "dw"]):
-            if ~exist(stateField):
-                stateField = Field(field_size, stateDim)
-                workspace.add_field(stateField, stateName, className)
-
-        # scalar fields
-        for varName in enumerate(["dt"]):
-            if ~exist(varName):
-                scalarField = Field(field_size, 1)
-                workspace.add_field(scalarField, varName, className)
+        workspace.init_vars(className, vars)

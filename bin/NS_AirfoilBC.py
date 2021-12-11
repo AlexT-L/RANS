@@ -1,4 +1,5 @@
 from bin.BoundaryConditioner import BoundaryConditioner
+from bin.NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
 
 class NS_AirfoilBC(BoundaryConditioner):
     
@@ -10,39 +11,32 @@ class NS_AirfoilBC(BoundaryConditioner):
     
     # apply far-field boundary conditions
     def bc_far(self, workspace, state, fields):
-        # get geometry dictionary
-        geom = workspace.get_geom()
 
         # extract fields
         p = fields.p
 
-        ### NEED TO FINISH
+        implementation.bc_far(self, workspace, state, p)
 
 
     # apply wall boundary conditions
     def bc_wall(self, workspace, state, fields):
-        # get geometry dictionary
-        geom = workspace.get_geom()
 
         # extract fields
         p = fields.p
-        rev = fields.rev
-        rlv = fields.rlv
         vol = fields.vol
+        rev = fields.rev
 
-        ### NEED TO FINISH
+        implementation.bc_wall(self, workspace, state, p, vol, rev)
 
 
     # apply halo boundary conditions
     def halo(self, workspace, state, fields):
-        # get geometry dictionary
-        geom = workspace.get_geom()
 
         # extract fields
         p = fields.p
         vol = fields.vol
 
-        ### NEED TO FINISH
+        implementation.halo(self, workspace, state, p, vol)
 
 
     # apply all boundary conditions
@@ -60,12 +54,11 @@ class NS_AirfoilBC(BoundaryConditioner):
 
     # transfer data between workspaces
     def transfer_down(self, workspace1, workspace2, fields1, fields2):
-        # get geometry dictionary
-        geom1 = workspace1.get_geom()
-        geom2 = workspace2.get_geom()
 
         # extract fields
         rev1 = fields1.rev
         rlv1 = fields1.rlv
         rev2 = fields2.rev
         rlv2 = fields2.rlv
+
+        implementation.transfer_down(self, workspace1, workspace2, rev1, rlv1, rev2, rlv2)

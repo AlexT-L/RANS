@@ -63,10 +63,15 @@ class Workspace(ABC):
             classWorkspace = self.flds[className]
             classWorkspace[fieldName].set_val(fieldVal)
 
+    # check if a class dictionary exists
+    def has_dict(self, className):
+        return className in self.flds
+
+    # check if a field exists in a class's dictionary
     def exists(self, fieldName, className='Grid'):
 
         # check that class dictionary exists
-        if not className in self.flds:
+        if not self.has_dict(className):
             return False
 
         # check that field exists
@@ -74,6 +79,23 @@ class Workspace(ABC):
             return False
 
         return True
+
+    # initialize class's stored fields
+    # must give a dictionary of variables with the following structure:
+    #   - keys are the variable name as a string (e.g. "w")
+    #   - values are an array of [field_dimensions, state_dim]
+    #       - field_dim is usually the grid size in [nx, ny] format
+    #       - state_dim is 1 for scalars
+    def init_vars(self, className, vars):
+        # simplify exist function call
+        def exist(var):
+            return self.exist(var, className)
+
+        for varName in vars:
+            [size, dim] = vars[varName]
+            newField = Field(size, dim)
+            self.add_field(newField, varName, className)
+
 
     def isFinest(self):
         return self.isFinest

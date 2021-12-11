@@ -22,12 +22,12 @@ class MultiGrid:
         stateDim = self.Model.dim()
 
         # Direct storage of variables
-        self.Workspaces   = [None] * n_levels
-        self.W            = [None] * n_levels
-        self.W1st         = [None] * n_levels
-        self.WCorrections = [None] * n_levels
-        self.Residuals    = [None] * n_levels
-        self.Fluxes       = [None] * n_levels
+        self.Workspaces   = dict()
+        self.W            = dict()
+        self.W1st         = dict()
+        self.WCorrections = dict()
+        self.Residuals    = dict()
+        self.Fluxes       = dict()
         self.visits       = np.zeros(n_levels, dtype=int)
         
 
