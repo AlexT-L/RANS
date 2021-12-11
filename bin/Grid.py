@@ -2,6 +2,7 @@
 # oversimplified version of Grid class just for now
 # so I can write other stuff
 
+from abc import abstractmethod
 import numpy as np
 from Field import Field
 
@@ -48,7 +49,7 @@ class Grid:
         self.Fint = Field(self.get_size()) """
 
     # get number of vertices
-    def get_dim(self):
+    def get_size(self):
         return [self.nx+1, self.ny+1]
 
     def get_x(self, i, j):
@@ -65,3 +66,7 @@ class Grid:
 
     def get_volume(self, i, j):
         return self.Vol[i,j]
+
+    @abstractmethod
+    def get_geometry(self):
+        pass

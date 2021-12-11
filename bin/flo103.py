@@ -1,4 +1,4 @@
-import Input, SqrtGrid, NavierStokes, Workspace, MultiGrid, CellCenterWS
+import Input, AirfoilMap, NavierStokes, Workspace, MultiGrid, CellCenterWS
 from bin.ImplicitEuler import ImplicitEuler
 
 if __name__ == '__main__':
@@ -8,7 +8,7 @@ if __name__ == '__main__':
     
     # Command line inputs: Cycle type, Integrator type
     input = Input(filename) # Will actually take all command line inputs
-    grid = SqrtGrid(input.grid)
+    grid = AirfoilMap(input.grid)
     workspace = CellCenterWS(grid)
     model = NavierStokes(input.model)
     integrator = ImplicitEuler(model, input.integrator)

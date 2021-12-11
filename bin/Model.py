@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from Input import Input
 
 class Model(ABC):
     
-    def __init__(self, input):
+    def __init__(self, bcmodel, input):
 
         # get the fields required by the model
         self.reqFields = input.mdl['fields'] 
@@ -11,8 +10,21 @@ class Model(ABC):
         pass
     
     @abstractmethod
-    def do_thing(self):
+    def get_flux(self, workspace, state, output, update_factor=1):
         pass
+
+    @abstractmethod
+    def get_safe_timestep(self, workspace, state, dt):
+        pass
+
+    @abstractmethod
+    def update_stability(self, workspace, state):
+        pass
+
+    @abstractmethod
+    def transfer_down(self, workspace1, workspace2):
+        pass
+
 
     # return state dimesions
     def dim(self):

@@ -2,11 +2,11 @@ import numpy as np
 
 class Field:
 
-    def __init__(self, grid_size, stateDim=1):
+    def __init__(self, field_size, stateDim=1):
         if stateDim != 1:
-            grid_size.append(stateDim)
-        self.dims = grid_size
-        self.vals = np.ones(grid_size, order = 'F') # set fortran ordering for f2py
+            field_size.append(stateDim)
+        self.dims = field_size
+        self.vals = np.ones(field_size, order = 'F') # set fortran ordering for f2py
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx): 
@@ -22,6 +22,10 @@ class Field:
     
     def get_for_array(self):
         return np.array(self.vals, order = 'F')
+
+    # size of field
+    def size(self):
+        return self.dims
 
 
 #############################
