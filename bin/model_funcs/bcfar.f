@@ -2,8 +2,8 @@
      & w, p, rlv, rev, 
      & x, xc,
      & cp, cf,
-     & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,cl,cd,
-     & cm,clv,cdv,scal,chord,xm,ym,kvis,
+     & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,
+     & ym,kvis,
      & bc,
      & mode)
 c
@@ -35,7 +35,7 @@ c      use solv_param
 c
 c     ******************************************************************
 c     dims
-      integer :: il, jl, ie, je, itl, itu
+      integer, intent(in) :: il, jl, ie, je, itl, itu
 
 c     flo_var
       real(8), intent(inout), dimension(:,:,:) :: w
@@ -43,22 +43,21 @@ c     flo_var
       real(8), intent(inout), dimension(:,:)   :: rlv, rev
 
 c     mesh_var
-      real(8), intent(inout), dimension(:,:,:) :: x,xc
+      real(8), intent(in), dimension(:,:,:) :: x,xc
 
 c     out_var
       real(8), intent(inout), dimension(:)     :: cp
       real(8), intent(inout), dimension(:)     :: cf
 
 c     flo_param
-      real(8), intent(inout)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
-      real(8), intent(inout)      :: re,prn,prt
-      real(8), intent(inout)      :: cl,cd,cm,clv,cdv
-      real(8), intent(inout)      :: scal,chord,xm,ym
+      real(8), intent(in)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
+      real(8), intent(in)      :: re,prn,prt
+      real(8), intent(in)      :: scal,chord,xm,ym
 
-      integer, intent(inout)   :: kvis
+      integer, intent(in)   :: kvis
 
 c     solv_param
-      real(8), intent(inout)      :: bc
+      real(8), intent(in)      :: bc
 
 c     mg_param
       integer, intent(in)   :: mode
@@ -96,6 +95,8 @@ c
 c     ******************************************************************
 c
       real(8), dimension(il)               :: gs2,gs3,gs4
+
+      real(8) :: cl,cd,cm,cdv,clv
 c
 c     ******************************************************************
 c
