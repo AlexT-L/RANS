@@ -1,7 +1,7 @@
 import numpy as np
 from Grid import Grid
 from BaldwinLomax import BaldwinLomax
-
+from BoundaryThickness import BoundaryThickness
 class Viscosity():        
 #  from subroutine viscf.f
     def compute_viscosity(params, dims):
@@ -130,12 +130,10 @@ class Viscosity():
 
             #   to add: 
             # call delt
+        # BoundaryThickness.boundary_thickness(params, dims)
 
 
-            #   do 30 j=2,jl
-            #   do 20 i=2,il
-            # what do the 30 and 20 do?
-            # also they did not have a corresponding end do?
+
         for j in range(1,jl):
             for i in range(1,il):
                 xbi       = .5*(x[i-1,0,0]  +x[i,0,0])
@@ -236,12 +234,12 @@ params = {
   "rm": 1,
   "re": 1,
   "ncyc": dim_var,
-  "rev": np.ones((dim_var+1,dim_var+1)),
+  "rev": np.random.rand(dim_var+1,dim_var+1),
   "cmesh": 1,
   "ncyci1": -1,
   "itl": dim_var-2, 
   "itu": dim_var-2,
-  "x": np.ones((dim_var,dim_var,3)),
+  "x": np.random.rand(dim_var,dim_var,3),
   "w": np.ones((dim_var,dim_var,3)),
   "p": np.ones((dim_var,dim_var)),
   "vol": np.ones((dim_var,dim_var)),
@@ -263,6 +261,7 @@ params = {
 dims = {
     "il": dim_var - 1, 
     "jl": dim_var - 1,
+    "ny": dim_var,
 }
 Viscosity.compute_viscosity(params,dims)
 
