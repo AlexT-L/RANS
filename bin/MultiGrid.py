@@ -34,7 +34,7 @@ class MultiGrid:
         # set up grids
         self.Workspaces[n_levels-1] = workspace
         for l in range(n_levels-2, -1, -1):
-            newGrid = Grid(self.Workspaces[l+1].grid())
+            newGrid = Grid(self.Workspaces[l+1].get_grid())
             self.Workspaces[l] = workspace.MakeNew(newGrid, False)
         
         # initialize state variables
@@ -87,6 +87,9 @@ class MultiGrid:
                 wc.storeDifference(w, w1)
 
             elif dir > 0: # go up a level
+                # Allow model to transfer data to next mesh
+                model.transfer_down(self.Workspaces[prev], workspace)
+
                 # Transer correction(s) from coarser mesh(es)
                 expand.bilinear4way(self.WCorrections[prev], wc)
 
@@ -94,7 +97,7 @@ class MultiGrid:
                 w.storeSum(wc, w)
 
                 # Update residuals
-                model.getFlux(workspace, w, Rw)
+                model.get_flux(workspace, w, Rw)
                 
                 # Update Correction
                 wc.storeDifference(w, w1)

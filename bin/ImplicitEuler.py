@@ -26,13 +26,13 @@ class ImplicitEuler(Integrator):
         dt = workspace.get_field("dt", self.className)
 
         # subtract baseline residuals from forcing
-        model.getFlux(workspace, w, Rw, 1)
+        model.get_flux(workspace, w, Rw, 1)
         forcing.storeDifference(forcing, Rw)
 
         # perform implicit euler step
         for stage in range(0, self.numStages-1):
             # calculate new flux
-            model.getFlux(workspace, w, Rw, self.Flux_update[stage])
+            model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
             # add forcing
             Rw.add(forcing)
@@ -48,7 +48,7 @@ class ImplicitEuler(Integrator):
             w.storeDifference(wn, dw)
 
     def __checkVars(self, workspace):
-        field_size = workspace.get_dim()
+        field_size = workspace.get_size()
         stateDim = self.Model.dim()
         className = self.className
 

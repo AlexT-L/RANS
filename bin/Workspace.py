@@ -24,8 +24,12 @@ class Workspace(ABC):
         return Workspace(grid, isFinest)
 
     # return grid object
-    def grid(self):
+    def get_grid(self):
         return self.grd
+
+    # return geometry info
+    def get_geometry(self):
+        return self.grd.get_geometry()
 
     # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
@@ -76,7 +80,7 @@ class Workspace(ABC):
 
 # Methods for getting geometric info
     @abstractmethod
-    def get_dim(self):
+    def get_size(self):
         pass
 
     @abstractmethod
