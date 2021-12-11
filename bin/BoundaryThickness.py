@@ -24,10 +24,6 @@ class BoundaryThickness():
         ynot = np.ones(dim_var)
         ssmax = np.ones(dim_var)
         
-
-
-
-
         # js        = 2*jl/3  -2
         js        = .75*(ny  -4)
         js = int(np.round(js))

@@ -4,14 +4,10 @@ from Grid import Grid
 class BaldwinLomax():
     def turbulent_viscosity(params, dims):
         # from subroutine turb2.f
-
-        #  **********************************************************************
-        #  *   baldwin-lomax turbulence model:  modtur = 2                      *
-        #  *                                                                    *
-        #  *   calculates turbulent viscosity at the cell faces and then        *
-        #  *   averages to obtain cell center values                            *
-        #  *   fully vectorized routine                                         *
-        #  **********************************************************************
+        
+        # baldwin-lomax turbulence model:  modtur = 2
+        # calculates turbulent viscosity at the cell faces and then
+        # averages to obtain cell center values fully vectorized routine                                         *
 
         # "uses:" 
         # dims, flo_var, solv_var, mesh_var, psm_var, flo_param, solv_param
@@ -25,8 +21,7 @@ class BaldwinLomax():
         re = params['re']
         ncyc = params['ncyc']
         rev = params['rev']
-        # cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
-        # ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
+
         il = dims['il']
         jl = dims['jl']
         itl = params['itl']
@@ -34,8 +29,7 @@ class BaldwinLomax():
         x = params['x']
         w = params['w']
         p = params['p']
-        # w = grid.w
-        # p = grid.p
+
         xtran = params['xtran'] # needs to be from flo_param
 
         vol = params['vol'] # new
