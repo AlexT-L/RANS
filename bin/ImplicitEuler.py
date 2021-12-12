@@ -1,4 +1,3 @@
-from numpy.core.numeric import Infinity
 import Integrator, Field
 from bin.Workspace import Workspace
 
@@ -10,9 +9,6 @@ class ImplicitEuler(Integrator):
         self.Model = model
         self.className = "ImplicitEuler"
         self.numStages = input.mstage
-        self.courant_num_fine = input.cflf
-        self.courant_num_coarse = input.cfl0
-        self.courant_num_lim = Infinity
         self.Flux_update = input.cdis # relaxation/update factor for flux --> 0: no update, 1: full update
         self.c_step = input.cstp    # fraction of timestep to use
 
@@ -46,11 +42,8 @@ class ImplicitEuler(Integrator):
             # get local timestep
             model.get_safe_timestep(workspace, dt)
 
-            # set courant number
-            cfl = self.courant_num_coarse
-            if workspace.isFinest():
-                cfl = self.courant_num_fine
-            cfl = min(cfl, self.courant_num_lim)
+            # get courant number
+            cfl = model.get_cfl(workspace)
             
             # scale timestep
             c_dt = self.cfl*self.c_step/2.0
@@ -61,10 +54,6 @@ class ImplicitEuler(Integrator):
 
             # update state
             w.store_difference(wn, dw)
-
-    # specify upper bound on cfl
-    def update_cfl_limit(self, cfl_lim):
-        self.courant_num_lim = cfl_lim
 
     # initialize class workspace fields
     def __init_vars(self, workspace):

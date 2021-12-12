@@ -44,7 +44,7 @@ if __name__ == '__main__':
     mg.get_solution(state)
 
     # enforce cfl < 10 on first few cycles
-    integrator.update_cfl_limit(10)
+    model.update_cfl_limit(10.0)
 
     while not CONVERGED:
         # update rev and rlv at specified interval
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             model.update_physics(workspace, state)
 
         # after the first few cycles, relax restriction on cfl
-        integrator.update_cfl_limit(Infinity)
+        model.update_cfl_limit(Infinity)
         
         # perform an interation of the multigrid cycle
         mg.performCycle()

@@ -1,3 +1,4 @@
+from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
 from bin.Field import Field
@@ -7,8 +8,14 @@ class NavierStokes(Model):
     def __init__(self, bcmodel, input):
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
-        self.padding = 2 # size of halo
-        self.flo_params = input.flo_params # grab physical parameters
+        self.padding = bcmodel.padding
+        self.params = input # grab physical parameters
+
+        # courant number
+        self.cfl_fine = input.cflf
+        self.cfl_coarse = input.cfl0
+        self.cfl_lim = Infinity
+        self.cfl = min([self.cfl_fine, self.cfl_lim])
         
 
     # initialize state
@@ -96,6 +103,24 @@ class NavierStokes(Model):
         self.BCmodel.update_stability(self, model, workspace, state)
 
     
+    # specify upper bound on cfl
+    def update_cfl_limit(self, cfl_lim):
+        self.cfl_lim = cfl_lim
+
+
+    # get courant number
+    def get_cfl(self, workspace):
+
+        # set courant number
+        cfl = self.cfl_coarse
+        if workspace.isFinest():
+            cfl = self.cfl_fine
+        self.cfl = min(cfl, self.cfl_lim)
+
+        # return courant number
+        return self.cfl
+            
+
     def transfer_down(self, workspace1, workspace2):
         self.__check_vars(workspace)
         self.BCmodel.transfer_down(self, workspace1, workspace2)
