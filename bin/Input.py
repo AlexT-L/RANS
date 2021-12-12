@@ -182,7 +182,7 @@ class Input:
         v0 = flo["v0"]    = rm*c0*sa
         h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
         mu_air= 1.461e-06 #kinematic viscosity of air at sea-level at STP
-        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3)
+        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3) # sutherlands law
 
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
