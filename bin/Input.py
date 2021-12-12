@@ -21,7 +21,7 @@ import pandas as pd
 #
 #               cflf      = the courant number for the time step on the fine mesh
 #                           (cflf<0 selects the use of a variable local step)
-#               cflim     = ?
+#               cflim     = scaling factor for cfl when smoothing with psmoo
 #               bc        = optional  far field boundary conditions
 #               vis2      = the coefficient for the adaptive dissipation
 #               vis4      = the coefficient for the background dissipation
@@ -39,10 +39,10 @@ import pandas as pd
 #               ksmoop    = 1. for residual averaging at all stages
 #               ksmoop    = -1. for residual averaging at alternate stages
 #               vt        = local time step (1=same local step, 0=variable local step)
-#               iprec     = ?
-#               epsf      = ?
-#               epsc      = ?
-#               diag      = ?
+#               iprec     = turns on gauss-seidel preconditioner (psgs) when not zero
+#               epsf      = eps for fine meshes (eps is used by psgs)
+#               epsc      = eps for coarse meshes (eps is used by psgs)
+#               diag      = ? (literally not used)
 #               cflc      = the courant number for time steps on the coarse meshes
 #               hmc       = the enthalpy damping factor for the coarse meshes
 #               fbc         controls the far field boundary condition
@@ -78,7 +78,7 @@ import pandas as pd
 #               rho0      = density of free-stream
 #               p0        = pressure of the free-stream
 #               c0        = speed of sound for the the free-stream
-#               ei0       = ???
+#               ei0       = ? (never used)
 #               u0        = x-velocity for the free-stream
 #               v0        = y-velocity for the free-stream
 #               h0        = enthalpy for the free-stream

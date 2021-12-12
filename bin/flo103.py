@@ -1,6 +1,6 @@
 from numpy.core.numeric import Infinity
 import Input, AirfoilMap, NavierStokes, MultiGrid, CellCenterWS
-import PostProcessor, ConvergenceChecker
+import flo103_PostProcessor, flo103_ConvergenceChecker
 from bin.ImplicitEuler import ImplicitEuler
 from bin.NS_AirfoilBC import NS_AirfoilBC
 
@@ -30,8 +30,8 @@ if __name__ == '__main__':
 
     # create multigrid cycle objects
     mg = MultiGrid(workspace, model, integrator, state, input.solv_param)
-    watcher = ConvergenceChecker(input)
-    post = PostProcessor(input)
+    watcher = flo103_ConvergenceChecker(input)
+    post = flo103_PostProcessor(input)
 
     # initialize trackers
     CONVERGED = False
@@ -59,7 +59,7 @@ if __name__ == '__main__':
         resid = mg.residuals()
 
         # output the convergence
-        post.print_convergence(resid)
+#        post.print_convergence(resid)
 
         # update convergence checker
         CONVERGED = watcher.is_converged(resid)
@@ -67,6 +67,6 @@ if __name__ == '__main__':
 
     # retrieve final solution and print results
     state = mg.solution()
-    post.print_solution(state)
+#    post.print_solution(state)
     
     # Take solution and plot and save info
