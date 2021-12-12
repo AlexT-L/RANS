@@ -109,6 +109,7 @@ import pandas as pd
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space
+
 class Input:
 
     dim_p=[["nx","ny"]]
@@ -242,14 +243,14 @@ class Input:
     
 
     
-##plot airfoil
-# import matplotlib.pyplot as plt
+#plot airfoil
+import matplotlib.pyplot as plt
 
-# input=Input("rae9e-s3.data")
-# x=input.in_var["xn"]
-# y=input.in_var["yn"]
-# plt.plot(x,y,"+")
-# plt.show()
-# #print(input.solv_param["cstp"])
+input=Input("rae9e-s3.data")
+x=input.in_var["xn"]
+y=input.in_var["yn"]
+plt.plot(x,y,"+")
+plt.show()
+#print(input.solv_param["cstp"])
 
 
