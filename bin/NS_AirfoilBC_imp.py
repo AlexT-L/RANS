@@ -1,7 +1,7 @@
 import bcfar_fort, bcwall_fort, halo_fort
 from bin.Field import Field
 
-def init_state(self, model, workspace):
+def init_state(self, model, workspace, state):
     field_size = workspace.field_size()
     stateDim = self.dim
     state = Field(field_size, stateDim)

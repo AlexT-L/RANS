@@ -28,17 +28,17 @@ class MultiGrid:
         stateDim = self.Model.dim()
 
         # Direct storage of variables
-        self.Workspaces   = dict()
-        self.W            = dict()
-        self.W1st         = dict()
-        self.WCorrections = dict()
-        self.Residuals    = dict()
-        self.Fluxes       = dict()
+        self.Workspaces   = [None] * n_levels
+        self.W            = [None] * n_levels
+        self.W1st         = [None] * n_levels
+        self.WCorrections = [None] * n_levels
+        self.Residuals    = [None] * n_levels
+        self.Fluxes       = [None] * n_levels
         self.visits       = np.zeros(n_levels, dtype=int)
         
 
         # set up grids
-        self.Workspaces[n_levels-1] = workspace
+        self.Workspaces[-1] = workspace
         for l in range(n_levels-2, -1, -1):
             newGrid = Grid(self.Workspaces[l+1].get_grid())
             self.Workspaces[l] = workspace.MakeNew(newGrid, False)
@@ -56,6 +56,9 @@ class MultiGrid:
             self.WCorrections = newStateField()
             self.Residuals[l] = newStateField()
             self.Fluxes[l]    = newStateField()
+
+        # set initial state values
+        model.init_state(self.Workspaces[-1], self.W[-1])
     
 
     # perform one iteration of the given cycle
@@ -124,10 +127,12 @@ class MultiGrid:
         # update number of cycles
         self.num_cycles += 1
 
-                
-    def residuals(self):
-        dw = self.Workspaces[-1].dw
-        return np.max(dw)
+    # copy residuals into output field
+    def residuals(self, output):
+        residuals = self.Residuals[-1]
+        residuals.copy_to(output)
         
-    def solution(self):
-        return self.W[-1]
+    # copy state into output field
+    def solution(self, output):
+        state = self.W[-1]
+        state.copy_to(output)

@@ -8,9 +8,9 @@ class NS_AirfoilBC(BoundaryConditioner):
         pass
 
     # initialize state
-    def init_state(self, model, workspace):
+    def init_state(self, model, workspace, state):
         self.__check_vars(workspace)
-        return implementation.init_state(self, model, workspace)
+        return implementation.init_state(self, model, workspace, state)
 
     # Methods for applying boundary conditions
 

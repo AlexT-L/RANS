@@ -1,6 +1,6 @@
 from Model import Model
 from Workspace import Workspace
-from Input import Input
+from bin.Field import Field
 
 class NavierStokes(Model):
     
@@ -12,10 +12,18 @@ class NavierStokes(Model):
         
 
     # initialize state
-    def init_state(self, workspace):
+    def init_state(self, workspace, state):
         self.__check_vars(workspace)
-        # pass off to boundary condition model
-        return self.BCmodel.init_state(self, workspace)
+
+        # copy into padded state field
+        w = workspace.get_field("w", self.className)
+        self.__copy_in(state, w)
+
+        # pass off to boundary condition model to initialize
+        self.BCmodel.init_state(self, workspace, w)
+        
+        # copy out to non-padded field
+        self.__copy_out(w, state)
 
 
     # flux calculations
@@ -69,12 +77,22 @@ class NavierStokes(Model):
     # update rev and rlv
     def update_physics(self, model, workspace, state):
         self.__check_vars(workspace)
+
+        # copy state into padded field
+        w = workspace.get_field("w", self.className)
+        self.__copy_in(state, w)
+
         self.BCmodel.update_physics(self, model, workspace, state)
 
 
     # calls 'step.f' to update stability conditions
     def update_stability(self, model, workspace, state):
         self.__check_vars(workspace)
+        
+        # copy state into padded field
+        w = workspace.get_field("w", self.className)
+        self.__copy_in(state, w)
+
         self.BCmodel.update_stability(self, model, workspace, state)
 
     
@@ -122,11 +140,11 @@ class NavierStokes(Model):
         vars = dict()
 
         # add state variables stored at cell center with padding
-        for stateName in ["vw", "fw"]:
+        for stateName in ["w", "dw", "vw", "fw"]:
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj"]:
+        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj","vol"]:
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at edges

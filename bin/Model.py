@@ -9,7 +9,7 @@ class Model(WorkspaceClass):
         pass
 
     @abstractmethod
-    def init_state(self, workspace):
+    def init_state(self, workspace, state):
         pass
     
     @abstractmethod

@@ -8,7 +8,7 @@ class BoundaryConditioner(WorkspaceClass):
         pass
 
     @abstractmethod
-    def init_state(self, model, workspace):
+    def init_state(self, model, workspace, state):
         pass
 
     @abstractmethod
