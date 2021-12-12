@@ -49,11 +49,6 @@ class ImplicitEuler(Integrator):
             # update state
             w.storeDifference(wn, dw)
 
-    # check if dictionary has been initialized
-    def __check_vars(self, workspace):
-        if not workspace.has_dict(self.className):
-            self.__init_vars(workspace)
-
     # initialize class workspace fields
     def __init_vars(self, workspace):
         field_size = workspace.get_size()
@@ -61,7 +56,7 @@ class ImplicitEuler(Integrator):
         className = self.className
 
         vars = dict()
-        vars["dt"] = [field_size, stateDim]
+        vars["dt"] = [field_size, 1]
         for stateName in ["wn", "Rw", "dw"]:
             vars[stateName] = [field_size, stateDim]
 

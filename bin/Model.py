@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from bin.WorkspaceClass import WorkspaceClass
 
-class Model(ABC):
+class Model(WorkspaceClass):
     
     def __init__(self, bcmodel, input):
 
@@ -15,6 +16,10 @@ class Model(ABC):
 
     @abstractmethod
     def get_safe_timestep(self, workspace, state, dt):
+        pass
+
+    @abstractmethod
+    def update_physics(self, workspace, state):
         pass
 
     @abstractmethod

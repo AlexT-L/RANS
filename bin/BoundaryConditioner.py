@@ -1,36 +1,37 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from bin.WorkspaceClass import WorkspaceClass
 
-class BoundaryConditioner(ABC):
+class BoundaryConditioner(WorkspaceClass):
     
     @abstractmethod
     def __init__(self, input):
         pass
 
-# Methods for applying boundary conditions
+    # Methods for applying boundary conditions
     @abstractmethod
-    def bc_far(workspace, state, fields):
+    def bc_far(self, model, workspace, state):
         pass
 
     @abstractmethod
-    def bc_wall(workspace, state, fields):
+    def bc_wall(self, model, workspace, state):
         pass
 
     @abstractmethod
-    def halo(workspace, state, fields):
+    def halo(self, model, workspace, state):
         pass
 
     @abstractmethod
-    def bc_all(workspace, state, fields):
+    def bc_all(self, model, workspace, state):
         pass
 
     # Get porosity
-    @abstractmethod
-    def get_pori(self, i, j):
-        pass
+    def get_pori(self, workspace):
+        self.__check_vars(workspace)
+        return workspace.get_field("pori", self.className)
 
-    @abstractmethod
-    def get_porj(self, i, j):
-        pass
+    def get_porj(self, workspace):
+        self.__check_vars(workspace)
+        return workspace.get_field("pori", self.className)
 
     # Transfer information between workspaces
     @abstractmethod
