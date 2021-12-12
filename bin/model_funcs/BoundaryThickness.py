@@ -26,7 +26,7 @@ def boundary_thickness(params, dims):
     
     # js        = 2*jl/3  -2
     js        = .75*(ny  -4)
-    js = int(np.round(js))
+    js = int(np.floor(js))
 
     # one big loop 
     for i in range(1,il):
