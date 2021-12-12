@@ -43,7 +43,8 @@ class NavierStokes(Model):
         self.__copy_in(state, w)
 
         # calculate residuals
-
+        ##### TO DO #####
+        
 
         # copy residuals into output array
         self.__copy_out(dw, output)

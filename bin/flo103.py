@@ -1,3 +1,4 @@
+from numpy.core.numeric import Infinity
 import Input, AirfoilMap, NavierStokes, MultiGrid, CellCenterWS
 import PostProcessor, ConvergenceChecker
 from bin.ImplicitEuler import ImplicitEuler
@@ -32,11 +33,12 @@ if __name__ == '__main__':
     watcher = ConvergenceChecker(input)
     post = PostProcessor(input)
 
-    # Update model viscosity with current state
-    
     # initialize trackers
     CONVERGED = False
     num_iterations = 0
+
+    # enforce cfl < 10 on first few cycles
+    integrator.update_cfl_limit(10)
 
     while not CONVERGED:
         # update rev and rlv at specified interval
@@ -46,6 +48,9 @@ if __name__ == '__main__':
                 updatePhysics = False
         if updatePhysics: 
             model.update_physics(workspace, state)
+
+        # after the first few cycles, relax restriction on cfl
+        integrator.update_cfl_limit(Infinity)
         
         # perform an interation of the multigrid cycle
         mg.performCycle()
