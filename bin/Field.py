@@ -6,21 +6,18 @@ class Field:
         if stateDim != 1:
             field_size.append(stateDim)
         self.dims = field_size
-        self.vals = np.ones(field_size, order = 'F') # set fortran ordering for f2py
+        self.vals = np.NaN*np.ones(field_size, order = 'F') # set fortran ordering for f2py
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx): 
         return self.vals[indx]
     
-    def set_init_vals(self, vals):
-        self.vals = vals
-        
     def set_val(self, new_vals):
         if np.shape(new_vals) != np.shape(self.vals):
             raise ValueError('Dimensions of field do not match expected dimensions')
         self.vals = np.array(new_vals,order = 'F')  # make new fortran ordered array  
     
-    def get_for_array(self):
+    def get_vals(self):
         return self.vals
 
     # size of field

@@ -109,6 +109,7 @@ import pandas as pd
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space
+
 class Input:
 
     dim_p=[["nx","ny"]]
@@ -181,7 +182,7 @@ class Input:
         v0 = flo["v0"]    = rm*c0*sa
         h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
         mu_air= 1.461e-06 #kinematic viscosity of air at sea-level at STP
-        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3)
+        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3) # sutherlands law
 
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
@@ -242,14 +243,14 @@ class Input:
     
 
     
-##plot airfoil
-# import matplotlib.pyplot as plt
+#plot airfoil
+import matplotlib.pyplot as plt
 
-# input=Input("rae9e-s3.data")
-# x=input.in_var["xn"]
-# y=input.in_var["yn"]
-# plt.plot(x,y,"+")
-# plt.show()
-# #print(input.solv_param["cstp"])
+input=Input("rae9e-s3.data")
+x=input.in_var["xn"]
+y=input.in_var["yn"]
+plt.plot(x,y,"+")
+plt.show()
+#print(input.solv_param["cstp"])
 
 
