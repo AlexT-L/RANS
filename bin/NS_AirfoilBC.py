@@ -17,6 +17,10 @@ class NS_AirfoilBC(BoundaryConditioner):
     def update_physics(self, model, workspace, state):
         implementation.update_physics(self, model, workspace, state)
     
+    # update stability
+    def update_stability(self, model, workspace, state):
+        implementation.update_physics(self, model, workspace, state)
+    
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
         implementation.bc_far(self, model, workspace, state)
@@ -45,7 +49,7 @@ class NS_AirfoilBC(BoundaryConditioner):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.get_size()
+        field_size = workspace.field_size()
         className = self.className
 
         vars = dict()

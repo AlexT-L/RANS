@@ -2,13 +2,24 @@ import bcfar_fort, bcwall_fort, halo_fort
 from bin.Field import Field
 
 def init_state(self, model, workspace):
-    field_size = workspace.get_size()
+    field_size = workspace.field_size()
     stateDim = self.dim
     state = Field(field_size, stateDim)
 
     ##### TO DO #####
 
     return state
+
+# update rev and rlv
+def update_physics(self, model, workspace, state):
+    pass
+    ##### TO DO #####
+
+
+# update stability
+def update_stability(self, model, workspace, state):
+    pass
+    ##### TO DO #####
 
 
 def bc_far(self, model, workspace, state):

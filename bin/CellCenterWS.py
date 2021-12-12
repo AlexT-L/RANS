@@ -12,8 +12,9 @@ class CellCenterWS(Workspace):
     
 # Methods for returning control volume edges
 
-    def get_size(self):
-        [xv, yv] = self.grid.get_size()
+    # dimensions of field (# of control volumes)
+    def field_size(self):
+        [xv, yv] = self.grid_size()
         return [xv-1, yv-1]
 
     # control volume center coordinates

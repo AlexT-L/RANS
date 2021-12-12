@@ -69,22 +69,7 @@ class NavierStokes(Model):
 
     # calls 'step.f' to update stability conditions
     def update_stability(self, workspace, state):
-        # retrieve necessary workspace fields
-        def get(varName):
-            return workspace.get_field(varName, self.className)
-        radi = get("radi")
-        radj = get("radj")
-        rfl = get("rfl")
-        dtl = get("dtl")
-        rfli = get("rfli")
-        rflj = get("rflj")
-
-
-        ##### NEED TO FINISH #####
-        
-
-        # set boundary values
-        self.BCmodel.update_stability(workspace, fields)
+        self.BCmodel.update_stability(workspace)
 
     
     def transfer_down(self, workspace1, workspace2):
@@ -121,13 +106,25 @@ class NavierStokes(Model):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.get_size()
-        stateDim = self.Model.dim()
+        [nx, ny] = workspace.field_size()
+        grid_size = [nx+1, ny+1]
+        field_size = [nx+2, ny+2]
+        stateDim = self.dim
         className = self.className
 
+        # initialize list of variables to add
         vars = dict()
-        vars["dt"] = [field_size, stateDim]
-        for stateName in ["P", "vw", "fw","porI","porJ","radi","radj","rfl","dtl","rfli","rflj"]:
+
+        # add state variables stored at cell center with padding
+        for stateName in ["vw", "fw"]:
             vars[stateName] = [field_size, stateDim]
+
+        # add scalar variables stored at cell center with padding
+        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj"]:
+            vars[stateName] = [field_size, stateDim]
+
+        # add scalar variables stored at edges
+        for stateName in ["porI","porJ"]:
+            vars[stateName] = [grid_size, stateDim]
 
         workspace.init_vars(className, vars)

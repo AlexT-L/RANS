@@ -51,7 +51,7 @@ class ImplicitEuler(Integrator):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.get_size()
+        field_size = workspace.field_size()
         stateDim = self.Model.dim()
         className = self.className
 

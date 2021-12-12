@@ -1,6 +1,7 @@
-import Input, AirfoilMap, NavierStokes, NS_AirfoilBC, MultiGrid, CellCenterWS
+import Input, AirfoilMap, NavierStokes, MultiGrid, CellCenterWS
 import PostProcessor, ConvergenceChecker
 from bin.ImplicitEuler import ImplicitEuler
+from bin.NS_AirfoilBC import NS_AirfoilBC
 
 if __name__ == '__main__':
     # Comment later
@@ -9,14 +10,25 @@ if __name__ == '__main__':
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
+
+    # read in input
     input = Input(filename) # Will actually take all command line inputs
+
+    # create geometry objects
     grid = AirfoilMap(input.grid)
     workspace = CellCenterWS(grid)
-    bcmodel = NS_AirfoilBC
-    model = NavierStokes(input.model)
+
+    # create physics objects
+    modelInput = input.add_dicts(input.flo_param, input.solv_param)
+    bcmodel = NS_AirfoilBC(input)
+    model = NavierStokes(bcmodel, modelInput)
+    integrator = ImplicitEuler(model, input.solv_param)
+
+    # initialize state
     state = model.init_state(workspace)
-    integrator = ImplicitEuler(model, input.integrator)
-    mg = MultiGrid(workspace, model, integrator, state, input.multigrid)
+
+    # create multigrid cycle objects
+    mg = MultiGrid(workspace, model, integrator, state, input.solv_param)
     watcher = ConvergenceChecker(input)
     post = PostProcessor(input)
 

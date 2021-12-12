@@ -11,6 +11,14 @@ class BoundaryConditioner(WorkspaceClass):
     def init_state(self, model, workspace):
         pass
 
+    @abstractmethod
+    def update_stability(self, model, workspace):
+        pass
+
+    @abstractmethod
+    def update_physics(self, model, workspace):
+        pass
+
     # Methods for applying boundary conditions
     @abstractmethod
     def bc_far(self, model, workspace, state):

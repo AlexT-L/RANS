@@ -101,10 +101,16 @@ class Workspace(ABC):
     def isFinest(self):
         return self.isFinest
 
-# Methods for getting geometric info
+    # Methods for getting geometric info
+
+    # dimensions of field (# of control volumes)
     @abstractmethod
-    def get_size(self):
+    def field_size(self):
         pass
+
+    # dimensions of grid (# of vertices)
+    def grid_size(self):
+        return self.grid.get_size()
 
     @abstractmethod
     def get_x(self, i, j):
