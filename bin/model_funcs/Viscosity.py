@@ -6,18 +6,7 @@ class Viscosity():
 #  from subroutine viscf.f
     def compute_viscosity(params, dims):
                 
-
-        #     ******************************************************************
-        #     *                                                                *
-        #     *   computes viscosity coefficients                              *
-        #     *                                                                *
-        #     ******************************************************************
-
-
-        # subroutines / modules "used"
-            # dims
-            # flo_var, mesh_var
-            # flo_param, solv_param, mg_param
+        # computes viscosity coefficients               
         ie = params['ie'] # Mesh dimension
         je = params['je'] # Mesh dimension
         kvis = params['kvis']
@@ -32,8 +21,6 @@ class Viscosity():
         itu = params['itu']
         w = params['w']
         xtran = params['xtran'] # needs to be from flo_param
-
-        # real, dimension(ie,je)            :: u,v,astr,rev0
 
         # other parameters needed in this 
         scal = params['scal']
@@ -130,7 +117,7 @@ class Viscosity():
 
             #   to add: 
             # call delt
-        # BoundaryThickness.boundary_thickness(params, dims)
+        BoundaryThickness.boundary_thickness(params, dims) 
 
 
 
@@ -164,23 +151,20 @@ class Viscosity():
                 
                 if (max(rnut0*a1-a2,0) == 0.):
                     rev[i,j]  = 0.
-                    continue #  go to 20, so continue
+                    continue 
                 else:
                     rnut      = np.sqrt(a1)
                 
-
                 k      = 0
                 fac    = a2 - 1.
 
-
-                # 11?
-                while k<201: # this is instead of the 'go to 11'
+                while k<201: 
                     den    = 1./(4.*rnut*rnut*rnut + fac)
                     rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
                     
                     if (abs((rnut1  -rnut))<=1.e-3):
                         rev[i,j] = w[i,j,1]*max(rnut1-rnul,0)
-                        break # go to 20
+                        break # exits the while loop, then continues
                     else:
                         k      = k  +1
                         if (k>200):
@@ -188,19 +172,12 @@ class Viscosity():
                             print(*[' rnut = ',rnut,' rnut1 =',rnut1])
 
                             rev[i,j]  = w[i,j,0]*max(rnut1-rnul,0)
-                            break # go to 20
+                            break # exits the while loop, then continues
 
                         rnut   = rnut1
-                        # go to 11, which is above this loop, so repeat until that condition is no longer satisfied?
-
-                    # those would 'go' here, and then just continue?
-                    #    20 continue
-                    #    30 continue
 
         #     adjust the near wake
-
         ii        = ie
-
         for i in range(1,itl+1):
             ii        = ii  -1
             for j in range(1,jl):
