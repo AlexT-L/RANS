@@ -7,7 +7,11 @@ class NS_AirfoilBC(BoundaryConditioner):
     def __init__(self, input):
         pass
 
-# Methods for applying boundary conditions
+    # initialize state
+    def init_state(self, model, workspace):
+        return implementation.init_state(self, model, workspace)
+
+    # Methods for applying boundary conditions
 
     # update rev and rlv
     def update_physics(self, model, workspace, state):
@@ -54,4 +58,4 @@ class NS_AirfoilBC(BoundaryConditioner):
 
     # set the porosity values
     def __set_porosity(self, workspace):
-        pass
+        implementation.set_porosity(self, workspace)

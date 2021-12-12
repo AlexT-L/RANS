@@ -1,13 +1,15 @@
 from abc import abstractmethod
+from bin.Field import Field
 from bin.WorkspaceClass import WorkspaceClass
 
 class Model(WorkspaceClass):
     
+    @abstractmethod
     def __init__(self, bcmodel, input):
+        pass
 
-        # get the fields required by the model
-        self.reqFields = input.mdl['fields'] 
-
+    @abstractmethod
+    def init_state(self, workspace):
         pass
     
     @abstractmethod

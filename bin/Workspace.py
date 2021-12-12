@@ -87,14 +87,15 @@ class Workspace(ABC):
     #       - field_dim is usually the grid size in [nx, ny] format
     #       - state_dim is 1 for scalars
     def init_vars(self, className, vars):
-        # simplify exist function call
-        def exist(var):
-            return self.exist(var, className)
+        # create class dictionary
+        classDict = dict()
+        self.flds[className] = classDict
 
+        # create fields and store in dictionary
         for varName in vars:
             [size, dim] = vars[varName]
             newField = Field(size, dim)
-            self.add_field(newField, varName, className)
+            classDict[varName] = newField
 
 
     def isFinest(self):

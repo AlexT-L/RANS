@@ -8,6 +8,12 @@ class NavierStokes(Model):
         self.BCmodel = bcmodel
         self.padding = 2 # size of halo
 
+    # initialize state
+    def init_state(self, workspace):
+        # pass off to boundary condition model
+        return self.BCmodel.init_state(self, workspace)
+
+
     # flux calculations
     from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 

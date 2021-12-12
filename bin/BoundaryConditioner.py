@@ -7,6 +7,10 @@ class BoundaryConditioner(WorkspaceClass):
     def __init__(self, input):
         pass
 
+    @abstractmethod
+    def init_state(self, model, workspace):
+        pass
+
     # Methods for applying boundary conditions
     @abstractmethod
     def bc_far(self, model, workspace, state):
@@ -35,5 +39,5 @@ class BoundaryConditioner(WorkspaceClass):
 
     # Transfer information between workspaces
     @abstractmethod
-    def transfer_down(self, workspace1, workspace2, fields1, fields2):
+    def transfer_down(self, model, workspace1, workspace2):
         pass

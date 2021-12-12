@@ -17,6 +17,7 @@ class Field:
             raise ValueError('Dimensions of field do not match expected dimensions')
         self.vals = np.array(new_vals,order = 'F')  # make new fortran ordered array  
     
+    # return underlying implementation of field values
     def get_vals(self):
         return self.vals
 
@@ -32,23 +33,23 @@ class Field:
 # for store methods, would be ideal if var1 and/or var2 could be individual values (not a field)
 
     # store the sum of var1 and var2 in self
-    def storeSum(self, var1, var2):
+    def store_sum(self, var1, var2):
         pass
 
     # store the difference (var1 - var2) in self
-    def storeDifference(self, var1, var2):
+    def store_difference(self, var1, var2):
         pass
 
     # store the elementwise product of var1 and var2 in self
-    def storeProduct(self, var1, var2):
+    def store_product(self, var1, var2):
         pass
 
     # store the elementwise quotient (var1/var2) in self
-    def storeQuotient(self, var1, var2):
+    def store_quotient(self, var1, var2):
         pass
 
     # elementwise copy self into copy
-    def copyTo(self, copy):
+    def copy_to(self, copy):
         pass
 
     # elementwise multiply self by k (could be field or scalar)

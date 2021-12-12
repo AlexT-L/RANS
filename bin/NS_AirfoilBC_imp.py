@@ -1,4 +1,14 @@
 import bcfar_fort, bcwall_fort, halo_fort
+from bin.Field import Field
+
+def init_state(self, model, workspace):
+    field_size = workspace.get_size()
+    stateDim = self.dim
+    state = Field(field_size, stateDim)
+
+    ##### TO DO #####
+
+    return state
 
 
 def bc_far(self, model, workspace, state):
@@ -19,16 +29,16 @@ def bc_far(self, model, workspace, state):
     itu = geom.itu
     
     # flo_var
-    w = state.fortran()
-    rlv = get("rlv").fortran()
-    rev = get("rev").fortran()
-    p = get("p").fortran()
+    w = state.get_vals()
+    rlv = get("rlv").get_vals()
+    rev = get("rev").get_vals()
+    p = get("p").get_vals()
     
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.fortran()
+    x = coords.get_vals()
     coords = workspace.get_field("xc")
-    xc = coords.fortran()
+    xc = coords.get_vals()
     
     # out_var
     cp = 0
@@ -89,13 +99,13 @@ def bc_wall(self, model, workspace, state):
     itu = geom.itu
     
     # flo_var
-    w = state.fortran()
-    p = get("p").fortran()
-    rev = get("rev").fortran()
+    w = state.get_vals()
+    p = get("p").get_vals()
+    rev = get("rev").get_vals()
     
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.fortran()
+    x = coords.get_vals()
     
     # flo_param
     rm = model.mach
@@ -130,13 +140,13 @@ def halo(self, model, workspace, state):
     itu = geom.itu
     
     # flo_var
-    w = state.fortran()
-    p = get("p").fortran()
+    w = state.get_vals()
+    p = get("p").get_vals()
 
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.fortran()
-    vol = get("vol").fortran()
+    x = coords.get_vals()
+    vol = get("vol").get_vals()
     
     halo_fort.halo(il, jl, ie, je, ib, jb, itl, itu,
             w, p,

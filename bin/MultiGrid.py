@@ -122,7 +122,7 @@ class MultiGrid:
         self.num_cycles += 1
 
                 
-    def res(self):
+    def residuals(self):
         dw = self.Workspaces[-1].dw
         return np.max(dw)
         
