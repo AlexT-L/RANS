@@ -25,11 +25,12 @@ def coord_stretch(self):
     b0     = self.b0
     s0     = self.s0
 
-    #parameters defined in sqrtgrid class
-    il     = self.il
-    jl     = self.jl
-    nx     = self.nx
-    ny     = self.ny
+    #parameters from dims
+    dim    = self.dims
+    il     = dim["il"]
+    jl     = dim["jl"]
+    nx     = dim["nx"]
+    ny     = dim["ny"]
     
     #coord stretching
     ile         = self.ile
@@ -64,12 +65,14 @@ def coord_stretch(self):
 
  
 
-    dy        = boundy/float(jl  -1)
+    dy        = boundy/(jl  -1)
     for i in range(jl):
-        d         = float(i  -1)*dy
+        d         = (i  -1)*dy
         g         = 1.  -d*d
         c         = g**ay
         b0[i]     = sy*d/c
+    print("STRETCH")
+    
     return
       
       
