@@ -5,7 +5,9 @@ class NS_AirfoilBC(BoundaryConditioner):
     
     
     def __init__(self, input):
-        pass
+        self.padding = 2
+        self.local_timestepping = not bool(input.vt)
+        self.bc = input.bc
 
     # initialize state
     def init_state(self, model, workspace, state):
@@ -58,12 +60,25 @@ class NS_AirfoilBC(BoundaryConditioner):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.field_size()
+        [nx, ny] = workspace.field_size()
+        p = self.padding
+        field_size = [nx+p, ny+p]
+        grid_size = workspace.grid_size()
         className = self.className
 
         vars = dict()
-        vars["pori"] = [field_size, 1]
-        vars["porj"] = [field_size, 1]
+
+        # edge porosities
+        vars["pori"] = [grid_size, 1]
+        vars["porj"] = [grid_size, 1]
+
+        # stability
+        vars["s"] = [field_size, 1]
+        vars["dtlc"] = [field_size, 1]
+
+        # Cp and Cf
+        vars["cp"] = [[nx+2,1], 1]
+        vars["cf"] = [[nx+2,1], 1]
 
         self.__set_porosity(workspace)
 
