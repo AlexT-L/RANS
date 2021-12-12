@@ -12,11 +12,11 @@ class BoundaryConditioner(WorkspaceClass):
         pass
 
     @abstractmethod
-    def update_stability(self, model, workspace):
+    def update_stability(self, model, workspace, state):
         pass
 
     @abstractmethod
-    def update_physics(self, model, workspace):
+    def update_physics(self, model, workspace, state):
         pass
 
     # Methods for applying boundary conditions

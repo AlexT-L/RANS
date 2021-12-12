@@ -63,19 +63,17 @@ class NavierStokes(Model):
 
 
     # update rev and rlv
-    def update_physics(self, workspace, state):
-        self.BCmodel.update_physics(self, workspace, state)
+    def update_physics(self, model, workspace, state):
+        self.BCmodel.update_physics(self, model, workspace, state)
 
 
     # calls 'step.f' to update stability conditions
-    def update_stability(self, workspace, state):
-        self.BCmodel.update_stability(workspace)
+    def update_stability(self, model, workspace, state):
+        self.BCmodel.update_stability(self, model, workspace, state)
 
     
     def transfer_down(self, workspace1, workspace2):
-        # This needs to be filled in
-
-        self.BCmodel.transfer_down(workspace1, workspace2, fields1, fields2)
+        self.BCmodel.transfer_down(self, workspace1, workspace2)
 
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
