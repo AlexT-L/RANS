@@ -1,28 +1,32 @@
 import numpy as np
+from numpy.core.numeric import isclose
 from Field import Field
-from coord_stretch import coord_stretch
+from coord_strch_func import coord_stretch
+from geom_func import geom 
+from Grid import Grid
 
-class Sqrt_Grid:
+        
+class Sqrt_Grid(Grid):
     
     def __init__(self, input):
         #
 
-        # let Grid contain the variables in input.dims and input.geo_param and input.flo_param
-        self.dims = input.dims        
+        # let Grid contain the variables in input.dims, geo_param, flo_param and in_var
+        self.dims = input.dims
+        self.in_var=input.in_var        
         nx = self.dims['nx']
         ny = self.dims['ny']
         self.nx = nx 
         self.ny = ny
+        
+        input.geo_param["trail"]=input.geo_param["trail"]*np.pi/180#convert trail angle to radians
         self.geo=input.geo_param
         xte=self.geo['xte']
+
         self.flo=input.flo_param
         kvis=self.flo["kvis"]
 
-        #geo_var (array of variables required for sqrt mapping)
-        self.a0 = np.zeros(nx)
-        self.a1 = np.zeros(ny)
-        self.b0 = np.zeros(ny)
-        self.s0 = np.zeros(nx)
+        
 
          
         # set mesh dimensions
@@ -35,11 +39,16 @@ class Sqrt_Grid:
         self.ib = nx + 3
         self.jb = ny + 3
 
+        #geo_var (array of variables required for sqrt mapping)
+        self.a  = np.array([np.zeros(self.il),np.zeros(self.jl)])
+        self.b0 = np.zeros(self.il)
+        self.s0 = np.zeros(self.jl)
+
         #set the limits of the aerfoil profile
-        self.ite       = .5000005*xte*nx #coordinate of trailing edge in computationa domain
-        self.ile       = self.il/2  +1 #coordinate of leading edge in computationa domain
-        self.itl       = self.ile - self.ite #not sure what these do
-        self.itu       = self.ile + self.ite
+        self.ite       = int(0.5*xte*nx) #coordinate of trailing edge in physical space
+        self.ile       = np.floor(self.il/2  +1) #coordinate of leading edge in physical space
+        self.itl       = self.ile - self.ite #lower coordinate of trailing edge in computational space
+        self.itu       = self.ile + self.ite #upper coordinate of trailing edge in computational space
         
         #set the limits of the outer mesh for a viscous simulation (kvis>1)
         if kvis > 1:
@@ -50,7 +59,11 @@ class Sqrt_Grid:
         #define point distributions in each coordinate direction (coordinate stretching)
         self.coord_stretch()
 
-         
+        #sqrt root mapping of aerfoil profile to slit & interpolating 
+        # to make sure points on aerfoil match those of the grid
+        self.geom()
+
+        #making mesh 
 
 
 
