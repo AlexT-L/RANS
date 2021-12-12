@@ -56,6 +56,11 @@ class NavierStokes(Model):
         self.__copy_out(dt, timestep)
 
 
+    # update rev and rlv
+    def update_physics(self, workspace, state):
+        self.BCmodel.update_physics(self, workspace, state)
+
+
     # calls 'step.f' to update stability conditions
     def update_stability(self, workspace, state):
         # retrieve necessary workspace fields

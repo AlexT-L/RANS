@@ -63,7 +63,10 @@ class MultiGrid:
         cycleIndex = self.num_cycles + 1
 
         # toggle for updating stability
-        UPDATE_STABILITY = ( mod(self.num_cycles, self.stabilityUpdateFrequency) == 0 )
+        if self.num_cycles == 0:
+            UPDATE_STABILITY = True
+        else:
+            UPDATE_STABILITY = (self.num_cycles % self.stabilityUpdateFrequency) == 0
 
         level = n_levels
         for dir in self.cycle.pattern:
