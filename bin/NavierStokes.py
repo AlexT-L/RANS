@@ -1,6 +1,5 @@
 from Model import Model
 from Workspace import Workspace
-from model_funcs import eflux_wrap, nsflux_wrap
 
 class NavierStokes(Model):
     
@@ -10,9 +9,7 @@ class NavierStokes(Model):
         self.padding = 2 # size of halo
 
     # flux calculations
-    from .model_funcs import eflux_wrap,nsflux_wrap
-
-
+    from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
         # set rfil value
