@@ -2,5 +2,5 @@
 
 class flo103_PostProcessor:
 
-    def __init__(input):
+    def __init__(self, input):
         pass
