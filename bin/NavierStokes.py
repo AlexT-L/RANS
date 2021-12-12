@@ -1,5 +1,6 @@
 from Model import Model
 from Workspace import Workspace
+from Input import Input
 
 class NavierStokes(Model):
     
@@ -7,6 +8,8 @@ class NavierStokes(Model):
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
         self.padding = 2 # size of halo
+        self.flo_params = input.flo_params # grab physical parameters
+        
 
     # initialize state
     def init_state(self, workspace):
@@ -18,6 +21,10 @@ class NavierStokes(Model):
     from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
+        
+        # initialize the variables we want in the workspace 
+        self.__check_vars(self, workspace)
+
         # set rfil value
         rfil = update_factor
 
@@ -34,7 +41,7 @@ class NavierStokes(Model):
         self.__copy_in(state, w)
 
         # calculate residuals
-
+        self.update_viscocity(self,workspace,state)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -106,3 +113,21 @@ class NavierStokes(Model):
         for i in range(0, leni):
             for j in range(0, lenj):
                 field[i][j] = paddedField[i+p][j+p]
+
+    # check if dictionary has been initialized
+    def __check_vars(self, workspace):
+        if not workspace.has_dict(self.className):
+            self.__init_vars(workspace)
+
+    # initialize class workspace fields
+    def __init_vars(self, workspace):
+        field_size = workspace.get_size()
+        stateDim = self.Model.dim()
+        className = self.className
+
+        vars = dict()
+        vars["dt"] = [field_size, stateDim]
+        for stateName in ["P", "vw", "fw","porI","porJ","radi","radj","rfl","dtl","rfli","rflj"]:
+            vars[stateName] = [field_size, stateDim]
+
+        workspace.init_vars(className, vars)
