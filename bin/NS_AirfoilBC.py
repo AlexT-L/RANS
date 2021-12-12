@@ -7,58 +7,68 @@ class NS_AirfoilBC(BoundaryConditioner):
     def __init__(self, input):
         pass
 
-# Methods for applying boundary conditions
+    # initialize state
+    def init_state(self, model, workspace):
+        self.__check_vars(workspace)
+        return implementation.init_state(self, model, workspace)
+
+    # Methods for applying boundary conditions
+
+    # update rev and rlv
+    def update_physics(self, model, workspace, state):
+        self.__check_vars(workspace)
+        implementation.update_physics(self, model, workspace, state)
+    
+    # update stability
+    def update_stability(self, model, workspace, state):
+        self.__check_vars(workspace)
+        implementation.update_physics(self, model, workspace, state)
     
     # apply far-field boundary conditions
-    def bc_far(self, workspace, state, fields):
-
-        # extract fields
-        p = fields.p
-
-        implementation.bc_far(self, workspace, state, p)
+    def bc_far(self, model, workspace, state):
+        self.__check_vars(workspace)
+        implementation.bc_far(self, model, workspace, state)
 
 
     # apply wall boundary conditions
-    def bc_wall(self, workspace, state, fields):
-
-        # extract fields
-        p = fields.p
-        vol = fields.vol
-        rev = fields.rev
-
-        implementation.bc_wall(self, workspace, state, p, vol, rev)
+    def bc_wall(self, model, workspace, state):
+        self.__check_vars(workspace)
+        implementation.bc_wall(self, model, workspace, state)
 
 
     # apply halo boundary conditions
-    def halo(self, workspace, state, fields):
-
-        # extract fields
-        p = fields.p
-        vol = fields.vol
-
-        implementation.halo(self, workspace, state, p, vol)
+    def halo(self, model, workspace, state):
+        self.__check_vars(workspace)
+        implementation.halo(self, model, workspace, state)
 
 
     # apply all boundary conditions
-    def bc_all(self, workspace, state, fields):
-        self.bc_wall(workspace, state, fields)
-        self.bc_far(workspace, state, fields)
-        self.halo(workspace, state, fields)
-
-    # Get porosity
-    def get_pori(self, i, j):
-        return self.pori(i,j)
-
-    def get_porj(self, i, j):
-        return self.porj(i,j)
+    def bc_all(self, model, workspace, state):
+        self.__check_vars(workspace)
+        self.bc_wall(self, model, workspace, state)
+        self.bc_far(self, model, workspace, state)
+        self.halo(self, model, workspace, state)
 
     # transfer data between workspaces
-    def transfer_down(self, workspace1, workspace2, fields1, fields2):
+    def transfer_down(self, model, workspace1, workspace2):
+        self.__check_vars(workspace1)
+        self.__check_vars(workspace2)
+        implementation.transfer_down(self, model, workspace1, workspace2)
 
-        # extract fields
-        rev1 = fields1.rev
-        rlv1 = fields1.rlv
-        rev2 = fields2.rev
-        rlv2 = fields2.rlv
 
-        implementation.transfer_down(self, workspace1, workspace2, rev1, rlv1, rev2, rlv2)
+    # initialize class workspace fields
+    def __init_vars(self, workspace):
+        field_size = workspace.field_size()
+        className = self.className
+
+        vars = dict()
+        vars["pori"] = [field_size, 1]
+        vars["porj"] = [field_size, 1]
+
+        self.__set_porosity(workspace)
+
+        workspace.init_vars(className, vars)
+
+    # set the porosity values
+    def __set_porosity(self, workspace):
+        implementation.set_porosity(self, workspace)

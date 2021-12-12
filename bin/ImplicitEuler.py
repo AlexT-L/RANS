@@ -1,3 +1,4 @@
+from numpy.core.numeric import Infinity
 import Integrator, Field
 from bin.Workspace import Workspace
 
@@ -8,9 +9,12 @@ class ImplicitEuler(Integrator):
         # set attributes
         self.Model = model
         self.className = "ImplicitEuler"
-        self.numStages = 000000000000000
-        self.kn = 0000000000000000
-        self.Flux_update = 000000000000000000 # relaxation/update factor for flux --> 0: no update, 1: full update
+        self.numStages = input.mstage
+        self.courant_num_fine = input.cflf
+        self.courant_num_coarse = input.cfl0
+        self.courant_num_lim = Infinity
+        self.Flux_update = input.cdis # relaxation/update factor for flux --> 0: no update, 1: full update
+        self.c_step = input.cstp    # fraction of timestep to use
 
     
     def step(self, workspace, state, forcing):
@@ -29,7 +33,7 @@ class ImplicitEuler(Integrator):
 
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
-        forcing.storeDifference(forcing, Rw)
+        forcing.store_difference(forcing, Rw)
 
         # perform implicit euler step
         for stage in range(0, self.numStages-1):
@@ -37,31 +41,39 @@ class ImplicitEuler(Integrator):
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
             # add forcing
-            Rw.add(forcing)
+            Rw.store_sum(Rw, forcing)
 
-            # set timestep
+            # get local timestep
             model.get_safe_timestep(workspace, dt)
-            dt.scale(self.kn[stage])
+
+            # set courant number
+            cfl = self.courant_num_coarse
+            if workspace.isFinest():
+                cfl = self.courant_num_fine
+            cfl = min(cfl, self.courant_num_lim)
+            
+            # scale timestep
+            c_dt = self.cfl*self.c_step/2.0
+            dt.scale(c_dt)
 
             # take step
-            dw.storeProduct(Rw, dt)
+            dw.store_product(Rw, dt)
 
             # update state
-            w.storeDifference(wn, dw)
+            w.store_difference(wn, dw)
 
-    # check if dictionary has been initialized
-    def __check_vars(self, workspace):
-        if not workspace.has_dict(self.className):
-            self.__init_vars(workspace)
+    # specify upper bound on cfl
+    def update_cfl_limit(self, cfl_lim):
+        self.courant_num_lim = cfl_lim
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.get_size()
+        field_size = workspace.field_size()
         stateDim = self.Model.dim()
         className = self.className
 
         vars = dict()
-        vars["dt"] = [field_size, stateDim]
+        vars["dt"] = [field_size, 1]
         for stateName in ["wn", "Rw", "dw"]:
             vars[stateName] = [field_size, stateDim]
 

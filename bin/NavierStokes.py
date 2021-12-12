@@ -1,5 +1,6 @@
 from Model import Model
 from Workspace import Workspace
+from Input import Input
 
 class NavierStokes(Model):
     
@@ -7,11 +8,25 @@ class NavierStokes(Model):
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
         self.padding = 2 # size of halo
+        self.flo_params = input.flo_params # grab physical parameters
+        
+
+    # initialize state
+    def init_state(self, workspace):
+        self.__check_vars(workspace)
+        # pass off to boundary condition model
+        return self.BCmodel.init_state(self, workspace)
+
 
     # flux calculations
     from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
+        self.__check_vars(workspace)
+        
+        # initialize the variables we want in the workspace 
+        self.__check_vars(self, workspace)
+
         # set rfil value
         rfil = update_factor
 
@@ -28,7 +43,8 @@ class NavierStokes(Model):
         self.__copy_in(state, w)
 
         # calculate residuals
-
+        ##### TO DO #####
+        
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -36,6 +52,7 @@ class NavierStokes(Model):
 
 
     def get_safe_timestep(self, workspace, state, timestep):
+        self.__check_vars(workspace)
         # retrieve necessary workspace fields
         def get(varName):
             return workspace.get_field(varName, self.className)
@@ -49,33 +66,25 @@ class NavierStokes(Model):
         self.__copy_out(dt, timestep)
 
 
+    # update rev and rlv
+    def update_physics(self, model, workspace, state):
+        self.__check_vars(workspace)
+        self.BCmodel.update_physics(self, model, workspace, state)
+
+
     # calls 'step.f' to update stability conditions
-    def update_stability(self, workspace, state):
-        # retrieve necessary workspace fields
-        def get(varName):
-            return workspace.get_field(varName, self.className)
-        radi = get("radi")
-        radj = get("radj")
-        rfl = get("rfl")
-        dtl = get("dtl")
-        rfli = get("rfli")
-        rflj = get("rflj")
-
-
-        ##### NEED TO FINISH #####
-        
-
-        # set boundary values
-        self.BCmodel.update_stability(workspace, fields)
+    def update_stability(self, model, workspace, state):
+        self.__check_vars(workspace)
+        self.BCmodel.update_stability(self, model, workspace, state)
 
     
     def transfer_down(self, workspace1, workspace2):
-        # This needs to be filled in
-
-        self.BCmodel.transfer_down(workspace1, workspace2, fields1, fields2)
+        self.__check_vars(workspace)
+        self.BCmodel.transfer_down(self, workspace1, workspace2)
 
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
+        self.__check_vars(workspace)
         # get field size
         [leni, lenj] = field.size()
         p = self.padding
@@ -95,3 +104,33 @@ class NavierStokes(Model):
         for i in range(0, leni):
             for j in range(0, lenj):
                 field[i][j] = paddedField[i+p][j+p]
+
+    # check if dictionary has been initialized
+    def __check_vars(self, workspace):
+        if not workspace.has_dict(self.className):
+            self.__init_vars(workspace)
+
+    # initialize class workspace fields
+    def __init_vars(self, workspace):
+        [nx, ny] = workspace.field_size()
+        grid_size = [nx+1, ny+1]
+        field_size = [nx+2, ny+2]
+        stateDim = self.dim
+        className = self.className
+
+        # initialize list of variables to add
+        vars = dict()
+
+        # add state variables stored at cell center with padding
+        for stateName in ["vw", "fw"]:
+            vars[stateName] = [field_size, stateDim]
+
+        # add scalar variables stored at cell center with padding
+        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj"]:
+            vars[stateName] = [field_size, stateDim]
+
+        # add scalar variables stored at edges
+        for stateName in ["porI","porJ"]:
+            vars[stateName] = [grid_size, stateDim]
+
+        workspace.init_vars(className, vars)

@@ -1,12 +1,15 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from bin.Field import Field
+from bin.WorkspaceClass import WorkspaceClass
 
-class Model(ABC):
+class Model(WorkspaceClass):
     
+    @abstractmethod
     def __init__(self, bcmodel, input):
+        pass
 
-        # get the fields required by the model
-        self.reqFields = input.mdl['fields'] 
-
+    @abstractmethod
+    def init_state(self, workspace):
         pass
     
     @abstractmethod
@@ -15,6 +18,10 @@ class Model(ABC):
 
     @abstractmethod
     def get_safe_timestep(self, workspace, state, dt):
+        pass
+
+    @abstractmethod
+    def update_physics(self, workspace, state):
         pass
 
     @abstractmethod

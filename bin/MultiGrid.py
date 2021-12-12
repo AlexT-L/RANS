@@ -12,7 +12,10 @@ class MultiGrid:
     # Constructor
     def __init__(self, workspace, model, integrator, input):
         # Parameters
-        self.f_relax = input.fcoll
+        self.stabilityUpdateFrequency = input.ftim
+        self.wr_relax = input.fcoll
+
+        # counter variable
         self.num_cycles = 0
 
         # Objects
@@ -63,7 +66,10 @@ class MultiGrid:
         cycleIndex = self.num_cycles + 1
 
         # toggle for updating stability
-        UPDATE_STABILITY = ( mod(self.num_cycles, self.stabilityUpdateFrequency) == 0 )
+        if self.num_cycles == 0:
+            UPDATE_STABILITY = True
+        else:
+            UPDATE_STABILITY = (self.num_cycles % self.stabilityUpdateFrequency) == 0
 
         level = n_levels
         for dir in self.cycle.pattern:
@@ -83,7 +89,7 @@ class MultiGrid:
                 # Transfer state and residuals (fluxes) down to coarse mesh
                 contract.conservative4way(self.W[prev], self.Grids[prev], w)
                 contract.sum4way(self.Fluxes[prev], wr)
-                wr.scale(self.f_relax)
+                wr.scale(self.wr_relax)
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
@@ -119,7 +125,7 @@ class MultiGrid:
         self.num_cycles += 1
 
                 
-    def res(self):
+    def residuals(self):
         dw = self.Workspaces[-1].dw
         return np.max(dw)
         
