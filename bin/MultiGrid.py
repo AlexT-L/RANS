@@ -107,11 +107,15 @@ class MultiGrid:
             Rw = self.Fluxes[level]
 
             if dir < 0: # go down a level
-                # Transfer state and residuals (fluxes) down to coarse mesh
                 grid = workspace.get_grid()
                 vol = grid.vol
+
+                # Transfer state and residuals (fluxes) down to coarse mesh
+                model.transfer_down(self.Workspaces[prev], workspace)
                 contract.conservative4way(self.W[prev], w, vol)
                 contract.sum4way(self.Fluxes[prev], wr)
+
+                # relax transferred residuals
                 wr.scale(self.wr_relax)
 
                 # If first time at this grid level, store baseline state into w1
@@ -126,23 +130,20 @@ class MultiGrid:
                 integrator.step(workspace, w, Rw)
 
                 # Update Correction
-                wc.storeDifference(w, w1)
+                wc.store_difference(w, w1)
 
             elif dir > 0: # go up a level
-                # Allow model to transfer data to next mesh
-                model.transfer_down(self.Workspaces[prev], workspace)
-
                 # Transer correction(s) from coarser mesh(es)
                 expand.bilinear4way(self.WCorrections[prev], wc)
 
                 # Update state
-                w.storeSum(wc, w)
+                w.store_sum(wc, w)
 
                 # Update residuals
                 model.get_flux(workspace, w, Rw)
                 
                 # Update Correction
-                wc.storeDifference(w, w1)
+                wc.store_difference(w, w1)
 
         # update number of cycles
         self.num_cycles += 1

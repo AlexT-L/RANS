@@ -19,7 +19,7 @@ def sum4way(fine, coarse):
         raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
     shape = coarse.shape()
-    dim = shape[0]
+    dim = shape[2]
 
     ic = 0
     for i in range(0,x_fine,2):
@@ -51,7 +51,7 @@ def conservative4way(fine, coarse, weights):
         raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
     shape = coarse.shape()
-    dim = shape[0]
+    dim = shape[2]
 
     ic = 0
     for i in range(0,x_fine,2):
