@@ -49,7 +49,10 @@ class MultiGrid:
         # initialize state variables
         for l in range(n_levels):
             workspace = self.Workspaces[l]
+            grid = workspace.get_grid()
             field_size = workspace.field_size()
+            vol = Field(field_size, 1)
+            VOL = grid.vol
 
             def newStateField():
                 return Field(field_size, stateDim)
@@ -59,12 +62,11 @@ class MultiGrid:
             self.WCorrections[l] = newStateField()
             self.Residuals[l]    = newStateField()
             self.Fluxes[l]       = newStateField()
-            vol = Field(field_size, 1)
             self.Volume[l]       = vol
 
             for i in range(field_size[0]):
                 for j in range(field_size[1]):
-                    vol[i,j] = 1
+                    vol[i,j] = VOL[i+2,j+2]
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])

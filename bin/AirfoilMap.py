@@ -54,9 +54,9 @@ class AirfoilMap(Grid):
         
 
         # initialize x-y vertex, center,vol and porosity arrays
-        self.x  = np.zeros((il,jl,2))
-        self.xc = np.zeros((ib+1,jb+1,2))
-        self.vol= np.zeros((ib+1,jb+1))
+        self.x  = Field((il,jl),2)
+        self.xc = Field((ib+1,jb+1),2)
+        self.vol= Field((ib+1,jb+1),1)
 
 
         #set the limits of the aerfoil profile
@@ -103,7 +103,7 @@ class AirfoilMap(Grid):
 
    
     def get_size(self):
-         return [self.ib, self.jb]
+         return [int(self.dims['nx'])+1, int(self.dims['ny'])+1]
 
 
 
