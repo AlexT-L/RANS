@@ -46,7 +46,7 @@ def coord_stretch(self):
     a3     = 2.0*ylim1 - 3.0*ylim2
 
     for i in range(il):
-        d  = (i  -ile)*dx
+        d  = ((i+1) -ile)*dx
         if abs(d) <= xlim:
             d = d  +bp*np.sin(px*d)
         else:
@@ -67,12 +67,13 @@ def coord_stretch(self):
 
     dy        = boundy/(jl  -1)
     for i in range(jl):
-        d         = (i  -1)*dy
+        d         = ((i+1)  -1)*dy
         g         = 1.  -d*d
         c         = g**ay
         b0[i]     = sy*d/c
     print("STRETCH")
-    
+    print("A0=",a[0])
+    print("B0=",b0)
     return
       
       
