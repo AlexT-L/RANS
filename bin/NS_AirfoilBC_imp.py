@@ -7,9 +7,51 @@ def init_state(self, model, workspace, state):
     stateDim = self.dim
     state = Field(field_size, stateDim)
 
-    ##### TO DO #####
+    p = workspace.get_field("p", model.className)
 
-    return state
+    # set initial values
+    rho0 = model.params.rho0
+    u0 = model.params.u0
+    v0 = model.params.v0
+    h0 = model.params.h0
+    p0 = model.params.p0
+
+    [lenx, leny] = p.size()
+    for i in range(lenx):
+        for j in range(leny):
+            state[i,j,1] = rho0
+            state[i,j,2] = rho0 * u0
+            state[i,j,3] = rho0 * v0
+            state[i,j,4] = rho0 * h0 - p0
+            p[i,j]       = p0
+
+# set porosity
+def set_porosity(self, workspace):
+    # get relevant geometry parameters
+    geom = workspace.get_geometry()
+    [nx, ny] = workspace.field_size()
+    il = nx+1
+    jl = ny+1
+    itl = geom.itl
+    itu = geom.itu
+
+    # get porosity
+    pori = workspace.get_field("pori", self.className)
+    porj = workspace.get_field("porj", self.className)
+
+    # c
+    # c     set the porosity to unity
+    # c
+    for j in range(jl):
+        for i in range(il):
+            pori[i,j] = 1.0
+            porj[i,j] = 1.0
+
+    # c
+    # c     flag the wall and far field points at the j boundaries
+    # c
+    for i in range(itl,itu):
+        porj[i,0]   = 0.0
 
 # update rev and rlv
 def update_physics(self, model, workspace, state):
@@ -18,9 +60,11 @@ def update_physics(self, model, workspace, state):
     
     # This should call Baldwin Lomax
 
-
 # update stability
 def update_stability(self, model, workspace, state):
+
+    # padding
+    p = self.padding
     
     # set stability parameters
     slim      = 0.001
@@ -87,10 +131,6 @@ def update_stability(self, model, workspace, state):
         diff = a-b
         return max(diff, 0)
 
-    # define inclusive range
-    def range_in(start, stop):
-        return range_in(start, stop+1)
-
     # edge function decorator
     def edge(i, j, side):
         p = model.padding
@@ -99,8 +139,8 @@ def update_stability(self, model, workspace, state):
     # c
     # c     permissible time step
     # c
-    for j in range_in(2,jl):
-        for i in range_in(2,il):
+    for j in range(p,ny+p):
+        for i in range(p,nx+p):
             cc        = gamma*p[i,j]/max(w(i,j,1),rlim)
 
             # get side lengths
@@ -131,8 +171,8 @@ def update_stability(self, model, workspace, state):
     # c     pressure or entropy switch
     # c
     # c     if (kvis == 0) then
-    for j in range_in(0,jb):
-        for i in range_in(0,ib):
+    for j in range(p+ny+p):
+        for i in range(p+nx+p):
             s[i,j]    = p[i,j]
     # c     else
     # c        do j=0,jb
@@ -144,7 +184,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     adaptive time step
     # c
-    for j in range_in(2,jl):
+    for j in range(p,ny+p):
         for i in range_in(2,il):
          dpi       = abs((s[i+1,j]  -2.0*s[i,j]  +s[i-1,j])/ \
                          (s[i+1,j]  +2.0*s[i,j]  +s[i-1,j]  +slim))
@@ -175,8 +215,8 @@ def update_stability(self, model, workspace, state):
     # c
     #    11 do j=2,jl
     #       do i=2,il
-    for j in range_in(2,jl):
-        for i in range_in(2,il):
+    for j in range(p,ny+p):
+        for i in range_in(p,nx+p):
             if (iprec != 0):
     # c         rfli[i,j] = math.sqrt(radj[i,j]/radi[i,j])
     # c         rflj[i,j] = math.sqrt(radi[i,j]/radj[i,j])
@@ -204,8 +244,8 @@ def update_stability(self, model, workspace, state):
         if (kvis > 1): 
             v2 = v1
 
-        for j in range_in(2,jl):
-            for i in range_in(2,il):
+        for j in range(p,ny+p):
+            for i in range(p,nx+p):
                 rk        = gamma *(v1*rlv[i,j]/prn + v2*rev[i,j]/prt)/w(i,j,1)
                 rmu       = (v1*rlv[i,j]+v2*rev[i,j])/w(i,j,1)
             
@@ -236,7 +276,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at i=1 and i=ie
     # c
-    for j in range_in(2,jl):
+    for j in range(p,ny+p):
         radi[1,j]   = radi[2,j]
         radi[ie,j]  = radi[il,j]
         rfl[1,j]    = rfl[2,j]
@@ -251,7 +291,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at j=1 and j=je
     # c
-    for i in range_in(1,ie):
+    for i in range(p-1,nx+p+1):
         radj[i,1]   = radj[i,2]
         radj[i,je]  = radj[i,jl]
         rfl[i,1]    = rfl[i,2]
@@ -266,7 +306,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values along the cut
     # c
-    for i in range_in(1, itl):
+    for i in range(p-1, itl+p):
         ii        = ib  -i
         radj[ii,1]  = radj[i,2]
         radj[i,1]   = radj[ii,2]
@@ -345,7 +385,7 @@ def bc_far(self, model, workspace, state):
     if workspace.is_finest():
         mode = 0
     
-    bcfar_fort.bcfar(il, jl, ie, je, itl, itu,
+    bcfar_fort.bcfar(il, jl, ie, je, itl+1, itu+1,
                         w, p, rlv, rev,
                         x, xc, 
                         cp, cf,
@@ -390,7 +430,7 @@ def bc_wall(self, model, workspace, state):
     # solv_param
     isym = geom.isym
     
-    bcwall_fort.bcwall(ny, il, ie, ib, itl, itu, 
+    bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
                         w, p, rev,
                         x,
                         rm, sa, kvis,
@@ -425,12 +465,15 @@ def halo(self, model, workspace, state):
     x = coords.get_vals()
     vol = get("vol").get_vals()
     
-    halo_fort.halo(il, jl, ie, je, ib, jb, itl, itu,
+    halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
             w, p,
             x, vol)
 
 
 def transfer_down(self, model, workspace1, workspace2):
+    # get padding
+    p = self.padding
+
     # get geometry dictionary
     geom1 = workspace1.get_geometry()
     geom2 = workspace2.get_geometry()
@@ -443,14 +486,11 @@ def transfer_down(self, model, workspace1, workspace2):
 
     # dims
     [nx, ny] = workspace1.field_size()
-    il = nx+1
-    jl = ny+1
-    ie = nx+2
-    je = ny+2
 
     # coarse mesh dims
-    iie = nx/2 + 2
-    jje = ny/2 + 2
+    ratio = 2
+    nxc = nx/ratio
+    nyc = ny/ratio
 
     # parameters
     kvis = model.params.kvis
@@ -462,10 +502,10 @@ def transfer_down(self, model, workspace1, workspace2):
     if kvis > 0:
 
         jj        = 1
-        for j in range(2, jl, 2):
+        for j in range(p, ny+p, 2):
             jj        = jj  +1
             ii        = 1
-            for i in range(2, il, 2):
+            for i in range(p, nx+p, 2):
                 ii        = ii  +1
                 rlvc[ii, jj] = mean(rlv[i:i+2, j:j+2])
                 revc[ii, jj] = mean(rlv[i:i+2, j:j+2])
@@ -474,22 +514,22 @@ def transfer_down(self, model, workspace1, workspace2):
         # c     set the boundary values at i=1 and i=ie
         # c
         jj        = 1
-        for j in range(2, jl, 2):
+        for j in range(p, ny+p, ratio):
             jj        = jj  +1
 
-            rlvc[1  ,jj] = mean(rlv[1  , j:j+2])
-            rlvc[iie,jj] = mean(rlv[iie, j:j+2])
-            revc[1  ,jj] = mean(rev[1  , j:j+2])
-            revc[iie,jj] = mean(rev[iie, j:j+2])
+            rlvc[1    ,jj] = mean(rlv[1   , j:j+ratio])
+            rlvc[nxc+p,jj] = mean(rlv[nx+p, j:j+ratio])
+            revc[1    ,jj] = mean(rev[1   , j:j+ratio])
+            revc[nxc+p,jj] = mean(rev[nx+p, j:j+ratio])
 
         # c
         # c     set the boundary values at j=1 and j=je
         # c
         ii        = 1
-        for i in range(2, il, 2):
+        for i in range(p, nx+p, ratio):
             ii        = ii  +1
 
-            rlvc[ii,1  ] = mean(rlv[i:i+2, 1 ])
-            rlvc[ii,jje] = mean(rlv[i:i+2, je])
-            rlvc[ii,1  ] = mean(rlv[i:i+2, 1 ])
-            rlvc[ii,jje] = mean(rlv[i:i+2, je])
+            rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
+            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])
+            rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
+            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])

@@ -16,7 +16,7 @@ def boundary_thickness(params, dims):
     xc = params['xc']
 
     # defining local variables:
-    dim_var = 10
+    dim_var = 500
     qs = np.ones(dim_var)
     ut = np.ones(dim_var)
     dn = np.ones(dim_var)
@@ -91,9 +91,8 @@ def boundary_thickness(params, dims):
         ybi       = .5*(x[i,0,1]+x[i-1,0,1])
         ycorr     = np.sqrt((xc[i,lend,0] - xbi)**2+(xc[i,lend,1]-ybi)**2)
         ynot[i]   = 1.5*(ycorr  +dn[lend]*(fc  -ut[lend])/(ut[lend+1]  -ut[lend]))
-    print(ynot)
     return
-dim_var = 10
+dim_var = 500
 params = {
   "ie": dim_var,
   "je": dim_var,

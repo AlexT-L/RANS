@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.core.numeric import isclose
+from numpy.lib.function_base import iterable
 from Field import Field
 from Grid import Grid
 from Input import Input
@@ -14,6 +15,7 @@ class SqrtGrid():
         self.in_var=input.in_var        
         nx = self.dims['nx']
         ny = self.dims['ny']
+        
         
         #modify input object by adding values to flo_param dictionary
         input.flo_param["scal"]=0
@@ -43,10 +45,10 @@ class SqrtGrid():
         dim["ib"]   = int(nx + 3)
         dim["jb"]   = int(ny + 3)
         il          = dim["il"]
-        jl          = dim["il"]
+        jl          = dim["jl"]
         ib          = dim["ib"]
         jb          = dim["jb"]
-
+        
 
         # initialize x-y vertex, center,vol and porosity arrays
         self.x  = np.zeros((il,jl,2))
@@ -71,9 +73,10 @@ class SqrtGrid():
             dim["ny"]   = ny  -geo["nbl"]
             dim["jl"]   = jl  -geo["nbl"]
         #geo_var (array of variables required for sqrt mapping)
-        self.a  = np.array([np.zeros(il),np.zeros(jl)])
-        self.b0 = np.zeros(il)
-        self.s0 = np.zeros(jl)
+        
+        self.a  = np.array([np.zeros(il),np.zeros(il)])
+        self.b0 = np.zeros(jl)
+        self.s0 = np.zeros(il)
 
         #define point distributions in each coordinate direction (coordinate stretching)
         self.coord_stretch()
@@ -85,6 +88,27 @@ class SqrtGrid():
         
         #making mesh 
         self.mesh()
+
+        #sanghos modification for non-dimensionalization(re-scaling the c-mesh)
+        itl         = self.itl
+        itu         = self.itu
+        x           = self.x
+
+        xmax        = self.x[itl,0,0]
+        xmin        = self.x[itl,0,0]
+
+        for i in range(itl-1,itu):
+            xmin       = min(xmin,x[i,1,1])
+
+
+        scal       = xmax  -xmin
+
+        for  i in range(il):
+            for j in range(jl):
+                x[i,j,0]   = x[i,j,0]/scal
+                x[i,j,1]   = x[i,j,1]/scal
+        
+
     #class methods
     from coord_strch_func import coord_stretch
     from geom_func import geom 
