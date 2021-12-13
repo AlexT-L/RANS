@@ -22,7 +22,7 @@ def eflux(self,ws,w,dw):
         return ws.get_field(varName, self.className)
     porJ = get('porJ') # porosity
     P = get('p') # pressure
-    x = ws.x()
+    x = ws.get_field('x')
 
     # residuals returned in Field dw
     eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porJ.vals,il,jl)
