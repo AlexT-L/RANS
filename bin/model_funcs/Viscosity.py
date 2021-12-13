@@ -7,10 +7,10 @@ import numpy as np
 from BaldwinLomax import turbulent_viscosity
 from BoundaryThickness import boundary_thickness
 
-@profile
+# @profile
 def compute_viscosity(params, dims):
     #  from subroutine viscf.f
-    print('test compute')
+    print('start of compute_viscosity')
     # computes viscosity coefficients               
     ie = params['ie'] # Mesh dimension
     je = params['je'] # Mesh dimension

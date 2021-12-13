@@ -2,7 +2,7 @@ import numpy as np
 # from Grid import Grid
 
 # class BaldwinLomax():
-@profile
+# @profile
 def turbulent_viscosity(params, dims):
     # from subroutine turb2.f
     
