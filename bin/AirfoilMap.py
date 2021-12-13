@@ -6,7 +6,7 @@ from Grid import Grid
 from Input import Input
 
         
-class SqrtGrid():
+class AirfoilMap(Grid):
     
     def __init__(self, input):
 
@@ -108,7 +108,7 @@ start=time.time()
 
 input=Input("rae1-s1.data")
 print("INPUT")
-grid = SqrtGrid(input)
+grid = AirfoilMap(input)
 print("SQRT")
 ver =grid.x
 x=ver[:,:,0]

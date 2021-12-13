@@ -2,11 +2,11 @@
 # oversimplified version of Grid class just for now
 # so I can write other stuff
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 import numpy as np
 from Field import Field
 
-class Grid:
+class Grid(ABC):
     
     # Test Constructor --> ignore
     """ def __init__(self, input):
@@ -50,22 +50,10 @@ class Grid:
 
     # get number of vertices
     def get_size(self):
-        return [self.nx+1, self.ny+1]
-
-    def get_x(self, i, j):
-        return self.Y[i,j]
-
-    def get_y(self, i, j):
-        return self.Y[i,j]
-
-    def get_xc(self, i, j):
-        return self.Xc[i,j]
-
-    def get_yc(self, i, j):
-        return self.Yc[i,j]
+        pass
 
     def get_volume(self, i, j):
-        return self.Vol[i,j]
+        pass
 
     @abstractmethod
     def get_geometry(self):

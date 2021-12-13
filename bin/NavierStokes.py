@@ -1,7 +1,7 @@
 from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
-from bin.Field import Field
+from Field import Field
 
 class NavierStokes(Model):
     
@@ -53,13 +53,18 @@ class NavierStokes(Model):
         vw = get("vw")
         dw = get("dw")
 
-
         # copy state into padded array
         self.__copy_in(state, w)
 
+        # update boundary conditions
+        bcmodel = self.BCmodel
+        bcmodel.bc_all(self, workspace, state)
+
         # calculate residuals
-        ##### TO DO #####
-        
+        # eflux_wrap.eflux(self, workspace, w, dw)
+        # dflux_wrap.dflux(self, workspace, w, dw, rfil)
+        if self.params.kvis > 0 and False:
+            nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -122,12 +127,12 @@ class NavierStokes(Model):
             
 
     def transfer_down(self, workspace1, workspace2):
-        self.__check_vars(workspace)
+        self.__check_vars(workspace1)
+        self.__check_vars(workspace2)
         self.BCmodel.transfer_down(self, workspace1, workspace2)
 
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
-        self.__check_vars(workspace)
         # get field size
         [leni, lenj] = field.size()
         p = self.padding
@@ -170,7 +175,7 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj","vol"]:
+        for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol"]:
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at edges
@@ -178,3 +183,29 @@ class NavierStokes(Model):
             vars[stateName] = [grid_size, stateDim]
 
         workspace.init_vars(className, vars)
+
+        # set porosity values
+        bcmodel = self.BCmodel
+        porI = workspace.get_field("porI", self.className)
+        porJ = workspace.get_field("porI", self.className)
+        pori = bcmodel.get_pori(workspace)
+        porj = bcmodel.get_pori(workspace)
+
+        # copy over porosity values
+        pori.copyTo(porI)
+        porj.copyTo(porJ)
+
+        # copy over volume
+        grid = workspace.get_grid()
+        VOL = grid.vol
+        vol = workspace.get_field("vol", self.className)
+        VOL.copyTo(vol)
+
+        # # set volumes
+        # def get_vol(i, j):
+        #     return workspace.volume(i, j)
+        # p = self.padding
+        # vol = workspace.get_field("vol", self.className)
+        # for i in range(p+nx+p):
+        #     for j in range(p+ny+p):
+        #         vol[i,j] = get_vol(i,j)

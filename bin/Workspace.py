@@ -25,7 +25,7 @@ class Workspace(ABC):
 
     # return grid object
     def get_grid(self):
-        return self.grd
+        return self.grid
 
     # return geometry info
     def get_geometry(self):
@@ -111,14 +111,6 @@ class Workspace(ABC):
     # dimensions of grid (# of vertices)
     def grid_size(self):
         return self.grid.get_size()
-
-    @abstractmethod
-    def get_x(self, i, j):
-        pass
-
-    @abstractmethod
-    def get_y(self, i, j):
-        pass
 
     @abstractmethod
     def volume(self, i, j):

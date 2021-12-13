@@ -1,4 +1,4 @@
-      subroutine eflux(w,dw,p,x,porj,il,jl)
+      subroutine eflux(w,dw,p,x,porj,il,jl,ib,jb)
 c
 c     ******************************************************************
 c     *                                                                *
@@ -26,15 +26,16 @@ c
       implicit none
 
 c     inputs
-      integer, intent(inout) :: il,jl
-c      integer ib = il + 3
-c      integer jb = jl + 3
-      real(8), intent(in), dimension(:,:,:) :: w
-      real(8), intent(in), dimension(:,:,:) :: x
-      real(8), intent(in), dimension(:,:) :: p, porj
+      integer, intent(inout) :: il,jl,ib,jb
+
+c     everything is zero indexed except for porosity
+      real(8), intent(in), dimension(0:ib,0:jb,4) :: w
+      real(8), intent(in), dimension(0:ib,0:jb,2) :: x
+      real(8), intent(in), dimension(0:ib,0:jb)   :: p
+      real(8), intent(in), dimension(:,:)         :: porj
 
 
-      real(8), intent(inout), dimension(:,:,:)  :: dw
+      real(8), intent(inout), dimension(0:ib,0:jb,4)  :: dw
 
       
       

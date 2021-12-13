@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../RANS/bin')
+import time
 
 import numpy as np
 from Grid import Grid
@@ -55,13 +56,15 @@ def compute_viscosity(params, dims):
     cwk       = 0.
     #  scf       = re/(np.sqrt(gamma)*rm)
     scf       = (scal*re/chord)/(np.sqrt(gamma)*rm)
+    visc_const_C1 = 1.461e-06
+    visc_const_C2 = 110.3
 
     # compute the molecular viscosity
 
     for j in range(0,je):
         for i in range(0,ie):
             tt       = p[i,j]/w[i,j,0]*t0
-            rlv[i,j] = 1.461e-06*tt*np.sqrt(tt)/((tt+110.3)*rmu0)
+            rlv[i,j] = visc_const_C1*tt*np.sqrt(tt)/((tt+visc_const_C2)*rmu0)
 
 
     # for laminar flows we are done.
@@ -120,6 +123,7 @@ def compute_viscosity(params, dims):
 
         #   to add: 
         # call delt
+    # calculates the boundary layer thickness
     boundary_thickness(params, dims) 
 
 
@@ -170,10 +174,9 @@ def compute_viscosity(params, dims):
                     break # exits the while loop, then continues
                 else:
                     k      = k  +1
-                    print(k)
                     if (k>200):
-                        print(*[' iteration not converged ',i,j])
-                        print(*[' rnut = ',rnut,' rnut1 =',rnut1])
+                        print([' iteration not converged ',i,j])
+                        print([' rnut = ',rnut,' rnut1 =',rnut1])
 
                         rev[i,j]  = w[i,j,0]*max(rnut1-rnul,0)
                         break # exits the while loop, then continues
@@ -204,9 +207,8 @@ def compute_viscosity(params, dims):
     for j in range(0,je):
             rev[0,j]  = rev[1,j]
             rev[ie,j] = rev[il,j]
-    print(rev)
     return
-dim_var = 10
+dim_var = 500
 params = {
   "ie": dim_var,
   "je": dim_var,
@@ -242,4 +244,10 @@ dims = {
     "jl": dim_var - 1,
     "ny": dim_var,
 }
+
+t0 = time.time()
 compute_viscosity(params,dims)
+t1 = time.time()
+
+total = t1-t0
+print(total)

@@ -3,6 +3,8 @@
 
 # append to path so we can access Field class
 import sys
+
+from WorkspaceClass import WorkspaceClass
 sys.path.append("../")
 
 # class dependencies
@@ -14,7 +16,7 @@ import numpy as np
 # fortran module
 import dflux_fort 
 
-def dflux(self,ws,dw):
+def dflux(model,ws,w,dw,rfil):
 
     # calculate artificial dissipation fluxes given a workspace
 
@@ -25,28 +27,26 @@ def dflux(self,ws,dw):
     jl = G.dims['jl']
     ie = G.dims['ie']
     je = G.dims['je']
-    itl = G.dims['itl']
-    itu = G.dims['itu']
 
     # flow related variabless
-    w = ws.getField['w'] # state
-    P = ws.getField['P'] # pressure
-    porI = ws.getField['porI'] # porosity in i 
-    porJ = ws.getField['porJ'] # porosity in j
+    def get(varName):
+        return ws.get_field(varName, model.className)
+    P = get('p') # pressure
+    porI = get('porI') # porosity in i 
+    porJ = get('porJ') # porosity in j
 
     # mesh related vars
-    x = ws.getField['x'] # mesh vertices
-    xc = ws.getField['xc'] # mesh centers
+    x = ws.x() # cell vertices
+    xc = ws.xc # cell centers
 
     # solver related vars
-    fw = ws.getField['fw'] # storage for viscous residuals?
-    radI = ws.getField['radI'] # some kind of stability metric in i
-    radJ = ws.getField['radJ'] # some kind of stability metric in j
+    fw = get('fw') # storage for viscous residuals?
+    radI = get('radI') # some kind of stability metric in i
+    radJ = get('radJ') # some kind of stability metric in j
 
     # solver params
-    rfil = ws.rfil
-    vis2 = ws.vis2
-    vis4 = ws.vis4
+    vis2 = model.params.vis2
+    vis4 = model.params.vis4
 
     # residuals returned in Field vw
     dflux_fort.dflux(ny,il,jl,ie,je, \

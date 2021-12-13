@@ -1,5 +1,5 @@
-from bin.BoundaryConditioner import BoundaryConditioner
-from bin.NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
+from BoundaryConditioner import BoundaryConditioner
+from NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
 
 class NS_AirfoilBC(BoundaryConditioner):
     
@@ -12,7 +12,7 @@ class NS_AirfoilBC(BoundaryConditioner):
     # initialize state
     def init_state(self, model, workspace, state):
         self.__check_vars(workspace)
-        return implementation.init_state(self, model, workspace, state)
+        implementation.init_state(self, model, workspace, state)
 
     # Methods for applying boundary conditions
 
@@ -80,9 +80,9 @@ class NS_AirfoilBC(BoundaryConditioner):
         vars["cp"] = [[p+nx+p,1], 1]
         vars["cf"] = [[p+nx+p,1], 1]
 
-        self.__set_porosity(workspace)
-
         workspace.init_vars(className, vars)
+
+        self.__set_porosity(workspace)
 
     # set the porosity values
     def __set_porosity(self, workspace):

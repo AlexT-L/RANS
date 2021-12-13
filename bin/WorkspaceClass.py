@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class WorkspaceClass:
+class WorkspaceClass(ABC):
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):

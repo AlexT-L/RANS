@@ -1,9 +1,9 @@
 from numpy.core.numeric import Infinity
 import Input, AirfoilMap, NavierStokes, MultiGrid, CellCenterWS
-from bin.Field import Field
+from Field import Field
 import flo103_PostProcessor, flo103_ConvergenceChecker
-from bin.ImplicitEuler import ImplicitEuler
-from bin.NS_AirfoilBC import NS_AirfoilBC
+from ImplicitEuler import ImplicitEuler
+from NS_AirfoilBC import NS_AirfoilBC
 
 if __name__ == '__main__':
     # Comment later
@@ -14,16 +14,23 @@ if __name__ == '__main__':
 
     # read in input
     input = Input(filename) # Will actually take all command line inputs
+    print("read input")
 
     # create geometry objects
     grid = AirfoilMap(input.grid)
+    print("created grid")
     workspace = CellCenterWS(grid)
+    print("created workspace")
 
     # create physics objects
     modelInput = input.add_dicts(input.flo_param, input.solv_param)
+    print("made model input")
     bcmodel = NS_AirfoilBC(input)
+    print("created bcmodel")
     model = NavierStokes(bcmodel, modelInput)
+    print("created model")
     integrator = ImplicitEuler(model, input.solv_param)
+    print("created integrator")
 
     # create multigrid cycle objects
     mg = MultiGrid(workspace, model, integrator, input.solv_param)

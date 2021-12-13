@@ -11,7 +11,7 @@ def geom(self):
     xsing   = geo["xsing"]
     ysing   = geo["ysing"]
     slopt   = geo["slopt"]
-    trail   = geo["trail"]#in radians, converted in SqrtGrid constructo
+    trail   = geo["trail"]#in radians, converted in AirfoilMap constructor
     
     #use parameter from flow param
     flo=self.flo
