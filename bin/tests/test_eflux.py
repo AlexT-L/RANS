@@ -1,6 +1,6 @@
 import model_funcs.eflux_fort
 import numpy as np
-from Field
+from Field import Field
 
 # grab grid related parameter
 #G = ws.grid
