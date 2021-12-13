@@ -15,9 +15,7 @@ Also none.
 
 Author(s)
 ---------
-Satya, Joey Salads, V, Alex, My sexuality is rich people/dank meme Andy, and Brian. \n
-Created on 12/11/2021. \n
-Last modified on 12/12/2021.
+Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
 """
 
