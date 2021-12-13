@@ -11,13 +11,40 @@ def init_state(self, model, workspace, state):
 
     return state
 
+# set porosity
+def set_porosity(self, workspace):
+    # get relevant geometry parameters
+    geom = workspace.get_geometry()
+    [nx, ny] = workspace.field_size()
+    il = nx+1
+    jl = ny+1
+    itl = geom.itl
+    itu = geom.itu
+
+    # get porosity
+    pori = workspace.get_field("pori", self.className)
+    porj = workspace.get_field("porj", self.className)
+
+    # c
+    # c     set the porosity to unity
+    # c
+    for j in range(0,jl):
+        for i in range(0,il):
+            pori[i,j] = 1.0
+            porj[i,j] = 1.0
+
+    # c
+    # c     flag the wall and far field points at the j boundaries
+    # c
+    for i in range(itl,itu):
+        porj[i,0]   = 0.0
+
 # update rev and rlv
 def update_physics(self, model, workspace, state):
     pass
     ##### TO DO #####
     
     # This should call Baldwin Lomax
-
 
 # update stability
 def update_stability(self, model, workspace, state):

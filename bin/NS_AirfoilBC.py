@@ -62,7 +62,7 @@ class NS_AirfoilBC(BoundaryConditioner):
     def __init_vars(self, workspace):
         [nx, ny] = workspace.field_size()
         p = self.padding
-        field_size = [nx+p, ny+p]
+        field_size = [p+nx+p, p+ny+p]
         grid_size = workspace.grid_size()
         className = self.className
 
@@ -77,8 +77,8 @@ class NS_AirfoilBC(BoundaryConditioner):
         vars["dtlc"] = [field_size, 1]
 
         # Cp and Cf
-        vars["cp"] = [[nx+2,1], 1]
-        vars["cf"] = [[nx+2,1], 1]
+        vars["cp"] = [[p+nx+p,1], 1]
+        vars["cf"] = [[p+nx+p,1], 1]
 
         self.__set_porosity(workspace)
 

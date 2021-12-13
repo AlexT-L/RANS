@@ -155,9 +155,10 @@ class NavierStokes(Model):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
+        p = self.padding
         [nx, ny] = workspace.field_size()
-        grid_size = [nx+1, ny+1]
-        field_size = [nx+2, ny+2]
+        grid_size = workspace.grid_size()
+        field_size = [p+nx+p, p+ny+p]
         stateDim = self.dim
         className = self.className
 
