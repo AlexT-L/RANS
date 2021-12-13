@@ -6,7 +6,7 @@ from Grid import Grid
 from Input import Input
 
         
-class AirfoilMap():
+class AirfoilMap(Grid):
     
     def __init__(self, input):
 
@@ -122,7 +122,8 @@ class AirfoilMap():
         #     jl        = jl  +nbl
         #     call vmesh
 
-      
+    def get_geometry(self):
+        return self.geo
 
 
 
