@@ -6,7 +6,7 @@ from Grid import Grid
 from Input import Input
 
         
-class SqrtGrid():
+class AirfoilMap():
     
     def __init__(self, input):
 
@@ -157,7 +157,7 @@ class SqrtGrid():
 import matplotlib.pyplot as plt 
 input=Input("rae9e-s3.data")
 print("INPUT")
-grid = SqrtGrid(input)
+grid = AirfoilMap(input)
 print("SQRT")
 ver =grid.x
 x=ver[:,:,0]

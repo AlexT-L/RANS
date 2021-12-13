@@ -61,9 +61,9 @@ class NavierStokes(Model):
         bcmodel.bc_all(self, workspace, state)
 
         # calculate residuals
-        eflux_wrap.eflux(self, workspace, w, dw)
-        dflux_wrap.dflux(self, workspace, w, dw, rfil)
-        if self.params.kvis > 0:
+        # eflux_wrap.eflux(self, workspace, w, dw)
+        # dflux_wrap.dflux(self, workspace, w, dw, rfil)
+        if self.params.kvis > 0 and False:
             nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
 
         # copy residuals into output array
@@ -127,12 +127,12 @@ class NavierStokes(Model):
             
 
     def transfer_down(self, workspace1, workspace2):
-        self.__check_vars(workspace)
+        self.__check_vars(workspace1)
+        self.__check_vars(workspace2)
         self.BCmodel.transfer_down(self, workspace1, workspace2)
 
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
-        self.__check_vars(workspace)
         # get field size
         [leni, lenj] = field.size()
         p = self.padding

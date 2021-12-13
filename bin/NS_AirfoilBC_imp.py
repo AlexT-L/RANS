@@ -185,7 +185,7 @@ def update_stability(self, model, workspace, state):
     # c     adaptive time step
     # c
     for j in range(p,ny+p):
-        for i in range_in(2,il):
+        for i in range(p,nx+p):
          dpi       = abs((s[i+1,j]  -2.0*s[i,j]  +s[i-1,j])/ \
                          (s[i+1,j]  +2.0*s[i,j]  +s[i-1,j]  +slim))
          dpj       = abs((s[i,j+1]  -2.0*s[i,j]  +s[i,j-1])/ \
@@ -199,15 +199,15 @@ def update_stability(self, model, workspace, state):
     dtmin = dtl[imin,jmin]
     if not self.local_timestepping:
 
-        for j in range_in(2,jl):
-            for i in range_in(2,il):
+        for j in range(p,ny+p):
+            for i in range(p,nx+p):
                 if (dtl[i,j] <= dtmin):
                     dtmin     = dtl[i,j]
                     imin      = i
                     jmin      = j
 
-        for j in range_in(2,jl):
-            for i in range_in(2,il):
+        for j in range(p,ny+p):
+            for i in range(p,nx+p):
                 rfl[i,j]  = dtmin/dtl[i,j]
 
     # c
@@ -216,7 +216,7 @@ def update_stability(self, model, workspace, state):
     #    11 do j=2,jl
     #       do i=2,il
     for j in range(p,ny+p):
-        for i in range_in(p,nx+p):
+        for i in range(p,nx+p):
             if (iprec != 0):
     # c         rfli[i,j] = math.sqrt(radj[i,j]/radi[i,j])
     # c         rflj[i,j] = math.sqrt(radi[i,j]/radj[i,j])
