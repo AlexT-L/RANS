@@ -1,7 +1,4 @@
-import sys
-sys.path.append("/model_funcs/")
-
-import eflux_fort
+import model_funcs.eflux_fort
 import numpy as np
 from Field import Field
 
