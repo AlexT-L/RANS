@@ -16,26 +16,29 @@ if __name__ == '__main__':
 
     # # Testing fields
     # field = Field([12,8],4)
-    # field2 = Field([6,4],4)
+    # field2 = Field([6,4],1)
     # weights = Field([12,8],4)
-    # print(field.vals)
+    # # print(field.vals)
 
-    # print(field.shape())
+    # field2[0:4,0,0] = 4
+    # print(field2.vals)
 
-    # print("sum")
-    # print(sum(sum(field[0:2,0:2,0])))
+    # # print(field.shape())
+
+    # # print("sum")
+    # # print(sum(sum(field[0:2,0:2,0])))
 
     # for z in range(4):
-    #     field[0:12,0:8,z] = 3
-    #     weights[0:12,0:8,z] = 2
+    #     field[0,0:8,z] = 3
+    #     weights[0:12,0,z] = 2
     
     # print(field.vals)
 
     # print(field.shape())
 
-    # con.conservative4way(field, field2, weights)
+    # # con.conservative4way(field, field2, weights)
 
-    # print(field2.vals)
+    # # print(field2.vals)
 
     # # print(field.vals)
 
@@ -59,7 +62,11 @@ if __name__ == '__main__':
     grid = AirfoilMap(input)
     workspace = CellCenterWS(grid)
 
-    print(grid.vol.vals)
+    vol = grid.vol
+    for i in range(vol.size()[0]):
+        for j in range(vol.size()[1]):
+            vol[i,j] = 1
+
 
     # create physics objects
     modelInput = input.add_dicts(input.flo_param, input.solv_param)

@@ -7,7 +7,7 @@ class Field:
         self.dims = field_size
         nx = field_size[0]
         ny = field_size[1]
-        full_dim = (stateDim, nx, ny)
+        full_dim = (nx, ny, stateDim)
         self.vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
 
     # Allow fields to be indexed like numpy arrays
@@ -17,7 +17,7 @@ class Field:
         z = 0
         if len(indx) == 3:
             z = indx[2]
-        indx = (z, x, y)
+        indx = (x, y, z)
         return self.vals[indx]
 
     # Allow fields values to be set
@@ -27,7 +27,7 @@ class Field:
         z = 0
         if len(indx) == 3:
             z = indx[2]
-        indx = (z, x, y)
+        indx = (x, y, z)
         self.vals[indx] = value
     
     def set_val(self, new_vals):
@@ -42,13 +42,13 @@ class Field:
     # size of field
     def size(self):
         vals = self.vals
-        return vals.shape[1:3]
+        return vals.shape[0:2]
 
     # size of field
     def shape(self):
         vals = self.vals
         shape = vals.shape
-        return (shape[1], shape[2], shape[0])
+        return (shape[0], shape[1], shape[2])
 
 
 #############################
