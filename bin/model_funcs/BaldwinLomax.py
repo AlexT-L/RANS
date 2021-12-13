@@ -1,17 +1,13 @@
 import numpy as np
-from Grid import Grid
+# from Grid import Grid
 
 # class BaldwinLomax():
 def turbulent_viscosity(params, dims):
     # from subroutine turb2.f
-
-    #  **********************************************************************
-    #  *   baldwin-lomax turbulence model:  modtur = 2                      *
-    #  *                                                                    *
-    #  *   calculates turbulent viscosity at the cell faces and then        *
-    #  *   averages to obtain cell center values                            *
-    #  *   fully vectorized routine                                         *
-    #  **********************************************************************
+    
+    # baldwin-lomax turbulence model:  modtur = 2
+    # calculates turbulent viscosity at the cell faces and then
+    # averages to obtain cell center values fully vectorized routine                                         *
 
     # "uses:" 
     # dims, flo_var, solv_var, mesh_var, psm_var, flo_param, solv_param
@@ -25,8 +21,7 @@ def turbulent_viscosity(params, dims):
     re = params['re']
     ncyc = params['ncyc']
     rev = params['rev']
-    # cmesh = params['cmesh'] # doesn't seem to appear anywhere other than here?
-    # ncyci1 = params['ncyci1'] # also doesn't seem to appear anywhere other than here
+
     il = dims['il']
     jl = dims['jl']
     itl = params['itl']
@@ -34,8 +29,7 @@ def turbulent_viscosity(params, dims):
     x = params['x']
     w = params['w']
     p = params['p']
-    # w = grid.w
-    # p = grid.p
+
     xtran = params['xtran'] # needs to be from flo_param
 
     vol = params['vol'] # new
@@ -44,7 +38,7 @@ def turbulent_viscosity(params, dims):
 
     # initializing, defined later
     uedge = []
-    dim_var = 100
+    dim_var = 500
     tauw = np.ones(dim_var)
     yscal = np.ones(dim_var)
     scalf = np.ones(dim_var)
@@ -268,7 +262,7 @@ def turbulent_viscosity(params, dims):
 
     for i in range(1,il):
         ylen1     = 0.5* ylen[i,1]
-        for j in range(0,round(jstop)):
+        for j in range(0,int(np.floor(jstop))):
             y1        = yscal[i]* ylen[i,j]
             damp      = 1.0- np.exp(-y1)
             yvor[j]   = ylen[i,j]* vor[i,j]* damp
@@ -285,7 +279,7 @@ def turbulent_viscosity(params, dims):
         yvorm[i]  = max(yvor[jmaxyv],1.e-6)
         ylenm[i]  = max(ylen[i,jmaxyv],ylen1)
 
-        if (jedge[i] < round(jstop)):
+        if (jedge[i] < int(np.floor(jstop))):
             ylenm1  = ylenm[i]
 
         if (ncyc>=10 or restarr==1.0):
@@ -314,7 +308,7 @@ def turbulent_viscosity(params, dims):
     for i in range(1,il): #start of outer i loop #####################
         udiff     = abs(utmax[i]- utmin[i])
         udiff1    = cwk1* udiff
-        for j in range(1,round(jstop)): # loop 60
+        for j in range(1,int(np.floor(jstop))): # loop 60
             ravg[j]   = 0.5* (w[i,j,0]+ w[i,j+1,0])
             coeff     = 0.0168* ccp
             fwake1    = coeff* yvorm[i]* ylenm[i]
@@ -333,7 +327,7 @@ def turbulent_viscosity(params, dims):
         # *   compute inner eddy viscosity                                     *
         # **********************************************************************
 
-        for j in range(1,round(jstop)): # loop 70
+        for j in range(1,int(np.floor(jstop))): # loop 70
             y1        = yscal[i]* ylen[i,j]
             damp      = 1.0- np.exp(-y1)
             tscali    = 0.4* ylen[i,j]* damp
@@ -353,7 +347,7 @@ def turbulent_viscosity(params, dims):
         if (ivect == 0): # start of big if statement
             icross    = 0
             amut[i,0] = amuti[0]
-            for j in range(1,round(jstop)): # loop 75
+            for j in range(1,int(np.floor(jstop))): # loop 75
                 if (amuti[j]<=amuto[j] and icross==0): # nested if
                     amut[i,j] = amuti[j]
                 else:
@@ -363,8 +357,8 @@ def turbulent_viscosity(params, dims):
             # end loop 75
         else: # else from the big if statement
             amut[i,0] = amuti[0]
-            ystop     = round(jstop)
-            for j in range(0,round(jstop)): # loop 80
+            ystop     = int(np.floor(jstop))
+            for j in range(0,int(np.floor(jstop))): # loop 80
                 amudif    = amuti[j]- amuto[j]
                 if (amudif >= 0): # if statement instead of cvmgp function
                     fcros[j] = j
@@ -380,7 +374,7 @@ def turbulent_viscosity(params, dims):
                 amut[i,j] = amuti[j]
             # end loop 90
     
-            for j in range(jcros-1,round(jstop)): # loop 100
+            for j in range(jcros-1,int(np.floor(jstop))): # loop 100
                 amut[i,j] = amuto[j]
             # end loop 100
         # end of big if statement
@@ -389,15 +383,15 @@ def turbulent_viscosity(params, dims):
         # *   compute turbulent viscosity at cell center                       *
         # **********************************************************************
 
-        for j in range(1,round(jstop)):
+        for j in range(1,int(np.floor(jstop))):
             amutc     = 0.5* (amut[i,j]+ amut[i,j-1])
             amu[i,j]  = amutc
 
-        for j in range(1,round(jstop)):
+        for j in range(1,int(np.floor(jstop))):
             amut[i,j] = amu[i,j]
 
         if (i>itr1 and i<=itr2):
-            for j in range(1,round(jstop)):
+            for j in range(1,int(np.floor(jstop))):
                 amut[i,j] = 0.
 
 # **********************************************************************
@@ -426,8 +420,9 @@ def turbulent_viscosity(params, dims):
     for j in range(0,je):
         for i in range(0,ie):
             rev[i,j]  = scale*amut[i,j]
+    print('test BL')
 
-    print(np.mean(rev))
+    # print(np.mean(rev))
     return
 
     # 'return' statement here in turb2. So with current implementation, would end after this
@@ -520,7 +515,7 @@ def turbulent_viscosity(params, dims):
 # 880 format(1h ,5x,i5,7f12.4)
 #     end
 
-dim_var = 100
+dim_var = 500
 params = {
   "ie": dim_var,
   "je": dim_var,
@@ -530,8 +525,6 @@ params = {
   "re": 1,
   "ncyc": dim_var,
   "rev": np.ones((dim_var,dim_var)),
-  "cmesh": 1,
-  "ncyci1": -1,
   "itl": dim_var, 
   "itu": dim_var,
   "x": np.ones((dim_var,dim_var,3)),
@@ -547,4 +540,4 @@ dims = {
     "jl": dim_var - 1,
 }
 
-turbulent_viscosity(params, dims)
+# turbulent_viscosity(params, dims)

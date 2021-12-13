@@ -2,17 +2,19 @@
 # oversimplified version of Grid class just for now
 # so I can write other stuff
 
+from abc import ABC, abstractmethod
 import numpy as np
 from Field import Field
 
-class Grid:
+class Grid(ABC):
     
-    def __init__(self, input):
+    # Test Constructor --> ignore
+    """ def __init__(self, input):
 
         # let Grid contain the variables in dims.f
         dims = input.dims        
-        nx = dims['nx']
-        ny = dims['ny']
+        nx = input['nx']
+        ny = in['ny']
         
         # defining things to be consistent with gmesh.f
         self.nx = nx
@@ -44,7 +46,14 @@ class Grid:
         self.Vol = Field(self.get_size())
         self.PorJ = Field(self.get_size())
         self.PorI = Field(self.get_size())
-        self.Fint = Field(self.get_size())
+        self.Fint = Field(self.get_size()) """
 
+    # get number of vertices
     def get_size(self):
-        return [self.ib, self.jb]
+        pass
+
+    def get_volume(self, i, j):
+        pass
+
+    def get_geometry(self):
+        return self.geo

@@ -1,38 +1,164 @@
+from os import stat
 import numpy as np
 
 class Field:
 
-    def __init__(self, grid_size, stateDim=1):
-        grid_size.append(stateDim)
-        self.dims = grid_size
-        self.vals = np.ones(grid_size, order = 'F') # set fortran ordering for f2py
+    def __init__(self, field_size, stateDim=1):
+        self.dims = field_size
+        nx = field_size[0]
+        ny = field_size[1]
+        full_dim = (stateDim, nx, ny)
+        self.vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
 
     # Allow fields to be indexed like numpy arrays
-    def __getitem__(self,indx): 
+    def __getitem__(self,indx):
+        x = indx[0]
+        y = indx[1]
+        z = 0
+        if len(indx) == 3:
+            z = indx[2]
+        indx = (z, x, y)
         return self.vals[indx]
+
+    # Allow fields values to be set
+    def __setitem__(self,indx,value):
+        x = indx[0]
+        y = indx[1]
+        z = 0
+        if len(indx) == 3:
+            z = indx[2]
+        indx = (z, x, y)
+        self.vals[indx] = value
     
-    def set_init_vals(self, vals):
-        self.vals = vals
+    def set_val(self, new_vals):
+        if np.shape(new_vals) != np.shape(self.vals):
+            raise ValueError('Dimensions of field do not match expected dimensions')
+        self.vals = np.array(new_vals, order = 'F')  # make new fortran ordered array  
+    
+    # return underlying implementation of field values
+    def get_vals(self):
+        return self.vals
+
+    # size of field
+    def size(self):
+        vals = self.vals
+        return vals.shape[1:3]
+
+    # size of field
+    def shape(self):
+        vals = self.vals
+        shape = vals.shape
+        return (shape[1], shape[2], shape[0])
 
 
 #############################
 #       Math Methods        #
 #############################
 
-    def storeSum(self, var1, var2):
-        pass
+# for store methods, would be ideal if var1 and/or var2 could be individual values (not a field)
 
-    def storeDifference(self, var1, var2):
-        pass
+    # store the sum of var1 and var2 in self
+    def store_sum(self, var1, var2):
+        [nx, ny, nz] = self.shape()
 
-    def storeProduct(self, var1, var2):
-        pass
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    if isinstance(var1, Field):
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1[i,j,k] + var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1[i,j,k] + var2
+                    else:
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1 + var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1 + var2
 
-    def copyTo(self, copy):
-        pass
+    # store the difference (var1 - var2) in self
+    def store_difference(self, var1, var2):
+        [nx, ny, nz] = self.shape()
 
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    if isinstance(var1, Field):
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1[i,j,k] - var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1[i,j,k] - var2
+                    else:
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1 - var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1 - var2
+
+    # store the elementwise product of var1 and var2 in self
+    def store_product(self, var1, var2):
+        [nx, ny, nz] = self.shape()
+
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    if isinstance(var1, Field):
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1[i,j,k] * var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1[i,j,k] * var2
+                    else:
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1 * var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1 * var2
+
+    # store the elementwise quotient (var1/var2) in self
+    def store_quotient(self, var1, var2):
+        [nx, ny, nz] = self.shape()
+
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    if isinstance(var1, Field):
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1[i,j,k] / var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1[i,j,k] / var2
+                    else:
+                        if isinstance(var2, Field):
+                            self[i,j,k] = var1 / var2[i,j,k]
+                        else:
+                            self[i,j,k] = var1 / var2
+
+    # elementwise copy self into copy
+    def copy_to(self, copy):
+        [nx, ny, nz] = self.shape()
+
+        for i in range(nx):
+            for j in range(ny):
+                for k in range(nz):
+                    copy[i,j,k] = self[i,j,k]
+
+    # elementwise copy self into copy
+    def copy_from(self, source):
+        [nx, ny, nz] = self.shape()
+
+        TWO_D = False
+        if isinstance(source, np.ndarray):
+            if len(source.shape) == 2:
+                TWO_D = True
+
+        for i in range(nx):
+            for j in range(ny):
+                if TWO_D:
+                    self[i,j] = source[i,j]
+                else:
+                    for k in range(nz):
+                        self[i,j,k] = source[i,j,k]
+
+
+    # elementwise multiply self by k (could be field or scalar)
     def scale(self, k):
-        pass
+        self.store_product(self, k)
 
 
 

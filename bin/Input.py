@@ -21,7 +21,7 @@ import pandas as pd
 #
 #               cflf      = the courant number for the time step on the fine mesh
 #                           (cflf<0 selects the use of a variable local step)
-#               cflim     = ?
+#               cflim     = scaling factor for cfl when smoothing with psmoo
 #               bc        = optional  far field boundary conditions
 #               vis2      = the coefficient for the adaptive dissipation
 #               vis4      = the coefficient for the background dissipation
@@ -39,10 +39,10 @@ import pandas as pd
 #               ksmoop    = 1. for residual averaging at all stages
 #               ksmoop    = -1. for residual averaging at alternate stages
 #               vt        = local time step (1=same local step, 0=variable local step)
-#               iprec     = ?
-#               epsf      = ?
-#               epsc      = ?
-#               diag      = ?
+#               iprec     = turns on gauss-seidel preconditioner (psgs) when not zero
+#               epsf      = eps for fine meshes (eps is used by psgs)
+#               epsc      = eps for coarse meshes (eps is used by psgs)
+#               diag      = ? (literally not used)
 #               cflc      = the courant number for time steps on the coarse meshes
 #               hmc       = the enthalpy damping factor for the coarse meshes
 #               fbc         controls the far field boundary condition
@@ -78,7 +78,7 @@ import pandas as pd
 #               rho0      = density of free-stream
 #               p0        = pressure of the free-stream
 #               c0        = speed of sound for the the free-stream
-#               ei0       = ???
+#               ei0       = ? (never used)
 #               u0        = x-velocity for the free-stream
 #               v0        = y-velocity for the free-stream
 #               h0        = enthalpy for the free-stream
@@ -109,6 +109,7 @@ import pandas as pd
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space
+
 class Input:
 
     dim_p=[["nx","ny"]]
@@ -181,15 +182,16 @@ class Input:
         v0 = flo["v0"]    = rm*c0*sa
         h0 = flo["h0"]    = gamma*ei0  +.5*(u0*u0  +v0*v0)
         mu_air= 1.461e-06 #kinematic viscosity of air at sea-level at STP
-        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3)
+        mu0 = flo["mu0"]  = mu_air*((t0)**(3/2))/(t0+110.3) # sutherlands law
 
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
         geo=self.geo_param
-        geo["nn"]=geo["nu"] + geo["nl"] -1
+        geo["nn"]=int(geo["nu"] + geo["nl"] -1)
 
         #airfoil coordinated (in_var)
-        self.update_geom(self.df,self.in_var,self.in_v,32)
+        self.update_geom(self.df,self.in_var,self.in_v,33)#starting a line late to remove duplicate (0.0,0.0) point 
+                                                          #in upper and lower surface
 
 
     #Methods
@@ -229,20 +231,26 @@ class Input:
         no_nan_r=np.array(df.count(axis=1))
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
-            upper=np.array(df.iloc[strt_row:96,i])
-            lower=np.array(df.iloc[98:162,i])
-            dict[params[i]]=np.concatenate((upper,lower),axis=0)
+            upper=np.array(df.iloc[strt_row:97,i])
+            lower=np.array(df.iloc[98:163,i])#starting at 99 and not 98 to remove duplicate point of leading edge
+            lower=lower[::-1]#flip order of lower array
+            dict[params[i]]=np.concatenate((lower,upper),axis=0)
+            #NOTE: 1)IN XN AND YN LOWER SURFACE COMES BEFORE UPPER SURFACE
+            #      2) THE ORDER OF THE LOWER SURFACE IS FLIPPED
+            #         THIS IS SO THAT X-ARRAY IS STRICTLY INCREASING
+            #         WHEN FITTING A CUBIC SPLINE TO THE AERFOIL DATA MAPPED 
+            #         IN THE COMPUTATIONAL DOMAIN THE FINAL ORDER IS (LOWER[LAST:FIRST],UPPER[SECOND:LAST])
         return
 
     def add_dicts(self,dict1,dict2):
         sum_dict= {**dict1, **dict2}
-        return sum
+        return sum_dict
      
 
     
 
     
-##plot airfoil
+# #plot airfoil
 # import matplotlib.pyplot as plt
 
 # input=Input("rae9e-s3.data")

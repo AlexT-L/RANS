@@ -1,15 +1,13 @@
-from abc import ABC, abstractmethod
-from Input import Input
 
-class Integrator(ABC):
+from abc import abstractmethod
+from ws_class import WorkspaceClass
+
+class Integrator(WorkspaceClass):
     
-    def __init__(self, input):
-
+    @abstractmethod
+    def __init__(self, model, input):
         pass
     
     @abstractmethod
-    def do_thing(self):
+    def step(self, workspace, state, forcing):
         pass
-
-
-    
