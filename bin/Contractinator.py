@@ -1,34 +1,73 @@
 import numpy as np
-import Field
+import Field as Field
 
-def sum4way(fine, coarse, weights=np.ones(4)):
+def sum4way(fine, coarse):
     # Combines fine grid by summing over 4 blocks 
-    if type(fine) != Field or type(coarse) != Field:
-        raise TypeError('Fine or coarse field is not a field')
-    
-    if len(weights) != 4:
-        raise ValueError('Weights not of length 4, is: '+len(weights))
+    # if not isinstance(fine, Field) or not isinstance(coarse, Field):
+        # raise TypeError('Fine or coarse field is not a field')
     
     # Check that fine grid is divisible by 2 in both dims
-    x_dim = np.shape(fine)[0]
-    y_dim = np.shape(fine)[1]
-    if (x_dim % 2) == 1 or (y_dim % 2) == 1:
+    x_fine = fine.size()[0]
+    y_fine = fine.size()[1]
+    if (x_fine % 2) == 1 or (y_fine % 2) == 1:
         raise ValueError('Fine field dimensions do not allow for 4 way sum')
 
     # Check that dimensions of coarse grid are half of fine grid
-    x_coarse = np.shape(fine)[0]
-    y_coarse = np.shape(fine)[1]
-    if (x_dim / 2) != x_coarse or (y_dim / 2) != y_coarse:
+    x_coarse = coarse.size()[0]
+    y_coarse = coarse.size()[1]
+    if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
         raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
-    newField = np.zeros(np.shape(coarse), order='F')
-    for x in range(x_coarse):
-        for y in range(y_coarse):
-            flat = fine[2*x:2*x+1,2*y:2*y+1].flatten() # Pick 4 cells around new center
-            newField[x, y] = np.sum(flat * weights) / sum(weights) # Multiply by weights and sum
+    shape = coarse.shape()
+    dim = shape[0]
+
+    ic = 0
+    for i in range(0,x_fine,2):
+        jc = 0
+        for j in range(0,y_fine,2):
+            for k in range(dim):
+                print("i,j,k")
+                print([ic,jc,k])
+                coarse[ic, jc, k] = sum(sum(fine[i:i+2,j:j+2,k]))
+            jc += 1
+        ic += 1
             
-    coarse.set_val(newField)
 
+def conservative4way(fine, coarse, weights):
+    # Combines fine grid by summing over 4 blocks 
+    # if not isinstance(fine, Field) or not isinstance(coarse, Field):
+    #     raise TypeError('Fine or coarse field is not a field')
+    
+    # Check that fine grid is divisible by 2 in both dims
+    x_fine = fine.size()[0]
+    y_fine = fine.size()[1]
+    if (x_fine % 2) == 1 or (y_fine % 2) == 1:
+        raise ValueError('Fine field dimensions do not allow for 4 way sum')
 
-def conservative4way():
-    pass
+    # Check that dimensions of coarse grid are half of fine grid
+    x_coarse = coarse.size()[0]
+    y_coarse = coarse.size()[1]
+    if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
+        raise ValueError('Coarse grid size different from expected reduction from fine grid')
+    
+    shape = coarse.shape()
+    dim = shape[0]
+
+    ic = 0
+    for i in range(0,x_fine,2):
+        jc = 0
+        for j in range(0,y_fine,2):
+            for k in range(dim):
+                coarse[ic, jc, k] = __weighted_sum(fine[i:i+2,j:j+2,k], weights[i:i+2,j:j+2,k]) / sum(sum(weights[i:i+2,j:j+2,k]))
+            jc += 1
+        ic += 1
+            
+
+def __weighted_sum(field1, field2):
+
+    sum = 0
+    for i in range(2):
+        for j in range(2):
+            sum += field1[i,j]*field2[i,j]
+
+    return sum

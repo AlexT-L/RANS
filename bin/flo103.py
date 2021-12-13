@@ -1,36 +1,52 @@
+import numpy as np
 from numpy.core.numeric import Infinity
-import Input, AirfoilMap, NavierStokes, MultiGrid, CellCenterWS
 from Field import Field
-import flo103_PostProcessor, flo103_ConvergenceChecker
+from Input import Input
+from flo103_PostProcessor import flo103_PostProcessor
+from flo103_ConvergenceChecker import flo103_ConvergenceChecker
 from ImplicitEuler import ImplicitEuler
 from NS_AirfoilBC import NS_AirfoilBC
+from AirfoilMap import AirfoilMap
+from CellCenterWS import CellCenterWS
+from NavierStokes import NavierStokes
+from MultiGrid import MultiGrid
 
 if __name__ == '__main__':
+
+    # # Testing fields
+    # field = Field([6,8],4)
+    # print(field.vals)
+
+    # for z in range(4):
+    #     field[1,2,z] = 3
+    
+    # print(field.vals)
+
+    # print(field.shape())
+
+    # exit()
+
+
+
+
     # Comment later
-    filename = 'data.dat'
+    filename = 'rae9-s1.data'
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
 
     # read in input
     input = Input(filename) # Will actually take all command line inputs
-    print("read input")
 
     # create geometry objects
-    grid = AirfoilMap(input.grid)
-    print("created grid")
+    grid = AirfoilMap(input)
     workspace = CellCenterWS(grid)
-    print("created workspace")
 
     # create physics objects
     modelInput = input.add_dicts(input.flo_param, input.solv_param)
-    print("made model input")
-    bcmodel = NS_AirfoilBC(input)
-    print("created bcmodel")
+    bcmodel = NS_AirfoilBC(modelInput)
     model = NavierStokes(bcmodel, modelInput)
-    print("created model")
     integrator = ImplicitEuler(model, input.solv_param)
-    print("created integrator")
 
     # create multigrid cycle objects
     mg = MultiGrid(workspace, model, integrator, input.solv_param)
@@ -48,7 +64,7 @@ if __name__ == '__main__':
     resid = Field(field_size, stateDim)
 
     # get initial state
-    mg.get_solution(state)
+    mg.solution(state)
 
     # enforce cfl < 10 on first few cycles
     model.update_cfl_limit(10.0)
@@ -69,8 +85,8 @@ if __name__ == '__main__':
         mg.performCycle()
 
         # get the new state and residuals
-        mg.get_solution(state)
-        mg.get_residuals(resid)
+        mg.solution(state)
+        mg.residuals(resid)
 
         # output the convergence
 #        post.print_convergence(resid)
@@ -79,7 +95,6 @@ if __name__ == '__main__':
         CONVERGED = watcher.is_converged(resid)
         
     
-
     # print results
 #    post.print_solution(state)
     

@@ -1,39 +1,39 @@
 from numpy.core.fromnumeric import mean
-import bcfar_fort, bcwall_fort, halo_fort, math
+# import bcfar_fort, bcwall_fort, halo_fort, math
 from Field import Field
 
 def init_state(self, model, workspace, state):
-    field_size = workspace.field_size()
-    stateDim = self.dim
-    state = Field(field_size, stateDim)
 
     p = workspace.get_field("p", model.className)
 
     # set initial values
-    rho0 = model.params.rho0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    h0 = model.params.h0
-    p0 = model.params.p0
+    rho0 = model.params['rho0']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    h0 = model.params['h0']
+    p0 = model.params['p0']
 
     [lenx, leny] = p.size()
     for i in range(lenx):
         for j in range(leny):
-            state[i,j,1] = rho0
-            state[i,j,2] = rho0 * u0
-            state[i,j,3] = rho0 * v0
-            state[i,j,4] = rho0 * h0 - p0
+            # print("i,j")
+            # print([i,j])
+            state[i,j,0] = rho0
+            state[i,j,1] = rho0 * u0
+            state[i,j,2] = rho0 * v0
+            state[i,j,3] = rho0 * h0 - p0
             p[i,j]       = p0
 
 # set porosity
 def set_porosity(self, workspace):
     # get relevant geometry parameters
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
     il = nx+1
     jl = ny+1
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
 
     # get porosity
     pori = workspace.get_field("pori", self.className)
@@ -77,6 +77,7 @@ def update_stability(self, model, workspace, state):
 
     # get relevant geometry parameters
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
     il = nx+1
     jl = ny+1
@@ -84,26 +85,26 @@ def update_stability(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
 
     # flo_param
-    gamma = model.params.gamma
-    rm = model.params.rm
-    rho0 = model.params.rho0
-    p0 = model.params.p0
-    h0 = model.params.h0
-    c0 = model.params.c0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    ca = model.params.ca
-    sa = model.params.sa
-    re = model.params.re
-    prn = model.params.prn
-    prt = model.params.prt
-    adis = model.params.adis
+    gamma = model.params['gamma']
+    rm = model.params['rm']
+    rho0 = model.params['rho0']
+    p0 = model.params['p0']
+    h0 = model.params['h0']
+    c0 = model.params['co']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    ca = model.params['ca']
+    sa = model.params['sa']
+    re = model.params['re']
+    prn = model.params['prn']
+    prt = model.params['prt']
+    adis = model.params['adis']
     cfl = model.cfl
-    kvis = model.params.kvis
+    kvis = model.params['kvis']
 
     # retrieve working arrays from model
     def get(varName):
@@ -327,6 +328,7 @@ def bc_far(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -336,8 +338,8 @@ def bc_far(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -358,24 +360,24 @@ def bc_far(self, model, workspace, state):
     cf = cf.get_vals()
     
     # flo_param
-    gamma = model.params.gamma
-    rm = model.params.rm
-    rho0 = model.params.rho0
-    p0 = model.params.p0
-    h0 = model.params.h0
-    c0 = model.params.c0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    ca = model.params.ca
-    sa = model.params.sa
-    re = model.params.re
-    prn = model.params.prn
-    prt = model.params.prt
-    scal = geom.scal
-    chord = geom.chord
-    xm = geom.xm
-    ym = geom.ym
-    kvis = model.params.kvis
+    gamma = model.params['gamma']
+    rm = model.params['rm']
+    rho0 = model.params['rho0']
+    p0 = model.params['p0']
+    h0 = model.params['h0']
+    c0 = model.params['co']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    ca = model.params['ca']
+    sa = model.params['sa']
+    re = model.params['re']
+    prn = model.params['prn']
+    prt = model.params['prt']
+    scal = geom['scal']
+    chord = geom['chord']
+    xm = geom['xm']
+    ym = geom['ym']
+    kvis = model.params['kvis']
     
     # solv_param
     bc = self.bc
@@ -385,13 +387,13 @@ def bc_far(self, model, workspace, state):
     if workspace.is_finest():
         mode = 0
     
-    bcfar_fort.bcfar(il, jl, ie, je, itl+1, itu+1,
-                        w, p, rlv, rev,
-                        x, xc, 
-                        cp, cf,
-                        gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,ym,kvis,
-                        bc,
-                        mode)
+    # bcfar_fort.bcfar(il, jl, ie, je, itl+1, itu+1,
+    #                     w, p, rlv, rev,
+    #                     x, xc, 
+    #                     cp, cf,
+    #                     gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,ym,kvis,
+    #                     bc,
+    #                     mode)
 
 
 def bc_wall(self, model, workspace, state):
@@ -401,6 +403,7 @@ def bc_wall(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -410,8 +413,8 @@ def bc_wall(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -423,18 +426,18 @@ def bc_wall(self, model, workspace, state):
     x = coords.get_vals()
     
     # flo_param
-    rm = model.params.rm
-    sa = model.params.sa
-    kvis = model.params.kvis
+    rm = model.params['rm']
+    sa = model.params['sa']
+    kvis = model.params['kvis']
     
     # solv_param
     isym = geom.isym
     
-    bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
-                        w, p, rev,
-                        x,
-                        rm, sa, kvis,
-                        isym)
+    # bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
+    #                     w, p, rev,
+    #                     x,
+    #                     rm, sa, kvis,
+    #                     isym)
 
 
 def halo(self, model, workspace, state):
@@ -444,6 +447,7 @@ def halo(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -453,8 +457,8 @@ def halo(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -465,9 +469,9 @@ def halo(self, model, workspace, state):
     x = coords.get_vals()
     vol = get("vol").get_vals()
     
-    halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
-            w, p,
-            x, vol)
+    # halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
+    #         w, p,
+    #         x, vol)
 
 
 def transfer_down(self, model, workspace1, workspace2):
@@ -493,7 +497,7 @@ def transfer_down(self, model, workspace1, workspace2):
     nyc = ny/ratio
 
     # parameters
-    kvis = model.params.kvis
+    kvis = model.params['kvis']
 
     #     if (kvis.gt.0) then
     # c

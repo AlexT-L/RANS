@@ -55,6 +55,5 @@ class Grid(ABC):
     def get_volume(self, i, j):
         pass
 
-    @abstractmethod
     def get_geometry(self):
-        pass
+        return self.geo

@@ -36,15 +36,6 @@ class BoundaryConditioner(WorkspaceClass):
     def bc_all(self, model, workspace, state):
         pass
 
-    # Get porosity
-    def get_pori(self, workspace):
-        self.__check_vars(workspace)
-        return workspace.get_field("pori", self.className)
-
-    def get_porj(self, workspace):
-        self.__check_vars(workspace)
-        return workspace.get_field("pori", self.className)
-
     # Transfer information between workspaces
     @abstractmethod
     def transfer_down(self, model, workspace1, workspace2):

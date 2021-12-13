@@ -1,9 +1,9 @@
 import numpy as np
-import math
-from math import fmod as mod
 import Expandinator as expand
 import Contractinator as contract
-import Model, Grid, Field, Cycle
+from Grid import Grid
+from Field import Field
+from Cycle import Cycle
 from Workspace import Workspace
 from integrator import Integrator
 
@@ -13,8 +13,8 @@ class MultiGrid:
     # Constructor
     def __init__(self, workspace, model, integrator, input):
         # Parameters
-        self.stabilityUpdateFrequency = input.ftim
-        self.wr_relax = input.fcoll
+        self.stabilityUpdateFrequency = input['ftim']
+        self.wr_relax = input['fcoll']
 
         # counter variable
         self.num_cycles = 0
@@ -26,7 +26,7 @@ class MultiGrid:
 
         # Number of Cycles
         n_levels = self.cycle.levels
-        stateDim = self.Model.dim()
+        stateDim = model.dim()
 
         # Direct storage of variables
         self.Workspaces   = [None] * n_levels
@@ -46,11 +46,11 @@ class MultiGrid:
         
         # initialize state variables
         for l in range(n_levels):
-            grid = self.Grids[l]
-            gridSize = grid.get_size()
+            workspace = self.Workspaces[l]
+            field_size = workspace.field_size()
 
             def newStateField():
-                return Field(gridSize, stateDim)
+                return Field(field_size, stateDim)
 
             self.W[l]         = newStateField()
             self.W1st[l]      = newStateField()
@@ -64,7 +64,7 @@ class MultiGrid:
 
     # perform one iteration of the given cycle
     def performCycle(self):
-        n_levels = self.cycle.levels()
+        n_levels = self.cycle.levels
         model = self.Model
         integrator = self.Integrator
         cycleIndex = self.num_cycles + 1
@@ -108,13 +108,15 @@ class MultiGrid:
 
             if dir < 0: # go down a level
                 # Transfer state and residuals (fluxes) down to coarse mesh
-                contract.conservative4way(self.W[prev], self.Grids[prev], w)
+                grid = workspace.get_grid()
+                vol = grid.vol
+                contract.conservative4way(self.W[prev], w, vol)
                 contract.sum4way(self.Fluxes[prev], wr)
                 wr.scale(self.wr_relax)
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
-                    w.copyTo(w1)
+                    w.copy_to(w1)
 
                 # Check if stability needs to be updated
                 if UPDATE_STABILITY:
