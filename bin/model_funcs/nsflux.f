@@ -1,9 +1,9 @@
-      subroutine nsflux(il,jl,ie,je,
+      subroutine nsflux(il,jl,ie,je,ib,jb,
      & w,p,rlv,rev,
      & x,xc,
      & vw,
      & gamma,rm,scal,re,chord,prn,prt,
-     & mode, rfil)
+     & rfil)
 c     
 c     arg list above is:
 c     dims
@@ -46,30 +46,26 @@ c     input variables
 c
 c     ******************************************************************
 c     from dims
-      integer, intent(in) :: il,jl,ie,je
-      integer, intent(in) :: itl, itu
+      integer, intent(in) :: il,jl,ie,je,ib,jb
+c      integer, intent(in) :: itl, itu
 
 
-c     from flo_var
-      real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:) :: p
-      real(8), intent(inout), dimension(:,:) :: rlv, rev
+c     from flo_var (all zero indexed)
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: w
+      real(8), intent(inout), dimension(0:ib,0:jb) :: p
+      real(8), intent(inout), dimension(0:ib,0:jb) :: rlv, rev
 
 c     from mesh_var
-      real(8), intent(inout), dimension(:,:,:) :: x, xc
+      real(8), intent(inout), dimension(0:ib,0:jb,2) :: x, xc
 
-c     from solv_var
-      real(8), intent(inout), dimension(:,:,:) :: vw
+c     from solv_var (zero indexed)
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: vw
 
 c     from flo_param
       real(8), intent(in) :: gamma,rm,scal,re,chord,prn,prt
 
 c     from solv_param
       real(8), intent(in)     :: rfil
-
-c     from mg_param
-      integer, intent(in)   :: mode
-
 
 
 c     ******************************************************************
