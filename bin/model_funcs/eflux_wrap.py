@@ -11,15 +11,19 @@ from Field import Field
 # fortran module
 import eflux_fort 
 
-def eflux(model,ws,w,dw):
+def eflux(self,ws,w,dw):
+
+    G = ws.grid
+    il = G.dims['il']
+    jl = G.dims['jl']
 
     # calculate convective fluxes given a workspace
     def get(varName):
-        return ws.get_field(varName, model.className)
+        return ws.get_field(varName, self.className)
     porJ = get('porJ') # porosity
     P = get('p') # pressure
-    x = ws.x()
+    x = ws.get_field('x')
 
     # residuals returned in Field dw
-    eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porJ.vals)
+    eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porJ.vals,il,jl)
 

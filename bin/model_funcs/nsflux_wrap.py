@@ -37,8 +37,8 @@ def nsflux(self,ws,w,vw,rfil):
     #w = ws.get('w',self.className) # state
 
     # mesh related vars
-    x = ws.getField['x'] # mesh vertices
-    xc = ws.getField['xc'] # mesh centers
+    x = ws.get_field('x') # mesh vertices
+    xc = ws.get_field('xc') # mesh centers
 
     # residuals returned in Field vw
     nsflux_fort.nsflux(il, jl, ie, je, \
