@@ -88,6 +88,9 @@ class AirfoilMap(Grid):
 
         #sanghos modification for non-dimensionalization(re-scaling the c-mesh)
         self.sangho()
+
+        #plot mesh
+        self.plot_mesh(self.x)
         
         
 
@@ -96,35 +99,20 @@ class AirfoilMap(Grid):
     from geom_func import geom 
     from mesh_func import mesh
     from sangho_func import sangho
+    from plot_mesh_func import plot_mesh
 
    
     def get_size(self):
          return [self.ib, self.jb]
 
 
-#Plot
-import time
-start=time.time()
-
-input=Input("rae1-s1.data")
-print("INPUT")
-grid = AirfoilMap(input)
-print("SQRT")
-ver =grid.x
-x=ver[:,:,0]
-y=ver[:,:,1]
-x_t=x.T 
-y_t=y.T 
-end=time.time()
-print(end-start)
-
-import matplotlib.pyplot as plt 
-plt.plot(x,y)
-plt.plot(x_t,y_t,linewidth="0.5")
-import numpy as np
-from matplotlib.collections import LineCollection
 
 
-# plt.plot(x,y)
-plt.plot(input.in_var["xn"],input.in_var["yn"],"+")
-plt.show()
+# input=Input("rae1-s1.data")
+# print("INPUT")
+# grid = AirfoilMap(input)
+# print("SQRT")
+
+
+
+
