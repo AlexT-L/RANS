@@ -44,10 +44,13 @@ class SqrtGrid():
         dim["je"]   = int(ny + 2) 
         dim["ib"]   = int(nx + 3)
         dim["jb"]   = int(ny + 3)
+        self.il     = dim["il"]
+        self.jl     = dim["jl"]
         il          = dim["il"]
         jl          = dim["jl"]
         ib          = dim["ib"]
         jb          = dim["jb"]
+
         
 
         # initialize x-y vertex, center,vol and porosity arrays
@@ -67,12 +70,6 @@ class SqrtGrid():
         self.flo_param=input.flo_param
         self.geo_param=input.geo_param
         
-        #set the limits of the outer mesh for a viscous simulation (kvis>1)
-        if kvis > 1:
-            geo["nbl"]= jl/2
-            dim["ny"]   = ny  -geo["nbl"]
-            dim["jl"]   = jl  -geo["nbl"]
-        #geo_var (array of variables required for sqrt mapping)
         
         self.a  = np.array([np.zeros(il),np.zeros(il)])
         self.b0 = np.zeros(jl)
@@ -90,78 +87,44 @@ class SqrtGrid():
         self.mesh()
 
         #sanghos modification for non-dimensionalization(re-scaling the c-mesh)
-        itl         = self.itl
-        itu         = self.itu
-        x           = self.x
-
-        xmax        = self.x[itl,0,0]
-        xmin        = self.x[itl,0,0]
-
-        for i in range(itl-1,itu):
-            xmin       = min(xmin,x[i,1,1])
-
-
-        scal       = xmax  -xmin
-
-        for  i in range(il):
-            for j in range(jl):
-                x[i,j,0]   = x[i,j,0]/scal
-                x[i,j,1]   = x[i,j,1]/scal
+        self.sangho()
+        
         
 
     #class methods
     from coord_strch_func import coord_stretch
     from geom_func import geom 
     from mesh_func import mesh
+    from sangho_func import sangho
 
-        # #insert inner sub-layer for viscous simulations
-        # if kvis > 0:
-        #     jlinv     = jl
-        #     nyinv     = ny
-        #     ny        = ny  +nbl
-        #     jl        = jl  +nbl
-        #     call vmesh
-
-      
+   
+    def get_size(self):
+         return [self.ib, self.jb]
 
 
+#Plot
+import time
+start=time.time()
 
-
-
-
-    #     # it will also contain the variables in mesh_var as members
-    #     # these fields will require a lot more math but I barely 
-    #     # even know how to spell conformal mapping so I leave that to someone else
-
-    #     # rectangular cartesian grid for now
-    #     x_vec = np.linspace(dims['x_bound'][0], dims['x_bound'][1], self.ib)
-    #     y_vec = np.linspace(dims['y_bound'][0], dims['y_bound'][1], self.jb)
-    #     xg, yg = np.meshgrid(x_vec, y_vec)
-        
-    #     # physical vertex locations
-    #     self.X = Field(self.get_size(), stateDim=2) 
-    #     self.X.vals[:,:,0] = xg.T
-    #     self.X.vals[:,:,1] = yg.T
-
-    #     # cell volumes, porosity, and far field mask
-    #     self.Vol = Field(self.get_size())
-    #     self.PorJ = Field(self.get_size())
-    #     self.PorI = Field(self.get_size())
-    #     self.Fint = Field(self.get_size())
-
-    # def get_size(self):
-    #     return [self.ib, self.jb]
-
-
-#trial
-import matplotlib.pyplot as plt 
-input=Input("rae9e-s3.data")
+input=Input("rae1-s1.data")
 print("INPUT")
 grid = SqrtGrid(input)
 print("SQRT")
 ver =grid.x
 x=ver[:,:,0]
 y=ver[:,:,1]
+x_t=x.T 
+y_t=y.T 
+end=time.time()
+print(end-start)
+
+import matplotlib.pyplot as plt 
 plt.plot(x,y)
+plt.plot(x_t,y_t,linewidth="0.5")
+import numpy as np
+from matplotlib.collections import LineCollection
+
+
+# plt.plot(x,y)
 plt.plot(input.in_var["xn"],input.in_var["yn"],"+")
 plt.show()
