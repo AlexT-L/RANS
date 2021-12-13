@@ -1,4 +1,4 @@
-import model_funcs.eflux_fort
+from model_funcs import eflux_fort
 import numpy as np
 from Field import Field
 
