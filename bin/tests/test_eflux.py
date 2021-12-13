@@ -1,12 +1,14 @@
-'''
-from model_funcs.eflux_wrap import eflux
+import eflux_fort
 import numpy as np
-from Field import Field
+#from Field import Field
+
 
 def test_flux():
-    assert eflux() == 0
-    
+    print(eflux_fort.__doc__)
+    assert 0 == 0
 
+#test_flux()
+'''
 # grab grid related parameter
 #G = ws.grid
 nx = 4
