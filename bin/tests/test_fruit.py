@@ -20,7 +20,7 @@ Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Br
 
 """
 import pytest
-from fruit import fruit
+from fruit import bananas
 
 def test_bananas():
     """
@@ -35,5 +35,5 @@ def test_bananas():
         Nothing, but it asserts if 'this_is_bananas' is in fact the string 'bananas'.
     
     """
-    this_is_bananas = fruit.bananas("cantaloupe")
+    this_is_bananas = bananas("cantaloupe")
     assert this_is_bananas == "bananas"
