@@ -195,11 +195,17 @@ class NavierStokes(Model):
         pori.copyTo(porI)
         porj.copyTo(porJ)
 
+        # copy over volume
+        grid = workspace.get_grid()
+        VOL = grid.vol
+        vol = workspace.get_field("vol", self.className)
+        VOL.copyTo(vol)
+
         # # set volumes
         # def get_vol(i, j):
-        #     return workspace.volume(i-p, j-p)
+        #     return workspace.volume(i, j)
         # p = self.padding
         # vol = workspace.get_field("vol", self.className)
-        # for i in range(p,nx+p):
-        #     for j in range(p,ny+p):
+        # for i in range(p+nx+p):
+        #     for j in range(p+ny+p):
         #         vol[i,j] = get_vol(i,j)
