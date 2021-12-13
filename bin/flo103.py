@@ -59,6 +59,8 @@ if __name__ == '__main__':
     grid = AirfoilMap(input)
     workspace = CellCenterWS(grid)
 
+    print(grid.vol.vals)
+
     # create physics objects
     modelInput = input.add_dicts(input.flo_param, input.solv_param)
     bcmodel = NS_AirfoilBC(modelInput)

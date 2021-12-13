@@ -178,11 +178,11 @@ class NavierStokes(Model):
 
         # add scalar variables stored at cell center with padding
         for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
-            vars[stateName] = [field_size, stateDim]
+            vars[stateName] = [field_size, 1]
 
         # add scalar variables stored at edges
         for stateName in ["porI","porJ"]:
-            vars[stateName] = [grid_size, stateDim]
+            vars[stateName] = [grid_size, 1]
 
         workspace.init_vars(className, vars)
 
