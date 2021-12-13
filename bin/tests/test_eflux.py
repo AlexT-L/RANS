@@ -1,10 +1,14 @@
-import sys
-sys.path.append("../model_funcs")
-
 import eflux_fort
 import numpy as np
-from .. import Field
+#from Field import Field
 
+
+def test_flux():
+    print(eflux_fort.__doc__)
+    assert 0 == 0
+
+#test_flux()
+'''
 # grab grid related parameter
 #G = ws.grid
 nx = 4
@@ -60,3 +64,6 @@ print(eflux_fort.__doc__)
 eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porI.vals,il,jl)
 
 print(dw.vals[:][:][0])
+    
+'''
+

@@ -111,7 +111,7 @@ def geom(self):
         g         = slopt*(x0  -x1)
         b         = 1./(x0  -x1)
         
-        print("I1=",i1,"I2=",i2)
+        #print("I1=",i1,"I2=",i2)
         for j in range(i1,i2):
             xa        = 0.5*a[0][j]**2
             d         = b*(xa  -x1)
@@ -129,7 +129,7 @@ def geom(self):
         i1        = itu
         i2        = il
         
-    print("GEOM")
+    #print("GEOM")
 
     # plt.figure(2)
     # plt.plot(a[0],s0)

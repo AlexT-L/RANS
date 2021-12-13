@@ -9,10 +9,10 @@ from Grid import Grid
 from Field import Field
 
 # fortran module
-import eflux_fort 
+import eflux_fort
+
 
 def eflux(self,ws,w,dw):
-
     G = ws.grid
     il = G.dims['il']
     jl = G.dims['jl']

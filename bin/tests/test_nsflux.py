@@ -1,3 +1,4 @@
+'''
 import sys
 sys.path.append("../")
 
@@ -66,3 +67,4 @@ nsflux_fort.nsflux(il, jl, ie, je, \
       rfil)
 
 print(vw.vals[:][:][0])
+'''

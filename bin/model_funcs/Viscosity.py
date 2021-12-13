@@ -3,13 +3,14 @@ sys.path.append('../RANS/bin')
 import time
 
 import numpy as np
-from Grid import Grid
+# from Grid import Grid
 from BaldwinLomax import turbulent_viscosity
 from BoundaryThickness import boundary_thickness
 
+# @profile
 def compute_viscosity(params, dims):
     #  from subroutine viscf.f
-    print('test compute')
+    print('start of compute_viscosity')
     # computes viscosity coefficients               
     ie = params['ie'] # Mesh dimension
     je = params['je'] # Mesh dimension
