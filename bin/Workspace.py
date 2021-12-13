@@ -12,9 +12,13 @@ class Workspace(ABC):
 
         # initialize fields array with Grid fields
         self.flds = { 'Grid': {} }
-        dim_vals = np.zeros(self.grid.dims)
-        for i in range(len(self.mdl.reqFields)): # loop over required fields
-            self.flds['Grid'][self.mdl.reqFields[i]] = Field(dim_vals)
+        storage = self.flds['Grid']
+        storage['x'] = grid.x
+        storage['xc'] = grid.xc
+        storage['vol'] = grid.vol
+        # dim_vals = np.zeros(self.grid.dims)
+        # for i in range(len(self.mdl.reqFields)): # loop over required fields
+        #     self.flds['Grid'][self.mdl.reqFields[i]] = Field(dim_vals)
 
         self.isFinest = bool(isFinest)
 
@@ -29,7 +33,7 @@ class Workspace(ABC):
 
     # return geometry info
     def get_geometry(self):
-        return self.grd.get_geometry()
+        return self.grid.get_geometry()
 
     # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
