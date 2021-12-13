@@ -26,7 +26,7 @@ Andy Rothstein \n
 
 """
 import pytest
-from .. import Field
+from Field import Field
 import numpy as np
 
 def test_constructor_2d():
