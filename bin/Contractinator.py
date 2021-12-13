@@ -30,5 +30,5 @@ def sum4way(fine, coarse, weights=np.ones(4)):
     coarse.set_val(newField)
 
 
-def conservative4way():
+def conservative4way(fine, coarse, weights):
     pass
