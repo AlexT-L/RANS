@@ -1,4 +1,4 @@
-      subroutine dfluxc(ny,il,jl,
+      subroutine dfluxc(ny,il,jl,ib,jb,
      & w,p,
      & porj,
      & fw, radi, radj,
@@ -55,17 +55,17 @@ c     input variables
 c
 c     ******************************************************************
 c     from dims
-      integer, intent(in) :: ny,il,jl
+      integer, intent(in) :: ny,il,jl,ib,jb
 
 c     from flo_var
-      real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:) :: p
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: w
+      real(8), intent(inout), dimension(0:ib,0:jb) :: p
 
 c     from mesh_var
       real(8), intent(in), dimension(:,:)   :: porj
 
 c     from solv_var
-      real(8), intent(inout), dimension(:,:,:) :: fw
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: fw
       real(8), intent(inout), dimension(:,:)   :: radi,radj
 
 c     from solv_param

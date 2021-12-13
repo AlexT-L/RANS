@@ -1,6 +1,6 @@
       subroutine halo(il, jl, ie, je, ib, jb, itl, itu,
      & w, p,
-     & x, vol)
+     & vol)
 c
 c     ******************************************************************
 c     *                                                                *
@@ -14,7 +14,8 @@ c     w(i,j,3)  = momentum in y direction
 c     w(i,j,4)  = total energy
 c
 c     ******************************************************************
-c
+
+      implicit none
 c     use dims
       integer, intent(in)           :: il, jl, ie, je, ib, jb
 
@@ -23,16 +24,15 @@ c
 c     ******************************************************************
 c
 c      use flo_var
-      real, dimension(:,:,:), intent(inout)  :: w
-      real, dimension(:,:), intent(inout)    :: p
+      real, dimension(0:ib,0:jb,4), intent(inout)  :: w
+      real, dimension(0:ib,0:jb), intent(inout)    :: p
 
 c      use mesh_var
-      real, dimension(:,:,:), intent(inout) :: x
-      real, dimension(:,:), intent(inout)   :: vol
+      real, dimension(0:ib,0:jb), intent(inout)   :: vol
 c
 c     ******************************************************************
 c
-      implicit none
+
 c
 c     ******************************************************************
 c
