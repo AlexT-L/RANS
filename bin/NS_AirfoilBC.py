@@ -1,13 +1,14 @@
 from BoundaryConditioner import BoundaryConditioner
-from NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
+import NS_AirfoilBC_imp as implementation
 
 class NS_AirfoilBC(BoundaryConditioner):
     
     
     def __init__(self, input):
+        self.className = "NS_AirfoilBC"
         self.padding = 2
-        self.local_timestepping = not bool(input.vt)
-        self.bc = input.bc
+        self.local_timestepping = not bool(input['vt'])
+        self.bc = input['bc']
 
     # initialize state
     def init_state(self, model, workspace, state):
@@ -46,10 +47,11 @@ class NS_AirfoilBC(BoundaryConditioner):
 
     # apply all boundary conditions
     def bc_all(self, model, workspace, state):
+        return
         self.__check_vars(workspace)
-        self.bc_wall(self, model, workspace, state)
-        self.bc_far(self, model, workspace, state)
-        self.halo(self, model, workspace, state)
+        self.bc_wall(model, workspace, state)
+        self.bc_far(model, workspace, state)
+        self.halo(model, workspace, state)
 
     # transfer data between workspaces
     def transfer_down(self, model, workspace1, workspace2):
@@ -57,6 +59,19 @@ class NS_AirfoilBC(BoundaryConditioner):
         self.__check_vars(workspace2)
         implementation.transfer_down(self, model, workspace1, workspace2)
 
+    # Get porosity
+    def get_pori(self, workspace):
+        self.__check_vars(workspace)
+        return workspace.get_field("pori", self.className)
+
+    def get_porj(self, workspace):
+        self.__check_vars(workspace)
+        return workspace.get_field("pori", self.className)
+
+    # check if dictionary has been initialized
+    def __check_vars(self, workspace):
+        if not workspace.has_dict(self.className):
+            self.__init_vars(workspace)
 
     # initialize class workspace fields
     def __init_vars(self, workspace):

@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from Field import Field
-from WorkspaceClass import WorkspaceClass
+from ws_class import WorkspaceClass
 
 class Model(WorkspaceClass):
     
     @abstractmethod
     def __init__(self, bcmodel, input):
-        pass
+        self.dimensions = 0
 
     @abstractmethod
     def init_state(self, workspace, state):
@@ -35,4 +35,4 @@ class Model(WorkspaceClass):
 
     # return state dimesions
     def dim(self):
-        return self.dim
+        return self.dimensions

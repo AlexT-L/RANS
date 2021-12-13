@@ -1,5 +1,6 @@
-import Integrator, Field
+import Field
 from Workspace import Workspace
+from integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor
@@ -8,20 +9,20 @@ class ImplicitEuler(Integrator):
         # set attributes
         self.Model = model
         self.className = "ImplicitEuler"
-        self.numStages = input.mstage
-        self.Flux_update = input.cdis # relaxation/update factor for flux --> 0: no update, 1: full update
-        self.c_step = input.cstp    # fraction of timestep to use
+        self.numStages = input['mstage']
+        self.Flux_update = input['cdis'] # relaxation/update factor for flux --> 0: no update, 1: full update
+        self.c_step = input['cstp']    # fraction of timestep to use
 
     
     def step(self, workspace, state, forcing):
-        model = self.model
+        model = self.Model
 
         # make sure necessary variables exist in workspace
-        self.__checkVars(workspace)
+        self.__check_vars(workspace)
 
         def get(varName):
             return workspace.get_field(varName, self.className)
-        w =  get("w")
+        w =  state
         wn = get("wn")
         Rw = get("Rw")
         dw = get("dw")
@@ -54,6 +55,11 @@ class ImplicitEuler(Integrator):
 
             # update state
             w.store_difference(wn, dw)
+
+    # check if dictionary has been initialized
+    def __check_vars(self, workspace):
+        if not workspace.has_dict(self.className):
+            self.__init_vars(workspace)
 
     # initialize class workspace fields
     def __init_vars(self, workspace):

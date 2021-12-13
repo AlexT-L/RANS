@@ -3,6 +3,7 @@ from abc import ABC
 class Cycle(ABC):
     
     # Constructor
-    def __init__(self):
+    def __init__(self, input):
         self.grids = []
-        self.pattern = None
+        self.pattern = [-1]
+        self.levels = 2

@@ -1,6 +1,6 @@
 
 from abc import abstractmethod
-from WorkspaceClass import WorkspaceClass
+from ws_class import WorkspaceClass
 
 class Integrator(WorkspaceClass):
     

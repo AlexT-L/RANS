@@ -10,10 +10,11 @@ class NavierStokes(Model):
         self.BCmodel = bcmodel
         self.padding = bcmodel.padding
         self.params = input # grab physical parameters
+        self.dimensions = 4
 
         # courant number
-        self.cfl_fine = input.cflf
-        self.cfl_coarse = input.cfl0
+        self.cfl_fine = input['cflf']
+        self.cfl_coarse = input['cflc']
         self.cfl_lim = Infinity
         self.cfl = min([self.cfl_fine, self.cfl_lim])
         
@@ -34,14 +35,11 @@ class NavierStokes(Model):
 
 
     # flux calculations
-    from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
+    # from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
         self.__check_vars(workspace)
         
-        # initialize the variables we want in the workspace 
-        self.__check_vars(self, workspace)
-
         # set rfil value
         rfil = update_factor
 
@@ -63,8 +61,8 @@ class NavierStokes(Model):
         # calculate residuals
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, rfil)
-        if self.params.kvis > 0 and False:
-            nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
+        # if self.params.kvis > 0 and False:
+            # nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -87,25 +85,25 @@ class NavierStokes(Model):
 
 
     # update rev and rlv
-    def update_physics(self, model, workspace, state):
+    def update_physics(self, workspace, state):
         self.__check_vars(workspace)
 
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
-        self.BCmodel.update_physics(self, model, workspace, state)
+        self.BCmodel.update_physics(self, workspace, state)
 
 
     # calls 'step.f' to update stability conditions
-    def update_stability(self, model, workspace, state):
+    def update_stability(self, workspace, state):
         self.__check_vars(workspace)
         
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
-        self.BCmodel.update_stability(self, model, workspace, state)
+        self.BCmodel.update_stability(self, workspace, state)
 
     
     # specify upper bound on cfl
@@ -131,6 +129,10 @@ class NavierStokes(Model):
         self.__check_vars(workspace2)
         self.BCmodel.transfer_down(self, workspace1, workspace2)
 
+    # return state dimensions
+    def dim(self):
+        return self.dimensions
+
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
         # get field size
@@ -140,7 +142,7 @@ class NavierStokes(Model):
         # perform copy operation
         for i in range(0, leni):
             for j in range(0, lenj):
-                paddedField[i+p][j+p] = field[i][j]
+                paddedField[i+p,j+p] = field[i,j]
 
     # extract data from a padded field
     def __copy_out(self, paddedField, field):
@@ -151,7 +153,7 @@ class NavierStokes(Model):
         # perform copy operation
         for i in range(0, leni):
             for j in range(0, lenj):
-                field[i][j] = paddedField[i+p][j+p]
+                field[i,j] = paddedField[i+p,j+p]
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -164,7 +166,7 @@ class NavierStokes(Model):
         [nx, ny] = workspace.field_size()
         grid_size = workspace.grid_size()
         field_size = [p+nx+p, p+ny+p]
-        stateDim = self.dim
+        stateDim = self.dimensions
         className = self.className
 
         # initialize list of variables to add
@@ -175,7 +177,7 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol"]:
+        for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at edges
@@ -192,14 +194,14 @@ class NavierStokes(Model):
         porj = bcmodel.get_pori(workspace)
 
         # copy over porosity values
-        pori.copyTo(porI)
-        porj.copyTo(porJ)
+        pori.copy_to(porI)
+        porj.copy_to(porJ)
 
         # copy over volume
         grid = workspace.get_grid()
         VOL = grid.vol
         vol = workspace.get_field("vol", self.className)
-        VOL.copyTo(vol)
+        vol.copy_from(VOL)
 
         # # set volumes
         # def get_vol(i, j):

@@ -1,39 +1,39 @@
 from numpy.core.fromnumeric import mean
-import bcfar_fort, bcwall_fort, halo_fort, math
+# import bcfar_fort, bcwall_fort, halo_fort, math
 from Field import Field
 
 def init_state(self, model, workspace, state):
-    field_size = workspace.field_size()
-    stateDim = self.dim
-    state = Field(field_size, stateDim)
 
     p = workspace.get_field("p", model.className)
 
     # set initial values
-    rho0 = model.params.rho0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    h0 = model.params.h0
-    p0 = model.params.p0
+    rho0 = model.params['rho0']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    h0 = model.params['h0']
+    p0 = model.params['p0']
 
     [lenx, leny] = p.size()
     for i in range(lenx):
         for j in range(leny):
-            state[i,j,1] = rho0
-            state[i,j,2] = rho0 * u0
-            state[i,j,3] = rho0 * v0
-            state[i,j,4] = rho0 * h0 - p0
+            # print("i,j")
+            # print([i,j])
+            state[i,j,0] = rho0
+            state[i,j,1] = rho0 * u0
+            state[i,j,2] = rho0 * v0
+            state[i,j,3] = rho0 * h0 - p0
             p[i,j]       = p0
 
 # set porosity
 def set_porosity(self, workspace):
     # get relevant geometry parameters
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
     il = nx+1
     jl = ny+1
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
 
     # get porosity
     pori = workspace.get_field("pori", self.className)
@@ -64,7 +64,7 @@ def update_physics(self, model, workspace, state):
 def update_stability(self, model, workspace, state):
 
     # padding
-    p = self.padding
+    pad = self.padding
     
     # set stability parameters
     slim      = 0.001
@@ -77,6 +77,7 @@ def update_stability(self, model, workspace, state):
 
     # get relevant geometry parameters
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
     il = nx+1
     jl = ny+1
@@ -84,26 +85,26 @@ def update_stability(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
 
     # flo_param
-    gamma = model.params.gamma
-    rm = model.params.rm
-    rho0 = model.params.rho0
-    p0 = model.params.p0
-    h0 = model.params.h0
-    c0 = model.params.c0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    ca = model.params.ca
-    sa = model.params.sa
-    re = model.params.re
-    prn = model.params.prn
-    prt = model.params.prt
-    adis = model.params.adis
+    gamma = model.params['gamma']
+    rm = model.params['rm']
+    rho0 = model.params['rho0']
+    p0 = model.params['p0']
+    h0 = model.params['h0']
+    c0 = model.params['co']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    ca = model.params['ca']
+    sa = model.params['sa']
+    re = model.params['re']
+    prn = model.params['prn']
+    prt = model.params['prt']
+    adis = model.params['adis']
     cfl = model.cfl
-    kvis = model.params.kvis
+    kvis = model.params['kvis']
 
     # retrieve working arrays from model
     def get(varName):
@@ -133,14 +134,14 @@ def update_stability(self, model, workspace, state):
 
     # edge function decorator
     def edge(i, j, side):
-        p = model.padding
-        return workspace.edge(i-p, j-p, side)
+        pad = model.padding
+        return workspace.edge(i-pad, j-pad, side)
 
     # c
     # c     permissible time step
     # c
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
             cc        = gamma*p[i,j]/max(w(i,j,1),rlim)
 
             # get side lengths
@@ -171,8 +172,8 @@ def update_stability(self, model, workspace, state):
     # c     pressure or entropy switch
     # c
     # c     if (kvis == 0) then
-    for j in range(p+ny+p):
-        for i in range(p+nx+p):
+    for j in range(pad+ny+pad):
+        for i in range(pad+nx+pad):
             s[i,j]    = p[i,j]
     # c     else
     # c        do j=0,jb
@@ -184,8 +185,8 @@ def update_stability(self, model, workspace, state):
     # c
     # c     adaptive time step
     # c
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
          dpi       = abs((s[i+1,j]  -2.0*s[i,j]  +s[i-1,j])/ \
                          (s[i+1,j]  +2.0*s[i,j]  +s[i-1,j]  +slim))
          dpj       = abs((s[i,j+1]  -2.0*s[i,j]  +s[i,j-1])/ \
@@ -199,15 +200,15 @@ def update_stability(self, model, workspace, state):
     dtmin = dtl[imin,jmin]
     if not self.local_timestepping:
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 if (dtl[i,j] <= dtmin):
                     dtmin     = dtl[i,j]
                     imin      = i
                     jmin      = j
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 rfl[i,j]  = dtmin/dtl[i,j]
 
     # c
@@ -215,8 +216,8 @@ def update_stability(self, model, workspace, state):
     # c
     #    11 do j=2,jl
     #       do i=2,il
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
             if (iprec != 0):
     # c         rfli[i,j] = math.sqrt(radj[i,j]/radi[i,j])
     # c         rflj[i,j] = math.sqrt(radi[i,j]/radj[i,j])
@@ -244,8 +245,8 @@ def update_stability(self, model, workspace, state):
         if (kvis > 1): 
             v2 = v1
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 rk        = gamma *(v1*rlv[i,j]/prn + v2*rev[i,j]/prt)/w(i,j,1)
                 rmu       = (v1*rlv[i,j]+v2*rev[i,j])/w(i,j,1)
             
@@ -276,7 +277,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at i=1 and i=ie
     # c
-    for j in range(p,ny+p):
+    for j in range(pad,ny+pad):
         radi[1,j]   = radi[2,j]
         radi[ie,j]  = radi[il,j]
         rfl[1,j]    = rfl[2,j]
@@ -291,7 +292,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at j=1 and j=je
     # c
-    for i in range(p-1,nx+p+1):
+    for i in range(pad-1,nx+pad+1):
         radj[i,1]   = radj[i,2]
         radj[i,je]  = radj[i,jl]
         rfl[i,1]    = rfl[i,2]
@@ -306,7 +307,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values along the cut
     # c
-    for i in range(p-1, itl+p):
+    for i in range(pad-1, itl+pad):
         ii        = ib  -i
         radj[ii,1]  = radj[i,2]
         radj[i,1]   = radj[ii,2]
@@ -327,6 +328,7 @@ def bc_far(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -336,8 +338,8 @@ def bc_far(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -358,24 +360,24 @@ def bc_far(self, model, workspace, state):
     cf = cf.get_vals()
     
     # flo_param
-    gamma = model.params.gamma
-    rm = model.params.rm
-    rho0 = model.params.rho0
-    p0 = model.params.p0
-    h0 = model.params.h0
-    c0 = model.params.c0
-    u0 = model.params.u0
-    v0 = model.params.v0
-    ca = model.params.ca
-    sa = model.params.sa
-    re = model.params.re
-    prn = model.params.prn
-    prt = model.params.prt
-    scal = geom.scal
-    chord = geom.chord
-    xm = geom.xm
-    ym = geom.ym
-    kvis = model.params.kvis
+    gamma = model.params['gamma']
+    rm = model.params['rm']
+    rho0 = model.params['rho0']
+    p0 = model.params['p0']
+    h0 = model.params['h0']
+    c0 = model.params['co']
+    u0 = model.params['u0']
+    v0 = model.params['v0']
+    ca = model.params['ca']
+    sa = model.params['sa']
+    re = model.params['re']
+    prn = model.params['prn']
+    prt = model.params['prt']
+    scal = geom['scal']
+    chord = geom['chord']
+    xm = geom['xm']
+    ym = geom['ym']
+    kvis = model.params['kvis']
     
     # solv_param
     bc = self.bc
@@ -385,13 +387,13 @@ def bc_far(self, model, workspace, state):
     if workspace.is_finest():
         mode = 0
     
-    bcfar_fort.bcfar(il, jl, ie, je, itl+1, itu+1,
-                        w, p, rlv, rev,
-                        x, xc, 
-                        cp, cf,
-                        gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,ym,kvis,
-                        bc,
-                        mode)
+    # bcfar_fort.bcfar(il, jl, ie, je, itl+1, itu+1,
+    #                     w, p, rlv, rev,
+    #                     x, xc, 
+    #                     cp, cf,
+    #                     gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,ym,kvis,
+    #                     bc,
+    #                     mode)
 
 
 def bc_wall(self, model, workspace, state):
@@ -401,6 +403,7 @@ def bc_wall(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -410,8 +413,8 @@ def bc_wall(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -423,18 +426,18 @@ def bc_wall(self, model, workspace, state):
     x = coords.get_vals()
     
     # flo_param
-    rm = model.params.rm
-    sa = model.params.sa
-    kvis = model.params.kvis
+    rm = model.params['rm']
+    sa = model.params['sa']
+    kvis = model.params['kvis']
     
     # solv_param
     isym = geom.isym
     
-    bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
-                        w, p, rev,
-                        x,
-                        rm, sa, kvis,
-                        isym)
+    # bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
+    #                     w, p, rev,
+    #                     x,
+    #                     rm, sa, kvis,
+    #                     isym)
 
 
 def halo(self, model, workspace, state):
@@ -444,6 +447,7 @@ def halo(self, model, workspace, state):
 
     # get geometry dictionary
     geom = workspace.get_geometry()
+    grid = workspace.get_grid()
     
     # dims
     [nx, ny] = workspace.field_size()
@@ -453,8 +457,8 @@ def halo(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = nx+3
-    itl = geom.itl
-    itu = geom.itu
+    itl = grid.itl
+    itu = grid.itu
     
     # flo_var
     w = state.get_vals()
@@ -465,14 +469,14 @@ def halo(self, model, workspace, state):
     x = coords.get_vals()
     vol = get("vol").get_vals()
     
-    halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
-            w, p,
-            x, vol)
+    # halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
+    #         w, p,
+    #         x, vol)
 
 
 def transfer_down(self, model, workspace1, workspace2):
     # get padding
-    p = self.padding
+    pad = self.padding
 
     # get geometry dictionary
     geom1 = workspace1.get_geometry()
@@ -489,11 +493,11 @@ def transfer_down(self, model, workspace1, workspace2):
 
     # coarse mesh dims
     ratio = 2
-    nxc = nx/ratio
-    nyc = ny/ratio
+    nxc = int(nx/ratio)
+    nyc = int(ny/ratio)
 
     # parameters
-    kvis = model.params.kvis
+    kvis = model.params['kvis']
 
     #     if (kvis.gt.0) then
     # c
@@ -502,10 +506,10 @@ def transfer_down(self, model, workspace1, workspace2):
     if kvis > 0:
 
         jj        = 1
-        for j in range(p, ny+p, 2):
+        for j in range(pad, ny+pad, 2):
             jj        = jj  +1
             ii        = 1
-            for i in range(p, nx+p, 2):
+            for i in range(pad, nx+pad, 2):
                 ii        = ii  +1
                 rlvc[ii, jj] = mean(rlv[i:i+2, j:j+2])
                 revc[ii, jj] = mean(rlv[i:i+2, j:j+2])
@@ -514,22 +518,22 @@ def transfer_down(self, model, workspace1, workspace2):
         # c     set the boundary values at i=1 and i=ie
         # c
         jj        = 1
-        for j in range(p, ny+p, ratio):
+        for j in range(pad, ny+pad, ratio):
             jj        = jj  +1
 
             rlvc[1    ,jj] = mean(rlv[1   , j:j+ratio])
-            rlvc[nxc+p,jj] = mean(rlv[nx+p, j:j+ratio])
+            rlvc[nxc+pad,jj] = mean(rlv[nx+pad, j:j+ratio])
             revc[1    ,jj] = mean(rev[1   , j:j+ratio])
-            revc[nxc+p,jj] = mean(rev[nx+p, j:j+ratio])
+            revc[nxc+pad,jj] = mean(rev[nx+pad, j:j+ratio])
 
         # c
         # c     set the boundary values at j=1 and j=je
         # c
         ii        = 1
-        for i in range(p, nx+p, ratio):
+        for i in range(pad, nx+pad, ratio):
             ii        = ii  +1
 
             rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
-            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])
+            rlvc[ii,nyc+pad] = mean(rlv[i:i+ratio, ny+pad])
             rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
-            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])
+            rlvc[ii,nyc+pad] = mean(rlv[i:i+ratio, ny+pad])
