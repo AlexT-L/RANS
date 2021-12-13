@@ -28,6 +28,14 @@ class CellCenterWS(Workspace):
     def volume(self, i, j):
         return self.grid.get_volume(i, j)
 
+    # return x field
+    def x(self):
+        pass
+
+    # return xc field
+    def xc(self):
+        pass
+
 # For edges: side = "N", "S", "E", "W"
 
     # edge vector of control volume in positive i or j direction

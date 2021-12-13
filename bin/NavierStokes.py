@@ -53,13 +53,18 @@ class NavierStokes(Model):
         vw = get("vw")
         dw = get("dw")
 
-
         # copy state into padded array
         self.__copy_in(state, w)
 
+        # update boundary conditions
+        bcmodel = self.BCmodel
+        bcmodel.bc_all(self, workspace, state)
+
         # calculate residuals
-        ##### TO DO #####
-        
+        eflux_wrap.eflux(self, workspace, w, dw)
+        dflux_wrap.dflux(self, workspace, w, dw, rfil)
+        if self.params.kvis > 0:
+            nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -170,7 +175,7 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["P","radi","radj","rfl","dtl","rfli","rflj","vol"]:
+        for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol"]:
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at edges
@@ -178,3 +183,23 @@ class NavierStokes(Model):
             vars[stateName] = [grid_size, stateDim]
 
         workspace.init_vars(className, vars)
+
+        # set porosity values
+        bcmodel = self.BCmodel
+        porI = workspace.get_field("porI", self.className)
+        porJ = workspace.get_field("porI", self.className)
+        pori = bcmodel.get_pori(workspace)
+        porj = bcmodel.get_pori(workspace)
+
+        # copy over porosity values
+        pori.copyTo(porI)
+        porj.copyTo(porJ)
+
+        # # set volumes
+        # def get_vol(i, j):
+        #     return workspace.volume(i-p, j-p)
+        # p = self.padding
+        # vol = workspace.get_field("vol", self.className)
+        # for i in range(p,nx+p):
+        #     for j in range(p,ny+p):
+        #         vol[i,j] = get_vol(i,j)
