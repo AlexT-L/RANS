@@ -13,6 +13,9 @@ import eflux_fort
 
 def eflux(self,ws,w,dw):
 
+    G = ws.grid
+    il = G.dims['il']
+    jl = G.dims['jl']
 
     # calculate convective fluxes given a workspace
     def get(varName):
@@ -22,5 +25,5 @@ def eflux(self,ws,w,dw):
     x = ws.x()
 
     # residuals returned in Field dw
-    eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porJ.vals)
+    eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porJ.vals,il,jl)
 
