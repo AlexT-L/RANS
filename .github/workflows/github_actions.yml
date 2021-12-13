@@ -23,3 +23,7 @@ jobs:
         run: pip install NumPy
       - name: Run tests with pytest
         run: python3 -m pytest
+      - name: install scipy
+        run: pip install scipy
+      - name: install pandas
+        run: pip install pandas
