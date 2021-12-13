@@ -187,10 +187,11 @@ class Input:
         #geoparam
         self.update_dict(self.df,self.geo_param,self.geo_p,22)
         geo=self.geo_param
-        geo["nn"]=geo["nu"] + geo["nl"] -1
+        geo["nn"]=int(geo["nu"] + geo["nl"] -1)
 
         #airfoil coordinated (in_var)
-        self.update_geom(self.df,self.in_var,self.in_v,32)
+        self.update_geom(self.df,self.in_var,self.in_v,33)#starting a line late to remove duplicate (0.0,0.0) point 
+                                                          #in upper and lower surface
 
 
     #Methods
@@ -230,27 +231,33 @@ class Input:
         no_nan_r=np.array(df.count(axis=1))
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
-            upper=np.array(df.iloc[strt_row:96,i])
-            lower=np.array(df.iloc[98:162,i])
-            dict[params[i]]=np.concatenate((upper,lower),axis=0)
+            upper=np.array(df.iloc[strt_row:97,i])
+            lower=np.array(df.iloc[98:163,i])#starting at 99 and not 98 to remove duplicate point of leading edge
+            lower=lower[::-1]#flip order of lower array
+            dict[params[i]]=np.concatenate((lower,upper),axis=0)
+            #NOTE: 1)IN XN AND YN LOWER SURFACE COMES BEFORE UPPER SURFACE
+            #      2) THE ORDER OF THE LOWER SURFACE IS FLIPPED
+            #         THIS IS SO THAT X-ARRAY IS STRICTLY INCREASING
+            #         WHEN FITTING A CUBIC SPLINE TO THE AERFOIL DATA MAPPED 
+            #         IN THE COMPUTATIONAL DOMAIN THE FINAL ORDER IS (LOWER[LAST:FIRST],UPPER[SECOND:LAST])
         return
 
     def add_dicts(self,dict1,dict2):
         sum_dict= {**dict1, **dict2}
-        return sum
+        return sum_dict
      
 
     
 
     
-#plot airfoil
-import matplotlib.pyplot as plt
+# #plot airfoil
+# import matplotlib.pyplot as plt
 
-input=Input("rae9e-s3.data")
-x=input.in_var["xn"]
-y=input.in_var["yn"]
-plt.plot(x,y,"+")
-plt.show()
-#print(input.solv_param["cstp"])
+# input=Input("rae9e-s3.data")
+# x=input.in_var["xn"]
+# y=input.in_var["yn"]
+# plt.plot(x,y,"+")
+# plt.show()
+# #print(input.solv_param["cstp"])
 
 
