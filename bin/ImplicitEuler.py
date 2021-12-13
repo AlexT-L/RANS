@@ -1,5 +1,6 @@
-import Integrator, Field
+import Field
 from Workspace import Workspace
+from integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor

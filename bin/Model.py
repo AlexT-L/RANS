@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from Field import Field
-from WorkspaceClass import WorkspaceClass
+from ws_class import WorkspaceClass
 
 class Model(WorkspaceClass):
     

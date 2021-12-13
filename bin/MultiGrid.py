@@ -3,8 +3,9 @@ import math
 from math import fmod as mod
 import Expandinator as expand
 import Contractinator as contract
-import Model, Integrator, Grid, Field, Cycle
+import Model, Grid, Field, Cycle
 from Workspace import Workspace
+from integrator import Integrator
 
 
 class MultiGrid:

@@ -34,7 +34,7 @@ class NavierStokes(Model):
 
 
     # flux calculations
-    from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
+    # from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
         self.__check_vars(workspace)
@@ -63,8 +63,8 @@ class NavierStokes(Model):
         # calculate residuals
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, rfil)
-        if self.params.kvis > 0 and False:
-            nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
+        # if self.params.kvis > 0 and False:
+            # nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
