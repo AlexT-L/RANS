@@ -74,6 +74,23 @@ class MultiGrid:
         else:
             UPDATE_STABILITY = (self.num_cycles % self.stabilityUpdateFrequency) == 0
 
+    ##### first level #####
+        # set pointers to working variables
+        workspace = self.Workspaces[-1]
+        w = self.W[-1]
+        Rw = self.Fluxes[-1]
+        # Update residuals
+        model.get_flux(workspace, w, Rw)
+                
+        # Check if stability needs to be updated
+        if UPDATE_STABILITY:
+            model.update_stability(workspace, w)
+                
+        # Perform integration to get new state
+        integrator.step(workspace, w, Rw)
+    #####
+
+        # subsequent levels
         level = n_levels
         for dir in self.cycle.pattern:
             level += dir
