@@ -1,9 +1,6 @@
-import sys
-sys.path.append("../model_funcs")
-
-import eflux_fort
+from model_funcs.eflux_fort import eflux_fort
 import numpy as np
-from .. import Field
+from Field import Field
 
 # grab grid related parameter
 #G = ws.grid
