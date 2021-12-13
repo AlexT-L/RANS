@@ -1,6 +1,6 @@
+import Integrator
 
-
-class DynamicIntegrator:
+class DynamicIntegrator(Integrator):
     
     # Constructor
     def __init__(self, nStages, weights):

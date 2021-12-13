@@ -2,15 +2,20 @@
 # oversimplified version of Grid class just for now
 # so I can write other stuff
 
+from abc import abstractmethod
 import numpy as np
 from Field import Field
 
 class Grid:
     
-    def __init__(self,x_bound,y_bound,nx,ny):
+    # Test Constructor --> ignore
+    """ def __init__(self, input):
 
         # let Grid contain the variables in dims.f
-
+        dims = input.dims        
+        nx = input['nx']
+        ny = in['ny']
+        
         # defining things to be consistent with gmesh.f
         self.nx = nx
         self.ny = ny
@@ -28,18 +33,40 @@ class Grid:
         # even know how to spell conformal mapping so I leave that to someone else
 
         # rectangular cartesian grid for now
-        x_vec = np.linspace(x_bound[0],x_bound[1],self.ib)
-        y_vec = np.linspace(y_bound[0],y_bound[1],self.jb)
-        xg,yg = np.meshgrid(x_vec,y_vec)
-        dims = np.array([self.ib, self.jb, 2])
+        x_vec = np.linspace(dims['x_bound'][0], dims['x_bound'][1], self.ib)
+        y_vec = np.linspace(dims['y_bound'][0], dims['y_bound'][1], self.jb)
+        xg, yg = np.meshgrid(x_vec, y_vec)
         
         # physical vertex locations
-        self.X = Field(np.zeros(dims)) 
+        self.X = Field(self.get_size(), stateDim=2) 
         self.X.vals[:,:,0] = xg.T
         self.X.vals[:,:,1] = yg.T
 
         # cell volumes, porosity, and far field mask
-        self.Vol = Field( np.ones([self.ib, self.jb]) )
-        self.PorJ = Field( np.ones([self.ib, self.jb]) )
-        self.PorI = Field( np.ones([self.ib, self.jb]) )
-        self.Fint = Field( np.ones([self.ib, self.jb]) )
+        self.Vol = Field(self.get_size())
+        self.PorJ = Field(self.get_size())
+        self.PorI = Field(self.get_size())
+        self.Fint = Field(self.get_size()) """
+
+    # get number of vertices
+    def get_size(self):
+        return [self.nx+1, self.ny+1]
+
+    def get_x(self, i, j):
+        return self.Y[i,j]
+
+    def get_y(self, i, j):
+        return self.Y[i,j]
+
+    def get_xc(self, i, j):
+        return self.Xc[i,j]
+
+    def get_yc(self, i, j):
+        return self.Yc[i,j]
+
+    def get_volume(self, i, j):
+        return self.Vol[i,j]
+
+    @abstractmethod
+    def get_geometry(self):
+        pass
