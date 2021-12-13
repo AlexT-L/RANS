@@ -37,5 +37,5 @@ def test_bananas():
         Nothing, but it asserts if 'this_is_bananas' is in fact the string 'bananas'.
     
     """
-    this_is_bananas = fruit.bananas()
+    this_is_bananas = fruit.bananas("cantaloupe")
     assert this_is_bananas == "bananas"
