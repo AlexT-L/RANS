@@ -5,6 +5,12 @@ from Field import Field
 from Grid import Grid
 from Input import Input
 
+#class methods
+from utils.coord_strch_func import coord_stretch
+from utils.geom_func import geom 
+from utils.mesh_func import mesh
+from sangho_func import sangho
+from plot_mesh_func import plot_mesh
         
 class AirfoilMap(Grid):
     
@@ -76,30 +82,25 @@ class AirfoilMap(Grid):
         self.s0 = np.zeros(il)
 
         #define point distributions in each coordinate direction (coordinate stretching)
-        self.coord_stretch()
+        coord_stretch(self)
 
         #sqrt root mapping of aerfoil profile to slit & interpolating 
         # to make sure points on aerfoil match those of the grid
-        self.geom()
+        geom(self)
         
         
         #making mesh 
-        self.mesh()
+        mesh(self)
 
         #sanghos modification for non-dimensionalization(re-scaling the c-mesh)
-        self.sangho()
+        sangho(self)
 
         #plot mesh
-        self.plot_mesh(self.x)
+        plot_mesh(self, self.x)
         
         
 
-    #class methods
-    from coord_strch_func import coord_stretch
-    from geom_func import geom 
-    from mesh_func import mesh
-    from sangho_func import sangho
-    from plot_mesh_func import plot_mesh
+    
 
    
     def get_size(self):
