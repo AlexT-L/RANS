@@ -1,5 +1,5 @@
-from bin.BoundaryConditioner import BoundaryConditioner
-from bin.NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
+from BoundaryConditioner import BoundaryConditioner
+from NS_AirfoilBC_imp import NS_AirfoilBC_imp as implementation
 
 class NS_AirfoilBC(BoundaryConditioner):
     

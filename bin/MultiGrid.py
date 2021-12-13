@@ -4,7 +4,7 @@ from math import fmod as mod
 import Expandinator as expand
 import Contractinator as contract
 import Model, Integrator, Grid, Field, Cycle
-from bin.Workspace import Workspace
+from Workspace import Workspace
 
 
 class MultiGrid:

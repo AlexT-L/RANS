@@ -1,7 +1,7 @@
 from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
-from bin.Field import Field
+from Field import Field
 
 class NavierStokes(Model):
     

@@ -154,15 +154,15 @@ class AirfoilMap(Grid):
     #     return [self.ib, self.jb]
 
 
-#trial
-import matplotlib.pyplot as plt 
-input=Input("rae9e-s3.data")
-print("INPUT")
-grid = AirfoilMap(input)
-print("SQRT")
-ver =grid.x
-x=ver[:,:,0]
-y=ver[:,:,1]
-plt.plot(x,y)
-plt.plot(input.in_var["xn"],input.in_var["yn"],"+")
-plt.show()
+# #trial
+# import matplotlib.pyplot as plt 
+# input=Input("rae9e-s3.data")
+# print("INPUT")
+# grid = AirfoilMap(input)
+# print("SQRT")
+# ver =grid.x
+# x=ver[:,:,0]
+# y=ver[:,:,1]
+# plt.plot(x,y)
+# plt.plot(input.in_var["xn"],input.in_var["yn"],"+")
+# plt.show()

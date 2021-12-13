@@ -1,6 +1,6 @@
 from numpy.core.fromnumeric import mean
 import bcfar_fort, bcwall_fort, halo_fort, math
-from bin.Field import Field
+from Field import Field
 
 def init_state(self, model, workspace, state):
     field_size = workspace.field_size()

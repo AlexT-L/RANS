@@ -1,8 +1,8 @@
 import numpy as np
-from bin.Field import Field
-from bin.Grid import Grid
-from bin.Model import Model
-from bin.Workspace import Workspace
+from Field import Field
+from Grid import Grid
+from Model import Model
+from Workspace import Workspace
 
 class CellCenterWS(Workspace):
 
