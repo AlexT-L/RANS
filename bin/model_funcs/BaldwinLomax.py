@@ -2,6 +2,7 @@ import numpy as np
 # from Grid import Grid
 
 # class BaldwinLomax():
+@profile
 def turbulent_viscosity(params, dims):
     # from subroutine turb2.f
     
@@ -540,4 +541,4 @@ dims = {
     "jl": dim_var - 1,
 }
 
-# turbulent_viscosity(params, dims)
+turbulent_viscosity(params, dims)
