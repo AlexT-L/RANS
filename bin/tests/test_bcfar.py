@@ -1,3 +1,4 @@
+'''
 import sys
 sys.path.append("../")
 
@@ -66,3 +67,4 @@ bcfar_fort.bcfar(il, jl, ie, je, itl, itu, \
       mode)
 
 print(w.vals[0][0][0])
+'''
