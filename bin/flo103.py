@@ -10,21 +10,38 @@ from AirfoilMap import AirfoilMap
 from CellCenterWS import CellCenterWS
 from NavierStokes import NavierStokes
 from MultiGrid import MultiGrid
+import Contractinator as con
 
 if __name__ == '__main__':
 
     # # Testing fields
-    # field = Field([6,8],4)
+    # field = Field([12,8],4)
+    # field2 = Field([6,4],4)
+    # weights = Field([12,8],4)
     # print(field.vals)
 
+    # print(field.shape())
+
+    # print("sum")
+    # print(sum(sum(field[0:2,0:2,0])))
+
     # for z in range(4):
-    #     field[1,2,z] = 3
+    #     field[0:12,0:8,z] = 3
+    #     weights[0:12,0:8,z] = 2
     
     # print(field.vals)
 
     # print(field.shape())
 
+    # con.conservative4way(field, field2, weights)
+
+    # print(field2.vals)
+
+    # # print(field.vals)
+
     # exit()
+
+    
 
 
 
