@@ -145,7 +145,6 @@ class MultiGrid:
             elif dir > 0: # go up a level
                 # Transer correction(s) from coarser mesh(es)
                 expand.bilinear4way(self.WCorrections[prev], wc)
-                print("EXPANDINATOR")
 
                 # Update state
                 w.store_sum(wc, w)
