@@ -1,3 +1,4 @@
+'''
 import eflux_fort
 import numpy as np
 #from Field import Field
@@ -6,7 +7,7 @@ import numpy as np
 def test_flux():
     print(eflux_fort.__doc__)
     assert 0 == 0
-
+'''
 #test_flux()
 '''
 # grab grid related parameter
