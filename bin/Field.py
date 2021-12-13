@@ -47,7 +47,8 @@ class Field:
     # size of field
     def shape(self):
         vals = self.vals
-        return vals.shape
+        shape = vals.shape
+        return (shape[1], shape[2], shape[0])
 
 
 #############################
@@ -58,7 +59,7 @@ class Field:
 
     # store the sum of var1 and var2 in self
     def store_sum(self, var1, var2):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         for i in range(nx):
             for j in range(ny):
@@ -76,7 +77,7 @@ class Field:
 
     # store the difference (var1 - var2) in self
     def store_difference(self, var1, var2):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         for i in range(nx):
             for j in range(ny):
@@ -94,7 +95,7 @@ class Field:
 
     # store the elementwise product of var1 and var2 in self
     def store_product(self, var1, var2):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         for i in range(nx):
             for j in range(ny):
@@ -112,7 +113,7 @@ class Field:
 
     # store the elementwise quotient (var1/var2) in self
     def store_quotient(self, var1, var2):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         for i in range(nx):
             for j in range(ny):
@@ -130,7 +131,7 @@ class Field:
 
     # elementwise copy self into copy
     def copy_to(self, copy):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         for i in range(nx):
             for j in range(ny):
@@ -139,7 +140,7 @@ class Field:
 
     # elementwise copy self into copy
     def copy_from(self, source):
-        [nz, nx, ny] = self.shape()
+        [nx, ny, nz] = self.shape()
 
         TWO_D = False
         if isinstance(source, np.ndarray):
@@ -157,7 +158,7 @@ class Field:
 
     # elementwise multiply self by k (could be field or scalar)
     def scale(self, k):
-        self.storeProduct(self, k)
+        self.store_product(self, k)
 
 
 

@@ -64,7 +64,7 @@ def update_physics(self, model, workspace, state):
 def update_stability(self, model, workspace, state):
 
     # padding
-    p = self.padding
+    pad = self.padding
     
     # set stability parameters
     slim      = 0.001
@@ -134,14 +134,14 @@ def update_stability(self, model, workspace, state):
 
     # edge function decorator
     def edge(i, j, side):
-        p = model.padding
-        return workspace.edge(i-p, j-p, side)
+        pad = model.padding
+        return workspace.edge(i-pad, j-pad, side)
 
     # c
     # c     permissible time step
     # c
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
             cc        = gamma*p[i,j]/max(w(i,j,1),rlim)
 
             # get side lengths
@@ -172,8 +172,8 @@ def update_stability(self, model, workspace, state):
     # c     pressure or entropy switch
     # c
     # c     if (kvis == 0) then
-    for j in range(p+ny+p):
-        for i in range(p+nx+p):
+    for j in range(pad+ny+pad):
+        for i in range(pad+nx+pad):
             s[i,j]    = p[i,j]
     # c     else
     # c        do j=0,jb
@@ -185,8 +185,8 @@ def update_stability(self, model, workspace, state):
     # c
     # c     adaptive time step
     # c
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
          dpi       = abs((s[i+1,j]  -2.0*s[i,j]  +s[i-1,j])/ \
                          (s[i+1,j]  +2.0*s[i,j]  +s[i-1,j]  +slim))
          dpj       = abs((s[i,j+1]  -2.0*s[i,j]  +s[i,j-1])/ \
@@ -200,15 +200,15 @@ def update_stability(self, model, workspace, state):
     dtmin = dtl[imin,jmin]
     if not self.local_timestepping:
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 if (dtl[i,j] <= dtmin):
                     dtmin     = dtl[i,j]
                     imin      = i
                     jmin      = j
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 rfl[i,j]  = dtmin/dtl[i,j]
 
     # c
@@ -216,8 +216,8 @@ def update_stability(self, model, workspace, state):
     # c
     #    11 do j=2,jl
     #       do i=2,il
-    for j in range(p,ny+p):
-        for i in range(p,nx+p):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
             if (iprec != 0):
     # c         rfli[i,j] = math.sqrt(radj[i,j]/radi[i,j])
     # c         rflj[i,j] = math.sqrt(radi[i,j]/radj[i,j])
@@ -245,8 +245,8 @@ def update_stability(self, model, workspace, state):
         if (kvis > 1): 
             v2 = v1
 
-        for j in range(p,ny+p):
-            for i in range(p,nx+p):
+        for j in range(pad,ny+pad):
+            for i in range(pad,nx+pad):
                 rk        = gamma *(v1*rlv[i,j]/prn + v2*rev[i,j]/prt)/w(i,j,1)
                 rmu       = (v1*rlv[i,j]+v2*rev[i,j])/w(i,j,1)
             
@@ -277,7 +277,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at i=1 and i=ie
     # c
-    for j in range(p,ny+p):
+    for j in range(pad,ny+pad):
         radi[1,j]   = radi[2,j]
         radi[ie,j]  = radi[il,j]
         rfl[1,j]    = rfl[2,j]
@@ -292,7 +292,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values at j=1 and j=je
     # c
-    for i in range(p-1,nx+p+1):
+    for i in range(pad-1,nx+pad+1):
         radj[i,1]   = radj[i,2]
         radj[i,je]  = radj[i,jl]
         rfl[i,1]    = rfl[i,2]
@@ -307,7 +307,7 @@ def update_stability(self, model, workspace, state):
     # c
     # c     set boundary values along the cut
     # c
-    for i in range(p-1, itl+p):
+    for i in range(pad-1, itl+pad):
         ii        = ib  -i
         radj[ii,1]  = radj[i,2]
         radj[i,1]   = radj[ii,2]
@@ -476,7 +476,7 @@ def halo(self, model, workspace, state):
 
 def transfer_down(self, model, workspace1, workspace2):
     # get padding
-    p = self.padding
+    pad = self.padding
 
     # get geometry dictionary
     geom1 = workspace1.get_geometry()
@@ -493,8 +493,8 @@ def transfer_down(self, model, workspace1, workspace2):
 
     # coarse mesh dims
     ratio = 2
-    nxc = nx/ratio
-    nyc = ny/ratio
+    nxc = int(nx/ratio)
+    nyc = int(ny/ratio)
 
     # parameters
     kvis = model.params['kvis']
@@ -506,10 +506,10 @@ def transfer_down(self, model, workspace1, workspace2):
     if kvis > 0:
 
         jj        = 1
-        for j in range(p, ny+p, 2):
+        for j in range(pad, ny+pad, 2):
             jj        = jj  +1
             ii        = 1
-            for i in range(p, nx+p, 2):
+            for i in range(pad, nx+pad, 2):
                 ii        = ii  +1
                 rlvc[ii, jj] = mean(rlv[i:i+2, j:j+2])
                 revc[ii, jj] = mean(rlv[i:i+2, j:j+2])
@@ -518,22 +518,22 @@ def transfer_down(self, model, workspace1, workspace2):
         # c     set the boundary values at i=1 and i=ie
         # c
         jj        = 1
-        for j in range(p, ny+p, ratio):
+        for j in range(pad, ny+pad, ratio):
             jj        = jj  +1
 
             rlvc[1    ,jj] = mean(rlv[1   , j:j+ratio])
-            rlvc[nxc+p,jj] = mean(rlv[nx+p, j:j+ratio])
+            rlvc[nxc+pad,jj] = mean(rlv[nx+pad, j:j+ratio])
             revc[1    ,jj] = mean(rev[1   , j:j+ratio])
-            revc[nxc+p,jj] = mean(rev[nx+p, j:j+ratio])
+            revc[nxc+pad,jj] = mean(rev[nx+pad, j:j+ratio])
 
         # c
         # c     set the boundary values at j=1 and j=je
         # c
         ii        = 1
-        for i in range(p, nx+p, ratio):
+        for i in range(pad, nx+pad, ratio):
             ii        = ii  +1
 
             rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
-            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])
+            rlvc[ii,nyc+pad] = mean(rlv[i:i+ratio, ny+pad])
             rlvc[ii,1    ] = mean(rlv[i:i+ratio, 1   ])
-            rlvc[ii,nyc+p] = mean(rlv[i:i+ratio, ny+p])
+            rlvc[ii,nyc+pad] = mean(rlv[i:i+ratio, ny+pad])

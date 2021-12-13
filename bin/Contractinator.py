@@ -15,19 +15,17 @@ def sum4way(fine, coarse):
     # Check that dimensions of coarse grid are half of fine grid
     x_coarse = coarse.size()[0]
     y_coarse = coarse.size()[1]
-    if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
-        raise ValueError('Coarse grid size different from expected reduction from fine grid')
+    # if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
+    #     raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
     shape = coarse.shape()
-    dim = shape[0]
+    dim = shape[2]
 
     ic = 0
     for i in range(0,x_fine,2):
         jc = 0
         for j in range(0,y_fine,2):
             for k in range(dim):
-                print("i,j,k")
-                print([ic,jc,k])
                 coarse[ic, jc, k] = sum(sum(fine[i:i+2,j:j+2,k]))
             jc += 1
         ic += 1
@@ -47,18 +45,20 @@ def conservative4way(fine, coarse, weights):
     # Check that dimensions of coarse grid are half of fine grid
     x_coarse = coarse.size()[0]
     y_coarse = coarse.size()[1]
-    if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
-        raise ValueError('Coarse grid size different from expected reduction from fine grid')
+    # if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
+    #     raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
     shape = coarse.shape()
-    dim = shape[0]
+    dim = shape[2]
 
     ic = 0
     for i in range(0,x_fine,2):
         jc = 0
         for j in range(0,y_fine,2):
             for k in range(dim):
-                coarse[ic, jc, k] = __weighted_sum(fine[i:i+2,j:j+2,k], weights[i:i+2,j:j+2,k]) / sum(sum(weights[i:i+2,j:j+2,k]))
+                num = __weighted_sum(fine[i:i+2,j:j+2,k], weights[i:i+2,j:j+2])
+                den = sum(sum(weights[i:i+2,j:j+2]))
+                coarse[ic, jc, k] = num/den
             jc += 1
         ic += 1
             

@@ -1,8 +1,8 @@
-      subroutine bcwall(ny, il, ie, ib, itl, itu,
+      subroutine bcwall(ny, ie, itl, itu, ib, jb,
      & w, p, rev,
      & x,
-     & rm, sa, kvis,
-     & isym)
+     & kvis,
+     & isym,mode)
 c
 c     ******************************************************************
 c     *                                                                *
@@ -16,33 +16,32 @@ c     w(i,j,3)  = momentum in y direction
 c     w(i,j,4)  = total energy
 c
 c     ******************************************************************
-c
+      implicit none
 c     dims
-      integer, intent(in)      :: ny, il, ie, ib
+      integer, intent(in)      :: ny, ie, ib, jb
       integer, intent(in)         :: itl,itu      
 c
 c     ******************************************************************
 c
 c      use flo_var
-      real(8), intent(inout), dimension(:,:,:) :: w
-      real(8), intent(inout), dimension(:,:) :: p
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: w
+      real(8), intent(inout), dimension(0:ib,0:jb) :: p, rev
 
 c      use mesh_var
-      real, dimension(:,:,:), intent(in)    , allocatable :: x
+      real, dimension(0:ib,0:jb,2), intent(in) :: x
 
 c
 c     ******************************************************************
 c
 c      use flo_param
-      real      :: rm,sa
-      integer, intent(in) :: kvis
+      integer, intent(in) :: kvis, mode
 
 c      use solv_param
       integer, intent(in)   :: isym
 c
 c     ******************************************************************
 c
-      implicit none
+
 c
 c     ******************************************************************
 c
