@@ -16,7 +16,7 @@ import numpy as np
 # fortran module
 import nsflux_fort 
 
-def visc_flux(self,ws,w,vw,rfil):
+def nsflux(self,ws,w,vw,rfil):
 
     # calculate viscous fluxes given a workspace
 
