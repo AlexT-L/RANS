@@ -35,13 +35,15 @@ class MultiGrid:
         self.WCorrections = [None] * n_levels
         self.Residuals    = [None] * n_levels
         self.Fluxes       = [None] * n_levels
+        self.Volume       = [None] * n_levels
         self.visits       = np.zeros(n_levels, dtype=int)
         
 
         # set up grids
         self.Workspaces[-1] = workspace
         for l in range(n_levels-2, -1, -1):
-            newGrid = Grid(self.Workspaces[l+1].get_grid())
+            # newGrid = Grid(self.Workspaces[l+1].get_grid())
+            newGrid = workspace.get_grid()
             self.Workspaces[l] = workspace.MakeNew(newGrid, False)
         
         # initialize state variables
@@ -52,11 +54,17 @@ class MultiGrid:
             def newStateField():
                 return Field(field_size, stateDim)
 
-            self.W[l]         = newStateField()
-            self.W1st[l]      = newStateField()
-            self.WCorrections = newStateField()
-            self.Residuals[l] = newStateField()
-            self.Fluxes[l]    = newStateField()
+            self.W[l]            = newStateField()
+            self.W1st[l]         = newStateField()
+            self.WCorrections[l] = newStateField()
+            self.Residuals[l]    = newStateField()
+            self.Fluxes[l]       = newStateField()
+            vol = Field(field_size, 1)
+            self.Volume[l]       = vol
+
+            for i in range(field_size[0]):
+                for j in range(field_size[1]):
+                    vol[i,j] = 1
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])
@@ -92,7 +100,7 @@ class MultiGrid:
     #####
 
         # subsequent levels
-        level = n_levels
+        level = n_levels-1
         for dir in self.cycle.pattern:
             level += dir
             prev = level-dir
@@ -108,7 +116,7 @@ class MultiGrid:
 
             if dir < 0: # go down a level
                 grid = workspace.get_grid()
-                vol = grid.vol
+                vol = self.Volume[level]
 
                 # Transfer state and residuals (fluxes) down to coarse mesh
                 model.transfer_down(self.Workspaces[prev], workspace)

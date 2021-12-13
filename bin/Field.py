@@ -158,7 +158,7 @@ class Field:
 
     # elementwise multiply self by k (could be field or scalar)
     def scale(self, k):
-        self.storeProduct(self, k)
+        self.store_product(self, k)
 
 
 
