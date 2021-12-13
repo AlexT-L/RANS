@@ -20,7 +20,7 @@ Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Br
 
 """
 import pytest
-from .. import fruit
+from fruit import fruit
 
 def test_bananas():
     """
