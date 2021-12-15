@@ -17,7 +17,6 @@ class CellCenterWS(Workspace):
 
     # volume of control volume
     def volume(self, i, j):
-        grid = self.grid
         vol = self.get_field('vol')
         return vol[i,j]
 

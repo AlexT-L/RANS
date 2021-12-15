@@ -14,7 +14,6 @@ class Workspace(ABC):
         self.flds = { 'Grid': {} }
         gridFields = self.flds['Grid']
         for fieldName in grid.fields:
-            print(fieldName)
             gridFields[fieldName] = grid.fields[fieldName]
 
         self.isFinest = bool(isFinest)

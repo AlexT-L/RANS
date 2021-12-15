@@ -30,35 +30,17 @@ def init_from_file(self, grid_dim, input):
     geo["trail"]=geo["trail"]*np.pi/180#convert trail angle to radians
     geo["nbl"] = 0
     geo["jlinv"] = 0
-    geo["nyinv"] = 0
+    geo["nyinv"] = 0    
 
-    xte=self.geo['xte']    
-
-    # set mesh dimensions and update dims
-    dim         = dict()
-    self.dims   = dim     
-    dim["nx"]   = nx
-    dim["ny"]   = ny
-    dim["il"]   = nx + 1 # number of points/edges in i dir of computational grid
-    dim["jl"]   = ny + 1 # number of points/edges in j dir of computational grid
-        # values below define number of points in
-        # computational domain for a padded grid
-    dim["ie"]   = nx + 2
-    dim["je"]   = ny + 2
-    dim["ib"]   = nx + 3
-    dim["jb"]   = ny + 3
-    self.il     = dim["il"]
-    self.jl     = dim["jl"]
-    il          = dim["il"]
-    jl          = dim["jl"]
-    ib          = dim["ib"]
-    jb          = dim["jb"]
-    
+    # set dimensions
+    set_dims(self)
 
     # initialize x-y vertex, center, and volume fields
+    il = nx+1
+    jl = ny+1
     self.x  = Field((il,jl),2)
-    self.xc = Field((ib+1,jb+1),2)
-    self.vol= Field((ib+1,jb+1),1)
+    self.xc = Field((nx, ny),2)
+    self.vol= Field((nx, ny),1)
 
     # store relevant fields
     fields = dict()
@@ -67,13 +49,7 @@ def init_from_file(self, grid_dim, input):
     fields['vol'] = self.vol
     self.fields = fields
 
-
-    #set the limits of the aerfoil profile
-    self.ite       = int(0.5*xte*nx) #coordinate of trailing edge in physical space
-    self.ile       = np.floor(il/2  +1) #coordinate of leading edge in physical space
-    self.itl       = int(self.ile - self.ite) #lower coordinate of trailing edge in computational space
-    self.itu       = int(self.ile + self.ite) #upper coordinate of trailing edge in computational space
-    
+    # create arrays for mesh generation
     self.a  = np.array([np.zeros(il),np.zeros(il)])
     self.b0 = np.zeros(jl)
     self.s0 = np.zeros(il)
@@ -96,27 +72,64 @@ def init_from_file(self, grid_dim, input):
     
 
 def init_from_grid(newGrid, grid):
+    # transfer geometry info and set new dimensions
+    newGrid.geo = grid.geo
+    set_dims(newGrid)
+
     # get relavant values from old grid
     fields = grid.fields
     x = fields['x']
     xc = fields['xc']
     vol = fields['vol']
-    [nx, ny] = grid.divisions
-    [nxNew, nyNew] = newGrid.divisions
 
     # create new arrays
     xNew = Field(newGrid.get_size())
-    xcNew = Field((nxNew + 4, nyNew + 4))
-    volNew = Field((nxNew + 4, nyNew + 4))
+    xcNew = Field(newGrid.divisions)
+    volNew = Field(newGrid.divisions)
 
     # condense mesh
     simple(x, xNew)
     conservative4way(xc, xcNew)
-    sum4way(vol[2:nx+2, 2:ny+2], volNew[2:nxNew+2, 2:nyNew+2])
+    sum4way(vol, volNew)
 
     # store fields
     newFields = dict()
-    newFields['x'] = x
-    newFields['xc'] = xc
-    newFields['vol'] = vol
+    newFields['x'] = xNew
+    newFields['xc'] = xcNew
+    newFields['vol'] = volNew
     newGrid.fields = newFields
+
+    
+# set dimesions
+def set_dims(self):
+    # get dimensions
+    [nx, ny] = self.divisions
+
+    # set mesh dimensions and update dims
+    dim         = dict()
+    self.dims   = dim     
+    dim["nx"]   = nx
+    dim["ny"]   = ny
+    dim["il"]   = nx + 1 # number of points/edges in i dir of computational grid
+    dim["jl"]   = ny + 1 # number of points/edges in j dir of computational grid
+        # values below define number of points in
+        # computational domain for a padded grid
+    dim["ie"]   = nx + 2
+    dim["je"]   = ny + 2
+    dim["ib"]   = nx + 3
+    dim["jb"]   = ny + 3
+    self.il     = dim["il"]
+    self.jl     = dim["jl"]
+    il          = dim["il"]
+    jl          = dim["jl"]
+    ib          = dim["ib"]
+    jb          = dim["jb"]
+    
+    
+    #set the limits of the aerfoil profile
+    xte            = self.geo['xte']
+    self.ite       = int(0.5*xte*nx) #coordinate of trailing edge in physical space
+    self.ile       = np.floor(il/2  +1) #coordinate of leading edge in physical space
+    self.itl       = int(self.ile - self.ite) #lower coordinate of trailing edge in computational space
+    self.itu       = int(self.ile + self.ite) #upper coordinate of trailing edge in computational space
+    

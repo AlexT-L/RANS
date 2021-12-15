@@ -51,8 +51,6 @@ class MultiGrid:
         for l in range(n_levels):
             workspace = self.Workspaces[l]
             field_size = workspace.field_size()
-            vol = Field(field_size, 1)
-            VOL = workspace.get_field('vol')
 
             def newStateField():
                 return Field(field_size, stateDim)
@@ -62,11 +60,6 @@ class MultiGrid:
             self.WCorrections[l] = newStateField()
             self.Residuals[l]    = newStateField()
             self.Fluxes[l]       = newStateField()
-            self.Volume[l]       = vol
-
-            for i in range(field_size[0]):
-                for j in range(field_size[1]):
-                    vol[i,j] = VOL[i+2,j+2]
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])
@@ -117,8 +110,7 @@ class MultiGrid:
             Rw = self.Fluxes[level]
 
             if dir < 0: # go down a level
-                grid = workspace.get_grid()
-                vol = self.Volume[level]
+                vol = workspace.get_field("vol")
 
                 # Transfer state and residuals (fluxes) down to coarse mesh
                 model.transfer_down(self.Workspaces[prev], workspace)

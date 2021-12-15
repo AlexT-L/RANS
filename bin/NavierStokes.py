@@ -162,10 +162,10 @@ class NavierStokes(Model):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        p = self.padding
+        pad = self.padding
         [nx, ny] = workspace.field_size()
         grid_size = workspace.grid_size()
-        field_size = [p+nx+p, p+ny+p]
+        field_size = [pad+nx+pad, pad+ny+pad]
         stateDim = self.dimensions
         className = self.className
 
@@ -177,7 +177,7 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
+        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","xc","rev","rlv"]:
             vars[stateName] = [field_size, 1]
 
         # add scalar variables stored at edges
@@ -197,17 +197,12 @@ class NavierStokes(Model):
         pori.copy_to(porI)
         porj.copy_to(porJ)
 
-        # copy over volume
-        grid = workspace.get_grid()
+        # copy over volume and centers
         VOL = workspace.get_field("vol")
         vol = workspace.get_field("vol", self.className)
-        vol.copy_from(VOL)
+        self.__copy_in(VOL, vol)
 
-        # # set volumes
-        # def get_vol(i, j):
-        #     return workspace.volume(i, j)
-        # p = self.padding
-        # vol = workspace.get_field("vol", self.className)
-        # for i in range(p+nx+p):
-        #     for j in range(p+ny+p):
-        #         vol[i,j] = get_vol(i,j)
+        
+        XC = workspace.get_field("xc")
+        xc = workspace.get_field("xc", self.className)
+        self.__copy_in(XC, xc)
