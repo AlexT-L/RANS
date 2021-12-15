@@ -2,7 +2,7 @@ import numpy as np
 import Field as Field
 
 def simple(fine, coarse):
-    [x_fine, y_fine] = fine.size()
+    [x_fine, y_fine, dim] = fine.shape()
 
     # get slice indices
     xSlice = range(0,x_fine,2)
@@ -13,7 +13,10 @@ def simple(fine, coarse):
     for i in xSlice:
         jNew = 0
         for j in ySlice:
-            coarse[iNew, jNew] = fine[i,j]
+            if dim > 0:
+                for k in range(dim):
+                    coarse[iNew, jNew, k] = fine[i,j,k]
+                coarse[iNew, jNew] = fine[i,j]
             jNew += 1
         iNew += 1
 

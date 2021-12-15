@@ -47,8 +47,13 @@ class Field:
     # size of field
     def shape(self):
         vals = self.vals
-        shape = vals.shape
-        return (shape[0], shape[1], shape[2])
+        return vals.shape
+
+    # dimension of variable
+    # size of field
+    def dim(self):
+        vals = self.vals
+        return vals.shape[2]
 
 
 #############################
@@ -65,13 +70,17 @@ class Field:
             for j in range(ny):
                 for k in range(nz):
                     if isinstance(var1, Field):
+                        k1 = np.min((k, var1.dim()-1))
+
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] + var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1[i,j,k1] + var2[i,j,k2]
                         else:
-                            self[i,j,k] = var1[i,j,k] + var2
+                            self[i,j,k] = var1[i,j,k1] + var2
                     else:
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1 + var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1 + var2[i,j,k2]
                         else:
                             self[i,j,k] = var1 + var2
 
@@ -83,13 +92,17 @@ class Field:
             for j in range(ny):
                 for k in range(nz):
                     if isinstance(var1, Field):
+                        k1 = np.min((k, var1.dim()-1))
+
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] - var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1[i,j,k1] - var2[i,j,k2]
                         else:
-                            self[i,j,k] = var1[i,j,k] - var2
+                            self[i,j,k] = var1[i,j,k1] - var2
                     else:
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1 - var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1 - var2[i,j,k2]
                         else:
                             self[i,j,k] = var1 - var2
 
@@ -101,13 +114,17 @@ class Field:
             for j in range(ny):
                 for k in range(nz):
                     if isinstance(var1, Field):
+                        k1 = np.min((k, var1.dim()-1))
+
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] * var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1[i,j,k1] * var2[i,j,k2]
                         else:
-                            self[i,j,k] = var1[i,j,k] * var2
+                            self[i,j,k] = var1[i,j,k1] * var2
                     else:
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1 * var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1 * var2[i,j,k2]
                         else:
                             self[i,j,k] = var1 * var2
 
@@ -119,13 +136,17 @@ class Field:
             for j in range(ny):
                 for k in range(nz):
                     if isinstance(var1, Field):
+                        k1 = np.min((k, var1.dim()-1))
+
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] / var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1[i,j,k1] / var2[i,j,k2]
                         else:
-                            self[i,j,k] = var1[i,j,k] / var2
+                            self[i,j,k] = var1[i,j,k1] / var2
                     else:
                         if isinstance(var2, Field):
-                            self[i,j,k] = var1 / var2[i,j,k]
+                            k2 = np.min((k, var2.dim()-1))
+                            self[i,j,k] = var1 / var2[i,j,k2]
                         else:
                             self[i,j,k] = var1 / var2
 
