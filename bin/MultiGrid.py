@@ -42,17 +42,17 @@ class MultiGrid:
         # set up grids
         self.Workspaces[-1] = workspace
         for l in range(n_levels-2, -1, -1):
-            # newGrid = Grid(self.Workspaces[l+1].get_grid())
-            newGrid = workspace.get_grid()
+            grid = self.Workspaces[l+1].get_grid()
+            newGrid = grid.from_grid(grid)
+            # newGrid = workspace.get_grid()
             self.Workspaces[l] = workspace.MakeNew(newGrid, False)
         
         # initialize state variables
         for l in range(n_levels):
             workspace = self.Workspaces[l]
-            grid = workspace.get_grid()
             field_size = workspace.field_size()
             vol = Field(field_size, 1)
-            VOL = grid.vol
+            VOL = workspace.get_field('vol')
 
             def newStateField():
                 return Field(field_size, stateDim)

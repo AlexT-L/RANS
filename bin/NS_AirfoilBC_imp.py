@@ -111,8 +111,8 @@ def update_stability(self, model, workspace, state):
             return workspace.get_field(varName, model.className)
     rev = get("rev")
     rlv = get("rlv")
-    radi = get("radi")
-    radj = get("radj")
+    radI = get("radI")
+    radJ = get("radJ")
     rfli = get("rfli")
     rflj = get("rflj")
     rfl = get("rfl")
@@ -161,12 +161,12 @@ def update_stability(self, model, workspace, state):
             # yy        = 0.5*(x(i,j,2) -x(i,j-1,2) +x(i-1,j,2) -x(i-1,j-1,2))
             qs        = (yy*w(i,j,2) -xy*w(i,j,3))/w(i,j,1)
             cs        = cc*(xy**2  +yy**2)
-            radi[i,j] = abs(qs)  +math.sqrt(cs)
+            radI[i,j] = abs(qs)  +math.sqrt(cs)
             qs        = (xx*w(i,j,3)  -yx*w(i,j,2))/w(i,j,1)
             cs        = cc*(xx**2  +yx**2)
-            radj[i,j] = abs(qs)  +math.sqrt(cs)
-            dtl[i,j]  = 1.0/(radi[i,j]  +radj[i,j])
-            #dtlc[i,j] = radi[i,j]  +radj[i,j]
+            radJ[i,j] = abs(qs)  +math.sqrt(cs)
+            dtl[i,j]  = 1.0/(radI[i,j]  +radJ[i,j])
+            #dtlc[i,j] = radI[i,j]  +radJ[i,j]
 
     # c
     # c     pressure or entropy switch
@@ -219,19 +219,19 @@ def update_stability(self, model, workspace, state):
     for j in range(pad,ny+pad):
         for i in range(pad,nx+pad):
             if (iprec != 0):
-    # c         rfli[i,j] = math.sqrt(radj[i,j]/radi[i,j])
-    # c         rflj[i,j] = math.sqrt(radi[i,j]/radj[i,j])
-                rfli[i,j] = (radj[i,j]/radi[i,j])**(0.25)
-                rflj[i,j] = (radi[i,j]/radj[i,j])**(0.25)
+    # c         rfli[i,j] = math.sqrt(radJ[i,j]/radI[i,j])
+    # c         rflj[i,j] = math.sqrt(radI[i,j]/radJ[i,j])
+                rfli[i,j] = (radJ[i,j]/radI[i,j])**(0.25)
+                rflj[i,j] = (radI[i,j]/radJ[i,j])**(0.25)
     # c         rfli[i,j] = 1.
     # c         rflj[i,j] = 1.
     
-            a         = (radi[i,j]/radj[i,j])**adis
-            radi[i,j] = radi[i,j]*(1.0  +1.0/a)
-            radj[i,j] = radj[i,j]*(1.0  +a)
+            a         = (radI[i,j]/radJ[i,j])**adis
+            radI[i,j] = radI[i,j]*(1.0  +1.0/a)
+            radJ[i,j] = radJ[i,j]*(1.0  +a)
             if (iprec == 0):
-                rfli[i,j] = radi[i,j]/dtlc[i,j]
-                rflj[i,j] = radj[i,j]/dtlc[i,j]
+                rfli[i,j] = radI[i,j]/dtlc[i,j]
+                rflj[i,j] = radJ[i,j]/dtlc[i,j]
 
     # c
     # c
@@ -271,15 +271,15 @@ def update_stability(self, model, workspace, state):
                 vsj       = (rk*dsj + rmu*math.sqrt(dsi*dsj)/6.)/vol[i,j]
                 dtv       = dtlc[i,j]+4.*(vsi+vsj)
                 dtl[i,j]  = 1.0/dtv
-                radi[i,j] = dim(radi[i,j],vsi)
-                radj[i,j] = dim(radj[i,j],vsj)
+                radI[i,j] = dim(radI[i,j],vsi)
+                radJ[i,j] = dim(radJ[i,j],vsj)
 
     # c
     # c     set boundary values at i=1 and i=ie
     # c
     for j in range(pad,ny+pad):
-        radi[1,j]   = radi[2,j]
-        radi[ie,j]  = radi[il,j]
+        radI[1,j]   = radI[2,j]
+        radI[ie,j]  = radI[il,j]
         rfl[1,j]    = rfl[2,j]
         rfl[ie,j]   = rfl[il,j]
         rfli[1,j]   = rfli[2,j]
@@ -293,8 +293,8 @@ def update_stability(self, model, workspace, state):
     # c     set boundary values at j=1 and j=je
     # c
     for i in range(pad-1,nx+pad+1):
-        radj[i,1]   = radj[i,2]
-        radj[i,je]  = radj[i,jl]
+        radJ[i,1]   = radJ[i,2]
+        radJ[i,je]  = radJ[i,jl]
         rfl[i,1]    = rfl[i,2]
         rfl[i,je]   = rfl[i,jl]
         rfli[i,1]   = rfli[i,2]
@@ -309,8 +309,8 @@ def update_stability(self, model, workspace, state):
     # c
     for i in range(pad-1, itl+pad):
         ii        = ib  -i
-        radj[ii,1]  = radj[i,2]
-        radj[i,1]   = radj[ii,2]
+        radJ[ii,1]  = radJ[i,2]
+        radJ[i,1]   = radJ[ii,2]
         rfl[ii,1]   = rfl[i,2]
         rfl[i,1]    = rfl[ii,2]
         rfli[ii,1]  = rfli[i,2]

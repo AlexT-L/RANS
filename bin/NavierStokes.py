@@ -199,7 +199,7 @@ class NavierStokes(Model):
 
         # copy over volume
         grid = workspace.get_grid()
-        VOL = grid.vol
+        VOL = workspace.get_field("vol")
         vol = workspace.get_field("vol", self.className)
         vol.copy_from(VOL)
 

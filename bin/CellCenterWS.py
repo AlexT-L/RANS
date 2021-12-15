@@ -18,18 +18,16 @@ class CellCenterWS(Workspace):
     # volume of control volume
     def volume(self, i, j):
         grid = self.grid
-        vol = grid.vol
+        vol = self.get_field('vol')
         return vol[i,j]
 
     # return x field
     def x(self):
-        grid = self.grid
-        return grid.x
+        return self.get_field('x')
 
     # return xc field
     def xc(self):
-        grid = self.grid
-        return grid.x
+        return self.get_field('xc')
 
 # For edges: side = "n", "s", "e", "w"
 
@@ -52,8 +50,8 @@ class CellCenterWS(Workspace):
             i2 = i+1; j2 = j+1
 
         grid = self.grid
-        x = grid.x
-        y = grid.y
+        x = self.x
+        y = self.y
 
         x1 = x[i1, j1]
         y1 = y[i1, j1]

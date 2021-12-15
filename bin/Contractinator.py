@@ -1,6 +1,23 @@
 import numpy as np
 import Field as Field
 
+def simple(fine, coarse):
+    [x_fine, y_fine] = fine.size()
+
+    # get slice indices
+    xSlice = range(0,x_fine,2)
+    ySlice = range(0,y_fine,2)
+
+    # copy over
+    iNew = 0
+    for i in xSlice:
+        jNew = 0
+        for j in ySlice:
+            coarse[iNew, jNew] = fine[i,j]
+            jNew += 1
+        iNew += 1
+
+
 def sum4way(fine, coarse):
     # Combines fine grid by summing over 4 blocks 
     # if not isinstance(fine, Field) or not isinstance(coarse, Field):
@@ -29,9 +46,14 @@ def sum4way(fine, coarse):
                 coarse[ic, jc, k] = sum(sum(fine[i:i+2,j:j+2,k]))
             jc += 1
         ic += 1
-            
 
-def conservative4way(fine, coarse, weights):
+
+def conservative4way(fine, coarse, weights=None):
+    if weights == None:
+        sum4way(fine, coarse)
+        coarse.scale(0.25)
+        return
+
     # Combines fine grid by summing over 4 blocks 
     # if not isinstance(fine, Field) or not isinstance(coarse, Field):
     #     raise TypeError('Fine or coarse field is not a field')

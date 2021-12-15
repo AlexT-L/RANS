@@ -14,41 +14,6 @@ import Contractinator as con
 
 if __name__ == '__main__':
 
-    # # Testing fields
-    # field = Field([12,8],4)
-    # field2 = Field([6,4],1)
-    # weights = Field([12,8],4)
-    # # print(field.vals)
-
-    # field2[0:4,0,0] = 4
-    # print(field2.vals)
-
-    # # print(field.shape())
-
-    # # print("sum")
-    # # print(sum(sum(field[0:2,0:2,0])))
-
-    # for z in range(4):
-    #     field[0,0:8,z] = 3
-    #     weights[0:12,0,z] = 2
-    
-    # print(field.vals)
-
-    # print(field.shape())
-
-    # # con.conservative4way(field, field2, weights)
-
-    # # print(field2.vals)
-
-    # # print(field.vals)
-
-    # exit()
-
-    
-
-
-
-
     # Comment later
     filename = 'rae9-s1.data'
     physicsUpdateFrequency = 1
@@ -58,18 +23,23 @@ if __name__ == '__main__':
     # read in input
     input = Input(filename) # Will actually take all command line inputs
 
+    # format input
+    input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
+    gridInput = input.add_dicts(input.geo_param, input.in_var)
+    grid_dim = [input.dims['nx'], input.dims['ny']]
+    modelInput = input.add_dicts(input.flo_param, input.solv_param)
+
     # create geometry objects
-    grid = AirfoilMap(input)
+    grid = AirfoilMap.from_file(grid_dim, gridInput)
     workspace = CellCenterWS(grid)
 
-    vol = grid.vol
+    vol = workspace.get_field('vol')
     for i in range(vol.size()[0]):
         for j in range(vol.size()[1]):
             vol[i,j] = 1
 
 
     # create physics objects
-    modelInput = input.add_dicts(input.flo_param, input.solv_param)
     bcmodel = NS_AirfoilBC(modelInput)
     model = NavierStokes(bcmodel, modelInput)
     integrator = ImplicitEuler(model, input.solv_param)
