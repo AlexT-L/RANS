@@ -12,10 +12,8 @@ class Workspace(ABC):
 
         # initialize fields array with Grid fields
         self.flds = { 'Grid': {} }
-        storage = self.flds['Grid']
-        storage['x'] = grid.x
-        storage['xc'] = grid.xc
-        storage['vol'] = grid.vol
+        for fieldName in grid.fields:
+            self.flds[fieldName] = grid.fields[fieldName]
         # dim_vals = np.zeros(self.grid.dims)
         # for i in range(len(self.mdl.reqFields)): # loop over required fields
         #     self.flds['Grid'][self.mdl.reqFields[i]] = Field(dim_vals)

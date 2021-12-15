@@ -60,9 +60,9 @@ class NavierStokes(Model):
 
         # calculate residuals
         # eflux_wrap.eflux(self, workspace, w, dw)
-        # dflux_wrap.dflux(self, workspace, w, dw, rfil)
+        # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:
-            # nsflux_wrap.nsflux(self, workspace, w, dw, rfil)
+            # nsflux_wrap.nsflux(self, workspace, w, dw, vw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -177,7 +177,7 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["p","radi","radj","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
+        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
             vars[stateName] = [field_size, 1]
 
         # add scalar variables stored at edges
@@ -191,7 +191,7 @@ class NavierStokes(Model):
         porI = workspace.get_field("porI", self.className)
         porJ = workspace.get_field("porI", self.className)
         pori = bcmodel.get_pori(workspace)
-        porj = bcmodel.get_pori(workspace)
+        porj = bcmodel.get_porj(workspace)
 
         # copy over porosity values
         pori.copy_to(porI)
