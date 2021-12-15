@@ -110,7 +110,7 @@ class MultiGrid:
             Rw = self.Fluxes[level]
 
             if dir < 0: # go down a level
-                vol = workspace.get_field("vol")
+                vol = self.Workspaces[level-dir].get_field("vol")
 
                 # Transfer state and residuals (fluxes) down to coarse mesh
                 model.transfer_down(self.Workspaces[prev], workspace)

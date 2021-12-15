@@ -1,8 +1,9 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 
-def plot_mesh(self,ver):
+def plot_mesh(self):
     #x-y vertices
+    ver = self.fields['x']
     x=ver[:,:,0]
     y=ver[:,:,1]
     #transpose of x-y vertices

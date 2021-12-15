@@ -10,10 +10,12 @@ from Field import Field
 from Contractinator import conservative4way, simple, sum4way
 
 # grid creation functions
+from utils.dims_func import set_dims
 from utils.coord_strch_func import coord_stretch
 from utils.geom_func import geom 
 from utils.mesh_func import mesh
 from utils.sangho_func import sangho
+from utils.metric_func import metric
 from utils.plot_mesh_func import plot_mesh
 
 def init_from_file(self, grid_dim, input):
@@ -67,8 +69,11 @@ def init_from_file(self, grid_dim, input):
     #sanghos modification for non-dimensionalization(re-scaling the c-mesh)
     sangho(self)
 
+    # calculate cell volumes and centers
+    metric(self)
+
     #plot mesh
-    plot_mesh(self, self.x)
+    plot_mesh(self)
     
 
 def init_from_grid(newGrid, grid):
@@ -83,9 +88,9 @@ def init_from_grid(newGrid, grid):
     vol = fields['vol']
 
     # create new arrays
-    xNew = Field(newGrid.get_size())
-    xcNew = Field(newGrid.divisions)
-    volNew = Field(newGrid.divisions)
+    xNew = Field(newGrid.get_size(),2)
+    xcNew = Field(newGrid.divisions,2)
+    volNew = Field(newGrid.divisions,1)
 
     # condense mesh
     simple(x, xNew)
@@ -99,37 +104,5 @@ def init_from_grid(newGrid, grid):
     newFields['vol'] = volNew
     newGrid.fields = newFields
 
-    
-# set dimesions
-def set_dims(self):
-    # get dimensions
-    [nx, ny] = self.divisions
-
-    # set mesh dimensions and update dims
-    dim         = dict()
-    self.dims   = dim     
-    dim["nx"]   = nx
-    dim["ny"]   = ny
-    dim["il"]   = nx + 1 # number of points/edges in i dir of computational grid
-    dim["jl"]   = ny + 1 # number of points/edges in j dir of computational grid
-        # values below define number of points in
-        # computational domain for a padded grid
-    dim["ie"]   = nx + 2
-    dim["je"]   = ny + 2
-    dim["ib"]   = nx + 3
-    dim["jb"]   = ny + 3
-    self.il     = dim["il"]
-    self.jl     = dim["jl"]
-    il          = dim["il"]
-    jl          = dim["jl"]
-    ib          = dim["ib"]
-    jb          = dim["jb"]
-    
-    
-    #set the limits of the aerfoil profile
-    xte            = self.geo['xte']
-    self.ite       = int(0.5*xte*nx) #coordinate of trailing edge in physical space
-    self.ile       = np.floor(il/2  +1) #coordinate of leading edge in physical space
-    self.itl       = int(self.ile - self.ite) #lower coordinate of trailing edge in computational space
-    self.itu       = int(self.ile + self.ite) #upper coordinate of trailing edge in computational space
-    
+    #plot mesh
+    plot_mesh(newGrid)
