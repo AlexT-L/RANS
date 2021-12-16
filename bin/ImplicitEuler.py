@@ -1,11 +1,24 @@
-import Field
+from Field import max
 from Workspace import Workspace
-from integrator import Integrator
+from Integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor
     def __init__(self, model, input):
+        """Constructor
         
+        Parameters
+        ----------
+        model:
+            Model object
+        input:
+            Dictionary of parameter values
+
+        Returns
+        -------
+        :
+            A new ImplicitEuler integrator object.
+        """
         # set attributes
         self.Model = model
         self.className = "ImplicitEuler"
@@ -15,6 +28,17 @@ class ImplicitEuler(Integrator):
 
     
     def step(self, workspace, state, forcing):
+        """Returns the local timestep such that stability is maintained.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        forcing:
+            Field of values on the right hand side of the equation that "force" the ODE
+        """
         model = self.Model
 
         # make sure necessary variables exist in workspace

@@ -1,6 +1,6 @@
 # python implementation of eflux.f
 
-from Field import Field
+from Field import Field, max
 from Grid import Grid
 from Workspace import Workspace
 import numpy as np
@@ -27,10 +27,10 @@ def eflux(model, ws, state, dw):
     ie = nx+2
     je = ny+2
     ib = nx+3
-    jb = nx+4
+    jb = ny+4
     
     # i direction
-    fs = Field((ib, jb), n)
+    fs = Field((ib+1, jb+1), n)
     for j in range(pad,ny+pad):
         for i in range(pad-1,nx+pad):
 
@@ -45,15 +45,16 @@ def eflux(model, ws, state, dw):
             qsm       = (dyy*w[i,j,1]    -dxy*w[i,j,2])    / w[i,j,0]
 
             # add up on faces
-            fs[i,j,0] = qsp*w[i+1,j,0]   + qsm*w[i,j,0] # density
+            fs[i,j,0] = qsp*w[i+1,j,0]  + qsm*w[i,j,0] # density
             fs[i,j,1] = qsp*w[i+1,j,1]  + qsm*w[i,j,1]  + dyy*pa # x - momentum
             fs[i,j,2] = qsp*w[i+1,j,2]  + qsm*w[i,j,2]  - dxy*pa # y - momentum
             fs[i,j,3] = qsp*(w[i+1,j,3] + p[+1,j]) + qsm*(w[i,j,3] + p[i,j]) # energy
 
     # now add everything up
-    for j in range(pad,pad+ny):
-        for i in range(pad,pad+nx):
-            dw[i,j,:] = fs[i,j,:] -fs[i-1,j,:]
+    # for j in range(pad,pad+ny):
+    #     for i in range(pad,pad+nx):
+    #         dw[i,j,:] = fs[i,j,:] -fs[i-1,j,:]
+    dw[pad:nx+pad, pad:ny+pad, :] = fs[pad:nx+pad, pad:ny+pad, :] - fs[1:nx+1, pad:ny+pad, :]
 
 
     # j direction
@@ -77,7 +78,7 @@ def eflux(model, ws, state, dw):
         fs[i,j,3] = qsp*(w[i,j+1,3]  +p[i,j+1]) +qsm*(w[i,j,3]  + p[i,j])
                    
     # now add everything up for j direction
-    for j in range(pad,ny+pad):
-        for i in range(pad,nx+pad):
-            dw[i,j,:] = dw[i,j,:] + fs[i,j,:] - fs[i,j-1,:]
-    
+    # for j in range(pad,ny+pad):
+    #     for i in range(pad,nx+pad):
+    #         dw[i,j,:] = dw[i,j,:] + fs[i,j,:] - fs[i,j-1,:]
+    dw[pad:nx+pad, pad:ny+pad, :] += fs[pad:nx+pad, pad:ny+pad, :] - fs[pad:nx+pad, 1:ny+1, :]

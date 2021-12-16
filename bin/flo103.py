@@ -33,12 +33,6 @@ if __name__ == '__main__':
     grid = AirfoilMap.from_file(grid_dim, gridInput)
     workspace = CellCenterWS(grid)
 
-    vol = workspace.get_field('vol')
-    for i in range(vol.size()[0]):
-        for j in range(vol.size()[1]):
-            vol[i,j] = 1
-
-
     # create physics objects
     bcmodel = NS_AirfoilBC(modelInput)
     model = NavierStokes(bcmodel, modelInput)

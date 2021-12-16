@@ -1,4 +1,3 @@
-from os import stat
 import numpy as np
 
 
@@ -382,4 +381,7 @@ class Field:
         result = -self.vals
         output = Field(self.fieldDim, self.varDim, result)
         return output
+
+    def __pos__(self):
+        return self
     

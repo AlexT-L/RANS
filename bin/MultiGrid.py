@@ -5,13 +5,31 @@ from Grid import Grid
 from Field import Field
 from Cycle import Cycle
 from Workspace import Workspace
-from integrator import Integrator
+from Integrator import Integrator
 
 
 class MultiGrid:
 
     # Constructor
     def __init__(self, workspace, model, integrator, input):
+        """Constructor.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        model:
+            A Model object
+        integrator:
+            An Integrator object
+        input:
+            Dictionary of parameter values
+
+        Returns
+        -------
+        :
+            A new Multigrid object.
+        """
         # Parameters
         self.stabilityUpdateFrequency = input['ftim']
         self.wr_relax = input['fcoll']
@@ -67,6 +85,9 @@ class MultiGrid:
 
     # perform one iteration of the given cycle
     def performCycle(self):
+        """Performs one multi-grid cycle and calculates new state.
+        
+        """
         n_levels = self.cycle.levels
         model = self.Model
         integrator = self.Integrator
@@ -152,10 +173,24 @@ class MultiGrid:
 
     # copy residuals into output field
     def residuals(self, output):
+        """Copies the residual values to the output Field.
+        
+        Parameters
+        ----------
+        output:
+            Field that will store the values
+        """
         residuals = self.Residuals[-1]
         residuals.copy_to(output)
         
     # copy state into output field
     def solution(self, output):
+        """Copies the state values to the output Field.
+        
+        Parameters
+        ----------
+        output:
+            Field that will store the values
+        """
         state = self.W[-1]
         state.copy_to(output)

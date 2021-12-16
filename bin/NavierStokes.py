@@ -1,12 +1,26 @@
 from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
-from Field import Field
+from Field import Field, max
 from model_funcs.eflux import eflux
 
 class NavierStokes(Model):
     
     def __init__(self, bcmodel, input):
+        """Constructor
+        
+        Parameters
+        ----------
+        bcmodel:
+            A BoundaryConditioner object
+        input:
+            Dictionary with parameter values
+
+        Returns
+        -------
+        :
+            A new NavierStokes object.
+        """
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
         self.padding = bcmodel.padding
@@ -22,6 +36,15 @@ class NavierStokes(Model):
 
     # initialize state
     def init_state(self, workspace, state):
+        """Initializes state field.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A field containing the current state
+        """
         self.__check_vars(workspace)
 
         # copy into padded state field
@@ -39,6 +62,22 @@ class NavierStokes(Model):
     # from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
 
     def get_flux(self, workspace, state, output, update_factor=1):
+        """Calculates the spatial flux given the current state.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        output:
+            A Field where the flux values will be stored
+
+        Returns
+        -------
+        :
+            A new AirfoilMap object.
+        """
         self.__check_vars(workspace)
         
         # set rfil value
@@ -60,7 +99,7 @@ class NavierStokes(Model):
         bcmodel.bc_all(self, workspace, state)
 
         # calculate residuals
-        eflux(self, workspace, w, dw)
+        # eflux(self, workspace, w, dw)
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:
@@ -72,6 +111,18 @@ class NavierStokes(Model):
 
 
     def get_safe_timestep(self, workspace, state, timestep):
+        """Returns the local timestep such that stability is maintained.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        timestep:
+            A Field where the time steps will be stored
+
+        """
         self.__check_vars(workspace)
         # retrieve necessary workspace fields
         def get(varName):
@@ -88,6 +139,15 @@ class NavierStokes(Model):
 
     # update rev and rlv
     def update_physics(self, workspace, state):
+        """Updates physical properties of system based on state
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        """
         self.__check_vars(workspace)
 
         # copy state into padded field
@@ -99,6 +159,15 @@ class NavierStokes(Model):
 
     # calls 'step.f' to update stability conditions
     def update_stability(self, workspace, state):
+        """Updates the stability parameters given the current state.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        """
         self.__check_vars(workspace)
         
         # copy state into padded field
@@ -127,6 +196,15 @@ class NavierStokes(Model):
             
 
     def transfer_down(self, workspace1, workspace2):
+        """Calculates the spatial flux given the current state.
+        
+        Parameters
+        ----------
+        workspace1:
+            The Workspace object for the finer level
+        workspace2:
+            The Workspace object for the coarser level
+        """
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
         self.BCmodel.transfer_down(self, workspace1, workspace2)
@@ -138,24 +216,26 @@ class NavierStokes(Model):
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
         # get field size
-        [leni, lenj] = field.size()
-        p = self.padding
+        [nx, ny] = field.size()
+        pad = self.padding
 
         # perform copy operation
-        for i in range(0, leni):
-            for j in range(0, lenj):
-                paddedField[i+p,j+p] = field[i,j]
+        paddedField[pad:nx+pad, pad:ny+pad, :].copy_from(field)
+        # for i in range(0, leni):
+        #     for j in range(0, lenj):
+        #         paddedField[i+pad,j+pad] = field[i,j]
 
     # extract data from a padded field
     def __copy_out(self, paddedField, field):
         # get field size
-        [leni, lenj] = field.size()
-        p = self.padding
+        [nx, ny] = field.size()
+        pad = self.padding
 
         # perform copy operation
-        for i in range(0, leni):
-            for j in range(0, lenj):
-                field[i,j] = paddedField[i+p,j+p]
+        paddedField[pad:nx+pad, pad:ny+pad, :].copy_to(field)
+        # for i in range(0, nx):
+        #     for j in range(0, ny):
+        #         field[i,j] = paddedField[i+pad,j+pad]
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):

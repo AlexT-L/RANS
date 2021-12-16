@@ -1,6 +1,15 @@
 from Field import sum
 
 def simple(fine, coarse):
+    """Performs a simple contraction where every other value is deleted
+    
+    Parameters
+    ----------
+    fine:
+        The Field object on the finer grid
+    coarse:
+        The Field object on the coarser grid
+    """
     [x_fine, y_fine, dim] = fine.shape()
 
     # get slice indices
@@ -21,7 +30,15 @@ def simple(fine, coarse):
 
 
 def sum4way(fine, coarse):
-    # Combines fine grid by summing over 4 blocks 
+    """Contracts the Field by summing 4 values into 1
+    
+    Parameters
+    ----------
+    fine:
+        The Field object on the finer grid
+    coarse:
+        The Field object on the coarser grid
+    """
     # if not isinstance(fine, Field) or not isinstance(coarse, Field):
         # raise TypeError('Fine or coarse field is not a field')
     
@@ -51,6 +68,15 @@ def sum4way(fine, coarse):
 
 
 def conservative4way(fine, coarse, weights=None):
+    """Contracts the Field by averaging 4 values into 1 with weighting terms
+    
+    Parameters
+    ----------
+    fine:
+        The Field object on the finer grid
+    coarse:
+        The Field object on the coarser grid
+    """
     if weights is None:
         sum4way(fine, coarse)
         coarse.scale(0.25)
