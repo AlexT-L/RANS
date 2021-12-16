@@ -30,7 +30,7 @@ class ImplicitEuler(Integrator):
 
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
-        forcing.store_difference(forcing, Rw)
+        forcing -= Rw
 
         # perform implicit euler step
         for stage in range(0, self.numStages-1):
@@ -38,7 +38,7 @@ class ImplicitEuler(Integrator):
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
             # add forcing
-            Rw.store_sum(Rw, forcing)
+            Rw += forcing
 
             # get local timestep
             model.get_safe_timestep(workspace, dt)
@@ -48,7 +48,7 @@ class ImplicitEuler(Integrator):
             
             # scale timestep
             c_dt = self.cfl*self.c_step/2.0
-            dt.scale(c_dt)
+            dt *= c_dt
 
             # take step
             dw.store_product(Rw, dt)

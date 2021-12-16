@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.core.numeric import Infinity
-from Field import Field
+from Field import Field, max
 from Input import Input
 from flo103_PostProcessor import flo103_PostProcessor
 from flo103_ConvergenceChecker import flo103_ConvergenceChecker
@@ -28,9 +28,41 @@ if __name__ == '__main__':
     # newPointer.store_sum(newPointer, field2)
     print(newPointer)
     print(field)
+    
+    print("\n")
+    field2[:,:,:] = 2
+    print(field2)
 
     print("\n\n\n")
-    print(np.max(field))
+
+    # storage = field[0:4, 0:2, 0]
+    # storage.copy_from(field2[0:4, 0:2, 0])
+    # # field[0:4, 0:2, 0].copy_from(field2[0:4, 0:2, 0])
+    # # field.copy_from(field2)
+
+    # print("\n\n")
+    # print(storage)
+    # print(field)
+
+
+    print("\n")
+    num1 = np.zeros((4,4,6))
+    num2 = np.ones((4,4,6))
+    # newnum = num1[0:2,0:4,0:2]
+    # newnum[:,:,:] = 5
+    # print(num1)
+    # print(newnum)
+
+    test1 = Field((2,4),6,num1)
+    test2 = Field((2,4),6,num1)
+    num1[:,:,:] = 3
+
+    temp = test1[0:2,1:3,0:6]
+    temp[:,:,:] = 4
+
+    print(test1)
+    print(test2)
+
 
     # field2[0:4,0,0] = 4
     # print(field2.vals)

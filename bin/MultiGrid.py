@@ -118,7 +118,7 @@ class MultiGrid:
                 contract.sum4way(self.Fluxes[prev], wr)
 
                 # relax transferred residuals
-                wr.scale(self.wr_relax)
+                wr *= self.wr_relax
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
@@ -139,7 +139,7 @@ class MultiGrid:
                 expand.bilinear4way(self.WCorrections[prev], wc)
 
                 # Update state
-                w.store_sum(wc, w)
+                w += wc
 
                 # Update residuals
                 model.get_flux(workspace, w, Rw)

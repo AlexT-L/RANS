@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.core.numeric import Infinity
-from Field import Field
+from Field import Field, max, mean
 from Input import Input
 from flo103_PostProcessor import flo103_PostProcessor
 from flo103_ConvergenceChecker import flo103_ConvergenceChecker
@@ -95,7 +95,8 @@ if __name__ == '__main__':
 #    post.print_solution(state)
 
     rho = state[:,:,0]
-    print(np.max(rho.vals))
-    print(np.mean(rho.vals))
+    print(max(rho))
+    print(mean(rho))
+    print(max(resid))
     
     # Take solution and plot and save info

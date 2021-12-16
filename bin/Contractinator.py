@@ -1,5 +1,4 @@
-import numpy as np
-import Field as Field
+from Field import sum
 
 def simple(fine, coarse):
     [x_fine, y_fine, dim] = fine.shape()
@@ -46,13 +45,13 @@ def sum4way(fine, coarse):
         jc = 0
         for j in range(0,y_fine,2):
             for k in range(dim):
-                coarse[ic, jc, k] = sum(sum(fine[i:i+2,j:j+2,k]))
+                coarse[ic, jc, k] = sum(fine[i:i+2,j:j+2,k])
             jc += 1
         ic += 1
 
 
 def conservative4way(fine, coarse, weights=None):
-    if weights == None:
+    if weights is None:
         sum4way(fine, coarse)
         coarse.scale(0.25)
         return
@@ -81,18 +80,8 @@ def conservative4way(fine, coarse, weights=None):
         jc = 0
         for j in range(0,y_fine,2):
             for k in range(dim):
-                num = __weighted_sum(fine[i:i+2,j:j+2,k], weights[i:i+2,j:j+2])
-                den = sum(sum(weights[i:i+2,j:j+2]))
+                num = sum(fine[i:i+2,j:j+2,k] * weights[i:i+2,j:j+2])
+                den = sum(weights[i:i+2,j:j+2])
                 coarse[ic, jc, k] = num/den
             jc += 1
         ic += 1
-            
-
-def __weighted_sum(field1, field2):
-
-    sum = 0
-    for i in range(2):
-        for j in range(2):
-            sum += field1[i,j]*field2[i,j]
-
-    return sum

@@ -1,30 +1,70 @@
 from os import stat
 import numpy as np
 
+
+# Field classs math methods
+def mean(array):
+    assert(isinstance(array, Field))
+    return np.mean(array.vals)
+
+def abs(array):
+    assert(isinstance(array, Field))
+    return np.abs(array.vals)
+
+def max(array):
+    assert(isinstance(array, Field))
+    return np.max(array.vals)
+
+def min(array):
+    assert(isinstance(array, Field))
+    return np.min(array.vals)
+
+def sum(array):
+    assert(isinstance(array, Field))
+    return np.sum(array.vals)
+
+
+
 class Field:
 
-    def __init__(self, field_size, stateDim=1):
+    def __init__(self, field_size, stateDim=1, vals=None):
         self.fieldDim = field_size
         self.varDim = stateDim
-        nx = field_size[0]
-        ny = field_size[1]
-        full_dim = (nx, ny, stateDim)
-        self.vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
+
+        if vals is None:
+            [nx, ny] = field_size
+            full_dim = (nx, ny, stateDim)
+            vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
+
+        self.vals = vals
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
         x = indx[0]
         y = indx[1]
         z = 0
+        dim = 1
         if len(indx) == 3:
             z = indx[2]
+            # if type(z) != int:
+            #     dim = len(z)
         indx = (x, y, z)
-        fieldSlice = Field(self.fieldDim, self.varDim)
-        fieldSlice.vals = self.vals[indx]
+        
+        vals = self.vals[indx]
+        shape = vals.shape
+
+        if len(shape) == 3:
+            dim = shape[2]
+            shape = shape[0:2]
+
+        fieldSlice = Field(shape, dim, vals)
         return fieldSlice
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
+        if isinstance(value, Field):
+            value = value.vals
+
         x = indx[0]
         y = indx[1]
         z = 0
@@ -138,6 +178,22 @@ class Field:
     def __str__(self):
         return "Field: (\n" + np.array_str(self.vals) + " )"
 
+
+
+    # matrix operations
+
+    def T(self):
+        [nx, ny] = self.fieldDim
+        dim = self.varDim
+        trans = Field((ny, nx), dim)
+        trans.vals = self.vals.T
+        return trans
+
+    
+    def __len__(self):
+        return len(self.vals)
+    
+
     # comparison operatos
 
     def __lt__(self, other):
@@ -170,6 +226,9 @@ class Field:
             other = other.vals
         return self.vals != other
 
+    def __bool__(self):
+        return bool(self.vals)
+
 
     # math operators
     
@@ -179,8 +238,7 @@ class Field:
 
         result = self.vals + other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -190,8 +248,7 @@ class Field:
 
         result = self.vals + other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -201,8 +258,7 @@ class Field:
 
         result = self.vals * other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -212,8 +268,7 @@ class Field:
 
         result = self.vals ^ other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -223,8 +278,7 @@ class Field:
 
         result = self.vals / other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -234,8 +288,7 @@ class Field:
 
         result = self.vals // other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
     
@@ -245,8 +298,7 @@ class Field:
 
         result = self.vals % other
 
-        output = Field(self.fieldDim, self.varDim)
-        output.vals = result
+        output = Field(self.fieldDim, self.varDim, result)
 
         return output
 
@@ -281,4 +333,45 @@ class Field:
         self.vals = self.vals ^ other
         return self
 
+
+    # reverse math operations
+    def __radd__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = other + self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
+    
+    def __rsub__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = other - self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
+    
+    def __rmul__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result =  other * self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
+    
+    def __rpow__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = other ^ self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
     
