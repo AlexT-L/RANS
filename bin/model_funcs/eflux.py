@@ -3,66 +3,81 @@
 from Field import Field
 from Grid import Grid
 from Workspace import Workspace
-from NavierStokes import NavierStokes
 import numpy as np
 
-def eflux(ws,dw):
+def eflux(model, ws, state, dw):
     # take a workspace ws and calculate convective fluxes
 
-    G = ws.grd # grab grid
-    w = ws.flds['w'] # state vector
-    porJ = ws.flds['porJ'] # porosity
-    P = ws.flds['P']   # pressure
-    n = 4 # number of quantities being convected
+    pad = model.padding
+
+    def edge(i, j, side):
+        return ws.edge(i-pad, j-pad, side)
+    def normal(i, j, side):
+        return ws.edge_normal(i-pad, j-pad, side)
+
+    w = state # state vector
+    porJ = ws.get_field('porJ', model.className) # porosity
+    p = ws.get_field('p', model.className)   # pressure
+    x = ws.get_field('x')
+    n = state.dim() # number of quantities being convected
+
+    [nx, ny] = ws.field_size()
+    il = nx+1
+    jl = ny+1
+    ie = nx+2
+    je = ny+2
+    ib = nx+3
+    jb = nx+4
     
     # i direction
-    fs = np.zeros([G.ib, G.jb,n])
-    for j in range(1,G.jl):
-        for i in range(0,G.il):
+    fs = Field((ib, jb), n)
+    for j in range(pad,ny+pad):
+        for i in range(pad-1,nx+pad):
 
             # normal vector 
-            dxy = G.X[i,j,0] - G.X[i,j-1,0]
-            dyy = G.X[i,j,1] - G.X[i,j-1,1]
+            [dxy, dyy] = normal(i, j, 'e')
             
             # pressure averaging
-            Pa = P[i+1][j] + P[i][j]
+            pa = p[i+1-pad,j-pad] + p[i-pad,j-pad]
 
             # flux operator
-            qsp       = (dyy*w[i+1,j,1]  -dxy*w[i+1,j,2])/w[i+1,j,0]
-            qsm       = (dyy*w[i,j,1]  - dxy*w[i,j,2])/w[i,j,0]
+            qsp       = (dyy*w[i+1,j,1]  -dxy*w[i+1,j,2]) / w[i+1,j,0]
+            qsm       = (dyy*w[i,j,1]    -dxy*w[i,j,2])    / w[i,j,0]
 
             # add up on faces
             fs[i,j,0] = qsp*w[i+1,j,0]   + qsm*w[i,j,0] # density
-            fs[i,j,1] = qsp*w[i+1,j,1]  + qsm*w[i,j,1]  + dyy*Pa # x - momentum
-            fs[i,j,2] = qsp*w[i+1,j,2]  + qsm*w[i,j,2]  - dxy*Pa # y - momentum
-            fs[i,j,3] = qsp*(w[i+1,j,3] + P[+1,j]) + qsm*(w[i,j,3] + P[i,j]) # energy
+            fs[i,j,1] = qsp*w[i+1,j,1]  + qsm*w[i,j,1]  + dyy*pa # x - momentum
+            fs[i,j,2] = qsp*w[i+1,j,2]  + qsm*w[i,j,2]  - dxy*pa # y - momentum
+            fs[i,j,3] = qsp*(w[i+1,j,3] + p[+1,j]) + qsm*(w[i,j,3] + p[i,j]) # energy
 
     # now add everything up
-    for j in range(1,G.jl):
-        for i in range(1,G.il):
+    for j in range(pad,pad+ny):
+        for i in range(pad,pad+nx):
             dw[i,j,:] = fs[i,j,:] -fs[i-1,j,:]
 
 
     # j direction
-    for j in range(0,G.jl):
-      for i in range(1,G.il):
+    for j in range(pad,pad+ny):
+      for i in range(pad-1,pad+nx):
 
-          # normal vector
-         dxx        = G.X[i,j,0]  -G.X[i-1,j,0]
-         dyx        = G.X[i,j,1]  -G.X[i-1,j,1]
-         # pressure average
-         Pa        = P[i,j+1]  +P[i,j]
-         # convective operator
-         qsp       = porJ[i,j]*(dxx*w[i,j+1,2]  - dyx*w[i,j+1,1])/w[i,j+1,0]    
-         qsm       = porJ[i,j]*(dxx*w[i,j,2]  - dyx*w[i,j,1])/w[i,j,0]
+        # normal vector
+        [dxx, dyx] = normal(i, j, 'n')
+
+        # pressure average
+        pa        = p[i,j+1]  +p[i,j]
+
+        # convective operator
+        qsp       = porJ[i-pad,j-pad] * (dxx*w[i,j+1,2]  - dyx*w[i,j+1,1]) / w[i,j+1,0]    
+        qsm       = porJ[i-pad,j-pad] * (dxx*w[i,j,2]    - dyx*w[i,j,1])   / w[i,j,0]
+
         # add up on faces
-         fs[i,j,0] = qsp*w[i,j+1,0]  +qsm*w[i,j,0]
-         fs[i,j,1] = qsp*w[i,j+1,1]  +qsm*w[i,j,1]  - dyx*Pa
-         fs[i,j,2] = qsp*w[i,j+1,2]  +qsm*w[i,j,2]  + dxx*Pa
-         fs[i,j,3] = qsp*(w[i,j+1,3]  +P[i,j+1]) +qsm*(w[i,j,3]  + P[i,j])
+        fs[i,j,0] = qsp*w[i,j+1,0]  +qsm*w[i,j,0]
+        fs[i,j,1] = qsp*w[i,j+1,1]  +qsm*w[i,j,1]  - dyx*pa
+        fs[i,j,2] = qsp*w[i,j+1,2]  +qsm*w[i,j,2]  + dxx*pa
+        fs[i,j,3] = qsp*(w[i,j+1,3]  +p[i,j+1]) +qsm*(w[i,j,3]  + p[i,j])
                    
     # now add everything up for j direction
-    for j in range(1,G.jl):
-        for i in range(1,G.il):
+    for j in range(pad,ny+pad):
+        for i in range(pad,nx+pad):
             dw[i,j,:] = dw[i,j,:] + fs[i,j,:] - fs[i,j-1,:]
     

@@ -27,6 +27,10 @@ class Workspace(ABC):
     def get_grid(self):
         return self.grid
 
+    # get grid-level-specific geometry info
+    def get_dims(self):
+        return self.grid.get_dims()
+
     # return geometry info
     def get_geometry(self):
         return self.grid.get_geometry()
@@ -121,5 +125,5 @@ class Workspace(ABC):
         pass
 
     @abstractmethod
-    def edgeNormal(self, i, j, side):
+    def edge_normal(self, i, j, side):
         pass

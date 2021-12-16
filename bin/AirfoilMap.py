@@ -31,8 +31,13 @@ class AirfoilMap(Grid):
         init_from_grid(newGrid, grid)
         return newGrid
 
-    
+
+    def get_dims(self):
+        return self.dims 
    
+    def get_geometry(self):
+        return self.geo
+
     def get_size(self):
         [nx, ny] = self.divisions
         return (int(nx+1), int(ny+1))

@@ -2,6 +2,7 @@ from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
 from Field import Field
+from model_funcs.eflux import eflux
 
 class NavierStokes(Model):
     
@@ -59,6 +60,7 @@ class NavierStokes(Model):
         bcmodel.bc_all(self, workspace, state)
 
         # calculate residuals
+        eflux(self, workspace, w, dw)
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:
@@ -177,8 +179,11 @@ class NavierStokes(Model):
             vars[stateName] = [field_size, stateDim]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","xc","rev","rlv"]:
+        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
             vars[stateName] = [field_size, 1]
+
+        # xc has 2 dimensions
+        vars['xc'] = [field_size, 2]
 
         # add scalar variables stored at edges
         for stateName in ["porI","porJ"]:
@@ -206,3 +211,6 @@ class NavierStokes(Model):
         XC = workspace.get_field("xc")
         xc = workspace.get_field("xc", self.className)
         self.__copy_in(XC, xc)
+
+        # set geometric values in the halo
+        bcmodel.halo_geom(self, workspace)

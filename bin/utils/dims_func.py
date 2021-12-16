@@ -32,3 +32,9 @@ def set_dims(self):
     self.ile       = np.floor(il/2  +1) #coordinate of leading edge in physical space
     self.itl       = int(self.ile - self.ite) #lower coordinate of trailing edge in computational space
     self.itu       = int(self.ile + self.ite) #upper coordinate of trailing edge in computational space
+
+    # store in dims
+    dim['ite'] = self.ite
+    dim['ile'] = self.ile
+    dim['itl'] = self.itl
+    dim['itu'] = self.itu

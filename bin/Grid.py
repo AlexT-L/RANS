@@ -49,11 +49,10 @@ class Grid(ABC):
         self.Fint = Field(self.get_size()) """
 
     # get number of vertices
+    @abstractmethod
     def get_size(self):
         pass
 
-    def get_volume(self, i, j):
-        pass
-
+    @abstractmethod
     def get_geometry(self):
-        return self.geo
+        pass

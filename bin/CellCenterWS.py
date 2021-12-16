@@ -48,9 +48,9 @@ class CellCenterWS(Workspace):
             i1 = i+1; j1 = j
             i2 = i+1; j2 = j+1
 
-        grid = self.grid
-        x = self.x
-        y = self.y
+        X = self.get_field('x')
+        x = X[:,:,0]
+        y = X[:,:,1]
 
         x1 = x[i1, j1]
         y1 = y[i1, j1]
@@ -63,7 +63,7 @@ class CellCenterWS(Workspace):
         return [dx, dy]
 
     # normal vector of control volume edge in positive i or j direction
-    def edgeNormal(self, i, j, side):
+    def edge_normal(self, i, j, side):
         [dx, dy] = self.edge(i, j, side)
 
         return [dy, -dx]

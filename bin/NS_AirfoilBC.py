@@ -68,6 +68,11 @@ class NS_AirfoilBC(BoundaryConditioner):
         self.__check_vars(workspace)
         return workspace.get_field("pori", self.className)
 
+    # set geometry values in the halo
+    def halo_geom(self, model, workspace):
+        self.__check_vars(workspace)
+        implementation.halo_geom(self, model, workspace)
+
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
         if not workspace.has_dict(self.className):

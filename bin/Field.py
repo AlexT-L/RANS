@@ -49,6 +49,9 @@ class Field:
             # if type(z) != int:
             #     dim = len(z)
         indx = (x, y, z)
+
+        if len(self.vals.shape) == 2:
+            indx = (x, y)
         
         vals = self.vals[indx]
         shape = vals.shape
@@ -373,5 +376,10 @@ class Field:
 
         output = Field(self.fieldDim, self.varDim, result)
 
+        return output
+
+    def __neg__(self):
+        result = -self.vals
+        output = Field(self.fieldDim, self.varDim, result)
         return output
     
