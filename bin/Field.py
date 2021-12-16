@@ -4,7 +4,8 @@ import numpy as np
 class Field:
 
     def __init__(self, field_size, stateDim=1):
-        self.dims = field_size
+        self.fieldDim = field_size
+        self.varDim = stateDim
         nx = field_size[0]
         ny = field_size[1]
         full_dim = (nx, ny, stateDim)
@@ -18,7 +19,9 @@ class Field:
         if len(indx) == 3:
             z = indx[2]
         indx = (x, y, z)
-        return self.vals[indx]
+        fieldSlice = Field(self.fieldDim, self.varDim)
+        fieldSlice.vals = self.vals[indx]
+        return fieldSlice
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
@@ -64,117 +67,66 @@ class Field:
 
     # store the sum of var1 and var2 in self
     def store_sum(self, var1, var2):
-        [nx, ny, nz] = self.shape()
 
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        k1 = np.min((k, var1.dim()-1))
+        if isinstance(var1, Field):
+            var1 = var1.vals
+        if isinstance(var2, Field):
+            var2 = var2.vals
 
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1[i,j,k1] + var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1[i,j,k1] + var2
-                    else:
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1 + var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1 + var2
+        self.vals = var1 + var2
+        return
+
 
     # store the difference (var1 - var2) in self
     def store_difference(self, var1, var2):
-        [nx, ny, nz] = self.shape()
 
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        k1 = np.min((k, var1.dim()-1))
+        if isinstance(var1, Field):
+            var1 = var1.vals
+        if isinstance(var2, Field):
+            var2 = var2.vals
 
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1[i,j,k1] - var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1[i,j,k1] - var2
-                    else:
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1 - var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1 - var2
+        self.vals = var1 - var2
+        return
+
 
     # store the elementwise product of var1 and var2 in self
     def store_product(self, var1, var2):
-        [nx, ny, nz] = self.shape()
 
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        k1 = np.min((k, var1.dim()-1))
+        if isinstance(var1, Field):
+            var1 = var1.vals
+        if isinstance(var2, Field):
+            var2 = var2.vals
 
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1[i,j,k1] * var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1[i,j,k1] * var2
-                    else:
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1 * var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1 * var2
+        self.vals = var1 * var2
+        return
+
 
     # store the elementwise quotient (var1/var2) in self
     def store_quotient(self, var1, var2):
-        [nx, ny, nz] = self.shape()
 
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        k1 = np.min((k, var1.dim()-1))
+        if isinstance(var1, Field):
+            var1 = var1.vals
+        if isinstance(var2, Field):
+            var2 = var2.vals
 
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1[i,j,k1] / var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1[i,j,k1] / var2
-                    else:
-                        if isinstance(var2, Field):
-                            k2 = np.min((k, var2.dim()-1))
-                            self[i,j,k] = var1 / var2[i,j,k2]
-                        else:
-                            self[i,j,k] = var1 / var2
+        self.vals = var1 / var2
+        return
+    
 
     # elementwise copy self into copy
     def copy_to(self, copy):
-        [nx, ny, nz] = self.shape()
+        assert(isinstance(copy, Field))
 
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    copy[i,j,k] = self[i,j,k]
+        copy.vals = np.copy(self.vals)
+        return
+
 
     # elementwise copy self into copy
     def copy_from(self, source):
-        [nx, ny, nz] = self.shape()
+        assert(isinstance(source, Field))
 
-        TWO_D = False
-        if isinstance(source, np.ndarray):
-            if len(source.shape) == 2:
-                TWO_D = True
-
-        for i in range(nx):
-            for j in range(ny):
-                if TWO_D:
-                    self[i,j] = source[i,j]
-                else:
-                    for k in range(nz):
-                        self[i,j,k] = source[i,j,k]
+        self.vals = np.copy(source.vals)
+        return
 
 
     # elementwise multiply self by k (could be field or scalar)
@@ -182,5 +134,151 @@ class Field:
         self.store_product(self, k)
 
 
+    # string representation
+    def __str__(self):
+        return "Field: (\n" + np.array_str(self.vals) + " )"
+
+    # comparison operatos
+
+    def __lt__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals < other
+    
+    def __le__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals <= other
+    
+    def __gt__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals > other
+    
+    def __ge__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals >= other
+    
+    def __eq__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals == other
+    
+    def __ne__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+        return self.vals != other
 
 
+    # math operators
+    
+    def __add__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals + other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __sub__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals + other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __mul__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals * other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __pow__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals ^ other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __truediv__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals / other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __floordiv__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals // other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+    
+    def __mod__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = self.vals % other
+
+        output = Field(self.fieldDim, self.varDim)
+        output.vals = result
+
+        return output
+
+    def __iadd__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        self.vals = self.vals + other
+        return self
+
+    
+    def __isub__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        self.vals = self.vals + other
+        return self
+
+    
+    def __imul__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        self.vals = self.vals * other
+        return self
+
+    
+    def __ipow__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        self.vals = self.vals ^ other
+        return self
+
+    

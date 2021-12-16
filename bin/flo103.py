@@ -93,5 +93,9 @@ if __name__ == '__main__':
     
     # print results
 #    post.print_solution(state)
+
+    rho = state[:,:,0]
+    print(np.max(rho.vals))
+    print(np.mean(rho.vals))
     
     # Take solution and plot and save info
