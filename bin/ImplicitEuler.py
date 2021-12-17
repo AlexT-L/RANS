@@ -25,6 +25,7 @@ class ImplicitEuler(Integrator):
         self.numStages = input['mstage']
         self.Flux_update = input['cdis'] # relaxation/update factor for flux --> 0: no update, 1: full update
         self.c_step = input['cstp']    # fraction of timestep to use
+        print("ImplicitEuler")
 
     
     def step(self, workspace, state, forcing):
@@ -52,12 +53,15 @@ class ImplicitEuler(Integrator):
         dw = get("dw")
         dt = get("dt")
 
+        # store initial state
+        w.copy_to(wn)
+
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
         forcing -= Rw
 
         # perform implicit euler step
-        for stage in range(0, self.numStages-1):
+        for stage in range(0, self.numStages):
             # calculate new flux
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
@@ -65,13 +69,14 @@ class ImplicitEuler(Integrator):
             Rw += forcing
 
             # get local timestep
-            model.get_safe_timestep(workspace, dt)
+            model.get_safe_timestep(workspace, w, dt)
 
             # get courant number
             cfl = model.get_cfl(workspace)
+            print(cfl)
             
             # scale timestep
-            c_dt = self.cfl*self.c_step/2.0
+            c_dt = cfl*self.c_step[stage]/2.0
             dt *= c_dt
 
             # take step

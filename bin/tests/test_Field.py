@@ -39,7 +39,7 @@ def test_constructor_2d():
     field = Field(dims)
     
     # Assert correct shape
-    assert field.shape() == dims
+    assert field.size() == dims
     
 def test_constructor_3d():
     '''
@@ -66,7 +66,7 @@ def test_set_field():
     field = Field(dims)
     
     # Set values
-    field.set_val(rand)
+    field[:,:] = rand
     
     assert rand == field.get_vals()
     
@@ -79,8 +79,7 @@ def test_set_item():
     zeros = np.zeros(dims)
     
     # Create field initially all 0's
-    field = Field(dims)
-    field.set_val(zeros)
+    field = Field(dims, 1, zeros)
     
     # Set index to 1 in zeros
     indx = 3

@@ -91,6 +91,6 @@ if __name__ == '__main__':
     rho = state[:,:,0]
     print(max(rho))
     print(mean(rho))
-    print(max(resid))
+    print(resid)
     
     # Take solution and plot and save info

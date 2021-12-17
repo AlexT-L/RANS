@@ -32,7 +32,8 @@ class MultiGrid:
         """
         # Parameters
         self.stabilityUpdateFrequency = input['ftim']
-        self.wr_relax = input['fcoll']
+        self.wr_relax = float(input['fcoll'])
+        self.wr_relax = 0.0
 
         # counter variable
         self.num_cycles = 0
@@ -167,10 +168,18 @@ class MultiGrid:
                 
                 # Update Correction
                 wc.store_difference(w, w1)
+            
+            print("\nlevel")
+            print(level)
+            print(w)
+            print("\n")
+        
+        # perform one last step
+        integrator.step(workspace, w, Rw)
 
         # update number of cycles
-        print(max(Rw))
         self.num_cycles += 1
+
 
     # copy residuals into output field
     def residuals(self, output):
@@ -181,7 +190,7 @@ class MultiGrid:
         output:
             Field that will store the values
         """
-        residuals = self.Residuals[-1]
+        residuals = self.Fluxes[-1]
         residuals.copy_to(output)
         
     # copy state into output field

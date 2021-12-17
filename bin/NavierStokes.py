@@ -28,8 +28,8 @@ class NavierStokes(Model):
         self.dimensions = 4
 
         # courant number
-        self.cfl_fine = input['cflf']
-        self.cfl_coarse = input['cflc']
+        self.cfl_fine = abs(input['cflf'])
+        self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
         self.cfl = min([self.cfl_fine, self.cfl_lim])
         
@@ -99,7 +99,7 @@ class NavierStokes(Model):
         bcmodel.bc_all(self, workspace, w)
 
         # calculate residuals
-        # eflux(self, workspace, w, dw)
+        eflux(self, workspace, w, dw)
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:
