@@ -292,7 +292,7 @@ class Field:
         if isinstance(other, Field):
             other = other.vals
 
-        result = self.vals + other
+        result = self.vals - other
 
         output = Field(self.fieldDim, self.varDim, result)
 
