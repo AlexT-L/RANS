@@ -421,6 +421,26 @@ class Field:
 
         return output
 
+    def __rtruediv__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = other / self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
+
+    def __rfloordiv__(self, other):
+        if isinstance(other, Field):
+            other = other.vals
+
+        result = other // self.vals
+
+        output = Field(self.fieldDim, self.varDim, result)
+
+        return output
+
     def __neg__(self):
         result = -self.vals
         output = Field(self.fieldDim, self.varDim, result)
