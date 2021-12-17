@@ -134,7 +134,7 @@ def test_product_func():
     newfield = field1 * field2
     baseline = rand1 * rand2
     
-    assert np.array_equal(int(newfield.get_vals()), int(baseline))
+    assert np.array_equal(newfield.get_vals().astype(int), baseline.astype(int))
 
 def test_quotient_func():
     '''
@@ -153,4 +153,4 @@ def test_quotient_func():
     newfield = field1 / field2
     baseline = rand1 / rand2
     
-    assert np.array_equal(int(newfield.get_vals()), int(baseline))
+    assert np.array_equal(newfield.get_vals().astype(int), baseline.astype(int))
