@@ -8,10 +8,6 @@ class BoundaryConditioner(WorkspaceClass):
         pass
 
     @abstractmethod
-    def init_state(self, model, workspace, state):
-        pass
-
-    @abstractmethod
     def update_stability(self, model, workspace, state):
         pass
 
