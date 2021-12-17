@@ -32,19 +32,13 @@ def turbulent_viscosity(params, dims):
     p = params['p']
 
     xtran = params['xtran'] # needs to be from flo_param
-
     vol = params['vol'] # new
-    
-
 
     # initializing, defined later
-    uedge = []
     dim_var = 500
     tauw = np.ones(dim_var)
     yscal = np.ones(dim_var)
-    scalf = np.ones(dim_var)
     vor = np.ones((dim_var,dim_var))
-    avor = np.ones(dim_var)
     avorm = np.ones(dim_var)
     ravg = np.ones(dim_var)
     amut = np.ones((dim_var,dim_var))
@@ -54,8 +48,6 @@ def turbulent_viscosity(params, dims):
     yvorm = np.ones(dim_var)
     utot = np.ones((dim_var,dim_var))
     utotm = np.ones(dim_var)
-    utot1 = np.ones(dim_var)
-    ylenm1 = dim_var
     utmin = np.ones(dim_var)
     fkleb = np.ones(dim_var)
     jedge = np.ones(dim_var)
@@ -105,14 +97,13 @@ def turbulent_viscosity(params, dims):
     # ncyct     = 10 # commented out in turb2
     # if (ncyc > ncyct) return
 
-    for j in range(0,j2):
-        for i in range(0,i2):
-            rinv[i,j] = 1.0/w[i,j,0]
-            t[i,j]    = p[i,j]* rinv[i,j]
-            u[i,j]    = w[i,j,1]* rinv[i,j]
-            v[i,j]    = w[i,j,2]* rinv[i,j]
-            amu[i,j]  = t[i,j]
-            amut[i,j] = 0.0
+
+    rinv[:,:] = 1.0/w[:,:,0]
+    t[:,:]    = p[:,:]* rinv[:,:]
+    u[:,:]    = w[:,:,1]* rinv[:,:]
+    v[:,:]    = w[:,:,2]* rinv[:,:]
+    amu[:,:]  = t[:,:]
+    amut[:,:] = 0.0
 
 # c     **********************************************************************
 # c     *   determination of eddy viscosity                                  *
@@ -124,70 +115,65 @@ def turbulent_viscosity(params, dims):
 # c     *   calculate vorticity and total velocity                           *
 # c     **********************************************************************
 
-    for j in range(0,jl):
-        for i in range (0,i2):
-            vola[i,j] = 0.5* (vol[i,j]+ vol[i,j+1])
 
-    for i in range(1,il):
-        xxa       = x[i,1,1]-x[i-1,1,1]
-        yxa       = x[i,1,2]-x[i-1,1,2]
-        uy        = u[i,2]- u[i,1]
-        vy        = v[i,2]- v[i,1]
-        uavg      = .5* (u[i,1]+u[i,2])
-        vavg      = .5* (v[i,1]+v[i,2])
-        vor1      = (xxa*uy + yxa*vy)/vola[i,1]
-        vor2      = 0.0
-        vor3      = 0.0
+    vola[:,:] = 0.5* (vol[:,:]+ vol[:,:+1])
 
-        vort      = vor1-vor2-vor3
-        vor[i,1]  = abs(vort)
-        utotal    = uavg*uavg + vavg*vavg
-        utot[i,1] = np.sqrt(utotal)
-
-    for j in range(1,jlm):
-        for i in range( 1,il):
-            xxa       = x[i,j,0]-x[i-1,j,0]
-            yxa       = x[i,j,1]-x[i-1,j,1]
-            uy        = u[i,j+1]- u[i,j]
-            vy        = v[i,j+1]- v[i,j]
-            uavg      = 0.5* (u[i,j]+ u[i,j+1])
-            vavg      = 0.5* (v[i,j]+ v[i,j+1])
-
-        #  thin-layer navier-stokes contribution to vorticity
-
-            vor1      = (xxa*uy + yxa*vy)/vola[i,j]
+    xxa = x[1:,1,1]-x[:il,1,1] 
+    yxa = x[1:,1,2]-x[:il,1,2]
+    uy        = u[1:,2]- u[1:,1]
+    vy        = v[1:,2]- v[1:,1]
+    uavg      = .5* (u[1:,1]+u[1:,2])
+    vavg      = .5* (v[1:,1]+v[1:,2])
 
 
-        #  additional contributions to vorticity
+    vor1      = (xxa*uy + yxa*vy)/vola[1:,1]
+    vor2      = 0.0
+    vor3      = 0.0
 
-            xyw       = 0.5* (x[i-1,j+1,0]- x[i-1,j-1,0])
-            xye       = 0.5* (x[i,j+1,0]- x[i,j-1,0])
-            yyw       = 0.5* (x[i-1,j+1,1]- x[i-1,j-1,1])
-            yye       = 0.5* (x[i,j+1,1]- x[i,j-1,1])
-            volawi    = 2.0/(vola[i,j]+ vola[i-1,j])
-            volaei    = 2.0/(vola[i,j]+ vola[i+1,j])
-            uxe       = 0.5* (u[i+1,j]+u[i+1,j+1]) - uavg
-            vxe       = 0.5* (v[i+1,j]+v[i+1,j+1]) - vavg
-            uxw       = uavg - 0.5* (u[i-1,j]+u[i-1,j+1])
-            vxw       = vavg - 0.5* (v[i-1,j]+v[i-1,j+1])
-            vor2      = 0.5* (xye* volaei* uxe+ xyw* volawi* uxw)
-            vor3      = 0.5* (yye* volaei* vxe+ yyw* volawi* vxw)
-            vort      = vor1- vor2- vor3
+    vort      = vor1-vor2-vor3
+    vor[1:,1]  = abs(vort)
+    utotal    = uavg*uavg + vavg*vavg
 
-            vor[i,j]  = abs(vort)
-            utotal    = uavg* uavg+ vavg* vavg
-            utot[i,j] = np.sqrt(utotal)
+    utot[1:,1] = np.sqrt(utotal)
+
+    # i>1:il, i+1>2:il+1, i-1>0:il-1
+    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
+    xxa       = x[1:il,1:jlm,0]-x[0:il-1,1:jlm,0] 
+    yxa       = x[1:il,1:jlm,1]-x[0:il-1,1:jlm,1] 
+    uy        = u[1:il,2:jlm+1]- u[1:il,1:jlm]
+    vy        = v[1:il,2:jlm+1]- v[1:il,1:jlm]
+    uavg      = 0.5* (u[1:il,1:jlm]+ u[1:il,2:jlm+1])
+    vavg      = 0.5* (v[1:il,1:jlm]+ v[1:il,2:jlm+1])
+#  thin-layer navier-stokes contribution to vorticity
+    vor1      = (xxa*uy + yxa*vy)/vola[1:il,1:jlm]
+
+#  additional contributions to vorticity
+    xyw       = 0.5* (x[0:il-1,2:jlm+1,0]- x[0:il-1,0:jlm-1,0])
+    xye       = 0.5* (x[1:il,2:jlm+1,0]- x[1:il,0:jlm-1,0])
+    yyw       = 0.5* (x[0:il-1,2:jlm+1,1]- x[0:il-1,0:jlm-1,1])
+    yye       = 0.5* (x[1:il,2:jlm+1,1]- x[1:il,0:jlm-1,1])
+    volawi    = 2.0/(vola[1:il,1:jlm]+ vola[0:il-1,1:jlm])
+    volaei    = 2.0/(vola[1:il,1:jlm]+ vola[2:il+1,1:jlm])
+    uxe       = 0.5* (u[2:il+1,1:jlm]+u[2:il+1,2:jlm+1]) - uavg
+    vxe       = 0.5* (v[2:il+1,1:jlm]+v[2:il+1,2:jlm+1]) - vavg
+    uxw       = uavg - 0.5* (u[0:il-1,1:jlm]+u[0:il-1,2:jlm+1])
+    vxw       = vavg - 0.5* (v[0:il-1,1:jlm]+v[0:il-1,2:jlm+1])
+    vor2      = 0.5* (xye* volaei* uxe+ xyw* volawi* uxw)
+    vor3      = 0.5* (yye* volaei* vxe+ yyw* volawi* vxw)
+    vort      = vor1- vor2- vor3
+
+    vor[1:il,1:jlm]  = abs(vort)
+    utotal    = uavg* uavg+ vavg* vavg
+    utot[1:il,1:jlm] = np.sqrt(utotal)
 
     #  determine transition index
-
     itr1      = 0
     itr2      = 0
     j         = 1
     for i in range(0,il):
         if (x[i,j,1] <= xtran):
             itr1      = i - 1
-            break # seems like it might continue, 
-                # but if it continues then it changes nothing, so break?
+            break 
 
     itr1p     = itr1 + 1
     for i in range(itr1p-1,il):
@@ -196,14 +182,11 @@ def turbulent_viscosity(params, dims):
             break
 
     for i in range(1,il):
-        for j in range(0,jlm):
-            avor[j]   = vor[i,j]
-            utot1[j]  = utot[i,j]
-        # j loop ends here
+    
+        # for j in range(0,jlm):
+        avor   = vor[i,0:jlm]
+        utot1  = utot[i,0:jlm]
 
-        # effect of using jlm or jstop needs to be checked;
-        # it does not seem to make a difference
-        # jmaxv     = ismax(jstop,avor,1)
         jmaxv     = np.argmax(avor) # replacing ismax with np.argmax.
         if (jmaxv == 0): 
             jmaxv = 1 # Seems weird to me
@@ -231,35 +214,32 @@ def turbulent_viscosity(params, dims):
         tur2    = 0.
         tur3    = 1.0
 
-    for i in range(itlp-1,itu):
-        xxa       = x[i,0,0]- x[i-1,0,0]
-        yxa       = x[i,0,1]- x[i-1,0,1]
-        volai     = 1.0/vola[i,0]
-        uy        = 2.0* u[i,1]
-        amub      = .5* (amu[i,0]+ amu[i,1])
-        tauw[i]   = amub* (xxa* uy)* volai
-        avor1     = vor[i,0]
-        avora     = avor1
-        avorb     = 0.5* (avor1+ avorm[i])
-        avorc     = avorm[i]
-        avor2     = tur1*avora + tur2*avorb + tur3*avorc
-        yscal[i]  = np.sqrt(rey* sgrmi* amub* avor2* w[i,1,0])/(26.*amub)
+    xxa       = x[itlp-1:itu,0,0]- x[itlp-1:itu-1,0,0]
+    yxa       = x[itlp-1:itu,0,1]- x[itlp-1:itu-1,0,1]
+    volai     = 1.0/vola[itlp-1:itu,0]
+    uy        = 2.0* u[itlp-1:itu,1]
+    amub      = .5* (amu[itlp-1:itu,0]+ amu[itlp-1:itu,1])
+    tauw[itlp-1:itu]   = amub* (xxa* uy)* volai
+    avor1     = vor[itlp-1:itu,0]
+    avora     = avor1
+    avorb     = 0.5* (avor1+ avorm[itlp-1:itu])
+    avorc     = avorm[itlp-1:itu]
+    avor2     = tur1*avora + tur2*avorb + tur3*avorc
+    yscal[itlp-1:itu]  = np.sqrt(rey* sgrmi* amub* avor2* w[itlp-1:itu,1,0])/(26.*amub)
 
         # **********************************************************************
         # *   compute normal distance ylen[i,j] and function  yvor             *
         # *   (yvor = y* vorticity)                                            *
         # **********************************************************************
 
-    # if (ncyc == ncyci1):
-    for i in range(1,il):
-        ylen[i,1] = 0.0
-        for j in range(1,jl):
-            xc2       = .50* (x[i,j,0]+ x[i-1,j,0]-x[i,j-1,0]- x[i-1,j-1,0])
-            yc2       = .50* (x[i,j,1]+ x[i-1,j,1]-x[i,j-1,1]- x[i-1,j-1,1])
-            xyc       = xc2
-            yyc       = yc2
-            scalf[j]  = np.sqrt(xyc*xyc + yyc*yyc)
-            ylen[i,j] = ylen[i,j-1]+ scalf[j]
+    # i>1:il, i+1>2:il+1, i-1>0:il-1 (for j in range(1,jlm)/for i in range( 1,il):)
+    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
+    ylen[1:il,1] = 0.0
+    xc2       = .50* (x[1:il,1:jlm,0]+ x[0:il-1,1:jlm,0]-x[1:il,0:jlm-1,0]- x[0:il-1,0:jlm-1,0])
+    yc2       = .50* (x[1:il,1:jlm,1]+ x[0:il-1,1:jlm,1]-x[1:il,0:jlm-1,1]- x[0:il-1,0:jlm-1,1])
+
+    scalf  = np.sqrt(np.square(xc2) + np.square(yc2))
+    ylen[1:il,1:jlm] = ylen[1:il,0:jlm-1]+ scalf
 
     for i in range(1,il):
         ylen1     = 0.5* ylen[i,1]
@@ -327,14 +307,14 @@ def turbulent_viscosity(params, dims):
         # **********************************************************************
         # *   compute inner eddy viscosity                                     *
         # **********************************************************************
-
-        for j in range(1,int(np.floor(jstop))): # loop 70
-            y1        = yscal[i]* ylen[i,j]
-            damp      = 1.0- np.exp(-y1)
-            tscali    = 0.4* ylen[i,j]* damp
-            amuti1    = tscali* tscali* vor[i,j]
-            amuti[j]   = rey* sgrmi* ravg[j]* amuti1
-            amuti[j]   = abs(amuti[j])
+        j=int(np.floor(jstop))
+        # for j in range(1,int(np.floor(jstop))): # loop 70
+        y1        = yscal[i]* ylen[i,1:j]
+        damp      = 1.0- np.exp(-y1)
+        tscali    = 0.4* ylen[i,1:j]* damp
+        amuti1    = tscali* tscali* vor[i,1:j]
+        amuti[1:j]   = rey* sgrmi* ravg[1:j]* amuti1
+        amuti[1:j]   = abs(amuti[1:j])
         # end of loop 70
         amuti[1]  = 0.0
         if (i<=itl or i>itu):
@@ -371,29 +351,24 @@ def turbulent_viscosity(params, dims):
                 jcros = 2
             jcrosm   = jcros- 1
     
-            for j in range(0,jcrosm): # loop 90
-                amut[i,j] = amuti[j]
+            # for j in range(0,jcrosm): # loop 90
+            amut[i,0:jcrosm] = amuti[0:jcrosm]
             # end loop 90
-    
-            for j in range(jcros-1,int(np.floor(jstop))): # loop 100
-                amut[i,j] = amuto[j]
+            j = int(np.floor(jstop))
+            amut[i,jcros-1:j] = amuto[jcros-1:j]
             # end loop 100
         # end of big if statement
 
         # **********************************************************************
         # *   compute turbulent viscosity at cell center                       *
         # **********************************************************************
-
-        for j in range(1,int(np.floor(jstop))):
-            amutc     = 0.5* (amut[i,j]+ amut[i,j-1])
-            amu[i,j]  = amutc
-
-        for j in range(1,int(np.floor(jstop))):
-            amut[i,j] = amu[i,j]
+        j=int(np.floor(jstop))
+        amutc     = 0.5* (amut[i,1:j]+ amut[i,0:j-1])
+        amu[i,1:j]  = amutc
+        amut[i,1:j] = amu[i,1:j]
 
         if (i>itr1 and i<=itr2):
-            for j in range(1,int(np.floor(jstop))):
-                amut[i,j] = 0.
+            amut[i,1:j] = 0.
 
 # **********************************************************************
 # *   debugging check (activate with jwrit = 1)                        *
@@ -418,10 +393,7 @@ def turbulent_viscosity(params, dims):
 
     # copy amut to rev
     scale     = 1.
-    for j in range(0,je):
-        for i in range(0,ie):
-            rev[i,j]  = scale*amut[i,j]
-    print('test BL')
+    rev[0:ie,0:je]  = scale*amut[0:ie,0:je]
 
     # print(np.mean(rev))
     return
@@ -541,4 +513,10 @@ dims = {
     "jl": dim_var - 1,
 }
 
+import time
+t0 = time.time()
 turbulent_viscosity(params, dims)
+t1 = time.time()
+
+total = t1-t0
+print(total)
