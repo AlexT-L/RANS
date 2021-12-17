@@ -29,6 +29,8 @@ import pytest
 from Field import Field
 import numpy as np
 
+rng = np.random.default_rng()
+
 def test_constructor_2d():
     """
     Asserts that we can create a 8x8 field
@@ -81,8 +83,8 @@ def test_add_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = np.random.Generator.integers(dims[0])
-    rand2 = np.random.Generator.integers(dims[0])
+    rand1 = np.random.Generator.integers(dims[0], dims)
+    rand2 = np.random.Generator.integers(dims[0], dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -101,8 +103,8 @@ def test_difference_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = np.random.Generator.integers(dims[0])
-    rand2 = np.random.Generator.integers(dims[0])
+    rand1 = np.random.Generator.integers(dims[0], dims)
+    rand2 = np.random.Generator.integers(dims[0], dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -120,8 +122,8 @@ def test_product_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = np.random.Generator.integers(dims[0])
-    rand2 = np.random.Generator.integers(dims[0])
+    rand1 = np.random.Generator.integers(dims[0], dims)
+    rand2 = np.random.Generator.integers(dims[0], dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -139,8 +141,8 @@ def test_quotient_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = np.random.Generator.integers(dims[0])
-    rand2 = np.random.Generator.integers(dims[0])
+    rand1 = np.random.Generator.integers(dims[0], dims)
+    rand2 = np.random.Generator.integers(dims[0], dims)
     
     # Make fields
     field1 = Field(dims, rand1)
