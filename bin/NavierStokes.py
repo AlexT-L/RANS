@@ -96,7 +96,7 @@ class NavierStokes(Model):
 
         # update boundary conditions
         bcmodel = self.BCmodel
-        bcmodel.bc_all(self, workspace, state)
+        bcmodel.bc_all(self, workspace, w)
 
         # calculate residuals
         # eflux(self, workspace, w, dw)
@@ -187,7 +187,7 @@ class NavierStokes(Model):
 
         # set courant number
         cfl = self.cfl_coarse
-        if workspace.isFinest():
+        if workspace.is_finest():
             cfl = self.cfl_fine
         self.cfl = min(cfl, self.cfl_lim)
 

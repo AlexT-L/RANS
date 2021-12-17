@@ -99,7 +99,7 @@ class MultiGrid:
         else:
             UPDATE_STABILITY = (self.num_cycles % self.stabilityUpdateFrequency) == 0
 
-    ##### first level #####
+        ##### first level #####
         # set pointers to working variables
         workspace = self.Workspaces[-1]
         w = self.W[-1]
@@ -113,7 +113,7 @@ class MultiGrid:
                 
         # Perform integration to get new state
         integrator.step(workspace, w, Rw)
-    #####
+        #####
 
         # subsequent levels
         level = n_levels-1
@@ -169,6 +169,7 @@ class MultiGrid:
                 wc.store_difference(w, w1)
 
         # update number of cycles
+        print(max(Rw))
         self.num_cycles += 1
 
     # copy residuals into output field

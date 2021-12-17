@@ -60,9 +60,14 @@ if __name__ == '__main__':
     temp = test1[0:2,1:3,0:6]
     temp[:,:,:] = 4
 
-    print(test1)
     print(test2)
 
+    mask = test2 == 4
+
+    print(test1*mask + test2*(1-mask))
+
+    test1[0,:,0] = [0, 1, 2, 3]
+    print(test1[0, 4::-1, 0])
 
     # field2[0:4,0,0] = 4
     # print(field2.vals)

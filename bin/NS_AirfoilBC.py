@@ -1,5 +1,14 @@
+# append to path so we can access files
+import sys
+
+from numpy.core.defchararray import mod
+sys.path.append("../")
+
 from BoundaryConditioner import BoundaryConditioner
 import NS_AirfoilBC_imp as implementation
+from bin.model_funcs.bcfar import far_field
+from bin.model_funcs.halo import halo
+from bin.model_funcs.bcwall import wall
 
 class NS_AirfoilBC(BoundaryConditioner):
     
@@ -30,24 +39,26 @@ class NS_AirfoilBC(BoundaryConditioner):
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.bc_far(self, model, workspace, state)
+        far_field(self, model, workspace, state)
+        # implementation.bc_far(self, model, workspace, state)
 
 
     # apply wall boundary conditions
     def bc_wall(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.bc_wall(self, model, workspace, state)
+        wall(self, model, workspace, state)
+        # implementation.bc_wall(self, model, workspace, state)
 
 
     # apply halo boundary conditions
     def halo(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.halo(self, model, workspace, state)
+        halo(self, model, workspace, state)
+        # implementation.halo(self, model, workspace, state)
 
 
     # apply all boundary conditions
     def bc_all(self, model, workspace, state):
-        return
         self.__check_vars(workspace)
         self.bc_wall(model, workspace, state)
         self.bc_far(model, workspace, state)

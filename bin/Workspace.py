@@ -102,7 +102,7 @@ class Workspace(ABC):
             classDict[varName] = newField
 
 
-    def isFinest(self):
+    def is_finest(self):
         return self.isFinest
 
     # Methods for getting geometric info

@@ -1,5 +1,4 @@
 # import bcfar_fort, bcwall_fort, halo_fort, math
-import Field as fd
 from Field import mean
 import math
 
@@ -603,3 +602,11 @@ def halo_geom(self, model, workspace):
     xc[1,je,1]  = xc[2,je,1]   +xc[1,jl,1]   -xc[2,jl,1]
     xc[ie,je,0] = xc[il,je,0]  +xc[ie,jl,0]  -xc[il,jl,0]
     xc[ie,je,1] = xc[il,je,1]  +xc[ie,jl,1]  -xc[il,jl,1]
+
+    # outer halo volumes
+    vol[0:pad+nx+pad, 1] = vol[pad+nx+pad-1::-1, 2]
+    vol[0:pad+nx+pad, 0] = vol[pad+nx+pad-1::-1, 3]
+
+    # along airfoil
+    vol[itl:itu,1] = vol[itl:itu,2]
+

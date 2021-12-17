@@ -4,23 +4,42 @@ import numpy as np
 # Field classs math methods
 def mean(array):
     assert(isinstance(array, Field))
-    return np.mean(array.vals)
+    return Field(array.fieldDim, array.varDim, np.mean(array.vals))
 
 def abs(array):
     assert(isinstance(array, Field))
-    return np.abs(array.vals)
+    return Field(array.fieldDim, array.varDim, np.abs(array.vals))
 
 def max(array):
     assert(isinstance(array, Field))
-    return np.max(array.vals)
+    return Field(array.fieldDim, array.varDim, np.max(array.vals))
 
 def min(array):
     assert(isinstance(array, Field))
-    return np.min(array.vals)
+    return Field(array.fieldDim, array.varDim, np.min(array.vals))
 
 def sum(array):
     assert(isinstance(array, Field))
-    return np.sum(array.vals)
+    return Field(array.fieldDim, array.varDim, np.sum(array.vals))
+
+def sqrt(array):
+    assert(isinstance(array, Field))
+    result = array.vals**(0.5)
+    return Field(array.fieldDim, array.varDim, result)
+
+def norm(array1, array2):
+    assert(isinstance(array1, Field))
+    assert(isinstance(array2, Field))
+    result = (array1.vals**2 + array2.vals**2)**(0.5)
+    return Field(array1.fieldDim, array1.varDim, result)
+
+def pos_diff(array1, array2):
+    assert(isinstance(array1, Field))
+    assert(isinstance(array2, Field))
+    diff = array1.vals - array2.vals
+    result = np.max(diff, 0)
+    return Field(array1.fieldDim, array1.varDim, result)
+
 
 
 
@@ -39,14 +58,18 @@ class Field:
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
-        x = indx[0]
-        y = indx[1]
+        x = indx
+        y = 0
         z = 0
         dim = 1
-        if len(indx) == 3:
-            z = indx[2]
-            # if type(z) != int:
-            #     dim = len(z)
+
+        if type(indx) is not int:
+            x = indx[0]
+            y = indx[1]
+        
+            if len(indx) == 3:
+                z = indx[2]
+            
         indx = (x, y, z)
 
         if len(self.vals.shape) == 2:
@@ -73,7 +96,7 @@ class Field:
         if len(indx) == 3:
             z = indx[2]
         indx = (x, y, z)
-        self.vals[indx] = value
+        self.vals[indx] = np.array(value, order = 'F')
     
     def set_val(self, new_vals):
         if np.shape(new_vals) != np.shape(self.vals):
@@ -178,7 +201,7 @@ class Field:
 
     # string representation
     def __str__(self):
-        return "Field: (\n" + np.array_str(self.vals) + " )"
+        return "Field: (\n" + str(self.vals) + " )"
 
 
 
@@ -201,32 +224,38 @@ class Field:
     def __lt__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals < other
+        result = self.vals < other
+        return Field(self.fieldDim, self.varDim, result)
     
     def __le__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals <= other
+        result =  self.vals <= other
+        return Field(self.fieldDim, self.varDim, result)
     
     def __gt__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals > other
+        result = self.vals > other
+        return Field(self.fieldDim, self.varDim, result)
     
     def __ge__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals >= other
+        result = self.vals >= other
+        return Field(self.fieldDim, self.varDim, result)
     
     def __eq__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals == other
+        result = self.vals == other
+        return Field(self.fieldDim, self.varDim, result)
     
     def __ne__(self, other):
         if isinstance(other, Field):
             other = other.vals
-        return self.vals != other
+        result = self.vals != other
+        return Field(self.fieldDim, self.varDim, result)
 
     def __bool__(self):
         return bool(self.vals)
