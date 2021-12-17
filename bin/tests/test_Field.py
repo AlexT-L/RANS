@@ -52,23 +52,6 @@ def test_constructor_3d():
     
     # Assert correct shape
     assert field.shape() == (dims[0], dims[1], stateDim)
-
-
-def test_set_field():
-    ''''
-    Asserts that we can give Field an array and it will set all the values to that array
-    '''
-    # Get random array
-    dims = (8,8)
-    rand = np.random.rand(dims[0], dims[1])
-    
-    # Create field object
-    field = Field(dims)
-    
-    # Set values
-    field[:,:] = rand
-    
-    assert rand == field.get_vals()
     
 def test_set_item():
     '''
@@ -79,7 +62,7 @@ def test_set_item():
     zeros = np.zeros(dims)
     
     # Create field initially all 0's
-    field = Field(dims, 1, zeros)
+    field = Field(dims, zeros)
     
     # Set index to 1 in zeros
     indx = 3
@@ -89,7 +72,7 @@ def test_set_item():
     # Set index to 1 in field
     field[indx, indy] = 1
     
-    assert zeros == field.get_vals()
+    assert np.array_equal(zeros, field.get_vals())
     
     
 def test_add_func():
@@ -102,16 +85,14 @@ def test_add_func():
     rand2 = np.random.rand(dims[0], dims[1])
     
     # Make fields
-    field1 = Field(dims)
-    field1.set_val(rand1)
-    field2 = Field(dims)
-    field2.set_val(rand2)
-    field_sum = Field(dims)
+    field1 = Field(dims, rand1)
+    field2 = Field(dims, rand2)
     
     # Add arrays
-    field_sum.store_sum(field1, field2)
+    newfield = field1 + field2
+    baseline = rand1 + rand2
     
-    assert field_sum.get_vals() == (rand1+rand2)
+    assert np.array_equal(newfield.get_vals(), baseline)
     
     
 def test_difference_func():
@@ -124,16 +105,14 @@ def test_difference_func():
     rand2 = np.random.rand(dims[0], dims[1])
     
     # Make fields
-    field1 = Field(dims)
-    field1.set_val(rand1)
-    field2 = Field(dims)
-    field2.set_val(rand2)
-    field_sum = Field(dims)
+    field1 = Field(dims, rand1)
+    field2 = Field(dims, rand2)
     
-    # Subtract arrays
-    field_sum.store_difference(field1, field2)
+    # Add arrays
+    newfield = field1 - field2
+    baseline = rand1 - rand2
     
-    assert field_sum.get_vals() == (rand1-rand2)
+    assert np.array_equal(newfield.get_vals(), baseline)
 
 def test_product_func():
     '''
@@ -145,16 +124,14 @@ def test_product_func():
     rand2 = np.random.rand(dims[0], dims[1])
     
     # Make fields
-    field1 = Field(dims)
-    field1.set_val(rand1)
-    field2 = Field(dims)
-    field2.set_val(rand2)
-    field_sum = Field(dims)
+    field1 = Field(dims, rand1)
+    field2 = Field(dims, rand2)
     
-    # Multiply arrays
-    field_sum.store_product(field1, field2)
+    # Add arrays
+    newfield = field1 * field2
+    baseline = rand1 * rand2
     
-    assert field_sum.get_vals() == (rand1*rand2)
+    assert np.array_equal(newfield.get_vals(), baseline)
 
 def test_quotient_func():
     '''
@@ -166,13 +143,11 @@ def test_quotient_func():
     rand2 = np.random.rand(dims[0], dims[1])
     
     # Make fields
-    field1 = Field(dims)
-    field1.set_val(rand1)
-    field2 = Field(dims)
-    field2.set_val(rand2)
-    field_sum = Field(dims)
+    field1 = Field(dims, rand1)
+    field2 = Field(dims, rand2)
     
-    # Divide arrays
-    field_sum.store_quotient(field1, field2)
+    # Add arrays
+    newfield = field1 / field2
+    baseline = rand1 / rand2
     
-    assert field_sum.get_vals() == (rand1/rand2)
+    assert np.array_equal(newfield.get_vals(), baseline)

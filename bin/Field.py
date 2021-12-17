@@ -46,6 +46,10 @@ def pos_diff(array1, array2):
 class Field:
 
     def __init__(self, field_size, stateDim=1, vals=None):
+        if type(stateDim) is not int:
+            vals = stateDim
+            stateDim = 1
+
         self.fieldDim = field_size
         self.varDim = stateDim
 
@@ -90,12 +94,23 @@ class Field:
         if isinstance(value, Field):
             value = value.vals
 
-        x = indx[0]
-        y = indx[1]
+        x = indx
+        y = 0
         z = 0
-        if len(indx) == 3:
-            z = indx[2]
+        dim = 1
+
+        if type(indx) is not int:
+            x = indx[0]
+            y = indx[1]
+        
+            if len(indx) == 3:
+                z = indx[2]
+            
         indx = (x, y, z)
+
+        if len(self.vals.shape) == 2:
+            indx = (x, y)
+        
         self.vals[indx] = np.array(value, order = 'F')
     
     def set_val(self, new_vals):
