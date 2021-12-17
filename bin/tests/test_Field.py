@@ -30,7 +30,7 @@ from Field import Field
 import numpy as np
 
 def rng(range, dim):
-    return np.random.default_rng.integers(range, dim)
+    return np.random.randint(0, range, dim)
 
 def test_constructor_2d():
     """

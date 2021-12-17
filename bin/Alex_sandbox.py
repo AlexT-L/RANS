@@ -69,6 +69,12 @@ if __name__ == '__main__':
     test1[0,:,0] = [0, 1, 2, 3]
     print(test1[0, 4::-1, 0])
 
+    def rng(range, dim):
+        return np.random.randint(0, range, dim)
+
+    dim = (8,8)
+    rand1 = rng(dim[0], dim)
+
     # field2[0:4,0,0] = 4
     # print(field2.vals)
 
