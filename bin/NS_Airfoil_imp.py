@@ -20,16 +20,13 @@ def set_porosity(self, workspace):
     # c
     # c     set the porosity to unity
     # c
-    for j in range(jl):
-        for i in range(il):
-            pori[i,j] = 1.0
-            porj[i,j] = 1.0
+    pori[:,:] = 1.0
+    porj[:,:] = 1.0
 
     # c
     # c     flag the wall and far field points at the j boundaries
     # c
-    for i in range(itl,itu):
-        porj[i,0]   = 0.0
+    porj[itl:itu,0]   = 0.0
 
 # update rev and rlv
 def update_physics(self, model, workspace, state):
@@ -539,6 +536,7 @@ def halo_geom(self, model, workspace):
     x = workspace.get_field('x')
     xc = get('xc')
     vol = get('vol')
+    print(vol.size())
 
     # set values at edges
     for i in range(pad,nx+pad):

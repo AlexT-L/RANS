@@ -95,16 +95,16 @@ class NS_Airfoil(BoundaryConditioner):
         vars = dict()
 
         # edge porosities
-        vars["pori"] = [grid_size, 1]
-        vars["porj"] = [grid_size, 1]
+        vars["pori"] = [(nx+1, ny)]
+        vars["porj"] = [(nx, ny+1)]
 
         # stability
-        vars["s"] = [field_size, 1]
-        vars["dtlc"] = [field_size, 1]
+        vars["s"] = [field_size]
+        vars["dtlc"] = [field_size]
 
         # Cp and Cf
-        vars["cp"] = [[p+nx+p,1], 1]
-        vars["cf"] = [[p+nx+p,1], 1]
+        vars["cp"] = [p+nx+p]
+        vars["cf"] = [p+nx+p]
 
         workspace.init_vars(className, vars)
 

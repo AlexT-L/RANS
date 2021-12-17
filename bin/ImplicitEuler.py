@@ -92,13 +92,13 @@ class ImplicitEuler(Integrator):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.field_size()
+        [nx, ny] = workspace.field_size()
         stateDim = self.Model.dim()
         className = self.className
 
         vars = dict()
-        vars["dt"] = [field_size, 1]
+        vars["dt"] = [(nx, ny)]
         for stateName in ["wn", "Rw", "dw"]:
-            vars[stateName] = [field_size, stateDim]
+            vars[stateName] = [(nx, ny, stateDim)]
 
         workspace.init_vars(className, vars)

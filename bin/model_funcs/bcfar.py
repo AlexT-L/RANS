@@ -36,6 +36,12 @@ def far_field(bcmodel, model, workspace, state):
     w[pad:pad+nx, je, 1] = qn*w[pad:pad+nx, jl, 1] + (1-qn)*(rho0*u0)
     w[pad:pad+nx, je, 2] = qn*w[pad:pad+nx, jl, 2] + (1-qn)*(rho0*v0)
     w[pad:pad+nx, je, 3] = qn*w[pad:pad+nx, jl, 3] + (1-qn)*(rho0*h0 - p0)
+
+
+    print(p.shape())
+    print(p[pad:pad+nx, jl].shape())
+    print((1-qn).shape())
+
     p[pad:pad+nx, je]    = qn*p[pad:pad+nx, jl]    + (1-qn)*p0
 
     w[1, pad:pad+ny, :] = w[2, pad:pad+ny, :]

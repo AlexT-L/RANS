@@ -227,7 +227,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad, :].copy_from(field)
+        paddedField[pad:nx+pad, pad:ny+pad].copy_from(field)
         # for i in range(0, leni):
         #     for j in range(0, lenj):
         #         paddedField[i+pad,j+pad] = field[i,j]
@@ -239,7 +239,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad, :].copy_to(field)
+        paddedField[pad:nx+pad, pad:ny+pad].copy_to(field)
         # for i in range(0, nx):
         #     for j in range(0, ny):
         #         field[i,j] = paddedField[i+pad,j+pad]
@@ -253,8 +253,8 @@ class NavierStokes(Model):
     def __init_vars(self, workspace):
         pad = self.padding
         [nx, ny] = workspace.field_size()
+        [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
         grid_size = workspace.grid_size()
-        field_size = [pad+nx+pad, pad+ny+pad]
         stateDim = self.dimensions
         className = self.className
 
@@ -263,18 +263,20 @@ class NavierStokes(Model):
 
         # add state variables stored at cell center with padding
         for stateName in ["w", "dw", "vw", "fw"]:
-            vars[stateName] = [field_size, stateDim]
+            shape = [nxp, nyp, stateDim]
+            vars[stateName] = [shape]
 
         # add scalar variables stored at cell center with padding
         for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
-            vars[stateName] = [field_size, 1]
+            shape = (nxp, nyp)
+            vars[stateName] = [shape]
 
         # xc has 2 dimensions
-        vars['xc'] = [field_size, 2]
+        vars['xc'] = [(nxp, nyp, 2)]
 
         # add scalar variables stored at edges
-        for stateName in ["porI","porJ"]:
-            vars[stateName] = [grid_size, 1]
+        vars["porI"] = [(nx+1, ny)]
+        vars["porJ"] = [(nx, ny+1)]
 
         workspace.init_vars(className, vars)
 

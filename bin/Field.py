@@ -60,15 +60,15 @@ class Field:
             vals = shape
             shape = vals.shape
         
-        if type(shape) is int:
-            shape = (shape, 1)
+        # if type(shape) is int:
+        #     shape = (shape, 1)
 
-        assert(len(shape) > 0 and len(shape) <= 3)
+        # assert(len(shape) > 0 and len(shape) <= 3)
         
-        if len(shape) < 3:
-            if len(shape) < 2:
-                shape = (shape, 1)
-            shape = (shape[0], shape[1], 1)
+        # if len(shape) < 3:
+        #     if len(shape) < 2:
+        #         shape = (shape, 1)
+        #     shape = (shape[0], shape[1], 1)
 
         if vals is None:
             vals = np.zeros(shape, order = 'F') # set fortran ordering for f2py
@@ -78,21 +78,21 @@ class Field:
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
-        x = indx
-        y = 0
-        z = 0
+        # x = indx
+        # y = 0
+        # z = 0
 
-        if type(indx) is not int:
-            x = indx[0]
-            y = indx[1]
+        # if type(indx) is not int:
+        #     x = indx[0]
+        #     y = indx[1]
         
-            if len(indx) == 3:
-                z = indx[2]
+        #     if len(indx) == 3:
+        #         z = indx[2]
             
-        indx = (x, y, z)
+        # indx = (x, y, z)
 
-        if len(self.vals.shape) == 2:
-            indx = (x, y)
+        # if len(self.vals.shape) == 2:
+        #     indx = (x, y)
         
         vals = self.vals[indx]
 
@@ -107,24 +107,24 @@ class Field:
         if is_field(value):
             value = value.vals
 
-        x = indx
-        y = 0
-        z = 0
+        # x = indx
+        # y = 0
+        # z = 0
 
-        if type(indx) is not int:
-            x = indx[0]
-            y = indx[1]
+        # if type(indx) is not int:
+        #     x = indx[0]
+        #     y = indx[1]
         
-            if len(indx) == 3:
-                z = indx[2]
+        #     if len(indx) == 3:
+        #         z = indx[2]
             
-        indx = (x, y, z)
+        # indx = (x, y, z)
 
-        if len(self.vals.shape) == 2:
-            indx = (x, y)
+        # if len(self.vals.shape) == 2:
+        #     indx = (x, y)
 
         if not np.isscalar(value):
-            np.array(value, order = 'F')
+            value = np.array(value, order = 'F')
         
         self.vals[indx] = value
     
@@ -139,8 +139,12 @@ class Field:
 
     # size of field
     def size(self):
-        [nx, ny, nz] = self.fieldShape
-        return (nx, ny)
+        shape = self.fieldShape
+
+        if np.isscalar(shape):
+            shape = (shape, 1)
+
+        return (shape[0], shape[1])
 
     # size of field
     def shape(self):
@@ -149,8 +153,14 @@ class Field:
     # dimension of variable
     # size of field
     def dim(self):
-        [nx, ny, nz] = self.fieldShape
-        return nz
+        dim = 1
+        shape = self.fieldShape
+
+        if not np.isscalar(shape):
+            if len(shape) == 3:
+                dim = shape[2]
+
+        return dim
 
 
 #############################

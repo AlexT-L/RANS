@@ -31,10 +31,10 @@ class CellCenterWS(Workspace):
 
 # For edges: side = "n", "s", "e", "w"
 
-    def edges(self, side):
-        varName = "dx" + side
+    def edges(self, dim):
+        varName = "dx" + str(dim)
         if not self.exists(varName):
-            self.__calc_edges(side)
+            self.__calc_edges(dim)
 
         return self.get_field(varName)
 
@@ -71,21 +71,21 @@ class CellCenterWS(Workspace):
         return [dx, dy]
 
     # normal vector of control volume edge in positive i or j direction
-    def edge_normal(self, i, j, side):
-        [dx, dy] = self.edge(i, j, side)
+    def edge_normal(self, i, j, dim):
+        [dx, dy] = self.edge(i, j, dim)
 
         return [dy, -dx]
 
-    def edge_normals(self, side):
-        varName = "nx" + side
+    def edge_normals(self, dim):
+        varName = "nx" + str(dim)
         if not self.exists(varName):
-            self.__calc_normals(side)
+            self.__calc_normals(dim)
         
         return self.get_field(varName)
             
         
-    def __calc_edges(self, side):
-        varName = "dx" + side
+    def __calc_edges(self, dim):
+        varName = "dx" + str(dim)
         X = self.get_field('x')
         x = Field(X.shape())
         X.copy_to(x)
@@ -95,28 +95,24 @@ class CellCenterWS(Workspace):
         
         [nx, ny] = self.field_size()
 
-        if side == 'n':
-            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
-        
-        if side == 's':
-            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
-
-        if side == 'e':
+        # i edges
+        if dim == 0:
             dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny, :]
 
-        if side == 'w':
-            dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny, :]
+        # j edges
+        if dim == 1:
+            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
 
         assert(max(dx) != 0)
         assert(isfinite(dx))
 
         self.add_field(dx, varName)
 
-    def __calc_normals(self, side):
-        dx = self.edges(side)
+    def __calc_normals(self, dim):
+        dx = self.edges(dim)
         nx = Field(dx.shape())
         nx[:,:,0] = dx[:,:,1]
         nx[:,:,1] = -dx[:,:,0]
 
-        varName = "nx" + side
+        varName = "nx" + str(dim)
         self.add_field(dx, varName)

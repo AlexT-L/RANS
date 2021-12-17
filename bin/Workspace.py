@@ -103,10 +103,8 @@ class Workspace(ABC):
 
         # create fields and store in dictionary
         for varName in vars:
-            [size, dim] = vars[varName]
-            [nx, ny] = size
-            newField = Field((nx, ny, dim))
-            classDict[varName] = newField
+            [shape] = vars[varName]
+            classDict[varName] = Field(shape)
 
 
     def is_finest(self):
