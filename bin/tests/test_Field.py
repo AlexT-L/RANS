@@ -29,7 +29,7 @@ import pytest
 from Field import Field
 import numpy as np
 
-rng = np.random.default_rng.integers
+rng = np.random.default_rng
 
 def test_constructor_2d():
     """
