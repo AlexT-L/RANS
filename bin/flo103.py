@@ -5,7 +5,7 @@ from Input import Input
 from flo103_PostProcessor import flo103_PostProcessor
 from flo103_ConvergenceChecker import flo103_ConvergenceChecker
 from ImplicitEuler import ImplicitEuler
-from NS_AirfoilBC import NS_AirfoilBC
+from NS_Airfoil import NS_Airfoil
 from AirfoilMap import AirfoilMap
 from CellCenterWS import CellCenterWS
 from NavierStokes import NavierStokes
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     workspace = CellCenterWS(grid)
 
     # create physics objects
-    bcmodel = NS_AirfoilBC(modelInput)
+    bcmodel = NS_Airfoil(modelInput)
     model = NavierStokes(bcmodel, modelInput)
     integrator = ImplicitEuler(model, input.solv_param)
 

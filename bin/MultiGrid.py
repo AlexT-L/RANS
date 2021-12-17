@@ -44,7 +44,7 @@ class MultiGrid:
         self.Integrator = integrator
 
         # Number of Cycles
-        n_levels = self.cycle.levels
+        n_levels = self.cycle.depth()
         stateDim = model.dim()
 
         # Direct storage of variables
@@ -89,7 +89,7 @@ class MultiGrid:
         """Performs one multi-grid cycle and calculates new state.
         
         """
-        n_levels = self.cycle.levels
+        n_levels = self.cycle.depth()
         model = self.Model
         integrator = self.Integrator
         cycleIndex = self.num_cycles + 1
@@ -118,7 +118,7 @@ class MultiGrid:
 
         # subsequent levels
         level = n_levels-1
-        for dir in self.cycle.pattern:
+        for dir in self.cycle.path():
             level += dir
             prev = level-dir
             self.visits[level] += 1

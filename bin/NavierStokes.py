@@ -51,8 +51,8 @@ class NavierStokes(Model):
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
-        # pass off to boundary condition model to initialize
-        self.BCmodel.init_state(self, workspace, w)
+        # pass off to private method
+        self.__init_state(self, workspace, w)
         
         # copy out to non-padded field
         self.__copy_out(w, state)
@@ -294,3 +294,21 @@ class NavierStokes(Model):
 
         # set geometric values in the halo
         bcmodel.halo_geom(self, workspace)
+
+    # initialize state
+    def __init_state(self, workspace, state):
+        # get pressure
+        p = workspace.get_field("p", self.className)
+
+        # set initial values
+        rho0 = self.params['rho0']
+        u0 = self.params['u0']
+        v0 = self.params['v0']
+        h0 = self.params['h0']
+        p0 = self.params['p0']
+
+        state[:,:,0] = rho0
+        state[:,:,1] = rho0*u0
+        state[:,:,2] = rho0*v0
+        state[:,:,3] = rho0*h0 - p0
+        p[:,:] = p0

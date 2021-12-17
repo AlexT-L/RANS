@@ -2,28 +2,6 @@
 from Field import mean
 import math
 
-def init_state(self, model, workspace, state):
-
-    p = workspace.get_field("p", model.className)
-
-    # set initial values
-    rho0 = model.params['rho0']
-    u0 = model.params['u0']
-    v0 = model.params['v0']
-    h0 = model.params['h0']
-    p0 = model.params['p0']
-
-    [lenx, leny] = p.size()
-    for i in range(lenx):
-        for j in range(leny):
-            # print("i,j")
-            # print([i,j])
-            state[i,j,0] = rho0
-            state[i,j,1] = rho0 * u0
-            state[i,j,2] = rho0 * v0
-            state[i,j,3] = rho0 * h0 - p0
-            p[i,j]       = p0
-
 # set porosity
 def set_porosity(self, workspace):
     # get relevant geometry parameters

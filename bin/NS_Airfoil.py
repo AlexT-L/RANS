@@ -5,24 +5,19 @@ from numpy.core.defchararray import mod
 sys.path.append("../")
 
 from BoundaryConditioner import BoundaryConditioner
-import NS_AirfoilBC_imp as implementation
+import NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.bcwall import wall
 
-class NS_AirfoilBC(BoundaryConditioner):
+class NS_Airfoil(BoundaryConditioner):
     
     
     def __init__(self, input):
-        self.className = "NS_AirfoilBC"
+        self.className = "NS_Airfoil"
         self.padding = 2
         self.local_timestepping = not bool(input['vt'])
         self.bc = input['bc']
-
-    # initialize state
-    def init_state(self, model, workspace, state):
-        self.__check_vars(workspace)
-        implementation.init_state(self, model, workspace, state)
 
     # Methods for applying boundary conditions
 
