@@ -1,7 +1,7 @@
 from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
-from Field import Field, max
+from Field import Field, max, isfinite
 from model_funcs.eflux import eflux
 
 class NavierStokes(Model):
@@ -52,10 +52,11 @@ class NavierStokes(Model):
         self.__copy_in(state, w)
 
         # pass off to private method
-        self.__init_state(self, workspace, w)
+        self.__init_state(workspace, w)
         
         # copy out to non-padded field
         self.__copy_out(w, state)
+        assert(isfinite(state))
 
 
     # flux calculations
@@ -78,6 +79,7 @@ class NavierStokes(Model):
         :
             A new AirfoilMap object.
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         
         # set rfil value
@@ -107,6 +109,7 @@ class NavierStokes(Model):
 
         # copy residuals into output array
         self.__copy_out(dw, output)
+        assert(isfinite(output))
 
 
 
@@ -123,6 +126,7 @@ class NavierStokes(Model):
             A Field where the time steps will be stored
 
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         # retrieve necessary workspace fields
         def get(varName):
@@ -135,6 +139,7 @@ class NavierStokes(Model):
 
         # export dt
         self.__copy_out(dt, timestep)
+        assert(isfinite(timestep))
 
 
     # update rev and rlv
@@ -148,6 +153,7 @@ class NavierStokes(Model):
         state:
             A Field containing the current state
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
 
         # copy state into padded field
@@ -168,6 +174,7 @@ class NavierStokes(Model):
         state:
             A Field containing the current state
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         
         # copy state into padded field

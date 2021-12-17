@@ -3,6 +3,8 @@ import numpy as np
 
 # append to path so we can access files
 import sys
+
+from bin.Field import isfinite
 sys.path.append("../../../")
 
 # project specific dependencies
@@ -40,9 +42,9 @@ def init_from_file(self, grid_dim, input):
     # initialize x-y vertex, center, and volume fields
     il = nx+1
     jl = ny+1
-    self.x  = Field((il,jl),2)
-    self.xc = Field((nx, ny),2)
-    self.vol= Field((nx, ny),1)
+    self.x  = Field((il,jl,2))
+    self.xc = Field((nx,ny,2))
+    self.vol= Field((nx,ny,1))
 
     # store relevant fields
     fields = dict()
@@ -88,9 +90,10 @@ def init_from_grid(newGrid, grid):
     vol = fields['vol']
 
     # create new arrays
-    xNew = Field(newGrid.get_size(),2)
-    xcNew = Field(newGrid.divisions,2)
-    volNew = Field(newGrid.divisions,1)
+    [nx, ny] = newGrid.get_size()
+    xNew = Field((nx,ny,2))
+    xcNew = Field((nx,ny,2))
+    volNew = Field((nx,ny,1))
 
     # condense mesh
     simple(x, xNew)

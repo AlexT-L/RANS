@@ -1,8 +1,12 @@
+import sys
+sys.path.append("../")
+
 from abc import ABC, abstractmethod
 import numpy as np
 from Field import Field
 from Grid import Grid
 from Model import Model
+from bin.Field import isfinite
 
 class Workspace(ABC):
     
@@ -14,7 +18,9 @@ class Workspace(ABC):
         self.flds = { 'Grid': {} }
         gridFields = self.flds['Grid']
         for fieldName in grid.fields:
-            gridFields[fieldName] = grid.fields[fieldName]
+            field = grid.fields[fieldName]
+            assert(isfinite(field))
+            gridFields[fieldName] = field
 
         self.isFinest = bool(isFinest)
 
@@ -98,7 +104,8 @@ class Workspace(ABC):
         # create fields and store in dictionary
         for varName in vars:
             [size, dim] = vars[varName]
-            newField = Field(size, dim)
+            [nx, ny] = size
+            newField = Field((nx, ny, dim))
             classDict[varName] = newField
 
 

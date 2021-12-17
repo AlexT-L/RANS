@@ -62,7 +62,7 @@ class AirfoilMap(Grid):
         :
             A new AirfoilMap object.
         """
-        assert(isinstance(grid, AirfoilMap))
+        assert type(grid) is AirfoilMap
 
         [nx, ny] = grid.divisions
         newGrid = AirfoilMap((int(nx/2), int(ny/2)))

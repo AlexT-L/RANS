@@ -48,10 +48,11 @@ if __name__ == '__main__':
     num_iterations = 0
     
     # create fields for tracking state and residuals
-    field_size = workspace.field_size()
+    [nx, ny] = workspace.field_size()
     stateDim = model.dim()
-    state = Field(field_size, stateDim)
-    resid = Field(field_size, stateDim)
+    shape = (nx, ny, stateDim)
+    state = Field(shape)
+    resid = Field(shape)
 
     # get initial state
     mg.solution(state)

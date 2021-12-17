@@ -25,12 +25,57 @@ Author(s)
 Andy Rothstein \n
 
 """
+import sys
+sys.path.append("../")
+
 import pytest
 from Field import Field
 import numpy as np
 
-def rng(range, dim):
-    return np.random.randint(0, range, dim)
+from bin.Field import isfinite
+
+def rng(dim):
+    limit = np.max(dim)
+    return np.random.randint(0, limit, dim)
+
+def test_constructor():
+    """
+    Asserts that we can create a 8x1 field
+    
+    """
+    # Use dimensions for 8x8
+    dims = (8,8)
+    field = Field(dims)
+    
+    # Assert correct shape
+    assert type(field) is Field
+
+
+def test_isfinite():
+    """
+    Asserts that we can create a 8x1 field
+    
+    """
+    # Use dimensions for 8x8
+    dims = (8,8)
+    field = Field(dims)
+    
+    # Assert correct shape
+    assert isfinite(field)
+    
+
+def test_constructor_1d():
+    """
+    Asserts that we can create a 8x1 field
+    
+    """
+    # Use dimensions for 8x8
+    dims = (8)
+    field = Field(dims)
+    
+    # Assert correct shape
+    assert np.array_equal(field.size(), (dims,1))
+    
 
 def test_constructor_2d():
     """
@@ -42,20 +87,46 @@ def test_constructor_2d():
     field = Field(dims)
     
     # Assert correct shape
-    assert field.size() == dims
+    assert np.array_equal(field.size(), dims)
     
 def test_constructor_3d():
     '''
     Asserts we can 8x8 field with state dimension of 4
     '''
     # Use dimensions for 8x8
-    dims = (8,8)
-    stateDim =  4
-    field = Field(dims, stateDim=stateDim)
+    stateDim = 4
+    dims = (8,8,stateDim)
+    field = Field(dims)
     
     # Assert correct shape
-    assert field.shape() == (dims[0], dims[1], stateDim)
+    assert np.array_equal(field.shape(), dims)
     
+def test_constructor_wrap_2arg():
+    '''
+    Asserts we wrap a numpy array with state dimension of 4
+    '''
+    # Use dimensions for 8x8
+    stateDim =  4
+    dims = (8,8,stateDim)
+    test = rng(dims)
+    field = Field(dims, test)
+    
+    # Assert correct shape
+    assert np.array_equal(field.vals, test)
+    
+def test_constructor_wrap_1arg():
+    '''
+    Asserts we wrap a numpy array with state dimension of 4
+    '''
+    # Use dimensions for 8x8
+    stateDim =  4
+    dims = (8,8,stateDim)
+    test = rng(dims)
+    field = Field(test)
+    
+    # Assert correct shape
+    assert np.array_equal(field.vals, test)
+
 def test_set_item():
     '''
     Asserts that we can change a single element in a field
@@ -84,8 +155,8 @@ def test_add_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = rng(dims[0], dims)
-    rand2 = rng(dims[0], dims)
+    rand1 = rng(dims)
+    rand2 = rng(dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -104,8 +175,8 @@ def test_difference_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = rng(dims[0], dims)
-    rand2 = rng(dims[0], dims)
+    rand1 = rng(dims)
+    rand2 = rng(dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -123,8 +194,8 @@ def test_product_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = rng(dims[0], dims)
-    rand2 = rng(dims[0], dims)
+    rand1 = rng(dims)
+    rand2 = rng(dims)
     
     # Make fields
     field1 = Field(dims, rand1)
@@ -142,7 +213,7 @@ def test_quotient_func():
     '''
     # Make 2 random arrays
     dims = (8,8)
-    rand1 = rng(dims[0], dims)
+    rand1 = rng(dims)
     rand2 = np.ones(dims)*2
     
     # Make fields

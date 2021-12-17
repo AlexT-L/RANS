@@ -1,63 +1,79 @@
 import numpy as np
 
+# determine if a variable is a numpy array
+def is_numpy(var):
+    return type(var).__module__ is np.__name__
+
+def is_field(var):
+    return type(var).__module__ is Field.__name__
 
 # Field classs math methods
 def mean(array):
-    assert(isinstance(array, Field))
-    return Field(array.fieldDim, array.varDim, np.mean(array.vals))
+    assert is_field(array)
+    return Field(array.shape(), np.mean(array.vals))
 
 def abs(array):
-    assert(isinstance(array, Field))
-    return Field(array.fieldDim, array.varDim, np.abs(array.vals))
+    is_field(array)
+    return Field(array.shape(), np.abs(array.vals))
 
 def max(array):
-    assert(isinstance(array, Field))
-    return Field(array.fieldDim, array.varDim, np.max(array.vals))
+    is_field(array)
+    return Field(array.shape(), np.max(array.vals))
 
 def min(array):
-    assert(isinstance(array, Field))
-    return Field(array.fieldDim, array.varDim, np.min(array.vals))
+    is_field(array)
+    return Field(array.shape(), np.min(array.vals))
 
 def sum(array):
-    assert(isinstance(array, Field))
-    return Field(array.fieldDim, array.varDim, np.sum(array.vals))
+    is_field(array)
+    return Field(array.shape(), np.sum(array.vals))
 
 def sqrt(array):
-    assert(isinstance(array, Field))
+    is_field(array)
     result = array.vals**(0.5)
-    return Field(array.fieldDim, array.varDim, result)
+    return Field(array.shape(), result)
 
 def norm(array1, array2):
-    assert(isinstance(array1, Field))
-    assert(isinstance(array2, Field))
+    assert is_field(array1)
+    assert is_field(array2)
     result = (array1.vals**2 + array2.vals**2)**(0.5)
-    return Field(array1.fieldDim, array1.varDim, result)
+    return Field(array1.size(), array1.dim(), result)
 
 def pos_diff(array1, array2):
-    assert(isinstance(array1, Field))
-    assert(isinstance(array2, Field))
+    assert is_field(array1)
+    assert is_field(array2)
     diff = array1.vals - array2.vals
     result = np.max(diff, 0)
-    return Field(array1.fieldDim, array1.varDim, result)
+    return Field(array1.size(), array1.dim(), result)
+
+def isfinite(array):
+    is_field(array)
+    return Field(array.shape(), np.isfinite(array.vals))
 
 
 
 
 class Field:
 
-    def __init__(self, field_size, stateDim=1, vals=None):
-        if type(stateDim) is not int:
-            vals = stateDim
-            stateDim = 1
+    def __init__(self, shape, vals=None):
+        if is_numpy(shape):
+            vals = shape
+            shape = vals.shape
+        
+        if type(shape) is int:
+            shape = (shape, 1)
 
-        self.fieldDim = field_size
-        self.varDim = stateDim
+        assert(len(shape) > 0 and len(shape) <= 3)
+        
+        if len(shape) < 3:
+            if len(shape) < 2:
+                shape = (shape, 1)
+            shape = (shape[0], shape[1], 1)
 
         if vals is None:
-            [nx, ny] = field_size
-            full_dim = (nx, ny, stateDim)
-            vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
+            vals = np.zeros(shape, order = 'F') # set fortran ordering for f2py
 
+        self.fieldShape = shape
         self.vals = vals
 
     # Allow fields to be indexed like numpy arrays
@@ -65,7 +81,6 @@ class Field:
         x = indx
         y = 0
         z = 0
-        dim = 1
 
         if type(indx) is not int:
             x = indx[0]
@@ -80,24 +95,21 @@ class Field:
             indx = (x, y)
         
         vals = self.vals[indx]
-        shape = vals.shape
 
-        if len(shape) == 3:
-            dim = shape[2]
-            shape = shape[0:2]
+        if np.isscalar(vals):
+            return vals
 
-        fieldSlice = Field(shape, dim, vals)
+        fieldSlice = Field(vals)
         return fieldSlice
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
-        if isinstance(value, Field):
+        if is_field(value):
             value = value.vals
 
         x = indx
         y = 0
         z = 0
-        dim = 1
 
         if type(indx) is not int:
             x = indx[0]
@@ -110,8 +122,11 @@ class Field:
 
         if len(self.vals.shape) == 2:
             indx = (x, y)
+
+        if not np.isscalar(value):
+            np.array(value, order = 'F')
         
-        self.vals[indx] = np.array(value, order = 'F')
+        self.vals[indx] = value
     
     def set_val(self, new_vals):
         if np.shape(new_vals) != np.shape(self.vals):
@@ -124,19 +139,18 @@ class Field:
 
     # size of field
     def size(self):
-        vals = self.vals
-        return vals.shape[0:2]
+        [nx, ny, nz] = self.fieldShape
+        return (nx, ny)
 
     # size of field
     def shape(self):
-        vals = self.vals
-        return vals.shape
+        return self.fieldShape
 
     # dimension of variable
     # size of field
     def dim(self):
-        vals = self.vals
-        return vals.shape[2]
+        [nx, ny, nz] = self.fieldShape
+        return nz
 
 
 #############################
@@ -148,9 +162,9 @@ class Field:
     # store the sum of var1 and var2 in self
     def store_sum(self, var1, var2):
 
-        if isinstance(var1, Field):
+        if is_field(var1):
             var1 = var1.vals
-        if isinstance(var2, Field):
+        if is_field(var2):
             var2 = var2.vals
 
         self.vals = var1 + var2
@@ -160,9 +174,9 @@ class Field:
     # store the difference (var1 - var2) in self
     def store_difference(self, var1, var2):
 
-        if isinstance(var1, Field):
+        if is_field(var1):
             var1 = var1.vals
-        if isinstance(var2, Field):
+        if is_field(var2):
             var2 = var2.vals
 
         self.vals = var1 - var2
@@ -172,9 +186,9 @@ class Field:
     # store the elementwise product of var1 and var2 in self
     def store_product(self, var1, var2):
 
-        if isinstance(var1, Field):
+        if is_field(var1):
             var1 = var1.vals
-        if isinstance(var2, Field):
+        if is_field(var2):
             var2 = var2.vals
 
         self.vals = var1 * var2
@@ -184,9 +198,9 @@ class Field:
     # store the elementwise quotient (var1/var2) in self
     def store_quotient(self, var1, var2):
 
-        if isinstance(var1, Field):
+        if is_field(var1):
             var1 = var1.vals
-        if isinstance(var2, Field):
+        if is_field(var2):
             var2 = var2.vals
 
         self.vals = var1 / var2
@@ -195,7 +209,7 @@ class Field:
 
     # elementwise copy self into copy
     def copy_to(self, copy):
-        assert(isinstance(copy, Field))
+        assert is_field(copy)
 
         copy.vals = np.copy(self.vals)
         return
@@ -203,7 +217,7 @@ class Field:
 
     # elementwise copy self into copy
     def copy_from(self, source):
-        assert(isinstance(source, Field))
+        assert is_field(source)
 
         self.vals = np.copy(source.vals)
         return
@@ -223,10 +237,9 @@ class Field:
     # matrix operations
 
     def T(self):
-        [nx, ny] = self.fieldDim
-        dim = self.varDim
-        trans = Field((ny, nx), dim)
-        trans.vals = self.vals.T
+        [nx, ny] = self.size()
+        dim = self.dim()
+        trans = Field(self.vals.T)
         return trans
 
     
@@ -237,119 +250,119 @@ class Field:
     # comparison operatos
 
     def __lt__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result = self.vals < other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
     
     def __le__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result =  self.vals <= other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
     
     def __gt__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result = self.vals > other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
     
     def __ge__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result = self.vals >= other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
     
     def __eq__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result = self.vals == other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
     
     def __ne__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
         result = self.vals != other
-        return Field(self.fieldDim, self.varDim, result)
+        return Field(self.shape(), result)
 
     def __bool__(self):
-        return bool(self.vals)
+        return bool(self.vals.any())
 
 
     # math operators
     
     def __add__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals + other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __sub__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals - other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __mul__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals * other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __pow__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals ^ other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __truediv__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals / other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __floordiv__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals // other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __mod__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = self.vals % other
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
 
     def __iadd__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         self.vals = self.vals + other
@@ -357,7 +370,7 @@ class Field:
 
     
     def __isub__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         self.vals = self.vals + other
@@ -365,7 +378,7 @@ class Field:
 
     
     def __imul__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         self.vals = self.vals * other
@@ -373,7 +386,7 @@ class Field:
 
     
     def __ipow__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         self.vals = self.vals ^ other
@@ -382,68 +395,68 @@ class Field:
 
     # reverse math operations
     def __radd__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = other + self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __rsub__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = other - self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __rmul__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result =  other * self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
     
     def __rpow__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = other ^ self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
 
     def __rtruediv__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = other / self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
 
     def __rfloordiv__(self, other):
-        if isinstance(other, Field):
+        if is_field(other):
             other = other.vals
 
         result = other // self.vals
 
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
 
         return output
 
     def __neg__(self):
         result = -self.vals
-        output = Field(self.fieldDim, self.varDim, result)
+        output = Field(self.shape(), result)
         return output
 
     def __pos__(self):

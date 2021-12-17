@@ -3,6 +3,7 @@ from Field import Field
 from Grid import Grid
 from Model import Model
 from Workspace import Workspace
+from bin.Field import isfinite
 
 class CellCenterWS(Workspace):
 
@@ -13,7 +14,7 @@ class CellCenterWS(Workspace):
     # dimensions of field (# of control volumes)
     def field_size(self):
         [xv, yv] = self.grid_size()
-        return [xv-1, yv-1]
+        return (xv-1, yv-1)
 
     # volume of control volume
     def volume(self, i, j):
@@ -86,31 +87,34 @@ class CellCenterWS(Workspace):
     def __calc_edges(self, side):
         varName = "dx" + side
         X = self.get_field('x')
-        x = Field(X.size(), X.dim())
+        x = Field(X.shape())
         X.copy_to(x)
         dx = 0
+
+        assert(isfinite(x))
         
         [nx, ny] = self.field_size()
 
         if side == 'n':
-            dx = x[1:nx+1, 1:ny+1, :] - x[0:nx, 1:ny+1, :]
+            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
         
         if side == 's':
-            dx = x[1:nx+1, 0:ny, :] - x[0:nx, 0:ny, :]
+            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
 
         if side == 'e':
-            dx = x[1:nx+1, 1:ny+1, :] - x[1:nx+1, 0:ny+0, :]
+            dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny, :]
 
         if side == 'w':
-            dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny+0, :]
+            dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny, :]
 
         assert(max(dx) != 0)
+        assert(isfinite(dx))
 
         self.add_field(dx, varName)
 
     def __calc_normals(self, side):
         dx = self.edges(side)
-        nx = Field(dx.size(), dx.dim())
+        nx = Field(dx.shape())
         nx[:,:,0] = dx[:,:,1]
         nx[:,:,1] = -dx[:,:,0]
 
