@@ -143,7 +143,7 @@ def test_quotient_func():
     # Make 2 random arrays
     dims = (8,8)
     rand1 = rng(dims[0], dims)
-    rand2 = rng(dims[0], dims)
+    rand2 = np.ones(dims)*2
     
     # Make fields
     field1 = Field(dims, rand1)
