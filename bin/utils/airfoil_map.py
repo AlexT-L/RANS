@@ -75,7 +75,7 @@ def init_from_file(self, grid_dim, input):
     metric(self)
 
     #plot mesh
-    plot_mesh(self)
+    # plot_mesh(self)
     
 
 def init_from_grid(newGrid, grid):
@@ -109,4 +109,4 @@ def init_from_grid(newGrid, grid):
     newGrid.fields = newFields
 
     #plot mesh
-    plot_mesh(newGrid)
+    # plot_mesh(newGrid)

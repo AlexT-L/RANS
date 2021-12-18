@@ -13,86 +13,27 @@ from MultiGrid import MultiGrid
 import Contractinator as con
 
 if __name__ == '__main__':
-    # Testing fields
-    field = Field([6,2],2)
-    field2 = Field([6,2],2)
-    field[0:2,0:2,0] = 5
-    field2[0:6,0:2,0] = 1
-    weights = Field([12,8],4)
-    # print(field.vals)
+    # # Testing fields
+    # field = Field((6,2,2))
+    # field2 = Field((6,2,2))
+    # field[0:2,0:2,0] = 5
+    # field2[0:6,0:2,0] = 1
+    # weights = Field((12,8,4))
+    # # print(field.vals)
 
-    newPointer = field
-    print(field)
-
-    newPointer += field2
-    # newPointer.store_sum(newPointer, field2)
-    print(newPointer)
-    print(field)
-    
-    print("\n")
-    field2[:,:,:] = 2
-    print(field2)
-
-    print("\n\n\n")
-
-    # storage = field[0:4, 0:2, 0]
-    # storage.copy_from(field2[0:4, 0:2, 0])
-    # # field[0:4, 0:2, 0].copy_from(field2[0:4, 0:2, 0])
-    # # field.copy_from(field2)
-
-    # print("\n\n")
-    # print(storage)
+    # newPointer = field
     # print(field)
 
+    # newPointer += field2
+    # # newPointer.store_sum(newPointer, field2)
 
-    print("\n")
-    num1 = np.zeros((4,4,6))
-    num2 = np.ones((4,4,6))
-    # newnum = num1[0:2,0:4,0:2]
-    # newnum[:,:,:] = 5
-    # print(num1)
-    # print(newnum)
 
-    test1 = Field((2,4),6,num1)
-    test2 = Field((2,4),6,num1)
-    num1[:,:,:] = 3
+    a = Field((5,5,5))
 
-    temp = test1[0:2,1:3,0:6]
-    temp[:,:,:] = 4
+    print(isinstance(a, Field))
+    print(type(a) is Field)
 
-    print(test2)
 
-    mask = test2 == 4
-
-    print(test1*mask + test2*(1-mask))
-
-    test1[0,:,0] = [0, 1, 2, 3]
-    print(test1[0, 4::-1, 0])
-
-    def rng(range, dim):
-        return np.random.randint(0, range, dim)
-
-    dim = (8,8)
-    rand1 = rng(dim[0], dim)
-
-    # field2[0:4,0,0] = 4
-    # print(field2.vals)
-
-    # print(field.shape())
-
-    # print("sum")
-    # print(sum(sum(field[0:2,0:2,0])))
-
-    # for z in range(4):
-    #     field[0,0:8,z] = 3
-    #     weights[0:12,0,z] = 2
     
-    # print(field.vals)
-
-    # print(field.shape())
-
-    # con.conservative4way(field, field2, weights)
-
-    # print(field2.vals)
-
-    # print(field.vals)
+    print(a[:])
+    

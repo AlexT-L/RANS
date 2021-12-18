@@ -217,19 +217,12 @@ class Field:
     # store the difference (var1 - var2) in self
     def store_difference(self, var1, var2):
         
-        print("Field")
-
         if is_field(var1):
             var1 = var1.vals
         if is_field(var2):
             var2 = var2.vals
 
-        print(var1.shape)
-        print(var2.shape)
-
-        result = var1 * var2
-        print(result.shape)
-        self.vals = result
+        self.vals = var1 * var2
         return
 
 

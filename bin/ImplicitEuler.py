@@ -81,9 +81,6 @@ class ImplicitEuler(Integrator):
             dw.store_product(Rw, dt, 2)
 
             # update state
-            print(w.shape())
-            print(wn.shape())
-            print(dw.shape())
             w.store_difference(wn, dw)
 
     # check if dictionary has been initialized
