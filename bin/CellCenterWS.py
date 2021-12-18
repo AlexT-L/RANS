@@ -3,7 +3,7 @@ from Field import Field
 from Grid import Grid
 from Model import Model
 from Workspace import Workspace
-from bin.Field import isfinite
+from bin.Field import copy, isfinite
 
 class CellCenterWS(Workspace):
 
@@ -87,8 +87,7 @@ class CellCenterWS(Workspace):
     def __calc_edges(self, dim):
         varName = "dx" + str(dim)
         X = self.get_field('x')
-        x = Field(X.shape())
-        X.copy_to(x)
+        x = copy(X)
         dx = 0
 
         assert(isfinite(x))

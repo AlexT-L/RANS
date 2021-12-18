@@ -2,6 +2,7 @@ from numpy.core.numeric import Infinity
 from Model import Model
 from Workspace import Workspace
 from Field import Field, max, isfinite
+from bin.Field import copy
 from model_funcs.eflux import eflux
 from model_funcs.dflux import dflux
 from model_funcs.dfluxc import dfluxc
@@ -235,7 +236,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad].copy_from(field)
+        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
         # for i in range(0, leni):
         #     for j in range(0, lenj):
         #         paddedField[i+pad,j+pad] = field[i,j]
@@ -247,7 +248,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad].copy_to(field)
+        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
         # for i in range(0, nx):
         #     for j in range(0, ny):
         #         field[i,j] = paddedField[i+pad,j+pad]
@@ -303,6 +304,9 @@ class NavierStokes(Model):
         VOL = workspace.get_field("vol")
         vol = workspace.get_field("vol", self.className)
         self.__copy_in(VOL, vol)
+
+        assert min(VOL) > 0
+        assert min(vol[2:nx+2, 2:ny+2]) > 0
 
         
         XC = workspace.get_field("xc")

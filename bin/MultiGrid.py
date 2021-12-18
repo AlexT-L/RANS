@@ -6,6 +6,7 @@ from Field import Field
 from Cycle import Cycle
 from Workspace import Workspace
 from Integrator import Integrator
+from bin.Field import copy
 
 
 class MultiGrid:
@@ -142,7 +143,8 @@ class MultiGrid:
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
-                    w.copy_to(w1)
+                    w1[:] = copy(w)
+                    self.W1st[level] = w1
 
                 # Check if stability needs to be updated
                 if UPDATE_STABILITY:
@@ -184,7 +186,7 @@ class MultiGrid:
             Field that will store the values
         """
         residuals = self.Fluxes[-1]
-        residuals.copy_to(output)
+        output = copy(residuals)
         
     # copy state into output field
     def solution(self, output):
@@ -196,4 +198,4 @@ class MultiGrid:
             Field that will store the values
         """
         state = self.W[-1]
-        state.copy_to(output)
+        output = copy(state)

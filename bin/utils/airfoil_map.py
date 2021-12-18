@@ -44,7 +44,7 @@ def init_from_file(self, grid_dim, input):
     jl = ny+1
     self.x  = Field((il,jl,2))
     self.xc = Field((nx,ny,2))
-    self.vol= Field((nx,ny,1))
+    self.vol= Field((nx,ny))
 
     # store relevant fields
     fields = dict()
@@ -94,7 +94,7 @@ def init_from_grid(newGrid, grid):
     [nx, ny] = [il-1, jl-1]
     xNew = Field((il,jl,2))
     xcNew = Field((nx,ny,2))
-    volNew = Field((nx,ny,1))
+    volNew = Field((nx,ny))
 
     # condense mesh
     simple(x, xNew)

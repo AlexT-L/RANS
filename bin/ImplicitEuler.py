@@ -1,6 +1,7 @@
 from Field import max
 from Workspace import Workspace
 from Integrator import Integrator
+from bin.Field import copy
 
 class ImplicitEuler(Integrator):
     # Constructor
@@ -53,7 +54,7 @@ class ImplicitEuler(Integrator):
         dt = get("dt")
 
         # store initial state
-        w.copy_to(wn)
+        wn = copy(w)
 
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)

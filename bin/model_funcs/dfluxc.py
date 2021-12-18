@@ -37,7 +37,7 @@ def dfluxc(model, ws, state, dw, rfil):
     # physical paramteters
     vis0 = model.params['vis0']
 
-    fis0      = rfil*abs(vis0)/8.
+    fis0      = rfil*np.abs(vis0).item()/8
     sfil      = 1.  -rfil
 
     # working array

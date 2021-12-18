@@ -14,6 +14,11 @@ def is_field(var):
     isBinField = type(var).__module__ is binField.__name__
     return isField or isBinField
 
+def copy(array):
+    assert is_field(array)
+    copy = np.copy(array.vals)
+    return Field(copy)
+
 # Field classs math methods
 def mean(array, axis=None):
     assert is_field(array)
