@@ -1,24 +1,17 @@
 # libraries
 import numpy as np
-
-# append to path so we can access files
-import sys
-
 from bin.Field import isfinite
-sys.path.append("../../../")
-
-# project specific dependencies
-from Field import Field
-from Contractinator import conservative4way, simple, sum4way
+from bin.Field import Field
+from bin.Contractinator import conservative4way, simple, sum4way
 
 # grid creation functions
-from utils.dims_func import set_dims
-from utils.coord_strch_func import coord_stretch
-from utils.geom_func import geom 
-from utils.mesh_func import mesh
-from utils.sangho_func import sangho
-from utils.metric_func import metric
-from utils.plot_mesh_func import plot_mesh
+from bin.utils.dims_func import set_dims
+from bin.utils.coord_strch_func import coord_stretch
+from bin.utils.geom_func import geom 
+from bin.utils.mesh_func import mesh
+from bin.utils.sangho_func import sangho
+from bin.utils.metric_func import metric
+from bin.utils.plot_mesh_func import plot_mesh
 
 def init_from_file(self, grid_dim, input):
     # read in number of divisions

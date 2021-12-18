@@ -1,7 +1,6 @@
-from Field import max
-from Workspace import Workspace
-from Integrator import Integrator
-from bin.Field import copy
+from bin.Field import max, copy
+from bin.Workspace import Workspace
+from bin.Integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor

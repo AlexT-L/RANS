@@ -1,8 +1,8 @@
 import numpy as np
-from Field import Field
-from Grid import Grid
-from Model import Model
-from Workspace import Workspace
+from bin.Field import Field
+from bin.Grid import Grid
+from bin.Model import Model
+from bin.Workspace import Workspace
 from bin.Field import copy, isfinite
 
 class CellCenterWS(Workspace):

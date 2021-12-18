@@ -1,8 +1,4 @@
-# append to path so we can access files
-import sys
-sys.path.append("../../../")
-
-from Field import mean
+from bin.Field import mean
 
 def metric(self):
     # parameters

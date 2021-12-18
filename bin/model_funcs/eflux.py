@@ -1,8 +1,8 @@
 # python implementation of eflux.f
 
-from Field import Field, max
-from Grid import Grid
-from Workspace import Workspace
+from bin.Field import Field, max
+from bin.Grid import Grid
+from bin.Workspace import Workspace
 import numpy as np
 
 def eflux(model, ws, state, dw):

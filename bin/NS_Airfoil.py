@@ -1,11 +1,6 @@
-# append to path so we can access files
-import sys
-
 from numpy.core.defchararray import mod
-sys.path.append("../")
-
-from BoundaryConditioner import BoundaryConditioner
-import NS_Airfoil_imp as implementation
+from bin.BoundaryConditioner import BoundaryConditioner
+import bin.NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.bcwall import wall

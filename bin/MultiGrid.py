@@ -1,11 +1,11 @@
 import numpy as np
-import Expandinator as expand
-import Contractinator as contract
-from Grid import Grid
-from Field import Field
-from Cycle import Cycle
-from Workspace import Workspace
-from Integrator import Integrator
+import bin.Expandinator as expand
+import bin.Contractinator as contract
+from bin.Grid import Grid
+from bin.Field import Field
+from bin.Cycle import Cycle
+from bin.Workspace import Workspace
+from bin.Integrator import Integrator
 from bin.Field import copy
 
 

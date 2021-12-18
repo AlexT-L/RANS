@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from ws_class import WorkspaceClass
+from bin.ws_class import WorkspaceClass
 
 class BoundaryConditioner(WorkspaceClass):
     

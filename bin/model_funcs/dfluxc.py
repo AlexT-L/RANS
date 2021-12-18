@@ -1,8 +1,8 @@
 # python implementation of eflux.f
 
-from Field import Field, max, minimum
-from Grid import Grid
-from Workspace import Workspace
+from bin.Field import Field, max, minimum
+from bin.Grid import Grid
+from bin.Workspace import Workspace
 import numpy as np
 
 def dfluxc(model, ws, state, dw, rfil):

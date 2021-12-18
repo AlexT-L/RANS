@@ -1,9 +1,9 @@
 # python implementation of eflux.f
 
 from operator import pos
-from Field import Field, maximum, minimum, abs, pos_diff
-from Grid import Grid
-from Workspace import Workspace
+from bin.Field import Field, maximum, minimum, abs, pos_diff
+from bin.Grid import Grid
+from bin.Workspace import Workspace
 import numpy as np
 
 def dflux(model, ws, state, dw, rfil):

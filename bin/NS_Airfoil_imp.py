@@ -1,5 +1,5 @@
 # import bcfar_fort, bcwall_fort, halo_fort, math
-from Field import mean
+from bin.Field import mean
 import math
 
 # set porosity

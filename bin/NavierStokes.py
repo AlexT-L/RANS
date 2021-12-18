@@ -1,11 +1,11 @@
 from numpy.core.numeric import Infinity
-from Model import Model
-from Workspace import Workspace
-from Field import Field, max, isfinite
+from bin.Model import Model
+from bin.Workspace import Workspace
+from bin.Field import Field, max, isfinite
 from bin.Field import copy
-from model_funcs.eflux import eflux
-from model_funcs.dflux import dflux
-from model_funcs.dfluxc import dfluxc
+from bin.model_funcs.eflux import eflux
+from bin.model_funcs.dflux import dflux
+from bin.model_funcs.dfluxc import dfluxc
 
 class NavierStokes(Model):
     

@@ -1,11 +1,8 @@
-import sys
-sys.path.append("../")
-
 from abc import ABC, abstractmethod
 import numpy as np
-from Field import Field
-from Grid import Grid
-from Model import Model
+from bin.Field import Field
+from bin.Grid import Grid
+from bin.Model import Model
 from bin.Field import isfinite
 
 class Workspace(ABC):

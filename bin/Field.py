@@ -1,6 +1,3 @@
-import sys
-sys.path.append("../")
-
 import numpy as np
 import bin.Field as binField
 from numpy.core.numeric import isscalar

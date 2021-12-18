@@ -4,7 +4,7 @@
 
 from abc import ABC, abstractmethod
 import numpy as np
-from Field import Field
+from bin.Field import Field
 
 class Grid(ABC):
     

@@ -1,16 +1,16 @@
 import numpy as np
 from numpy.core.numeric import Infinity
-from Field import Field, max, mean
-from Input import Input
-from flo103_PostProcessor import flo103_PostProcessor
-from flo103_ConvergenceChecker import flo103_ConvergenceChecker
-from ImplicitEuler import ImplicitEuler
-from NS_Airfoil import NS_Airfoil
-from AirfoilMap import AirfoilMap
-from CellCenterWS import CellCenterWS
-from NavierStokes import NavierStokes
-from MultiGrid import MultiGrid
-import Contractinator as con
+from bin.Field import Field, max, mean
+from bin.Input import Input
+from bin.flo103_PostProcessor import flo103_PostProcessor
+from bin.flo103_ConvergenceChecker import flo103_ConvergenceChecker
+from bin.ImplicitEuler import ImplicitEuler
+from bin.NS_Airfoil import NS_Airfoil
+from bin.AirfoilMap import AirfoilMap
+from bin.CellCenterWS import CellCenterWS
+from bin.NavierStokes import NavierStokes
+from bin.MultiGrid import MultiGrid
+import bin.Contractinator as con
 
 if __name__ == '__main__':
 

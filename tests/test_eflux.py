@@ -1,70 +1,72 @@
-'''
-import eflux_fort
+"""
+Description
+-----------
+Tests the flux calculations
+
+Libraries/Modules
+-----------------
+-pytest \n
+-Field
+-Model
+-Workspace
+-
+
+Notes
+-----
+Runs the following tests:\n
+1. Checks that a 2D Field can be created  \n
+2. Checks that a 3D field can be created \n
+3. Tests that we can set a whole field \n
+4. Tests that we can set an individual elements \n
+5. Tests store_product function \n
+6. Tests store_difference function \n
+7. Tests store_product function \n
+8. Tests store_quotient function \n
+
+"""
+
+
+
 import numpy as np
-#from Field import Field
+from bin.Field import Field
+from bin.Input import Input
+from bin.AirfoilMap import AirfoilMap
+from bin.CellCenterWS import CellCenterWS
+from bin.NS_Airfoil import NS_Airfoil
+from bin.NavierStokes import NavierStokes
 
+# create input and grid
+filename = 'rae9-s1.data'
 
-def test_flux():
-    print(eflux_fort.__doc__)
-    assert 0 == 0
-'''
-#test_flux()
-'''
-# grab grid related parameter
-#G = ws.grid
-nx = 4
-ny = 10
-il = nx+1
-jl = ny+1
-ie = il+1
-je = jl+1
-itl = 1
-itu = 3
-ib = il + 2
-jb = jl + 2
+# read in input
+input = Input(filename) # Will actually take all command line inputs
+print("Input Loaded")
 
-# flow related vars
-w = Field([ib,jb],4) # state
-w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
-P = Field([ib,jb]) # pressure
-rlv = Field([ib,jb]) # laminar viscocity
-rev = Field([ib,jb]) # eddy viscocity
-dw = Field([ib,jb],4) # residuals
+# format input
+input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
+gridInput = input.add_dicts(input.geo_param, input.in_var)
+grid_dim = [input.dims['nx'], input.dims['ny']]
+modelInput = input.add_dicts(input.flo_param, input.solv_param)
 
-# mesh related vars
-porI = Field([ib,jb],2) # mesh vertices
-porI.vals = np.array(porI.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-porJ = Field([ib,jb],2) # mesh centers
-porJ.vals = np.array(porJ.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-xc = Field([ib,jb],2) # mesh vertices
-xc.vals = np.array(porI.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-x = Field([ib,jb],2) # mesh centers
-x.vals = np.array(porJ.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+# create geometry objects
+grid = AirfoilMap.from_file(grid_dim, gridInput)
+print("Grid Created")
+ws = CellCenterWS(grid)
+print("Workspace Created")
 
-# solver related vars
-fw = Field([ib,jb],4)
-radI = Field([ib,jb],2) # stability I
-radJ = Field([ib,jb],2) # stability J
+# create physics objects
+bcmodel = NS_Airfoil(modelInput)
+model = NavierStokes(bcmodel, modelInput)
+print("Model Created")
 
-gamma = 1.4
-rm = 1.2
-scal = 1.8
-re = 50000
-chord = 2.6
-prn = 1000
-prt = 10000
-mode = 1
-rfil = 0.8
-vis0 = 0.5
-rho0 = 1
-p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
+# create faux fields
+np.random.seed(100)
+w_init = np.random.standard_normal([grid.dims['nx'],grid.dims['ny'],model.dim()])
+w = Field(w_init)
+res = np.zeros([grid.dims['nx'],grid.dims['ny'],model.dim()])
+dw = Field(res)
 
-print(dw.vals[:][:][0])
-print(eflux_fort.__doc__)
-# residuals returned in Field dw
-eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porI.vals,il,jl)
-
-print(dw.vals[:][:][0])
-    
-'''
-
+#print(dw)
+model.init_state(ws,w)
+model.get_flux(ws,w,dw)
+print(dw)

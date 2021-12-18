@@ -1,4 +1,4 @@
-from Field import Field, sum
+from bin.Field import Field, sum
 import numpy as np
 
 def simple(fine, coarse):

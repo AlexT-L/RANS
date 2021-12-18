@@ -2,13 +2,13 @@ from typing import Dict
 import numpy as np
 from numpy.core.numeric import isclose
 from numpy.lib.function_base import iterable
-from Field import Field
-from Grid import Grid
-from Input import Input
+from bin.Field import Field
+from bin.Grid import Grid
+from bin.Input import Input
 
 #class methods
-from utils.airfoil_map import init_from_file
-from utils.airfoil_map import init_from_grid
+from bin.utils.airfoil_map import init_from_file
+from bin.utils.airfoil_map import init_from_grid
         
 class AirfoilMap(Grid):
     

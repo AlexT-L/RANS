@@ -1,4 +1,4 @@
-from Field import norm, pos_diff
+from bin.Field import norm, pos_diff
 
 def wall(bcmodel, model, workspace, state):
 

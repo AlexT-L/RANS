@@ -1,4 +1,4 @@
-import Field
+from bin.Field import Field
 import numpy as np
 from scipy.interpolate import griddata
 
