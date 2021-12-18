@@ -71,7 +71,7 @@ def test_constructor_1d():
     """
     # Use dimensions for 8x8
     dims = (8)
-    field = Field(dims)
+    field = Field(dims, 0)
     
     # Assert correct shape
     assert np.array_equal(field.size(), (dims,1))

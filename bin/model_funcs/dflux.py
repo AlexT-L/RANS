@@ -99,11 +99,6 @@ def dflux(model, ws, state, dw, rfil):
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
         max2 = dp[ip:ie, 1]
-
-        print(max1.shape())
-        print(max2.shape())
-        print(maximum(max1, max2).shape())
-
         dis2[ip:ie, 1] = fis2*rad*minimum(TOL[0:nx,0], maximum(max1, max2))
 
         dis4[ip:ie, 1] = fis4*rad

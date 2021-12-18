@@ -40,15 +40,18 @@ def dfluxc(model, ws, state, dw, rfil):
     fis0      = rfil*abs(vis0)/8.
     sfil      = 1.  -rfil
 
+    # working array
+    fs = Field((nxp, nyp, n))
+
     # c
     # c     dissipation in the i direction
     # c
     dis = fis0*minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])
 
-    fs  = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
-    fs += dis*(p[ip:ib, jp:je] - p[1:ie, jp:je])
+    fs[1:ie, jp:je]     = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
+    fs[1:ie, jp:je, 3] += dis*(p[ip:ib, jp:je] - p[1:ie, jp:je])
 
-    fw[:] = sfil*fw - fs[ip:ie, jp:je] + fs[1:il, jp:je]
+    fw[ip:ie, jp:je] = sfil*fw[ip:ie, jp:je] - fs[ip:ie, jp:je] + fs[1:il, jp:je]
 
     if ny < 3:
         return
@@ -58,10 +61,10 @@ def dfluxc(model, ws, state, dw, rfil):
     # c
     dis = fis0*porJ*minimum(radI[ip:ie, jp:jb], radI[ip:ie, 1:je])
 
-    fs  = dis*(w[ip:ie, jp:jb] - w[ip:ie, 1:je])
-    fs += dis*(p[ip:ie, jp:jb] - p[ip:ie, 1:je])
+    fs[ip:ie, 1:je]     = dis*(w[ip:ie, jp:jb] - w[ip:ie, 1:je])
+    fs[ip:ie, 1:je, 3] += dis*(p[ip:ie, jp:jb] - p[ip:ie, 1:je])
 
-    fw += fs[ip:ie, jp:je] + fs[ip:ie, 1:jl]
+    fw[ip:ie, jp:je] += fs[ip:ie, jp:je] + fs[ip:ie, 1:jl]
 
     # add to dw
     dw += fw
