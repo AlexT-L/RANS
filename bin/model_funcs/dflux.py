@@ -46,6 +46,14 @@ def dflux(model, ws, state, dw, rfil):
     plim      = 0.001
     tol       = 0.25
 
+    # working arrays
+    dp = Field((nxp,nyp))
+    dis2 = Field((nxp, nyp))
+    dis4 = Field((nxp, nyp))
+    d    = Field((nxp, nyp, n))
+    e    = Field((nxp, nyp, n))
+    TOL  = Field((nx+1, ny+1), tol)
+
     # c
     # c     replace the energy by the enthalpy
     # c
@@ -54,8 +62,8 @@ def dflux(model, ws, state, dw, rfil):
     # c
     # c     dissipation in the i direction
     # c
-    dp = abs((p[ip:nxp, jp:je] - 2*p[1:ib, jp:je] + p[0:ie, jp:je]) / \
-             (p[ip:nxp, jp:je] + 2*p[1:ib, jp:je] + p[0:ie, jp:je] + plim))
+    dp[1:ib, jp:je] = abs((p[ip:nxp, jp:je] - 2*p[1:ib, jp:je] + p[0:ie, jp:je]) / \
+                          (p[ip:nxp, jp:je] + 2*p[1:ib, jp:je] + p[0:ie, jp:je] + plim))
 
     dp[0, jp:je] = dp[1, jp:je]
     dp[ib, jp:je] = dp[ie, jp:je]
@@ -64,45 +72,49 @@ def dflux(model, ws, state, dw, rfil):
 
     max1 = maximum(dp[ip+1:nxp, jp:je], dp[ip:ib, jp:je])
     max2 = maximum(dp[1:ie, jp:je], dp[0:il, jp:je])
-    dis2 = fis2*rad*minimum(tol, maximum(max1, max2))
+    dis2[1:ie, jp:je] = fis2*rad*minimum(TOL[:,0:ny], maximum(max1, max2))
 
-    dis4 = fis4*rad
+    dis4[1:ie, jp:je] = fis4*rad
     dis4 = pos_diff(dis4, dis2)
 
     # forward differencing (1st order)
-    d = w[1:ib, jp:je] - w[0:ie, jp:je]
+    d[0:ib, jp:je] = w[1:nxp, jp:je] - w[0:ib, jp:je]
 
     # central differencing (third order)
-    e = d[ip:ib, jp:je] - 2*d[1:ie, jp:je] + d[0:il, jp:je]
+    e[1:ie, jp:je] = d[ip:ib, jp:je] - 2*d[1:ie, jp:je] + d[0:il, jp:je]
 
-    gs = porI*(dis2*d - dis4*e)
+    gs = porI*(dis2[1:ie, jp:je]*d[1:ie, jp:je] - dis4[1:ie, jp:je]*e[1:ie, jp:je])
 
-    fw[:] = sfil*fw + gs[1:il, jp:je] - gs[ip:ie, jp:je]
+    fw[ip:ie, jp:je] = sfil*fw[ip:ie, jp:je] + gs[0:nx] - gs[1:il]
 
     # c
     # c     dissipation in the j direction
     # c
     if ny >= 3:
-        dp = abs((p[ip:ie, jp:nyp] - 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je]) / \
-                 (p[ip:ie, jp:nyp] + 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je] + plim))
+        dp[ip:ie, 1:jb] = abs((p[ip:ie, jp:nyp] - 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je]) / \
+                              (p[ip:ie, jp:nyp] + 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je] + plim))
 
 
         rad = minimum(radJ[ip:ie, 2], radJ[ip:ie, 1])
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
         max2 = dp[ip:ie, 1]
-        dis2[ip:ie, 1] = fis2*rad*minimum(tol,maximum(max1, max2))
+
+        print(max1.shape())
+        print(max2.shape())
+        print(maximum(max1, max2).shape())
+
+        dis2[ip:ie, 1] = fis2*rad*minimum(TOL[0:nx,0], maximum(max1, max2))
 
         dis4[ip:ie, 1] = fis4*rad
         dis4[ip:ie, 1] = pos_diff(dis4[ip:ie, 1], dis2[ip:ie, 1])
 
 
-
         rad = minimum(radJ[ip:ie, je], radJ[ip:ie, jl])
 
         max1 = maximum(dp[ip:ie, je], dp[ip:ie, jl])
-        max2 = dp[ip:ie, nx]
-        dis2[ip:ie, jl] = fis2*rad*minimum(tol, maximum(max1, max2))
+        max2 = dp[ip:ie, ny]
+        dis2[ip:ie, jl] = fis2*rad*minimum(TOL[0:nx,0], maximum(max1, max2))
 
         dis4[ip:ie, jl] = fis4*rad
         dis4[ip:ie, jl] = pos_diff(dis4[ip:ie, jl], dis2[ip:ie, jl])
@@ -111,9 +123,9 @@ def dflux(model, ws, state, dw, rfil):
 
         rad = min(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
 
-        max1 = maximum(dp[ip:ie, je], dp[ip:ie, jl])
-        max2 = maximum(dp[ip:ie, ny], dp[ip:ie, ny-1])
-        dis2[ip:ie, jp:jl] = fis2*rad*minimum(tol, maximum(max1, max2))
+        max1 = maximum(dp[ip:ie, jp+2:jb], dp[ip:ie, jp+1:je])
+        max2 = maximum(dp[ip:ie, jp:jl], dp[ip:ie, 1:ny])
+        dis2[ip:ie, jp:jl] = fis2*rad*minimum(TOL[0:nx,0:ny-1], maximum(max1, max2))
 
         dis4[ip:ie, jp:jl] = fis4*rad
         dis4[ip:ie, jp:jl] = pos_diff(dis4[ip:ie, jp:jl], dis2[ip:ie, jp:jl])
@@ -125,11 +137,14 @@ def dflux(model, ws, state, dw, rfil):
         # central difference (third order)
         e[ip:ie, 1:je] = d[ip:ie, jp:jb] - 2*d[ip:ie, 1:je] + d[ip:ie, 0:jl]
 
-        gs = porJ*(dis2*d - dis4*e)
+        gs = porJ*(dis2[ip:ie, 1:je]*d[ip:ie, 1:je] - dis4[ip:ie, 1:je]*e[ip:ie, 1:je])
 
-        fw += gs[ip:ie, 1:jl] - gs[ip:ie, jp:je]
+        fw[ip:ie, jp:je] += gs[:, 0:ny] - gs[:, 1:jl]
 
     # c
     # c     replace the enthalpy by the energy
     # c
     w[:,:,3] = w[:,:,3] - p
+
+    # add to flux field
+    dw += fw

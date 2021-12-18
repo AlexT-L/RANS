@@ -104,7 +104,10 @@ class Workspace(ABC):
         # create fields and store in dictionary
         for varName in vars:
             [shape] = vars[varName]
-            classDict[varName] = Field(shape)
+            if np.isscalar(shape):
+                classDict[varName] = Field(shape, 0)
+            else:
+                classDict[varName] = Field(shape)
 
 
     def is_finest(self):

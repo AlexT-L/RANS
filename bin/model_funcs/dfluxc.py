@@ -62,3 +62,6 @@ def dfluxc(model, ws, state, dw, rfil):
     fs += dis*(p[ip:ie, jp:jb] - p[ip:ie, 1:je])
 
     fw += fs[ip:ie, jp:je] + fs[ip:ie, 1:jl]
+
+    # add to dw
+    dw += fw

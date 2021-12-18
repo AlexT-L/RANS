@@ -166,11 +166,6 @@ class MultiGrid:
                 
                 # Update Correction
                 wc.store_difference(w, w1)
-            
-            print("\nlevel")
-            print(level)
-            print(w)
-            print("\n")
         
         # perform one last step
         integrator.step(workspace, w, Rw)

@@ -3,6 +3,8 @@ from Model import Model
 from Workspace import Workspace
 from Field import Field, max, isfinite
 from model_funcs.eflux import eflux
+from model_funcs.dflux import dflux
+from model_funcs.dfluxc import dfluxc
 
 class NavierStokes(Model):
     
@@ -102,6 +104,12 @@ class NavierStokes(Model):
 
         # calculate residuals
         eflux(self, workspace, w, dw)
+
+        if workspace.is_finest():
+            dflux(self, workspace, w, dw, rfil)
+        else:
+            dfluxc(self, workspace, w, dw, rfil)
+
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:

@@ -67,7 +67,8 @@ def pos_diff(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     diff = array1.vals - array2.vals
-    result = np.max(diff, 0)
+    zeros = np.zeros(array1.shape())
+    result = np.maximum(diff, zeros)
     return Field(result)
 
 def isfinite(array):
@@ -101,21 +102,14 @@ class Field:
             vals = shape
             shape = vals.shape
         
-        
-        # if type(shape) is int:
-        #     shape = (shape, 1)
-
-        # assert(len(shape) > 0 and len(shape) <= 3)
-        
-        # if len(shape) < 3:
-        #     if len(shape) < 2:
-        #         shape = (shape, 1)
-        #     shape = (shape[0], shape[1], 1)
-
         if vals is None:
+            assert not np.isscalar(shape)
             vals = np.zeros(shape, order = 'F') # set fortran ordering for f2py
-        
-        assert not np.isscalar(vals)
+
+        if np.isscalar(vals):
+            vals = np.zeros(shape, order = 'F')
+        else:
+            assert np.array_equal(shape, vals.shape)
 
         self.fieldShape = shape
         self.vals = vals
@@ -627,16 +621,24 @@ def mismatch_mul(self, other):
 
     result = 0
 
-    if len(other.shape) == 3:
-        result = Field(other.shape)
-        k = other.shape[2]
+    diff = len(self.shape) - len(other.shape)
+
+    assert np.abs(diff) == 1
+
+    if diff < 0:
+        temp = self
+        self = other
+        other = temp
+
+    k = self.shape[-1]
+    result = Field(self.shape)
+
+    if len(self.shape) == 3:
         for i in range(1,k):
-            result.vals[:,:,i] = other[:,:,k] * self.vals
+            result.vals[:,:,i] = self[:,:,i] * other
     else:
-        k = self.shape[2]
-        result = Field(self.shape)
         for i in range(1,k):
-            result.vals[:,:,i] = self.vals[:,:,i] * other
+            result.vals[:,i] = self[:,i] * other
 
     assert not np.isscalar(result)
 
@@ -657,7 +659,7 @@ def mismatch_truediv(self, other):
         result = Field(other.shape)
         k = other.shape[2]
         for i in range(1,k):
-            result.vals[:,:,i] = other[:,:,k] / self.vals
+            result.vals[:,:,i] = other[:,:,i] / self.vals
     else:
         k = self.shape[2]
         result = Field(self.shape)
