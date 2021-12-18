@@ -1,11 +1,12 @@
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import Field, max, isfinite
+from bin.Field import Field, max, min, isfinite
 from bin.Field import copy
 from bin.model_funcs.eflux import eflux
 from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
+import numpy as np
 
 class NavierStokes(Model):
     
@@ -34,7 +35,7 @@ class NavierStokes(Model):
         self.cfl_fine = abs(input['cflf'])
         self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
-        self.cfl = min([self.cfl_fine, self.cfl_lim])
+        self.cfl = np.min([self.cfl_fine, self.cfl_lim])
         
 
     # initialize state

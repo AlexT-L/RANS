@@ -25,6 +25,7 @@ Author(s)
 Andy Rothstein \n
 
 """
+from numpy.core.numeric import NaN
 import pytest
 from bin.Field import Field
 import numpy as np
@@ -60,6 +61,21 @@ def test_isfinite():
     # Assert correct shape
     assert isfinite(field)
     
+
+def test_isscalar():
+    """
+    Asserts that we can create a 8x1 field
+    
+    """
+    # Use dimensions for 8x8
+    dims = (8,8)
+    array = Field(dims)
+    scalar = Field(1, 0)
+
+    
+    # Assert correct shape
+    
+
 
 def test_constructor_1d():
     """
@@ -119,7 +135,7 @@ def test_constructor_wrap_1arg():
     stateDim =  4
     dims = (8,8,stateDim)
     test = rng(dims)
-    field = Field(test)
+    field = Field(0, test)
     
     # Assert correct shape
     assert array_equal(field, test)

@@ -25,7 +25,6 @@ if __name__ == '__main__':
     # print(field)
 
     # newPointer += field2
-    # # newPointer.store_sum(newPointer, field2)
 
 
     a = Field((5,5,5))

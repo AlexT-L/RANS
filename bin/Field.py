@@ -1,7 +1,5 @@
 import numpy as np
 import bin.Field as binField
-from numpy.core.numeric import isscalar
-
 
 class Field:
 
@@ -11,7 +9,7 @@ class Field:
             Parameters
             ----------
             shape:
-                Array-like, e.g. (8,8,4)
+                Tuple (8,8,4)
                 Note: if shape is scalar (e.g. (8) or 8) then vals must not be None
             vals:
                 (Optional) array of values, or scalar.
@@ -23,20 +21,24 @@ class Field:
             :
                 A new Field object.
             """
-        if is_numpy(shape):
-            vals = shape
-            shape = vals.shape
-        
-        if vals is None:
-            assert not np.isscalar(shape)
-            vals = np.zeros(shape, order = 'F') # set fortran ordering for f2py
+        if is_field(vals):
+            vals = vals.vals
 
-        if np.isscalar(vals):
-            vals = vals*np.ones(shape, order = 'F')
+        if vals is not None:
+            if np.isscalar(vals):
+                vals = vals*np.ones(shape, order = 'F')
+
+            if is_numpy(vals):
+                if len(vals.shape) == 1 and vals.shape[0] == 1:
+                    vals = vals*np.ones(shape, order = 'F')
+                else:
+                        vals = np.array(vals, order = 'F')
+            else:
+                vals = np.array(vals, order = 'F')
         else:
-            assert np.array_equal(shape, vals.shape)
+            vals = np.zeros(shape, order = 'F')
+        assert vals is not None
 
-        self.fieldShape = shape
         self.vals = vals
 
     # size of field
@@ -49,10 +51,13 @@ class Field:
                 The 2-d size of the field.
                 This is important for fields living on a 2-d grid
             """
-        shape = self.fieldShape
+        shape = self.vals.shape
 
-        if np.isscalar(shape):
+        if isscalar(shape):
             shape = (shape, 1)
+        else:
+            if len(shape) <= 1:
+                shape = (shape[0], 1)
 
         return (shape[0], shape[1])
 
@@ -79,9 +84,9 @@ class Field:
                 This value is 1 for 1-d and 2-d arrays
             """
         dim = 1
-        shape = self.fieldShape
+        shape = self.vals.shape
 
-        if not np.isscalar(shape):
+        if not isscalar(shape):
             if len(shape) == 3:
                 dim = shape[-1]
 
@@ -108,12 +113,12 @@ class Field:
                 A field with values stored as the given type
             """
         result = self.vals.astype(dtype)
-        return Field(result)
+        return Field(0, result)
 
     # matrix operations
 
     def T(self):
-        trans = Field(self.vals.T)
+        trans = Field(0, self.vals.T)
         return trans
 
     
@@ -122,22 +127,22 @@ class Field:
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
         
-        if np.isscalar(self.vals):
+        if isscalar(self.vals):
             return self.vals
 
         vals = self.vals[indx]
 
-        if np.isscalar(vals):
+        if isscalar(vals):
             return vals
 
-        return Field(vals)
+        return Field(0, vals)
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
         if is_field(value):
             value = value.vals
 
-        if not np.isscalar(value):
+        if not isscalar(value):
             value = np.array(value, order = 'F')
         
         self.vals[indx] = value
@@ -224,7 +229,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_mul(self, other)
@@ -250,7 +255,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_truediv(self, other)
@@ -301,7 +306,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch != 0):
                 return self.__mismatch_imul(other)
@@ -321,7 +326,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch != 0):
                 return self.__mismatch_itruediv(other)
@@ -355,7 +360,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_mul(other, self)
@@ -382,7 +387,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not np.isscalar(other):
+        if not isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_truediv(other, self)
@@ -459,72 +464,72 @@ def array_equal(array1, array2):
 def copy(array):
     assert is_field(array)
     copy = np.copy(array.vals)
-    return Field(copy)
+    return Field(0, copy)
 
 # Field classs math methods
 def mean(array, axis=None):
     assert is_field(array)
     result = np.mean(array.vals, axis)
 
-    if np.isscalar(result):
+    if isscalar(result):
         return result
 
-    return Field(result)
+    return Field(0, result)
 
 def abs(array):
     assert is_field(array)
-    return Field(np.abs(array.vals))
+    return Field(0, np.abs(array.vals))
 
 def max(array, axis=None):
     assert is_field(array)
     
     result = np.max(array.vals, axis)
 
-    if np.isscalar(result):
+    if isscalar(result):
         return result
 
-    return Field(result)
+    return Field(0, result)
 
 def min(array, axis=None):
     assert is_field(array)
     
     result = np.min(array.vals, axis)
 
-    if np.isscalar(result):
+    if isscalar(result):
         return result
 
-    return Field(result)
+    return Field(0, result)
 
 def sum(array):
     assert is_field(array)
     
     result = np.sum(array.vals)
 
-    if np.isscalar(result):
+    if isscalar(result):
         return result
 
-    return Field(result)
+    return Field(0, result)
 
 def sqrt(array):
     assert is_field(array)
     result = array.vals**(0.5)
-    return Field(result)
+    return Field(0, result)
 
 def square(array):
     assert is_field(array)
     result = np.square(array.vals)
-    return Field(result)
+    return Field(0, result)
 
 def pow(array, power):
     assert is_field(array)
     result = np.power(array.vals, power)
-    return Field(result)
+    return Field(0, result)
 
 def norm(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     result = (array1.vals**2 + array2.vals**2)**(0.5)
-    return Field(result)
+    return Field(0, result)
 
 def pos_diff(array1, array2):
     assert is_field(array1)
@@ -532,29 +537,46 @@ def pos_diff(array1, array2):
     diff = array1.vals - array2.vals
     zeros = np.zeros(array1.shape())
     result = np.maximum(diff, zeros)
-    return Field(result)
+    return Field(0, result)
 
 def isfinite(array):
     assert is_field(array)
     
     result = np.isfinite(array.vals)
 
-    if np.isscalar(result):
+    if len(result) == 1:
         return result
 
-    return Field(result)
+    return Field(0, result)
+
+def isscalar(array):
+    if is_field(array):
+        array = array.vals
+
+    if np.isscalar(array):
+        return True
+    else:
+        if is_field(array):
+            array = array.vals
+        if is_numpy(array):
+            shape = array.shape
+            if shape is int:
+                return True
+            else:
+                return len(shape) <= 1
+        return False
 
 def minimum(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     result = np.minimum(array1.vals, array2.vals)
-    return Field(result)
+    return Field(0, result)
 
 def maximum(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     result = np.maximum(array1.vals, array2.vals)
-    return Field(result)
+    return Field(0, result)
 
 
 def mismatch_mul(self, other):
@@ -563,9 +585,9 @@ def mismatch_mul(self, other):
     if is_field(self):
         self = self.vals
     
-    if np.isscalar(other) or np.isscalar(self):
+    if isscalar(other) or isscalar(self):
         result = self*other
-        return Field(result)
+        return Field(0, result)
 
     result = 0
 
@@ -588,7 +610,7 @@ def mismatch_mul(self, other):
         for i in range(1,k):
             result.vals[:,i] = self[:,i] * other
 
-    assert not np.isscalar(result)
+    assert not isscalar(result)
     assert is_field(result)
 
     return result
@@ -599,8 +621,8 @@ def mismatch_truediv(self, other):
     if is_field(self):
         self = self.vals
 
-    if np.isscalar(other) or np.isscalar(self):
-        return Field(self*other)
+    if isscalar(other) or isscalar(self):
+        return Field(0, self*other)
 
     result = 0
 
@@ -615,7 +637,7 @@ def mismatch_truediv(self, other):
         for i in range(1,k):
             result.vals[:,:,i] = self.vals[:,:,i] / other
 
-    assert not np.isscalar(result)
+    assert not isscalar(result)
     assert is_field(result)
 
     return result

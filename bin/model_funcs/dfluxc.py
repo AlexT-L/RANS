@@ -47,6 +47,16 @@ def dfluxc(model, ws, state, dw, rfil):
     # c     dissipation in the i direction
     # c
     dis = fis0*minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])
+    # dis = Field(dis)
+
+    print("\ndfluxc")
+    print(dis.shape)
+    print(type(minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je]).__module__))
+    print(minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je]).vals)
+    print(type(radI).__module__)
+    print(type(dis).__module__)
+    print(type(dis.vals).__module__)
+    print(dis.shape())
 
     fs[1:ie, jp:je]     = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
     fs[1:ie, jp:je, 3] += dis*(p[ip:ib, jp:je] - p[1:ie, jp:je])
