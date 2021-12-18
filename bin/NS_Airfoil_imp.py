@@ -536,7 +536,6 @@ def halo_geom(self, model, workspace):
     x = workspace.get_field('x')
     xc = get('xc')
     vol = get('vol')
-    print(vol.size())
 
     # set values at edges
     for i in range(pad,nx+pad):

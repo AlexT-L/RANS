@@ -46,7 +46,7 @@ def test_constructor():
     # Use dimensions for 8x8
     dims = (8,8)
     field = Field(dims)
-    
+
     # Assert correct shape
     assert type(field) is Field
 

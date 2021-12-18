@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.core.numeric import isscalar
 
 # determine if a variable is a numpy array
 def is_numpy(var):
@@ -10,7 +11,12 @@ def is_field(var):
 # Field classs math methods
 def mean(array):
     assert is_field(array)
-    return Field(array.shape(), np.mean(array.vals))
+    result = np.mean(array.vals)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(array.shape(), result)
 
 def abs(array):
     is_field(array)
@@ -18,15 +24,33 @@ def abs(array):
 
 def max(array):
     is_field(array)
-    return Field(array.shape(), np.max(array.vals))
+    
+    result = np.max(array.vals)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(array.shape(), result)
 
 def min(array):
     is_field(array)
-    return Field(array.shape(), np.min(array.vals))
+    
+    result = np.min(array.vals)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(array.shape(), result)
 
 def sum(array):
     is_field(array)
-    return Field(array.shape(), np.sum(array.vals))
+    
+    result = np.sum(array.vals)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(array.shape(), result)
 
 def sqrt(array):
     is_field(array)
@@ -48,8 +72,13 @@ def pos_diff(array1, array2):
 
 def isfinite(array):
     is_field(array)
-    return Field(array.shape(), np.isfinite(array.vals))
+    
+    result = np.isfinite(array.vals)
 
+    if np.isscalar(result):
+        return result
+
+    return Field(array.shape(), result)
 
 
 
@@ -59,6 +88,7 @@ class Field:
         if is_numpy(shape):
             vals = shape
             shape = vals.shape
+        
         
         # if type(shape) is int:
         #     shape = (shape, 1)
@@ -72,6 +102,8 @@ class Field:
 
         if vals is None:
             vals = np.zeros(shape, order = 'F') # set fortran ordering for f2py
+        
+        assert not np.isscalar(vals)
 
         self.fieldShape = shape
         self.vals = vals
@@ -93,14 +125,15 @@ class Field:
 
         # if len(self.vals.shape) == 2:
         #     indx = (x, y)
-        
+        if np.isscalar(self.vals):
+            return self.vals
+
         vals = self.vals[indx]
 
         if np.isscalar(vals):
             return vals
 
-        fieldSlice = Field(vals)
-        return fieldSlice
+        return Field(vals)
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
@@ -148,7 +181,7 @@ class Field:
 
     # size of field
     def shape(self):
-        return self.fieldShape
+        return self.vals.shape
 
     # dimension of variable
     # size of field
@@ -183,37 +216,81 @@ class Field:
 
     # store the difference (var1 - var2) in self
     def store_difference(self, var1, var2):
+        
+        print("Field")
 
         if is_field(var1):
             var1 = var1.vals
         if is_field(var2):
             var2 = var2.vals
 
-        self.vals = var1 - var2
+        print(var1.shape)
+        print(var2.shape)
+
+        result = var1 * var2
+        print(result.shape)
+        self.vals = result
         return
 
 
     # store the elementwise product of var1 and var2 in self
-    def store_product(self, var1, var2):
+    def store_product(self, var1, var2, axis=None):
 
         if is_field(var1):
             var1 = var1.vals
         if is_field(var2):
-            var2 = var2.vals
+            var2 = var2.vals 
 
-        self.vals = var1 * var2
+        if axis != None: 
+            dim = var1.shape[axis]
+            if len(var2.shape) > len(var1.shape):
+                temp = var1
+                var1 = var2
+                var2 = temp
+        else:
+            self.vals = var1 * var2
+
+        if axis == 0:
+            for i in range(1,dim):
+                self.vals[i] = var1[i] * var2
+        if axis == 1:
+            for i in range(1,dim):
+                self.vals[:,i] = var1[:,i] * var2
+        if axis == 2:
+            for i in range(1,dim):
+                self.vals[:,:,i] = var1[:,:,i] * var2
+
         return
 
 
+
     # store the elementwise quotient (var1/var2) in self
-    def store_quotient(self, var1, var2):
+    def store_quotient(self, var1, var2, axis=None):
 
         if is_field(var1):
             var1 = var1.vals
         if is_field(var2):
             var2 = var2.vals
 
-        self.vals = var1 / var2
+        if axis != None: 
+            dim = var1.shape[axis]
+            if len(var2.shape) > len(var1.shape):
+                temp = var1
+                var1 = var2
+                var2 = temp
+        else:
+            self.vals = var1 * var2
+        
+        if axis == 0:
+            for i in range(1,dim):
+                self.vals[i] += var1[i] / var2
+        if axis == 1:
+            for i in range(1,dim):
+                self.vals[:,i] += var1[:,i] / var2
+        if axis == 2:
+            for i in range(1,dim):
+                self.vals[:,:,i] += var1[:,:,i] / var2
+
         return
     
 
@@ -325,6 +402,11 @@ class Field:
         if is_field(other):
             other = other.vals
 
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_mul(self, other)
+
         result = self.vals * other
 
         output = Field(self.shape(), result)
@@ -344,6 +426,11 @@ class Field:
     def __truediv__(self, other):
         if is_field(other):
             other = other.vals
+
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_truediv(self, other)
 
         result = self.vals / other
 
@@ -390,6 +477,11 @@ class Field:
     def __imul__(self, other):
         if is_field(other):
             other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch != 0):
+                return self.__mismatch_imul(other)
 
         self.vals = self.vals * other
         return self
@@ -400,6 +492,18 @@ class Field:
             other = other.vals
 
         self.vals = self.vals ^ other
+        return self
+
+    def __itruediv__(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch != 0):
+                return self.__mismatch_itruediv(other)
+
+        self.vals = self.vals / other
         return self
 
 
@@ -427,6 +531,11 @@ class Field:
     def __rmul__(self, other):
         if is_field(other):
             other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_mul(other, self)
 
         result =  other * self.vals
 
@@ -447,6 +556,11 @@ class Field:
     def __rtruediv__(self, other):
         if is_field(other):
             other = other.vals
+
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_truediv(other, self)
 
         result = other / self.vals
 
@@ -471,4 +585,80 @@ class Field:
 
     def __pos__(self):
         return self
+
+    def __mismatch_imul(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        k = self.shape()[2]
+        result = self.vals[:,:,0] * other
+        for i in range(1,k):
+            result += self.vals[:,:,k] * other
+
+        self.vals = result
+        return self
+
+    def __mismatch_itruediv(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        k = self.shape()[2]
+        result = self.vals[:,:,0] / other
+        for i in range(1,k):
+            result += self.vals[:,:,k] / other
+
+        self.vals = result
+        return self
     
+def mismatch_mul(self, other):
+    if is_field(other):
+        other = other.vals
+    if is_field(self):
+        self = self.vals
+    
+    if np.isscalar(other) or np.isscalar(self):
+        result = self*other
+        return Field(result)
+
+    result = 0
+
+    if len(other.shape) == 3:
+        result = Field(other.shape)
+        k = other.shape[2]
+        for i in range(1,k):
+            result.vals[:,:,i] = other[:,:,k] * self.vals
+    else:
+        k = self.shape[2]
+        result = Field(self.shape)
+        for i in range(1,k):
+            result.vals[:,:,i] = self.vals[:,:,i] * other
+
+    assert not np.isscalar(result)
+
+    return result
+
+def mismatch_truediv(self, other):
+    if is_field(other):
+        other = other.vals
+    if is_field(self):
+        self = self.vals
+
+    if np.isscalar(other) or np.isscalar(self):
+        return Field(self*other)
+
+    result = 0
+
+    if len(other.shape) == 3:
+        result = Field(other.shape)
+        k = other.shape[2]
+        for i in range(1,k):
+            result.vals[:,:,i] = other[:,:,k] / self.vals
+    else:
+        k = self.shape[2]
+        result = Field(self.shape)
+        for i in range(1,k):
+            result.vals[:,:,i] = self.vals[:,:,i] / other
+
+    assert not np.isscalar(result)
+
+    return result

@@ -90,8 +90,9 @@ def init_from_grid(newGrid, grid):
     vol = fields['vol']
 
     # create new arrays
-    [nx, ny] = newGrid.get_size()
-    xNew = Field((nx,ny,2))
+    [il, jl] = newGrid.get_size()
+    [nx, ny] = [il-1, jl-1]
+    xNew = Field((il,jl,2))
     xcNew = Field((nx,ny,2))
     volNew = Field((nx,ny,1))
 

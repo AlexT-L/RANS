@@ -25,7 +25,6 @@ class ImplicitEuler(Integrator):
         self.numStages = input['mstage']
         self.Flux_update = input['cdis'] # relaxation/update factor for flux --> 0: no update, 1: full update
         self.c_step = input['cstp']    # fraction of timestep to use
-        print("ImplicitEuler")
 
     
     def step(self, workspace, state, forcing):
@@ -73,16 +72,18 @@ class ImplicitEuler(Integrator):
 
             # get courant number
             cfl = model.get_cfl(workspace)
-            print(cfl)
             
             # scale timestep
             c_dt = cfl*self.c_step[stage]/2.0
             dt *= c_dt
 
             # take step
-            dw.store_product(Rw, dt)
+            dw.store_product(Rw, dt, 2)
 
             # update state
+            print(w.shape())
+            print(wn.shape())
+            print(dw.shape())
             w.store_difference(wn, dw)
 
     # check if dictionary has been initialized
