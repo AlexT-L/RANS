@@ -15,10 +15,10 @@ Runs the following tests:\n
 2. Checks that a 3D field can be created \n
 3. Tests that we can set a whole field \n
 4. Tests that we can set an individual elements \n
-5. Tests store_product function \n
-6. Tests store_difference function \n
-7. Tests store_product function \n
-8. Tests store_quotient function \n
+5. Tests + operation \n
+6. Tests - operation \n
+7. Tests * operation \n
+8. Tests / operation \n
 
 Author(s)
 ---------
@@ -29,7 +29,7 @@ import pytest
 from bin.Field import Field
 import numpy as np
 
-from bin.Field import isfinite
+from bin.Field import isfinite, mean, copy, array_equal
 
 def rng(dim):
     limit = np.max(dim)
@@ -71,7 +71,7 @@ def test_constructor_1d():
     field = Field(dims, 0)
     
     # Assert correct shape
-    assert np.array_equal(field.size(), (dims,1))
+    assert array_equal(field.size(), (dims,1))
     
 
 def test_constructor_2d():
@@ -84,7 +84,7 @@ def test_constructor_2d():
     field = Field(dims)
     
     # Assert correct shape
-    assert np.array_equal(field.size(), dims)
+    assert array_equal(field.size(), dims)
     
 def test_constructor_3d():
     '''
@@ -96,7 +96,7 @@ def test_constructor_3d():
     field = Field(dims)
     
     # Assert correct shape
-    assert np.array_equal(field.shape(), dims)
+    assert array_equal(field.shape(), dims)
     
 def test_constructor_wrap_2arg():
     '''
@@ -109,7 +109,7 @@ def test_constructor_wrap_2arg():
     field = Field(dims, test)
     
     # Assert correct shape
-    assert np.array_equal(field.vals, test)
+    assert array_equal(field, test)
     
 def test_constructor_wrap_1arg():
     '''
@@ -122,7 +122,7 @@ def test_constructor_wrap_1arg():
     field = Field(test)
     
     # Assert correct shape
-    assert np.array_equal(field.vals, test)
+    assert array_equal(field, test)
 
 def test_set_item():
     '''
@@ -143,7 +143,7 @@ def test_set_item():
     # Set index to 1 in field
     field[indx, indy] = 1
     
-    assert np.array_equal(zeros, field.get_vals())
+    assert array_equal(zeros, field)
     
     
 def test_add_func():
@@ -163,7 +163,7 @@ def test_add_func():
     newfield = field1 + field2
     baseline = rand1 + rand2
     
-    assert np.array_equal(newfield.get_vals(), baseline)
+    assert array_equal(newfield, baseline)
     
     
 def test_difference_func():
@@ -183,7 +183,7 @@ def test_difference_func():
     newfield = field1 - field2
     baseline = rand1 - rand2
     
-    assert np.array_equal(newfield.get_vals(), baseline)
+    assert array_equal(newfield, baseline)
 
 def test_product_func():
     '''
@@ -202,7 +202,7 @@ def test_product_func():
     newfield = field1 * field2
     baseline = rand1 * rand2
     
-    assert np.array_equal(newfield.get_vals().astype(int), baseline.astype(int))
+    assert array_equal(newfield.astype(int), baseline.astype(int))
 
 def test_quotient_func():
     '''
@@ -221,13 +221,13 @@ def test_quotient_func():
     newfield = field1 / field2
     baseline = rand1 / rand2
     
-    assert np.array_equal(newfield.get_vals().astype(int), baseline.astype(int))
+    assert array_equal(newfield.astype(int), baseline.astype(int))
 
 def test_dimensional_mean():
-    from Field import mean
     '''
     Tests that the add function works out
     '''
+    
     # Make 2 random arrays
     dims = (8,8)
     field = Field(dims)
@@ -239,5 +239,36 @@ def test_dimensional_mean():
     # find maximum y values along x:
     y_max = mean(field, (1))
     
-    assert np.array_equal(y_max.vals, compare.vals)
+    assert array_equal(y_max, compare)
 
+def test_copy():
+    '''
+    Tests we change the values of an array using the copy() method
+    '''
+    # Make a numpy array and a field
+    dims = (8,8)
+    twosnp = 2*np.ones(dims)
+    ones = Field(dims, 1)
+    twos = Field(dims, 2)
+
+    # copy values from ones into twos
+    pointer = ones
+    pointer[:] = copy(twos)
+    
+    assert array_equal(ones, twosnp)
+
+def test_product_2d_3d():
+    '''
+    Tests we can multiply (n,m,p) field by (n,m) field
+    '''
+    # Make 2 random arrays
+    dimsBig = (8,6,4)
+    dimsLittle = (8,6)
+    big = Field(dimsBig, 1)
+    small = Field(dimsLittle, 2)
+    compare = Field(dimsBig, 2)
+    
+    # Make fields
+    product = big*small
+    
+    assert array_equal(product, compare)

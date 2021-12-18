@@ -292,8 +292,8 @@ class NavierStokes(Model):
         porj = bcmodel.get_porj(workspace)
 
         # copy over porosity values
-        pori.copy_to(porI)
-        porj.copy_to(porJ)
+        pori[:] = copy(porI)
+        porj[:] = copy(porJ)
 
         # copy over volume and centers
         VOL = workspace.get_field("vol")

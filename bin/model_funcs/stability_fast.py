@@ -1,6 +1,6 @@
 import numpy as np
 
-from bin.Field import Field, maximum, minimum, abs, pos_diff, sqrt, square, min
+from bin.Field import Field, copy, maximum, minimum, abs, pos_diff, sqrt, square, min
 
 def stability(self, model, workspace, state):
 
@@ -112,7 +112,7 @@ def stability(self, model, workspace, state):
     # c
     # c     pressure or entropy switch
     # c
-    p.copy_to(s)
+    s[:] = copy(p)
 
     # c
     # c     adaptive time step

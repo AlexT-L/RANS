@@ -154,7 +154,7 @@ class MultiGrid:
                 integrator.step(workspace, w, Rw)
 
                 # Update Correction
-                wc.store_difference(w, w1)
+                wc[:] = w - w1
 
             elif dir > 0: # go up a level
                 # Transer correction(s) from coarser mesh(es)
@@ -167,7 +167,7 @@ class MultiGrid:
                 model.get_flux(workspace, w, Rw)
                 
                 # Update Correction
-                wc.store_difference(w, w1)
+                wc[:] = w - w1
         
         # perform one last step
         integrator.step(workspace, w, Rw)

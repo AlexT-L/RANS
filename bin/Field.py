@@ -98,119 +98,27 @@ class Field:
             """
         return self.vals
 
+    # return Field as given type
+    def astype(self, dtype=None):
+        """return a field with data stored as the given type
+            
+            Returns
+            -------
+            :
+                A field with values stored as the given type
+            """
+        result = self.vals.astype(dtype)
+        return Field(result)
 
-#############################
-#       Math Methods        #
-#############################
+    # matrix operations
 
-# for store methods, would be ideal if var1 and/or var2 could be individual values (not a field)
-
-    # store the sum of var1 and var2 in self
-    def store_sum(self, var1, var2):
-
-        if is_field(var1):
-            var1 = var1.vals
-        if is_field(var2):
-            var2 = var2.vals
-
-        self.vals = var1 + var2
-        return
-
-
-    # store the difference (var1 - var2) in self
-    def store_difference(self, var1, var2):
-        
-        if is_field(var1):
-            var1 = var1.vals
-        if is_field(var2):
-            var2 = var2.vals
-
-        self.vals = var1 * var2
-        return
-
-
-    # store the elementwise product of var1 and var2 in self
-    def store_product(self, var1, var2, axis=None):
-
-        if is_field(var1):
-            var1 = var1.vals
-        if is_field(var2):
-            var2 = var2.vals 
-
-        if axis != None: 
-            dim = var1.shape[axis]
-            if len(var2.shape) > len(var1.shape):
-                temp = var1
-                var1 = var2
-                var2 = temp
-        else:
-            self.vals = var1 * var2
-
-        if axis == 0:
-            for i in range(1,dim):
-                self.vals[i] = var1[i] * var2
-        if axis == 1:
-            for i in range(1,dim):
-                self.vals[:,i] = var1[:,i] * var2
-        if axis == 2:
-            for i in range(1,dim):
-                self.vals[:,:,i] = var1[:,:,i] * var2
-
-        return
-
-
-
-    # store the elementwise quotient (var1/var2) in self
-    def store_quotient(self, var1, var2, axis=None):
-
-        if is_field(var1):
-            var1 = var1.vals
-        if is_field(var2):
-            var2 = var2.vals
-
-        if axis != None: 
-            dim = var1.shape[axis]
-            if len(var2.shape) > len(var1.shape):
-                temp = var1
-                var1 = var2
-                var2 = temp
-        else:
-            self.vals = var1 * var2
-        
-        if axis == 0:
-            for i in range(1,dim):
-                self.vals[i] += var1[i] / var2
-        if axis == 1:
-            for i in range(1,dim):
-                self.vals[:,i] += var1[:,i] / var2
-        if axis == 2:
-            for i in range(1,dim):
-                self.vals[:,:,i] += var1[:,:,i] / var2
-
-        return
-    
-
-    # elementwise copy self into copy
-    def copy_to(self, copy):
-        assert is_field(copy)
-
-        copy.vals = np.copy(self.vals)
-        return
-
-
-    # elementwise copy self into copy
-    def copy_from(self, source):
-        assert is_field(source)
-
-        self.vals = np.copy(source.vals)
-        return
-
-
-    # elementwise multiply self by k (could be field or scalar)
-    def scale(self, k):
-        self.store_product(self, k)
+    def T(self):
+        trans = Field(self.vals.T)
+        return trans
 
     
+    # Special methods
+
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
         
@@ -243,15 +151,7 @@ class Field:
     def __str__(self):
         return "Field: (\n" + str(self.vals) + " )"
 
-
-
-    # matrix operations
-
-    def T(self):
-        trans = Field(self.vals.T)
-        return trans
-
-    
+    # length
     def __len__(self):
         return len(self.vals)
     
@@ -548,6 +448,13 @@ def is_field(var):
     isField = type(var).__module__ is Field.__name__
     isBinField = type(var).__module__ is binField.__name__
     return isField or isBinField
+
+def array_equal(array1, array2):
+    if is_field(array1):
+        array2 = array1.vals
+    if is_field(array2):
+        array2 = array2.vals
+    return np.array_equal(array1, array2)
 
 def copy(array):
     assert is_field(array)

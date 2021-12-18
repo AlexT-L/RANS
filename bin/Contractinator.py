@@ -75,7 +75,7 @@ def conservative4way(fine, coarse, weights=None):
     
     if weights is None:
         sum4way(fine, coarse)
-        coarse.scale(0.25)
+        coarse[:] = coarse/4
         return
 
     # Combines fine grid by summing over 4 blocks 

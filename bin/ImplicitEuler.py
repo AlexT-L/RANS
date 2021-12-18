@@ -78,10 +78,10 @@ class ImplicitEuler(Integrator):
             dt *= c_dt
 
             # take step
-            dw.store_product(Rw, dt, 2)
+            dw[:] = Rw*dt
 
             # update state
-            w.store_difference(wn, dw)
+            w[:] = wn - dw
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
