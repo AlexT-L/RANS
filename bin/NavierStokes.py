@@ -76,12 +76,7 @@ class NavierStokes(Model):
             A Field containing the current state
         output:
             A Field where the flux values will be stored
-
-        Returns
-        -------
-        :
-            A new AirfoilMap object.
-        """
+            """
         assert(isfinite(state))
         self.__check_vars(workspace)
         
