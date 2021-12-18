@@ -19,11 +19,11 @@ def mean(array):
     return Field(result)
 
 def abs(array):
-    is_field(array)
+    assert is_field(array)
     return Field(np.abs(array.vals))
 
 def max(array):
-    is_field(array)
+    assert is_field(array)
     
     result = np.max(array.vals)
 
@@ -33,7 +33,7 @@ def max(array):
     return Field(result)
 
 def min(array):
-    is_field(array)
+    assert is_field(array)
     
     result = np.min(array.vals)
 
@@ -43,7 +43,7 @@ def min(array):
     return Field(result)
 
 def sum(array):
-    is_field(array)
+    assert is_field(array)
     
     result = np.sum(array.vals)
 
@@ -53,7 +53,7 @@ def sum(array):
     return Field(result)
 
 def sqrt(array):
-    is_field(array)
+    assert is_field(array)
     result = array.vals**(0.5)
     return Field(result)
 
@@ -72,7 +72,7 @@ def pos_diff(array1, array2):
     return Field(result)
 
 def isfinite(array):
-    is_field(array)
+    assert is_field(array)
     
     result = np.isfinite(array.vals)
 

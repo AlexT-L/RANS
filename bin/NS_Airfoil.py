@@ -9,6 +9,7 @@ import NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.bcwall import wall
+from bin.model_funcs.stability import stability
 
 class NS_Airfoil(BoundaryConditioner):
     
@@ -29,7 +30,7 @@ class NS_Airfoil(BoundaryConditioner):
     # update stability
     def update_stability(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.update_physics(self, model, workspace, state)
+        stability(self, model, workspace, state)
     
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
