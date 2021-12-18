@@ -16,11 +16,11 @@ def mean(array):
     if np.isscalar(result):
         return result
 
-    return Field(array.shape(), result)
+    return Field(result)
 
 def abs(array):
     is_field(array)
-    return Field(array.shape(), np.abs(array.vals))
+    return Field(np.abs(array.vals))
 
 def max(array):
     is_field(array)
@@ -30,7 +30,7 @@ def max(array):
     if np.isscalar(result):
         return result
 
-    return Field(array.shape(), result)
+    return Field(result)
 
 def min(array):
     is_field(array)
@@ -40,7 +40,7 @@ def min(array):
     if np.isscalar(result):
         return result
 
-    return Field(array.shape(), result)
+    return Field(result)
 
 def sum(array):
     is_field(array)
@@ -50,25 +50,25 @@ def sum(array):
     if np.isscalar(result):
         return result
 
-    return Field(array.shape(), result)
+    return Field(result)
 
 def sqrt(array):
     is_field(array)
     result = array.vals**(0.5)
-    return Field(array.shape(), result)
+    return Field(result)
 
 def norm(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     result = (array1.vals**2 + array2.vals**2)**(0.5)
-    return Field(array1.size(), array1.dim(), result)
+    return Field(result)
 
 def pos_diff(array1, array2):
     assert is_field(array1)
     assert is_field(array2)
     diff = array1.vals - array2.vals
     result = np.max(diff, 0)
-    return Field(array1.size(), array1.dim(), result)
+    return Field(result)
 
 def isfinite(array):
     is_field(array)
@@ -78,7 +78,19 @@ def isfinite(array):
     if np.isscalar(result):
         return result
 
-    return Field(array.shape(), result)
+    return Field(result)
+
+def minimum(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    result = np.minimum(array1.vals, array2.vals)
+    return Field(result)
+
+def maximum(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    result = np.maximum(array1.vals, array2.vals)
+    return Field(result)
 
 
 

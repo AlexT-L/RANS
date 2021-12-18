@@ -10,15 +10,10 @@ def eflux(model, ws, state, dw):
 
     pad = model.padding
 
-    def edge(i, j, side):
-        return ws.edge(i-pad, j-pad, side)
-    def normal(i, j, side):
-        return ws.edge_normal(i-pad, j-pad, side)
 
     w = state # state vector
     porJ = ws.get_field('porJ', model.className) # porosity
     p = ws.get_field('p', model.className)   # pressure
-    x = ws.get_field('x')
     n = state.dim() # number of quantities being convected
 
     [nx, ny] = ws.field_size()
