@@ -1,7 +1,6 @@
 import numpy as np
 
 def stability(self, model, workspace, state):
-    print('STABILITY')
 
     # padding
     pad = self.padding

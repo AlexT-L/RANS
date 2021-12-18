@@ -9,7 +9,8 @@ import NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.bcwall import wall
-from bin.model_funcs.stability import stability
+# from bin.model_funcs.stability import stability
+from bin.model_funcs.stability_fast import stability
 
 class NS_Airfoil(BoundaryConditioner):
     

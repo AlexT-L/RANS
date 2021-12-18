@@ -102,8 +102,6 @@ class NavierStokes(Model):
         bcmodel = self.BCmodel
         bcmodel.bc_all(self, workspace, w)
 
-        bcmodel.update_stability(self, workspace, w)
-
         # calculate residuals
         eflux(self, workspace, w, dw)
 

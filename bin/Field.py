@@ -1,4 +1,8 @@
+import sys
+sys.path.append("../")
+
 import numpy as np
+import bin.Field as binField
 from numpy.core.numeric import isscalar
 
 # determine if a variable is a numpy array
@@ -6,12 +10,14 @@ def is_numpy(var):
     return type(var).__module__ is np.__name__
 
 def is_field(var):
-    return type(var).__module__ is Field.__name__
+    isField = type(var).__module__ is Field.__name__
+    isBinField = type(var).__module__ is binField.__name__
+    return isField or isBinField
 
 # Field classs math methods
-def mean(array):
+def mean(array, axis=None):
     assert is_field(array)
-    result = np.mean(array.vals)
+    result = np.mean(array.vals, axis)
 
     if np.isscalar(result):
         return result
@@ -22,20 +28,20 @@ def abs(array):
     assert is_field(array)
     return Field(np.abs(array.vals))
 
-def max(array):
+def max(array, axis=None):
     assert is_field(array)
     
-    result = np.max(array.vals)
+    result = np.max(array.vals, axis)
 
     if np.isscalar(result):
         return result
 
     return Field(result)
 
-def min(array):
+def min(array, axis=None):
     assert is_field(array)
     
-    result = np.min(array.vals)
+    result = np.min(array.vals, axis)
 
     if np.isscalar(result):
         return result
@@ -55,6 +61,16 @@ def sum(array):
 def sqrt(array):
     assert is_field(array)
     result = array.vals**(0.5)
+    return Field(result)
+
+def square(array):
+    assert is_field(array)
+    result = np.square(array.vals)
+    return Field(result)
+
+def pow(array, power):
+    assert is_field(array)
+    result = np.power(array.vals, power)
     return Field(result)
 
 def norm(array1, array2):
@@ -409,6 +425,7 @@ class Field:
         result = self.vals * other
 
         output = Field(self.shape(), result)
+        assert is_field(output)
 
         return output
     
@@ -416,7 +433,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        result = self.vals ^ other
+        result = self.vals ** other
 
         output = Field(self.shape(), result)
 
@@ -540,6 +557,8 @@ class Field:
 
         output = Field(self.shape(), result)
 
+        assert is_field(output)
+
         return output
     
     def __rpow__(self, other):
@@ -641,6 +660,7 @@ def mismatch_mul(self, other):
             result.vals[:,i] = self[:,i] * other
 
     assert not np.isscalar(result)
+    assert is_field(result)
 
     return result
 
@@ -667,5 +687,6 @@ def mismatch_truediv(self, other):
             result.vals[:,:,i] = self.vals[:,:,i] / other
 
     assert not np.isscalar(result)
+    assert is_field(result)
 
     return result

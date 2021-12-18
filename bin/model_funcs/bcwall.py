@@ -10,13 +10,14 @@ def wall(bcmodel, model, workspace, state):
     # set geometry parameters
     pad = model.padding
     [nx, ny] = workspace.field_size()
+    [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
     [il, jl] = [nx+1, ny+1]
     [ie, je] = [nx+2, ny+2]
     [ib, jb] = [nx+3, ny+3]
 
     dims = workspace.get_dims()
-    itl = dims['itl']
-    itu = dims['itu']
+    itl = dims['itl'] + pad
+    itu = dims['itu'] + pad
 
     geom = workspace.get_geometry()
     isym = geom['isym']

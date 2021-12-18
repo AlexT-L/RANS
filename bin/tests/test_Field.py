@@ -225,3 +225,22 @@ def test_quotient_func():
     baseline = rand1 / rand2
     
     assert np.array_equal(newfield.get_vals().astype(int), baseline.astype(int))
+
+def test_dimensional_mean():
+    from Field import mean
+    '''
+    Tests that the add function works out
+    '''
+    # Make 2 random arrays
+    dims = (8,8)
+    field = Field(dims)
+    compare = Field(8,0)
+    for i in range(np.max(dims)):
+        field[i,:] = i
+        compare[i] = i
+    
+    # find maximum y values along x:
+    y_max = mean(field, (1))
+    
+    assert np.array_equal(y_max.vals, compare.vals)
+
