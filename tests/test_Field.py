@@ -286,5 +286,8 @@ def test_product_2d_3d():
     
     # Make fields
     product = big*small
+
+    print(product)
+    print(compare)
     
     assert array_equal(product, compare)

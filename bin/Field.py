@@ -132,7 +132,7 @@ class Field:
 
         vals = self.vals[indx]
 
-        if isscalar(vals):
+        if np.isscalar(vals):
             return vals
 
         return Field(0, vals)
@@ -142,7 +142,7 @@ class Field:
         if is_field(value):
             value = value.vals
 
-        if not isscalar(value):
+        if not np.isscalar(value):
             value = np.array(value, order = 'F')
         
         self.vals[indx] = value
@@ -229,7 +229,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_mul(self, other)
@@ -255,7 +255,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_truediv(self, other)
@@ -306,7 +306,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch != 0):
                 return self.__mismatch_imul(other)
@@ -326,7 +326,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch != 0):
                 return self.__mismatch_itruediv(other)
@@ -360,7 +360,7 @@ class Field:
         if is_field(other):
             other = other.vals
         
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_mul(other, self)
@@ -387,7 +387,7 @@ class Field:
         if is_field(other):
             other = other.vals
 
-        if not isscalar(other):
+        if not np.isscalar(other):
             mismatch = len(self.vals.shape) - len(other.shape)
             if (mismatch):
                 return mismatch_truediv(other, self)
@@ -456,7 +456,7 @@ def is_field(var):
 
 def array_equal(array1, array2):
     if is_field(array1):
-        array2 = array1.vals
+        array1 = array1.vals
     if is_field(array2):
         array2 = array2.vals
     return np.array_equal(array1, array2)
@@ -471,7 +471,7 @@ def mean(array, axis=None):
     assert is_field(array)
     result = np.mean(array.vals, axis)
 
-    if isscalar(result):
+    if np.isscalar(result):
         return result
 
     return Field(0, result)
@@ -485,7 +485,7 @@ def max(array, axis=None):
     
     result = np.max(array.vals, axis)
 
-    if isscalar(result):
+    if np.isscalar(result):
         return result
 
     return Field(0, result)
@@ -495,7 +495,7 @@ def min(array, axis=None):
     
     result = np.min(array.vals, axis)
 
-    if isscalar(result):
+    if np.isscalar(result):
         return result
 
     return Field(0, result)
@@ -505,7 +505,7 @@ def sum(array):
     
     result = np.sum(array.vals)
 
-    if isscalar(result):
+    if np.isscalar(result):
         return result
 
     return Field(0, result)
@@ -587,6 +587,8 @@ def mismatch_mul(self, other):
     
     if isscalar(other) or isscalar(self):
         result = self*other
+        if np.isscalar(result):
+            return result
         return Field(0, result)
 
     result = 0
@@ -604,13 +606,13 @@ def mismatch_mul(self, other):
     result = Field(self.shape)
 
     if len(self.shape) == 3:
-        for i in range(1,k):
+        for i in range(k):
             result.vals[:,:,i] = self[:,:,i] * other
     else:
-        for i in range(1,k):
+        for i in range(k):
             result.vals[:,i] = self[:,i] * other
 
-    assert not isscalar(result)
+    assert not np.isscalar(result)
     assert is_field(result)
 
     return result
@@ -622,22 +624,25 @@ def mismatch_truediv(self, other):
         self = self.vals
 
     if isscalar(other) or isscalar(self):
-        return Field(0, self*other)
+        result = self*other
+        if np.isscalar(result):
+            return result
+        return Field(0, result)
 
     result = 0
 
     if len(other.shape) == 3:
         result = Field(other.shape)
         k = other.shape[2]
-        for i in range(1,k):
+        for i in range(k):
             result.vals[:,:,i] = other[:,:,i] / self.vals
     else:
         k = self.shape[2]
         result = Field(self.shape)
-        for i in range(1,k):
+        for i in range(k):
             result.vals[:,:,i] = self.vals[:,:,i] / other
 
-    assert not isscalar(result)
+    assert not np.isscalar(result)
     assert is_field(result)
 
     return result

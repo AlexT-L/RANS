@@ -1,7 +1,7 @@
 # python implementation of eflux.f
 
 from operator import pos
-from bin.Field import Field, maximum, minimum, abs, pos_diff
+from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np
@@ -23,6 +23,7 @@ def dflux(model, ws, state, dw, rfil):
     porJ = mget('porJ') # porosity
     radI = mget('radI')
     radJ = mget('radJ')
+    assert is_field(radJ)
 
     # grid dimensions
     [nx, ny] = ws.field_size()
@@ -94,7 +95,8 @@ def dflux(model, ws, state, dw, rfil):
         dp[ip:ie, 1:jb] = abs((p[ip:ie, jp:nyp] - 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je]) / \
                               (p[ip:ie, jp:nyp] + 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je] + plim))
 
-
+        
+        assert is_field(radJ[ip:ie, 2])
         rad = minimum(radJ[ip:ie, 2], radJ[ip:ie, 1])
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
