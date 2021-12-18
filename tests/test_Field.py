@@ -25,11 +25,8 @@ Author(s)
 Andy Rothstein \n
 
 """
-import sys
-sys.path.append("../")
-
 import pytest
-from Field import Field
+from bin.Field import Field
 import numpy as np
 
 from bin.Field import isfinite
