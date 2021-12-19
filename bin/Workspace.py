@@ -61,15 +61,6 @@ class Workspace(ABC):
             field = classWorkspace[fieldName]
         return field
     
-    def set_field(self, fieldName, fieldVal, className='Grid'):
-        # Sets value of a field if field already exists
-        if fieldName not in list(self.flds[className].keys()):
-            raise ValueError('Field does not exist: ' + fieldName) 
-        else: 
-            # Return field
-            classWorkspace = self.flds[className]
-            classWorkspace[fieldName].set_val(fieldVal)
-
     # check if a class dictionary exists
     def has_dict(self, className):
         return className in self.flds
@@ -126,9 +117,9 @@ class Workspace(ABC):
         pass
 
     @abstractmethod
-    def edge(self, i, j, side):
+    def edges(self, i, j, side):
         pass
 
     @abstractmethod
-    def edge_normal(self, i, j, side):
+    def edge_normals(self, i, j, side):
         pass

@@ -7,6 +7,7 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def dflux(model, ws, state, dw, rfil):
+    print("DFLUX")
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters
@@ -23,7 +24,6 @@ def dflux(model, ws, state, dw, rfil):
     porJ = mget('porJ') # porosity
     radI = mget('radI')
     radJ = mget('radJ')
-    assert is_field(radJ)
 
     # grid dimensions
     [nx, ny] = ws.field_size()
@@ -96,7 +96,6 @@ def dflux(model, ws, state, dw, rfil):
                               (p[ip:ie, jp:nyp] + 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je] + plim))
 
         
-        assert is_field(radJ[ip:ie, 2])
         rad = minimum(radJ[ip:ie, 2], radJ[ip:ie, 1])
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
@@ -115,8 +114,6 @@ def dflux(model, ws, state, dw, rfil):
 
         dis4[ip:ie, jl] = fis4*rad
         dis4[ip:ie, jl] = pos_diff(dis4[ip:ie, jl], dis2[ip:ie, jl])
-
-
 
         rad = min(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
 

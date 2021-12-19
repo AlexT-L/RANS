@@ -10,11 +10,11 @@ class Field:
             ----------
             shape:
                 Tuple (8,8,4)
-                Note: if shape is scalar (e.g. (8) or 8) then vals must not be None
             vals:
                 (Optional) array of values, or scalar.
-            output:
-                A Field where the flux values will be stored
+                If vals is a scalar, Field will set every value in the array to vals
+                Otherwise, Field ignores shape parameter and makes a new field with
+                the shape of vals
 
             Returns
             -------
