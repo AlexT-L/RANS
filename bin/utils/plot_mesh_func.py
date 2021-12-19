@@ -12,6 +12,8 @@ def plot_mesh(self):
     #plot c-mesh
     plt.plot(x.get_vals(),y.get_vals())
     plt.plot(x_t,y_t,linewidth="0.5")
+    plt.xlabel("x [chord lengths]",fontsize=15)
+    plt.ylabel("y [chord lengths]",fontsize=15)
     plt.axis([-0.75,1.50,-0.8,0.8])
     plt.show()
 
