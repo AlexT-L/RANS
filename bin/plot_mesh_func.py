@@ -11,6 +11,8 @@ def plot_mesh(self,ver):
     #plot c-mesh
     plt.plot(x,y)
     plt.plot(x_t,y_t,linewidth="0.5")
+    plt.xlabel("X")
+    plt.ylabel("Y")
     plt.axis([-0.75,1.50,-0.8,0.8])
     plt.show()
 
