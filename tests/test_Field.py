@@ -38,7 +38,7 @@ def rng(dim):
 
 def test_constructor():
     """
-    Asserts that we can create a 8x1 field
+    Asserts that we can create a 8x8 field
     
     """
     # Use dimensions for 8x8
@@ -51,7 +51,7 @@ def test_constructor():
 
 def test_isfinite():
     """
-    Asserts that we can create a 8x1 field
+    Asserts that we can create a 8x8 field
     
     """
     # Use dimensions for 8x8
@@ -59,22 +59,7 @@ def test_isfinite():
     field = Field(dims)
     
     # Assert correct shape
-    assert isfinite(field)
-    
-
-def test_isscalar():
-    """
-    Asserts that we can create a 8x1 field
-    
-    """
-    # Use dimensions for 8x8
-    dims = (8,8)
-    array = Field(dims)
-    scalar = Field(1, 0)
-
-    
-    # Assert correct shape
-    
+    assert isfinite(field)    
 
 
 def test_constructor_1d():
