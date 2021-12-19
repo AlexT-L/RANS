@@ -192,7 +192,7 @@ class Input:
         #airfoil coordinated (in_var)
         self.update_geom(self.df,self.in_var,self.in_v,33)#starting a line late to remove duplicate (0.0,0.0) point 
                                                           #in upper and lower surface
-
+        
 
     #Methods
 
@@ -204,6 +204,7 @@ class Input:
             col_count = [ len(l.split()) for l in temp_f.readlines() ]
         self.max_cols=max(col_count)
         return 
+    #Plot airfoil
     
     # Read .data file
     def read(self,file,max_cols):
