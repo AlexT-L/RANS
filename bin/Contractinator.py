@@ -14,7 +14,8 @@ def simple(fine, coarse):
     if type(fine) is not Field or type(coarse) is not Field:
         raise TypeError('Fine or coarse field is not a field')
     
-    [x_fine, y_fine, dim] = fine.shape()
+    #[x_fine, y_fine, dim] = fine.shape()
+    [x_fine, y_fine] = fine.shape()
 
     # get slice indices
     xSlice = range(0,x_fine,2)
