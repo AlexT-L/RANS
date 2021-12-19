@@ -29,7 +29,9 @@ from scipy.interpolate import griddata
 #             fine[i,j] = temp[i,j]
 
 def bilinear4way(coarse, fine):
-    [nx, ny, dim] = fine.shape()
+    #[nx, ny, dim] = fine.shape() # Don't need this. Doesn't work anyway.
+    # fine.shape() only returns two items.
+    nx, ny = fine.shape()
 
 
     for n in range(dim):

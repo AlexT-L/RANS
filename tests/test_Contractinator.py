@@ -15,8 +15,7 @@ Notes
 
 Author(s)
 ---------
-Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
+Satya Butler
 """
 from numpy.core.numeric import array_equal
 import pytest
