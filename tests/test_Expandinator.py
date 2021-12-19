@@ -16,25 +16,42 @@ Notes
 
 Author(s)
 ---------
-Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
+Satya Butler
 """
+from numpy.core.numeric import array_equal
 import pytest
-#import 
-#from fruit import bananas
+import numpy as np
+from bin.Field import Field
+import bin.Expandinator as Exp
 
-#def test_bananas():
-#    """
-#    Description of 'test_bananas' method goes here.
+def test_bilinear4way():
+    """
+    Description of the Expandinator.py 'bilinear4way' method.
 
-#    Parameters
-#    ----------
+    Parameters
+    ----------
     
-#    Returns
-#    -------
-#    :
-#        Nothing, but it asserts if 'this_is_bananas' is in fact the string 'bananas'.
+    Returns
+    -------
+    :
+        Nothing, but asserts if 'bilinear4way' expands a Field properly.
     
-#    """
-#    this_is_bananas = bananas("cantaloupe")
-#    assert this_is_bananas == "bananas"
+    """
+    output_dims = (4,4)
+    output_values = np.array([[1,3,1,3],[1,3,1,3],[1,3,1,3],[1,3,1,3]])
+    output_field = Field(output_dims, output_values)
+    #coarse_dims = (2,2)
+    #coarse_field = Field(coarse_dims)
+    input_dims = (2,2)
+    input_values = np.array([[2,2],[2,2]])
+    input_field = Field(input_dims, input_values)
+
+    dims = (2,2)
+    values = np.array([[2,2],[2,2]])
+    field = Field(dims, values)
+    print(field)
+
+#    Exp.bilinear4way(input_field, field)
+    #assert array_equal(coarse_field, output_field)
+    print(field)
+#    assert 1==3

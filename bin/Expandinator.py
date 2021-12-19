@@ -1,6 +1,6 @@
 from bin.Field import Field
 import numpy as np
-from scipy.interpolate import griddata
+#from scipy.interpolate import griddata
 
 # def billenear4way(coarse, fine):
 #     # Combines fine grid by summing over 4 blocks 
@@ -29,7 +29,8 @@ from scipy.interpolate import griddata
 #             fine[i,j] = temp[i,j]
 
 def bilinear4way(coarse, fine):
-    [nx, ny, dim] = fine.shape()
+    nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
+    #nx, ny = fine.shape() # This works
 
 
     for n in range(dim):
