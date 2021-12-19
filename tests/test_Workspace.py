@@ -23,11 +23,11 @@ import sys
 sys.path.append('../../RANS/bin')
 from numpy.core.numeric import NaN
 import pytest
-from Input import Input
-from Field import Field
-from AirfoilMap import AirfoilMap
-from Workspace import Workspace
-from CellCenterWS import CellCenterWS
+from bin.Input import Input
+from bin.Field import Field
+from bin.AirfoilMap import AirfoilMap
+from bin.Workspace import Workspace
+from bin.CellCenterWS import CellCenterWS
 import numpy as np
 
 
