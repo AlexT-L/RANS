@@ -204,7 +204,7 @@ class Input:
             col_count = [ len(l.split()) for l in temp_f.readlines() ]
         self.max_cols=max(col_count)
         return 
-    #Plot airfoil
+    
     
     # Read .data file
     def read(self,file,max_cols):
