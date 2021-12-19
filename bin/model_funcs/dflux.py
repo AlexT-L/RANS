@@ -7,7 +7,6 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def dflux(model, ws, state, dw, rfil):
-    print("DFLUX")
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters

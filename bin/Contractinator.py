@@ -16,7 +16,7 @@ def simple(fine, coarse):
     
     #[x_fine, y_fine, dim] = fine.shape() # Don't need 'dim'. In fact, it causes errors
     # as fine.shape() only returns two items.
-    x_fine, y_fine = fine.shape()
+    x_fine, y_fine = fine.size()
 
     # get slice indices
     xSlice = range(0,x_fine,2)
