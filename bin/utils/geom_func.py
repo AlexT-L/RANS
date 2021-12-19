@@ -16,6 +16,7 @@ def geom(self):
     
     #geo_var
     a       = self.a
+    b0      = self.b0
     s0      = self.s0
 
     #x and y coords of aerfoil in physical space
