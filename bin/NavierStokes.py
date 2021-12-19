@@ -35,7 +35,7 @@ class NavierStokes(Model):
         self.cfl_fine = abs(input['cflf'])
         self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
-        self.cfl = np.min([self.cfl_fine, self.cfl_lim])
+        self.cfl = np.minimum(self.cfl_fine, self.cfl_lim)
         
 
     # initialize state
@@ -201,7 +201,7 @@ class NavierStokes(Model):
         cfl = self.cfl_coarse
         if workspace.is_finest():
             cfl = self.cfl_fine
-        self.cfl = min(cfl, self.cfl_lim)
+        self.cfl = np.minimum(cfl, self.cfl_lim)
 
         # return courant number
         return self.cfl
