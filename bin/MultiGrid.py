@@ -1,11 +1,12 @@
 import numpy as np
-import Expandinator as expand
-import Contractinator as contract
-from Grid import Grid
-from Field import Field
-from Cycle import Cycle
-from Workspace import Workspace
-from Integrator import Integrator
+import bin.Expandinator as expand
+import bin.Contractinator as contract
+from bin.Grid import Grid
+from bin.Field import Field
+from bin.Cycle import Cycle
+from bin.Workspace import Workspace
+from bin.Integrator import Integrator
+from bin.Field import copy
 
 
 class MultiGrid:
@@ -32,7 +33,8 @@ class MultiGrid:
         """
         # Parameters
         self.stabilityUpdateFrequency = input['ftim']
-        self.wr_relax = input['fcoll']
+        self.wr_relax = float(input['fcoll'])
+        self.wr_relax = 0.0
 
         # counter variable
         self.num_cycles = 0
@@ -43,7 +45,7 @@ class MultiGrid:
         self.Integrator = integrator
 
         # Number of Cycles
-        n_levels = self.cycle.levels
+        n_levels = self.cycle.depth()
         stateDim = model.dim()
 
         # Direct storage of variables
@@ -68,16 +70,14 @@ class MultiGrid:
         # initialize state variables
         for l in range(n_levels):
             workspace = self.Workspaces[l]
-            field_size = workspace.field_size()
+            [nx, ny] = workspace.field_size()
+            shape = (nx, ny, stateDim)
 
-            def newStateField():
-                return Field(field_size, stateDim)
-
-            self.W[l]            = newStateField()
-            self.W1st[l]         = newStateField()
-            self.WCorrections[l] = newStateField()
-            self.Residuals[l]    = newStateField()
-            self.Fluxes[l]       = newStateField()
+            self.W[l]            = Field(shape)
+            self.W1st[l]         = Field(shape)
+            self.WCorrections[l] = Field(shape)
+            self.Residuals[l]    = Field(shape)
+            self.Fluxes[l]       = Field(shape)
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])
@@ -88,7 +88,7 @@ class MultiGrid:
         """Performs one multi-grid cycle and calculates new state.
         
         """
-        n_levels = self.cycle.levels
+        n_levels = self.cycle.depth()
         model = self.Model
         integrator = self.Integrator
         cycleIndex = self.num_cycles + 1
@@ -99,7 +99,7 @@ class MultiGrid:
         else:
             UPDATE_STABILITY = (self.num_cycles % self.stabilityUpdateFrequency) == 0
 
-    ##### first level #####
+        ##### first level #####
         # set pointers to working variables
         workspace = self.Workspaces[-1]
         w = self.W[-1]
@@ -113,11 +113,11 @@ class MultiGrid:
                 
         # Perform integration to get new state
         integrator.step(workspace, w, Rw)
-    #####
+        #####
 
         # subsequent levels
         level = n_levels-1
-        for dir in self.cycle.pattern:
+        for dir in self.cycle.path():
             level += dir
             prev = level-dir
             self.visits[level] += 1
@@ -143,7 +143,8 @@ class MultiGrid:
 
                 # If first time at this grid level, store baseline state into w1
                 if self.visits[level] == 1:
-                    w.copy_to(w1)
+                    w1[:] = copy(w)
+                    self.W1st[level] = w1
 
                 # Check if stability needs to be updated
                 if UPDATE_STABILITY:
@@ -153,7 +154,7 @@ class MultiGrid:
                 integrator.step(workspace, w, Rw)
 
                 # Update Correction
-                wc.store_difference(w, w1)
+                wc[:] = w - w1
 
             elif dir > 0: # go up a level
                 # Transer correction(s) from coarser mesh(es)
@@ -166,10 +167,14 @@ class MultiGrid:
                 model.get_flux(workspace, w, Rw)
                 
                 # Update Correction
-                wc.store_difference(w, w1)
+                wc[:] = w - w1
+        
+        # perform one last step
+        integrator.step(workspace, w, Rw)
 
         # update number of cycles
         self.num_cycles += 1
+
 
     # copy residuals into output field
     def residuals(self, output):
@@ -180,8 +185,8 @@ class MultiGrid:
         output:
             Field that will store the values
         """
-        residuals = self.Residuals[-1]
-        residuals.copy_to(output)
+        residuals = self.Fluxes[-1]
+        output = copy(residuals)
         
     # copy state into output field
     def solution(self, output):
@@ -193,4 +198,4 @@ class MultiGrid:
             Field that will store the values
         """
         state = self.W[-1]
-        state.copy_to(output)
+        output = copy(state)

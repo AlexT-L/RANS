@@ -1,8 +1,12 @@
 from numpy.core.numeric import Infinity
-from Model import Model
-from Workspace import Workspace
-from Field import Field, max
-from model_funcs.eflux import eflux
+from bin.Model import Model
+from bin.Workspace import Workspace
+from bin.Field import Field, max, min, isfinite
+from bin.Field import copy
+from bin.model_funcs.eflux import eflux
+from bin.model_funcs.dflux import dflux
+from bin.model_funcs.dfluxc import dfluxc
+import numpy as np
 
 class NavierStokes(Model):
     
@@ -28,10 +32,10 @@ class NavierStokes(Model):
         self.dimensions = 4
 
         # courant number
-        self.cfl_fine = input['cflf']
-        self.cfl_coarse = input['cflc']
+        self.cfl_fine = abs(input['cflf'])
+        self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
-        self.cfl = min([self.cfl_fine, self.cfl_lim])
+        self.cfl = np.minimum(self.cfl_fine, self.cfl_lim)
         
 
     # initialize state
@@ -51,11 +55,12 @@ class NavierStokes(Model):
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
-        # pass off to boundary condition model to initialize
-        self.BCmodel.init_state(self, workspace, w)
+        # pass off to private method
+        self.__init_state(workspace, w)
         
         # copy out to non-padded field
         self.__copy_out(w, state)
+        assert(isfinite(state))
 
 
     # flux calculations
@@ -72,12 +77,8 @@ class NavierStokes(Model):
             A Field containing the current state
         output:
             A Field where the flux values will be stored
-
-        Returns
-        -------
-        :
-            A new AirfoilMap object.
-        """
+            """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         
         # set rfil value
@@ -96,10 +97,16 @@ class NavierStokes(Model):
 
         # update boundary conditions
         bcmodel = self.BCmodel
-        bcmodel.bc_all(self, workspace, state)
+        bcmodel.bc_all(self, workspace, w)
 
         # calculate residuals
-        # eflux(self, workspace, w, dw)
+        eflux(self, workspace, w, dw)
+
+        if workspace.is_finest():
+            dflux(self, workspace, w, dw, rfil)
+        else:
+            dfluxc(self, workspace, w, dw, rfil)
+
         # eflux_wrap.eflux(self, workspace, w, dw)
         # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
         # if self.params.kvis > 0 and False:
@@ -107,6 +114,7 @@ class NavierStokes(Model):
 
         # copy residuals into output array
         self.__copy_out(dw, output)
+        assert(isfinite(output))
 
 
 
@@ -123,6 +131,7 @@ class NavierStokes(Model):
             A Field where the time steps will be stored
 
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         # retrieve necessary workspace fields
         def get(varName):
@@ -135,6 +144,7 @@ class NavierStokes(Model):
 
         # export dt
         self.__copy_out(dt, timestep)
+        assert(isfinite(timestep))
 
 
     # update rev and rlv
@@ -148,6 +158,7 @@ class NavierStokes(Model):
         state:
             A Field containing the current state
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
 
         # copy state into padded field
@@ -168,13 +179,14 @@ class NavierStokes(Model):
         state:
             A Field containing the current state
         """
+        assert(isfinite(state))
         self.__check_vars(workspace)
         
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
-        self.BCmodel.update_stability(self, workspace, state)
+        self.BCmodel.update_stability(self, workspace, w)
 
     
     # specify upper bound on cfl
@@ -187,9 +199,9 @@ class NavierStokes(Model):
 
         # set courant number
         cfl = self.cfl_coarse
-        if workspace.isFinest():
+        if workspace.is_finest():
             cfl = self.cfl_fine
-        self.cfl = min(cfl, self.cfl_lim)
+        self.cfl = np.minimum(cfl, self.cfl_lim)
 
         # return courant number
         return self.cfl
@@ -220,7 +232,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad, :].copy_from(field)
+        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
         # for i in range(0, leni):
         #     for j in range(0, lenj):
         #         paddedField[i+pad,j+pad] = field[i,j]
@@ -232,7 +244,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad, :].copy_to(field)
+        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
         # for i in range(0, nx):
         #     for j in range(0, ny):
         #         field[i,j] = paddedField[i+pad,j+pad]
@@ -246,8 +258,8 @@ class NavierStokes(Model):
     def __init_vars(self, workspace):
         pad = self.padding
         [nx, ny] = workspace.field_size()
+        [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
         grid_size = workspace.grid_size()
-        field_size = [pad+nx+pad, pad+ny+pad]
         stateDim = self.dimensions
         className = self.className
 
@@ -256,18 +268,20 @@ class NavierStokes(Model):
 
         # add state variables stored at cell center with padding
         for stateName in ["w", "dw", "vw", "fw"]:
-            vars[stateName] = [field_size, stateDim]
+            shape = [nxp, nyp, stateDim]
+            vars[stateName] = [shape]
 
         # add scalar variables stored at cell center with padding
         for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
-            vars[stateName] = [field_size, 1]
+            shape = (nxp, nyp)
+            vars[stateName] = [shape]
 
         # xc has 2 dimensions
-        vars['xc'] = [field_size, 2]
+        vars['xc'] = [(nxp, nyp, 2)]
 
         # add scalar variables stored at edges
-        for stateName in ["porI","porJ"]:
-            vars[stateName] = [grid_size, 1]
+        vars["porI"] = [(nx+1, ny)]
+        vars["porJ"] = [(nx, ny+1)]
 
         workspace.init_vars(className, vars)
 
@@ -279,13 +293,16 @@ class NavierStokes(Model):
         porj = bcmodel.get_porj(workspace)
 
         # copy over porosity values
-        pori.copy_to(porI)
-        porj.copy_to(porJ)
+        pori[:] = copy(porI)
+        porj[:] = copy(porJ)
 
         # copy over volume and centers
         VOL = workspace.get_field("vol")
         vol = workspace.get_field("vol", self.className)
         self.__copy_in(VOL, vol)
+
+        assert min(VOL) > 0
+        assert min(vol[2:nx+2, 2:ny+2]) > 0
 
         
         XC = workspace.get_field("xc")
@@ -294,3 +311,21 @@ class NavierStokes(Model):
 
         # set geometric values in the halo
         bcmodel.halo_geom(self, workspace)
+
+    # initialize state
+    def __init_state(self, workspace, state):
+        # get pressure
+        p = workspace.get_field("p", self.className)
+
+        # set initial values
+        rho0 = self.params['rho0']
+        u0 = self.params['u0']
+        v0 = self.params['v0']
+        h0 = self.params['h0']
+        p0 = self.params['p0']
+
+        state[:,:,0] = rho0
+        state[:,:,1] = rho0*u0
+        state[:,:,2] = rho0*v0
+        state[:,:,3] = rho0*h0 - p0
+        p[:,:] = p0

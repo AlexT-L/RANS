@@ -1,8 +1,8 @@
 # python implementation of eflux.f
 
-from Field import Field, max
-from Grid import Grid
-from Workspace import Workspace
+from bin.Field import Field, max
+from bin.Grid import Grid
+from bin.Workspace import Workspace
 import numpy as np
 
 def eflux(model, ws, state, dw):
@@ -10,75 +10,61 @@ def eflux(model, ws, state, dw):
 
     pad = model.padding
 
-    def edge(i, j, side):
-        return ws.edge(i-pad, j-pad, side)
-    def normal(i, j, side):
-        return ws.edge_normal(i-pad, j-pad, side)
 
     w = state # state vector
     porJ = ws.get_field('porJ', model.className) # porosity
     p = ws.get_field('p', model.className)   # pressure
-    x = ws.get_field('x')
     n = state.dim() # number of quantities being convected
 
     [nx, ny] = ws.field_size()
+    [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
+    ip = pad
+    jp = pad
     il = nx+1
     jl = ny+1
     ie = nx+2
     je = ny+2
     ib = nx+3
-    jb = ny+4
-    
+    jb = ny+3
+
+    # flux array
+    fs = Field((ib+1, jb+1, n))
+
     # i direction
-    fs = Field((ib+1, jb+1), n)
-    for j in range(pad,ny+pad):
-        for i in range(pad-1,nx+pad):
+    dx = ws.edge_normals(0)
+    dyx = dx[:,:,0]
+    dyy = dx[:,:,1]
+    p_avg = p[1:ie, jp:je] + p[ip:ib, jp:je]
 
-            # normal vector 
-            [dxy, dyy] = normal(i, j, 'e')
-            
-            # pressure averaging
-            pa = p[i+1-pad,j-pad] + p[i-pad,j-pad]
+    # flux operator
+    qsp = (dyy*w[ip:ib, jp:je, 1] - dyx*w[ip:ib, jp:je, 2]) / w[ip:ib, jp:je, 0]
+    qsm = (dyy*w[ 1:ie, jp:je, 1] - dyx*w[ 1:ie, jp:je, 2]) / w[ 1:ie, jp:je, 0]
 
-            # flux operator
-            qsp       = (dyy*w[i+1,j,1]  -dxy*w[i+1,j,2]) / w[i+1,j,0]
-            qsm       = (dyy*w[i,j,1]    -dxy*w[i,j,2])    / w[i,j,0]
-
-            # add up on faces
-            fs[i,j,0] = qsp*w[i+1,j,0]  + qsm*w[i,j,0] # density
-            fs[i,j,1] = qsp*w[i+1,j,1]  + qsm*w[i,j,1]  + dyy*pa # x - momentum
-            fs[i,j,2] = qsp*w[i+1,j,2]  + qsm*w[i,j,2]  - dxy*pa # y - momentum
-            fs[i,j,3] = qsp*(w[i+1,j,3] + p[+1,j]) + qsm*(w[i,j,3] + p[i,j]) # energy
+    # add up on faces
+    fs[1:ie, jp:je, 0] = qsp * w[ip:ib, jp:je, 0]                   + qsm*w[1:ie, jp:je, 0] # density
+    fs[1:ie, jp:je, 1] = qsp * w[ip:ib, jp:je, 1]                   + qsm*w[1:ie, jp:je, 1]  + dyy*p_avg # x - momentum
+    fs[1:ie, jp:je, 2] = qsp * w[ip:ib, jp:je, 2]                   + qsm*w[1:ie, jp:je, 2]  - dyx*p_avg # y - momentum
+    fs[1:ie, jp:je, 3] = qsp *(w[ip:ib, jp:je, 3] + p[ip:ib, jp:je]) + qsm*(w[1:ie, jp:je, 3] + p[1:ie, jp:je]) # energy
 
     # now add everything up
-    # for j in range(pad,pad+ny):
-    #     for i in range(pad,pad+nx):
-    #         dw[i,j,:] = fs[i,j,:] -fs[i-1,j,:]
-    dw[pad:nx+pad, pad:ny+pad, :] = fs[pad:nx+pad, pad:ny+pad, :] - fs[1:nx+1, pad:ny+pad, :]
+    dw[ip:ie, jp:je, :] = fs[ip:ie, jp:je, :] - fs[1:il, jp:je, :]
 
 
     # j direction
-    for j in range(pad,pad+ny):
-      for i in range(pad-1,pad+nx):
+    dx = ws.edge_normals(1)
+    dxx = dx[:,:,0]
+    dxy = dx[:,:,1]
+    p_avg = p[ip:ie, 1:je] + p[ip:ie, jp:jb]
 
-        # normal vector
-        [dxx, dyx] = normal(i, j, 'n')
+    # flux operator
+    qsp = porJ * (dxx*w[ip:ie, jp:jb, 1] - dxy*w[ip:ie, jp:jb, 2]) / w[ip:ie, jp:jb, 0]
+    qsm = porJ * (dxx*w[ip:ie,  1:je, 1] - dxy*w[ip:ie,  1:je, 2]) / w[ip:ie,  1:je, 0]
 
-        # pressure average
-        pa        = p[i,j+1]  +p[i,j]
+    # add up on faces
+    fs[ip:ie, 1:je, 0] = qsp*w[ip:ie, jp:jb, 0]                     + qsm*w[ip:ie, 1:je, 0] # density
+    fs[ip:ie, 1:je, 1] = qsp*w[ip:ie, jp:jb, 1]                     + qsm*w[ip:ie, 1:je, 1]  + dxy*p_avg # x - momentum
+    fs[ip:ie, 1:je, 2] = qsp*w[ip:ie, jp:jb, 2]                     + qsm*w[ip:ie, 1:je, 2]  - dxx*p_avg # y - momentum
+    fs[ip:ie, 1:je, 3] = qsp*(w[ip:ie,jp:jb, 3] + p[ip:ie, jp:jb]) + qsm*(w[ip:ie, 1:je, 3] + p[ip:ie, 1:je]) # energy
 
-        # convective operator
-        qsp       = porJ[i-pad,j-pad] * (dxx*w[i,j+1,2]  - dyx*w[i,j+1,1]) / w[i,j+1,0]    
-        qsm       = porJ[i-pad,j-pad] * (dxx*w[i,j,2]    - dyx*w[i,j,1])   / w[i,j,0]
-
-        # add up on faces
-        fs[i,j,0] = qsp*w[i,j+1,0]  +qsm*w[i,j,0]
-        fs[i,j,1] = qsp*w[i,j+1,1]  +qsm*w[i,j,1]  - dyx*pa
-        fs[i,j,2] = qsp*w[i,j+1,2]  +qsm*w[i,j,2]  + dxx*pa
-        fs[i,j,3] = qsp*(w[i,j+1,3]  +p[i,j+1]) +qsm*(w[i,j,3]  + p[i,j])
-                   
     # now add everything up for j direction
-    # for j in range(pad,ny+pad):
-    #     for i in range(pad,nx+pad):
-    #         dw[i,j,:] = dw[i,j,:] + fs[i,j,:] - fs[i,j-1,:]
-    dw[pad:nx+pad, pad:ny+pad, :] += fs[pad:nx+pad, pad:ny+pad, :] - fs[pad:nx+pad, 1:ny+1, :]
+    dw[ip:ie, jp:je, :] += fs[ip:ie, jp:je, :] - fs[ip:ie, 1:jl, :]

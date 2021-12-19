@@ -1,6 +1,6 @@
-from Field import max
-from Workspace import Workspace
-from Integrator import Integrator
+from bin.Field import max, copy
+from bin.Workspace import Workspace
+from bin.Integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor
@@ -52,12 +52,15 @@ class ImplicitEuler(Integrator):
         dw = get("dw")
         dt = get("dt")
 
+        # store initial state
+        wn = copy(w)
+
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
         forcing -= Rw
 
         # perform implicit euler step
-        for stage in range(0, self.numStages-1):
+        for stage in range(0, self.numStages):
             # calculate new flux
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
@@ -65,20 +68,20 @@ class ImplicitEuler(Integrator):
             Rw += forcing
 
             # get local timestep
-            model.get_safe_timestep(workspace, dt)
+            model.get_safe_timestep(workspace, w, dt)
 
             # get courant number
             cfl = model.get_cfl(workspace)
             
             # scale timestep
-            c_dt = self.cfl*self.c_step/2.0
+            c_dt = cfl*self.c_step[stage]/2.0
             dt *= c_dt
 
             # take step
-            dw.store_product(Rw, dt)
+            dw[:] = Rw*dt
 
             # update state
-            w.store_difference(wn, dw)
+            w[:] = wn - dw
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -87,13 +90,13 @@ class ImplicitEuler(Integrator):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.field_size()
+        [nx, ny] = workspace.field_size()
         stateDim = self.Model.dim()
         className = self.className
 
         vars = dict()
-        vars["dt"] = [field_size, 1]
+        vars["dt"] = [(nx, ny)]
         for stateName in ["wn", "Rw", "dw"]:
-            vars[stateName] = [field_size, stateDim]
+            vars[stateName] = [(nx, ny, stateDim)]
 
         workspace.init_vars(className, vars)

@@ -47,4 +47,4 @@ def dfluxc(model,ws,w,dw,fw,rfil):
 
 
     # put in residuals
-    dw.store_sum(dw, fw)
+    dw += fw

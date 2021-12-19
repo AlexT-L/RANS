@@ -34,7 +34,7 @@ def set_dims(self):
     self.itu       = int(self.ile + self.ite) #upper coordinate of trailing edge in computational space
 
     # store in dims
-    dim['ite'] = self.ite
-    dim['ile'] = self.ile
-    dim['itl'] = self.itl
-    dim['itu'] = self.itu
+    dim['ite'] = self.ite - 1
+    dim['ile'] = self.ile - 1
+    dim['itl'] = self.itl - 1
+    dim['itu'] = self.itu - 1

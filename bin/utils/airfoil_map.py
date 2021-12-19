@@ -1,22 +1,17 @@
 # libraries
 import numpy as np
-
-# append to path so we can access files
-import sys
-sys.path.append("../../../")
-
-# project specific dependencies
-from Field import Field
-from Contractinator import conservative4way, simple, sum4way
+from bin.Field import isfinite
+from bin.Field import Field
+from bin.Contractinator import conservative4way, simple, sum4way
 
 # grid creation functions
-from utils.dims_func import set_dims
-from utils.coord_strch_func import coord_stretch
-from utils.geom_func import geom 
-from utils.mesh_func import mesh
-from utils.sangho_func import sangho
-from utils.metric_func import metric
-from utils.plot_mesh_func import plot_mesh
+from bin.utils.dims_func import set_dims
+from bin.utils.coord_strch_func import coord_stretch
+from bin.utils.geom_func import geom 
+from bin.utils.mesh_func import mesh
+from bin.utils.sangho_func import sangho
+from bin.utils.metric_func import metric
+from bin.utils.plot_mesh_func import plot_mesh
 
 def init_from_file(self, grid_dim, input):
     # read in number of divisions
@@ -40,9 +35,9 @@ def init_from_file(self, grid_dim, input):
     # initialize x-y vertex, center, and volume fields
     il = nx+1
     jl = ny+1
-    self.x  = Field((il,jl),2)
-    self.xc = Field((nx, ny),2)
-    self.vol= Field((nx, ny),1)
+    self.x  = Field((il,jl,2))
+    self.xc = Field((nx,ny,2))
+    self.vol= Field((nx,ny))
 
     # store relevant fields
     fields = dict()
@@ -73,7 +68,7 @@ def init_from_file(self, grid_dim, input):
     metric(self)
 
     #plot mesh
-    plot_mesh(self)
+    # plot_mesh(self)
     
 
 def init_from_grid(newGrid, grid):
@@ -88,9 +83,11 @@ def init_from_grid(newGrid, grid):
     vol = fields['vol']
 
     # create new arrays
-    xNew = Field(newGrid.get_size(),2)
-    xcNew = Field(newGrid.divisions,2)
-    volNew = Field(newGrid.divisions,1)
+    [il, jl] = newGrid.get_size()
+    [nx, ny] = [il-1, jl-1]
+    xNew = Field((il,jl,2))
+    xcNew = Field((nx,ny,2))
+    volNew = Field((nx,ny))
 
     # condense mesh
     simple(x, xNew)
@@ -105,4 +102,4 @@ def init_from_grid(newGrid, grid):
     newGrid.fields = newFields
 
     #plot mesh
-    plot_mesh(newGrid)
+    # plot_mesh(newGrid)
