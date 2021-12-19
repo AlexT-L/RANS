@@ -30,7 +30,6 @@ from bin.Workspace import Workspace
 from bin.CellCenterWS import CellCenterWS
 import numpy as np
 
-
 def test_x():
     """
     Asserts that we can retrieve x and that it is non zero
@@ -105,5 +104,3 @@ def test_vol():
 #     # but not always? cross check with mode?
 #     assert finest_check
 
-
-test_x()
