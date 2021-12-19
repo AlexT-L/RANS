@@ -96,11 +96,22 @@ def test_vol():
 #     a=True
 #     assert a
 
-# def test_finest():
-#     finest_check= Workspace.isFinest
-#     '''
-#     Asserts that isFinest 
-#     '''
-#     # but not always? cross check with mode?
-#     assert finest_check
+def test_finest():
+    # input = Input('rae9-s1.data') # Will actually take all command line inputs
+    filename = 'rae9-s1.data'
+    # read in input
+    input = Input(filename) # Will actually take all command line inputs
+    # format input
+    input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
+    gridInput = input.add_dicts(input.geo_param, input.in_var)
+    grid_dim = [input.dims['nx'], input.dims['ny']]
+    # create geometry objects
+    grid = AirfoilMap.from_file(grid_dim, gridInput)
+    workspace = CellCenterWS(grid)
+    # x = workspace.get_field('x')
+    finest_check= workspace.isFinest
+    '''
+    Asserts isFinest 
+    '''
+    assert finest_check
 
