@@ -29,8 +29,15 @@ import numpy as np
 #             fine[i,j] = temp[i,j]
 
 def bilinear4way(coarse, fine):
-    nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
-    #nx, ny = fine.shape() # This works
+    # nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
+    # #nx, ny = fine.shape() # This works
+    nx, ny, dim = 0, 0, 0
+    if(len(fine.shape()) == 3):
+        nx, ny, dim = fine.shape()
+    if(len(fine.shape()) == 2):
+        nx, ny = fine.shape()
+    if(len(fine.shape()) == 1):
+        nx = fine.shape()
 
 
     for n in range(dim):
