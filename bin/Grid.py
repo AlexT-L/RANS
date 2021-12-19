@@ -4,7 +4,7 @@
 
 from abc import ABC, abstractmethod
 import numpy as np
-from Field import Field
+from bin.Field import Field
 
 class Grid(ABC):
     
@@ -49,11 +49,10 @@ class Grid(ABC):
         self.Fint = Field(self.get_size()) """
 
     # get number of vertices
+    @abstractmethod
     def get_size(self):
         pass
 
-    def get_volume(self, i, j):
-        pass
-
+    @abstractmethod
     def get_geometry(self):
-        return self.geo
+        pass

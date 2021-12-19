@@ -3,7 +3,7 @@
 
 # append to path so we can access Field class
 import sys
-sys.path.append("../")
+sys.path.append("../../../")
 
 # class dependencies
 from Workspace import Workspace
@@ -14,38 +14,37 @@ import numpy as np
 # fortran module
 import dfluxc_fort 
 
-def dfluxc(self,ws,dw):
+def dfluxc(model,ws,w,dw,fw,rfil):
 
     # calculate artificial dissipation fluxes given a workspace
 
     # grab grid related parameters
-    G = ws.grid
-    ny = G.dims['ny']
-    il = G.dims['il']
-    jl = G.dims['jl']
+    [nx, ny] = ws.field_size()
+    [il, jl] = ws.grid_size()
+
+    # getter method for model
+    def get(varName):
+        return ws.get_field(varName, model.className)
 
     # flow related variabless
-    w = ws.getField['w'] # state
-    P = ws.getField['P'] # pressure
-    porI = ws.getField['porI'] # porosity in i 
-    porJ = ws.getField['porJ'] # porosity in j
+    p = get('p') # pressure
+    porI = get('porI') # porosity in i 
+    porJ = get('porJ') # porosity in j
 
     # solver related vars
-    fw = ws.getField['fw'] # storage for viscous residuals?
-    radI = ws.getField['radI'] # some kind of stability metric in i
-    radJ = ws.getField['radJ'] # some kind of stability metric in j
+    radI = get('radI') # some kind of stability metric in i
+    radJ = get('radJ') # some kind of stability metric in j
 
     # solver params
-    rfil = self.rfil
-    vis0 = self.vis0
+    vis0 = model.params.vis0
 
     # residuals returned in Field vw
     dfluxc_fort.dfluxc(ny,il,jl, \
-                        w.vals,P.vals, \
+                        w.vals,p.vals, \
                         porJ.vals, \
                         fw.vals, radI.vals, radJ.vals, \
                         rfil,vis0)
 
 
     # put in residuals
-    dw = dw + fw.vals
+    dw += fw

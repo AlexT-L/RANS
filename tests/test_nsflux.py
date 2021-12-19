@@ -1,8 +1,10 @@
+'''
 import sys
 sys.path.append("../")
 
-import eflux_fort
+import nsflux_fort
 import numpy as np
+#from eflux_arr import eflux
 from Field import Field
 
 # grab grid related parameter
@@ -24,7 +26,7 @@ w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
 P = Field([ib,jb]) # pressure
 rlv = Field([ib,jb]) # laminar viscocity
 rev = Field([ib,jb]) # eddy viscocity
-dw = Field([ib,jb],4) # residuals
+vw = Field([ib,jb],4) # residuals
 
 # mesh related vars
 porI = Field([ib,jb],2) # mesh vertices
@@ -54,9 +56,15 @@ vis0 = 0.5
 rho0 = 1
 p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
 
-print(dw.vals[:][:][0])
-print(eflux_fort.__doc__)
+print(vw.vals[:][:][0])
+print(nsflux_fort.__doc__)
 # residuals returned in Field dw
-eflux_fort.eflux(w.vals,dw.vals,P.vals,x.vals,porI.vals,il,jl)
+nsflux_fort.nsflux(il, jl, ie, je, \
+      w.vals, P.vals, rlv.vals, rev.vals,  \
+      x.vals, xc.vals, \
+      vw.vals,
+      gamma,rm,scal,re,chord,prn,prt, \
+      rfil)
 
-print(dw.vals[:][:][0])
+print(vw.vals[:][:][0])
+'''

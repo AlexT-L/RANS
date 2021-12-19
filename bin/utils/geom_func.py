@@ -6,6 +6,7 @@ def geom(self):
     pi      = np.pi
     #use parameters from geo_param in input
     geo     = self.geo
+    scal    = geo["scal"]
     xlim    = geo["xlim"]
     nn      = geo["nn"]
     xsing   = geo["xsing"]
@@ -13,20 +14,13 @@ def geom(self):
     slopt   = geo["slopt"]
     trail   = geo["trail"]#in radians, converted in AirfoilMap constructor
     
-    #use parameter from flow param
-    flo=self.flo
-    scal    = flo["scal"]
-
     #geo_var
     a       = self.a
     s0      = self.s0
 
-    #use aerfoil geometry from in_va
-    in_var  = self.in_var
-    
     #x and y coords of aerfoil in physical space
-    xn      = in_var["xn"]
-    yn      = in_var["yn"]
+    xn      = geo["xn"]
+    yn      = geo["yn"]
 
     #mesh dimensions
     dim    = self.dims
@@ -62,7 +56,7 @@ def geom(self):
         ys[i]     = r*np.sin(0.5*angl)
     
     
-    flo["scal"]  = 1/scal #set new value in dcitionary
+    geo["scal"]  = 1/scal #set new value in dcitionary
     
     
 
@@ -111,7 +105,7 @@ def geom(self):
         g         = slopt*(x0  -x1)
         b         = 1./(x0  -x1)
         
-        print("I1=",i1,"I2=",i2)
+        #print("I1=",i1,"I2=",i2)
         for j in range(i1,i2):
             xa        = 0.5*a[0][j]**2
             d         = b*(xa  -x1)
@@ -129,7 +123,7 @@ def geom(self):
         i1        = itu
         i2        = il
         
-    print("GEOM")
+    #print("GEOM")
 
     # plt.figure(2)
     # plt.plot(a[0],s0)

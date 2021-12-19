@@ -1,14 +1,10 @@
 from abc import abstractmethod
-from ws_class import WorkspaceClass
+from bin.ws_class import WorkspaceClass
 
 class BoundaryConditioner(WorkspaceClass):
     
     @abstractmethod
     def __init__(self, input):
-        pass
-
-    @abstractmethod
-    def init_state(self, model, workspace, state):
         pass
 
     @abstractmethod

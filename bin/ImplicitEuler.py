@@ -1,11 +1,24 @@
-import Field
-from Workspace import Workspace
-from integrator import Integrator
+from bin.Field import max, copy
+from bin.Workspace import Workspace
+from bin.Integrator import Integrator
 
 class ImplicitEuler(Integrator):
     # Constructor
     def __init__(self, model, input):
+        """Constructor
         
+        Parameters
+        ----------
+        model:
+            Model object
+        input:
+            Dictionary of parameter values
+
+        Returns
+        -------
+        :
+            A new ImplicitEuler integrator object.
+        """
         # set attributes
         self.Model = model
         self.className = "ImplicitEuler"
@@ -15,6 +28,17 @@ class ImplicitEuler(Integrator):
 
     
     def step(self, workspace, state, forcing):
+        """Returns the local timestep such that stability is maintained.
+        
+        Parameters
+        ----------
+        workspace:
+            The Workspace object
+        state:
+            A Field containing the current state
+        forcing:
+            Field of values on the right hand side of the equation that "force" the ODE
+        """
         model = self.Model
 
         # make sure necessary variables exist in workspace
@@ -28,33 +52,36 @@ class ImplicitEuler(Integrator):
         dw = get("dw")
         dt = get("dt")
 
+        # store initial state
+        wn = copy(w)
+
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)
-        forcing.store_difference(forcing, Rw)
+        forcing -= Rw
 
         # perform implicit euler step
-        for stage in range(0, self.numStages-1):
+        for stage in range(0, self.numStages):
             # calculate new flux
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
             # add forcing
-            Rw.store_sum(Rw, forcing)
+            Rw += forcing
 
             # get local timestep
-            model.get_safe_timestep(workspace, dt)
+            model.get_safe_timestep(workspace, w, dt)
 
             # get courant number
             cfl = model.get_cfl(workspace)
             
             # scale timestep
-            c_dt = self.cfl*self.c_step/2.0
-            dt.scale(c_dt)
+            c_dt = cfl*self.c_step[stage]/2.0
+            dt *= c_dt
 
             # take step
-            dw.store_product(Rw, dt)
+            dw[:] = Rw*dt
 
             # update state
-            w.store_difference(wn, dw)
+            w[:] = wn - dw
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -63,13 +90,13 @@ class ImplicitEuler(Integrator):
 
     # initialize class workspace fields
     def __init_vars(self, workspace):
-        field_size = workspace.field_size()
+        [nx, ny] = workspace.field_size()
         stateDim = self.Model.dim()
         className = self.className
 
         vars = dict()
-        vars["dt"] = [field_size, 1]
+        vars["dt"] = [(nx, ny)]
         for stateName in ["wn", "Rw", "dw"]:
-            vars[stateName] = [field_size, stateDim]
+            vars[stateName] = [(nx, ny, stateDim)]
 
         workspace.init_vars(className, vars)

@@ -1,165 +1,648 @@
-from os import stat
 import numpy as np
+import bin.Field as binField
 
 class Field:
 
-    def __init__(self, field_size, stateDim=1):
-        self.dims = field_size
-        nx = field_size[0]
-        ny = field_size[1]
-        full_dim = (stateDim, nx, ny)
-        self.vals = np.zeros(full_dim, order = 'F') # set fortran ordering for f2py
+    def __init__(self, shape, vals=None):
+        """Creates a new Field object
+            
+            Parameters
+            ----------
+            shape:
+                Tuple (8,8,4)
+                Note: if shape is scalar (e.g. (8) or 8) then vals must not be None
+            vals:
+                (Optional) array of values, or scalar.
+            output:
+                A Field where the flux values will be stored
+
+            Returns
+            -------
+            :
+                A new Field object.
+            """
+        if is_field(vals):
+            vals = vals.vals
+
+        if vals is not None:
+            if np.isscalar(vals):
+                vals = vals*np.ones(shape, order = 'F')
+
+            if is_numpy(vals):
+                if len(vals.shape) == 1 and vals.shape[0] == 1:
+                    vals = vals*np.ones(shape, order = 'F')
+                else:
+                        vals = np.array(vals, order = 'F')
+            else:
+                vals = np.array(vals, order = 'F')
+        else:
+            vals = np.zeros(shape, order = 'F')
+        assert vals is not None
+
+        self.vals = vals
+
+    # size of field
+    def size(self):
+        """2-d size of field
+            
+            Returns
+            -------
+            :
+                The 2-d size of the field.
+                This is important for fields living on a 2-d grid
+            """
+        shape = self.vals.shape
+
+        if isscalar(shape):
+            shape = (shape, 1)
+        else:
+            if len(shape) <= 1:
+                shape = (shape[0], 1)
+
+        return (shape[0], shape[1])
+
+    # size of field
+    def shape(self):
+        """shape of field
+            
+            Returns
+            -------
+            :
+                The shape of the underlying numpy array.
+            """
+        return self.vals.shape
+
+    # dimension of variable
+    # size of field
+    def dim(self):
+        """dimensions of variable
+            
+            Returns
+            -------
+            :
+                The dimensions of the field vector living at each point in a 2-d grid
+                This value is 1 for 1-d and 2-d arrays
+            """
+        dim = 1
+        shape = self.vals.shape
+
+        if not isscalar(shape):
+            if len(shape) == 3:
+                dim = shape[-1]
+
+        return dim
+    
+    # return underlying implementation of field values
+    def get_vals(self):
+        """get the underlying numpy representation
+            
+            Returns
+            -------
+            :
+                The underlying numpy ndarray that stores the values
+            """
+        return self.vals
+
+    # return Field as given type
+    def astype(self, dtype=None):
+        """return a field with data stored as the given type
+            
+            Returns
+            -------
+            :
+                A field with values stored as the given type
+            """
+        result = self.vals.astype(dtype)
+        return Field(0, result)
+
+    # matrix operations
+
+    def T(self):
+        trans = Field(0, self.vals.T)
+        return trans
+
+    
+    # Special methods
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
-        x = indx[0]
-        y = indx[1]
-        z = 0
-        if len(indx) == 3:
-            z = indx[2]
-        indx = (z, x, y)
-        return self.vals[indx]
+        
+        if isscalar(self.vals):
+            return self.vals
+
+        vals = self.vals[indx]
+
+        if np.isscalar(vals):
+            return vals
+
+        return Field(0, vals)
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
-        x = indx[0]
-        y = indx[1]
-        z = 0
-        if len(indx) == 3:
-            z = indx[2]
-        indx = (z, x, y)
+        if is_field(value):
+            value = value.vals
+
+        if not np.isscalar(value):
+            value = np.array(value, order = 'F')
+        
         self.vals[indx] = value
     
     def set_val(self, new_vals):
         if np.shape(new_vals) != np.shape(self.vals):
             raise ValueError('Dimensions of field do not match expected dimensions')
         self.vals = np.array(new_vals, order = 'F')  # make new fortran ordered array  
+
+    # string representation
+    def __str__(self):
+        return "Field: (\n" + str(self.vals) + " )"
+
+    # length
+    def __len__(self):
+        return len(self.vals)
     
-    # return underlying implementation of field values
-    def get_vals(self):
-        return self.vals
 
-    # size of field
-    def size(self):
-        vals = self.vals
-        return vals.shape[1:3]
+    # comparison operatos
 
-    # size of field
-    def shape(self):
-        vals = self.vals
-        shape = vals.shape
-        return (shape[1], shape[2], shape[0])
+    def __lt__(self, other):
+        if is_field(other):
+            other = other.vals
+        result = self.vals < other
+        return Field(self.shape(), result)
+    
+    def __le__(self, other):
+        if is_field(other):
+            other = other.vals
+        result =  self.vals <= other
+        return Field(self.shape(), result)
+    
+    def __gt__(self, other):
+        if is_field(other):
+            other = other.vals
+        result = self.vals > other
+        return Field(self.shape(), result)
+    
+    def __ge__(self, other):
+        if is_field(other):
+            other = other.vals
+        result = self.vals >= other
+        return Field(self.shape(), result)
+    
+    def __eq__(self, other):
+        if is_field(other):
+            other = other.vals
+        result = self.vals == other
+        return Field(self.shape(), result)
+    
+    def __ne__(self, other):
+        if is_field(other):
+            other = other.vals
+        result = self.vals != other
+        return Field(self.shape(), result)
 
-
-#############################
-#       Math Methods        #
-#############################
-
-# for store methods, would be ideal if var1 and/or var2 could be individual values (not a field)
-
-    # store the sum of var1 and var2 in self
-    def store_sum(self, var1, var2):
-        [nx, ny, nz] = self.shape()
-
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] + var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1[i,j,k] + var2
-                    else:
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1 + var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1 + var2
-
-    # store the difference (var1 - var2) in self
-    def store_difference(self, var1, var2):
-        [nx, ny, nz] = self.shape()
-
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] - var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1[i,j,k] - var2
-                    else:
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1 - var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1 - var2
-
-    # store the elementwise product of var1 and var2 in self
-    def store_product(self, var1, var2):
-        [nx, ny, nz] = self.shape()
-
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] * var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1[i,j,k] * var2
-                    else:
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1 * var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1 * var2
-
-    # store the elementwise quotient (var1/var2) in self
-    def store_quotient(self, var1, var2):
-        [nx, ny, nz] = self.shape()
-
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    if isinstance(var1, Field):
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1[i,j,k] / var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1[i,j,k] / var2
-                    else:
-                        if isinstance(var2, Field):
-                            self[i,j,k] = var1 / var2[i,j,k]
-                        else:
-                            self[i,j,k] = var1 / var2
-
-    # elementwise copy self into copy
-    def copy_to(self, copy):
-        [nx, ny, nz] = self.shape()
-
-        for i in range(nx):
-            for j in range(ny):
-                for k in range(nz):
-                    copy[i,j,k] = self[i,j,k]
-
-    # elementwise copy self into copy
-    def copy_from(self, source):
-        [nx, ny, nz] = self.shape()
-
-        TWO_D = False
-        if isinstance(source, np.ndarray):
-            if len(source.shape) == 2:
-                TWO_D = True
-
-        for i in range(nx):
-            for j in range(ny):
-                if TWO_D:
-                    self[i,j] = source[i,j]
-                else:
-                    for k in range(nz):
-                        self[i,j,k] = source[i,j,k]
+    def __bool__(self):
+        return bool(self.vals.any())
 
 
-    # elementwise multiply self by k (could be field or scalar)
-    def scale(self, k):
-        self.store_product(self, k)
+    # math operators
+    
+    def __add__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = self.vals + other
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __sub__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = self.vals - other
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __mul__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_mul(self, other)
+
+        result = self.vals * other
+
+        output = Field(self.shape(), result)
+        assert is_field(output)
+
+        return output
+    
+    def __pow__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = self.vals ** other
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __truediv__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_truediv(self, other)
+
+        result = self.vals / other
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __floordiv__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = self.vals // other
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __mod__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = self.vals % other
+
+        output = Field(self.shape(), result)
+
+        return output
+
+    def __iadd__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        self.vals = self.vals + other
+        return self
+
+    
+    def __isub__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        self.vals = self.vals + other
+        return self
+
+    
+    def __imul__(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch != 0):
+                return self.__mismatch_imul(other)
+
+        self.vals = self.vals * other
+        return self
+
+    
+    def __ipow__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        self.vals = self.vals ^ other
+        return self
+
+    def __itruediv__(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch != 0):
+                return self.__mismatch_itruediv(other)
+
+        self.vals = self.vals / other
+        return self
 
 
+    # reverse math operations
+    def __radd__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = other + self.vals
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __rsub__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = other - self.vals
+
+        output = Field(self.shape(), result)
+
+        return output
+    
+    def __rmul__(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_mul(other, self)
+
+        result =  other * self.vals
+
+        output = Field(self.shape(), result)
+
+        assert is_field(output)
+
+        return output
+    
+    def __rpow__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = other ^ self.vals
+
+        output = Field(self.shape(), result)
+
+        return output
+
+    def __rtruediv__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        if not np.isscalar(other):
+            mismatch = len(self.vals.shape) - len(other.shape)
+            if (mismatch):
+                return mismatch_truediv(other, self)
+
+        result = other / self.vals
+
+        output = Field(self.shape(), result)
+
+        return output
+
+    def __rfloordiv__(self, other):
+        if is_field(other):
+            other = other.vals
+
+        result = other // self.vals
+
+        output = Field(self.shape(), result)
+
+        return output
+
+    def __neg__(self):
+        result = -self.vals
+        output = Field(self.shape(), result)
+        return output
+
+    def __pos__(self):
+        return self
+
+    def __mismatch_imul(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        k = self.shape()[2]
+        result = self.vals[:,:,0] * other
+        for i in range(1,k):
+            result += self.vals[:,:,k] * other
+
+        self.vals = result
+        return self
+
+    def __mismatch_itruediv(self, other):
+        if is_field(other):
+            other = other.vals
+        
+        k = self.shape()[2]
+        result = self.vals[:,:,0] / other
+        for i in range(1,k):
+            result += self.vals[:,:,k] / other
+
+        self.vals = result
+        return self
+    
 
 
+##### Field Class Math and Logic Operators #####
+##### These work similar to numpy functions #####
+
+# determine if a variable is a numpy array
+def is_numpy(var):
+    return type(var).__module__ is np.__name__
+
+def is_field(var):
+    isField = type(var).__module__ is Field.__name__
+    isBinField = type(var).__module__ is binField.__name__
+    return isField or isBinField
+
+def array_equal(array1, array2):
+    if is_field(array1):
+        array1 = array1.vals
+    if is_field(array2):
+        array2 = array2.vals
+    return np.array_equal(array1, array2)
+
+def copy(array):
+    assert is_field(array)
+    copy = np.copy(array.vals)
+    return Field(0, copy)
+
+# Field classs math methods
+def mean(array, axis=None):
+    assert is_field(array)
+    result = np.mean(array.vals, axis)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(0, result)
+
+def abs(array):
+    assert is_field(array)
+    return Field(0, np.abs(array.vals))
+
+def max(array, axis=None):
+    assert is_field(array)
+    
+    result = np.max(array.vals, axis)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(0, result)
+
+def min(array, axis=None):
+    assert is_field(array)
+    
+    result = np.min(array.vals, axis)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(0, result)
+
+def sum(array):
+    assert is_field(array)
+    
+    result = np.sum(array.vals)
+
+    if np.isscalar(result):
+        return result
+
+    return Field(0, result)
+
+def sqrt(array):
+    assert is_field(array)
+    result = array.vals**(0.5)
+    return Field(0, result)
+
+def square(array):
+    assert is_field(array)
+    result = np.square(array.vals)
+    return Field(0, result)
+
+def pow(array, power):
+    assert is_field(array)
+    result = np.power(array.vals, power)
+    return Field(0, result)
+
+def norm(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    result = (array1.vals**2 + array2.vals**2)**(0.5)
+    return Field(0, result)
+
+def pos_diff(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    diff = array1.vals - array2.vals
+    zeros = np.zeros(array1.shape())
+    result = np.maximum(diff, zeros)
+    return Field(0, result)
+
+def isfinite(array):
+    assert is_field(array)
+    
+    result = np.isfinite(array.vals)
+
+    if len(result) == 1:
+        return result
+
+    return Field(0, result)
+
+def isscalar(array):
+    if is_field(array):
+        array = array.vals
+
+    if np.isscalar(array):
+        return True
+    else:
+        if is_field(array):
+            array = array.vals
+        if is_numpy(array):
+            shape = array.shape
+            if shape is int:
+                return True
+            else:
+                return len(shape) <= 1
+        return False
+
+def minimum(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    result = np.minimum(array1.vals, array2.vals)
+    return Field(0, result)
+
+def maximum(array1, array2):
+    assert is_field(array1)
+    assert is_field(array2)
+    result = np.maximum(array1.vals, array2.vals)
+    return Field(0, result)
+
+
+def mismatch_mul(self, other):
+    if is_field(other):
+        other = other.vals
+    if is_field(self):
+        self = self.vals
+    
+    if isscalar(other) or isscalar(self):
+        result = self*other
+        if np.isscalar(result):
+            return result
+        return Field(0, result)
+
+    result = 0
+
+    diff = len(self.shape) - len(other.shape)
+
+    assert np.abs(diff) == 1
+
+    if diff < 0:
+        temp = self
+        self = other
+        other = temp
+
+    k = self.shape[-1]
+    result = Field(self.shape)
+
+    if len(self.shape) == 3:
+        for i in range(k):
+            result.vals[:,:,i] = self[:,:,i] * other
+    else:
+        for i in range(k):
+            result.vals[:,i] = self[:,i] * other
+
+    assert not np.isscalar(result)
+    assert is_field(result)
+
+    return result
+
+def mismatch_truediv(self, other):
+    if is_field(other):
+        other = other.vals
+    if is_field(self):
+        self = self.vals
+
+    if isscalar(other) or isscalar(self):
+        result = self*other
+        if np.isscalar(result):
+            return result
+        return Field(0, result)
+
+    result = 0
+
+    if len(other.shape) == 3:
+        result = Field(other.shape)
+        k = other.shape[2]
+        for i in range(k):
+            result.vals[:,:,i] = other[:,:,i] / self.vals
+    else:
+        k = self.shape[2]
+        result = Field(self.shape)
+        for i in range(k):
+            result.vals[:,:,i] = self.vals[:,:,i] / other
+
+    assert not np.isscalar(result)
+    assert is_field(result)
+
+    return result

@@ -1,19 +1,20 @@
-from BoundaryConditioner import BoundaryConditioner
-import NS_AirfoilBC_imp as implementation
+from numpy.core.defchararray import mod
+from bin.BoundaryConditioner import BoundaryConditioner
+import bin.NS_Airfoil_imp as implementation
+from bin.model_funcs.bcfar import far_field
+from bin.model_funcs.halo import halo
+from bin.model_funcs.bcwall import wall
+# from bin.model_funcs.stability import stability
+from bin.model_funcs.stability_fast import stability
 
-class NS_AirfoilBC(BoundaryConditioner):
+class NS_Airfoil(BoundaryConditioner):
     
     
     def __init__(self, input):
-        self.className = "NS_AirfoilBC"
+        self.className = "NS_Airfoil"
         self.padding = 2
         self.local_timestepping = not bool(input['vt'])
         self.bc = input['bc']
-
-    # initialize state
-    def init_state(self, model, workspace, state):
-        self.__check_vars(workspace)
-        implementation.init_state(self, model, workspace, state)
 
     # Methods for applying boundary conditions
 
@@ -25,29 +26,31 @@ class NS_AirfoilBC(BoundaryConditioner):
     # update stability
     def update_stability(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.update_physics(self, model, workspace, state)
+        stability(self, model, workspace, state)
     
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.bc_far(self, model, workspace, state)
+        far_field(self, model, workspace, state)
+        # implementation.bc_far(self, model, workspace, state)
 
 
     # apply wall boundary conditions
     def bc_wall(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.bc_wall(self, model, workspace, state)
+        wall(self, model, workspace, state)
+        # implementation.bc_wall(self, model, workspace, state)
 
 
     # apply halo boundary conditions
     def halo(self, model, workspace, state):
         self.__check_vars(workspace)
-        implementation.halo(self, model, workspace, state)
+        halo(self, model, workspace, state)
+        # implementation.halo(self, model, workspace, state)
 
 
     # apply all boundary conditions
     def bc_all(self, model, workspace, state):
-        return
         self.__check_vars(workspace)
         self.bc_wall(model, workspace, state)
         self.bc_far(model, workspace, state)
@@ -68,6 +71,11 @@ class NS_AirfoilBC(BoundaryConditioner):
         self.__check_vars(workspace)
         return workspace.get_field("pori", self.className)
 
+    # set geometry values in the halo
+    def halo_geom(self, model, workspace):
+        self.__check_vars(workspace)
+        implementation.halo_geom(self, model, workspace)
+
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
         if not workspace.has_dict(self.className):
@@ -84,16 +92,16 @@ class NS_AirfoilBC(BoundaryConditioner):
         vars = dict()
 
         # edge porosities
-        vars["pori"] = [grid_size, 1]
-        vars["porj"] = [grid_size, 1]
+        vars["pori"] = [(nx+1, ny)]
+        vars["porj"] = [(nx, ny+1)]
 
         # stability
-        vars["s"] = [field_size, 1]
-        vars["dtlc"] = [field_size, 1]
+        vars["s"] = [field_size]
+        vars["dtlc"] = [field_size]
 
         # Cp and Cf
-        vars["cp"] = [[p+nx+p,1], 1]
-        vars["cf"] = [[p+nx+p,1], 1]
+        vars["cp"] = [p+nx+p]
+        vars["cf"] = [p+nx+p]
 
         workspace.init_vars(className, vars)
 

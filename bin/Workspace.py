@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from Field import Field
-from Grid import Grid
-from Model import Model
+from bin.Field import Field
+from bin.Grid import Grid
+from bin.Model import Model
+from bin.Field import isfinite
 
 class Workspace(ABC):
     
@@ -12,13 +13,11 @@ class Workspace(ABC):
 
         # initialize fields array with Grid fields
         self.flds = { 'Grid': {} }
-        storage = self.flds['Grid']
-        storage['x'] = grid.x
-        storage['xc'] = grid.xc
-        storage['vol'] = grid.vol
-        # dim_vals = np.zeros(self.grid.dims)
-        # for i in range(len(self.mdl.reqFields)): # loop over required fields
-        #     self.flds['Grid'][self.mdl.reqFields[i]] = Field(dim_vals)
+        gridFields = self.flds['Grid']
+        for fieldName in grid.fields:
+            field = grid.fields[fieldName]
+            assert(isfinite(field))
+            gridFields[fieldName] = field
 
         self.isFinest = bool(isFinest)
 
@@ -30,6 +29,10 @@ class Workspace(ABC):
     # return grid object
     def get_grid(self):
         return self.grid
+
+    # get grid-level-specific geometry info
+    def get_dims(self):
+        return self.grid.get_dims()
 
     # return geometry info
     def get_geometry(self):
@@ -97,12 +100,14 @@ class Workspace(ABC):
 
         # create fields and store in dictionary
         for varName in vars:
-            [size, dim] = vars[varName]
-            newField = Field(size, dim)
-            classDict[varName] = newField
+            [shape] = vars[varName]
+            if np.isscalar(shape):
+                classDict[varName] = Field(shape, 0)
+            else:
+                classDict[varName] = Field(shape)
 
 
-    def isFinest(self):
+    def is_finest(self):
         return self.isFinest
 
     # Methods for getting geometric info
@@ -125,5 +130,5 @@ class Workspace(ABC):
         pass
 
     @abstractmethod
-    def edgeNormal(self, i, j, side):
+    def edge_normal(self, i, j, side):
         pass

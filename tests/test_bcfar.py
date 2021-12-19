@@ -1,7 +1,8 @@
+'''
 import sys
 sys.path.append("../")
 
-import nsflux_fort
+import bcfar_fort
 import numpy as np
 #from eflux_arr import eflux
 from Field import Field
@@ -25,7 +26,6 @@ w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
 P = Field([ib,jb]) # pressure
 rlv = Field([ib,jb]) # laminar viscocity
 rev = Field([ib,jb]) # eddy viscocity
-vw = Field([ib,jb],4) # residuals
 
 # mesh related vars
 porI = Field([ib,jb],2) # mesh vertices
@@ -55,14 +55,16 @@ vis0 = 0.5
 rho0 = 1
 p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
 
-print(vw.vals[:][:][0])
-print(nsflux_fort.__doc__)
+print(w.vals[0][0][0])
+print(bcfar_fort.__doc__)
 # residuals returned in Field dw
-nsflux_fort.nsflux(il, jl, ie, je, \
+bcfar_fort.bcfar(il, jl, ie, je, itl, itu, \
       w.vals, P.vals, rlv.vals, rev.vals,  \
       x.vals, xc.vals, \
-      vw.vals,
-      gamma,rm,scal,re,chord,prn,prt, \
-      rfil)
+      gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm, \
+      ym,kvis, \
+      bc, \
+      mode)
 
-print(vw.vals[:][:][0])
+print(w.vals[0][0][0])
+'''

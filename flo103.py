@@ -1,33 +1,18 @@
 import numpy as np
 from numpy.core.numeric import Infinity
-from Field import Field
-from Input import Input
-from flo103_PostProcessor import flo103_PostProcessor
-from flo103_ConvergenceChecker import flo103_ConvergenceChecker
-from ImplicitEuler import ImplicitEuler
-from NS_AirfoilBC import NS_AirfoilBC
-from AirfoilMap import AirfoilMap
-from CellCenterWS import CellCenterWS
-from NavierStokes import NavierStokes
-from MultiGrid import MultiGrid
+from bin.Field import Field, max, mean
+from bin.Input import Input
+from bin.flo103_PostProcessor import flo103_PostProcessor
+from bin.flo103_ConvergenceChecker import flo103_ConvergenceChecker
+from bin.ImplicitEuler import ImplicitEuler
+from bin.NS_Airfoil import NS_Airfoil
+from bin.AirfoilMap import AirfoilMap
+from bin.CellCenterWS import CellCenterWS
+from bin.NavierStokes import NavierStokes
+from bin.MultiGrid import MultiGrid
+import bin.Contractinator as con
 
 if __name__ == '__main__':
-
-    # # Testing fields
-    # field = Field([6,8],4)
-    # print(field.vals)
-
-    # for z in range(4):
-    #     field[1,2,z] = 3
-    
-    # print(field.vals)
-
-    # print(field.shape())
-
-    # exit()
-
-
-
 
     # Comment later
     filename = 'rae9-s1.data'
@@ -38,13 +23,18 @@ if __name__ == '__main__':
     # read in input
     input = Input(filename) # Will actually take all command line inputs
 
+    # format input
+    input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
+    gridInput = input.add_dicts(input.geo_param, input.in_var)
+    grid_dim = [input.dims['nx'], input.dims['ny']]
+    modelInput = input.add_dicts(input.flo_param, input.solv_param)
+
     # create geometry objects
-    grid = AirfoilMap(input)
+    grid = AirfoilMap.from_file(grid_dim, gridInput)
     workspace = CellCenterWS(grid)
 
     # create physics objects
-    modelInput = input.add_dicts(input.flo_param, input.solv_param)
-    bcmodel = NS_AirfoilBC(modelInput)
+    bcmodel = NS_Airfoil(modelInput)
     model = NavierStokes(bcmodel, modelInput)
     integrator = ImplicitEuler(model, input.solv_param)
 
@@ -58,10 +48,11 @@ if __name__ == '__main__':
     num_iterations = 0
     
     # create fields for tracking state and residuals
-    field_size = workspace.field_size()
+    [nx, ny] = workspace.field_size()
     stateDim = model.dim()
-    state = Field(field_size, stateDim)
-    resid = Field(field_size, stateDim)
+    shape = (nx, ny, stateDim)
+    state = Field(shape)
+    resid = Field(shape)
 
     # get initial state
     mg.solution(state)
@@ -97,5 +88,10 @@ if __name__ == '__main__':
     
     # print results
 #    post.print_solution(state)
+
+    rho = state[:,:,0]
+    print(max(rho))
+    print(mean(rho))
+    print(resid)
     
     # Take solution and plot and save info
