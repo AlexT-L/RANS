@@ -1,7 +1,7 @@
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import Field, max, min, isfinite
+from bin.Field import Field, max, min, isfinite, pos_diff
 from bin.Field import copy
 from bin.model_funcs.eflux import eflux
 from bin.model_funcs.dflux import dflux
@@ -95,6 +95,9 @@ class NavierStokes(Model):
         # copy state into padded array
         self.__copy_in(state, w)
 
+        # update pressure
+        self.__update_pressure(workspace, w)
+        
         # update boundary conditions
         bcmodel = self.BCmodel
         bcmodel.bc_all(self, workspace, w)
@@ -165,6 +168,9 @@ class NavierStokes(Model):
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
+        # update pressure
+        self.__update_pressure(workspace, w)
+
         self.BCmodel.update_physics(self, workspace, state)
 
 
@@ -181,11 +187,14 @@ class NavierStokes(Model):
         """
         assert(isfinite(state))
         self.__check_vars(workspace)
-        
+
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
+        # update pressure
+        self.__update_pressure(workspace, w)
+        
         self.BCmodel.update_stability(self, workspace, w)
 
     
@@ -329,3 +338,18 @@ class NavierStokes(Model):
         state[:,:,2] = rho0*v0
         state[:,:,3] = rho0*h0 - p0
         p[:,:] = p0
+
+    # calculate pressure
+    def __update_pressure(self, workspace, state):
+        # retrieve variables
+        p = workspace.get_field('p', self.className)
+        w = state
+        gamma = self.params['gamma']
+        pad = self.padding
+        nx, ny = workspace.field_size()
+        ip, jp = 2, 2
+        ie, je = nx+pad, ny+pad
+
+        rqq = ( (w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0] ) / 2
+        p[ip:ie, jp:je] = pos_diff(w[ip:ie, jp:je, 3], rqq) * (gamma-1)
+
