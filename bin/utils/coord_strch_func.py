@@ -71,6 +71,7 @@ def coord_stretch(self):
         g         = 1.  -d*d
         c         = g**ay
         b0[i]     = sy*d/c
+    
     #print("STRETCH")
     #print("A0=",a[0])
     #print("B0=",b0)
