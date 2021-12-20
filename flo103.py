@@ -11,11 +11,13 @@ from bin.CellCenterWS import CellCenterWS
 from bin.NavierStokes import NavierStokes
 from bin.MultiGrid import MultiGrid
 import bin.Contractinator as con
+from time import time
 
 if __name__ == '__main__':
 
     # Comment later
     filename = 'rae9-s1.data'
+    filename = 'rae9e-s3.data'
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
@@ -60,6 +62,7 @@ if __name__ == '__main__':
     # enforce cfl < 10 on first few cycles
     model.update_cfl_limit(10.0)
 
+    start = time()
     while not CONVERGED:
         # update rev and rlv at specified interval
         updatePhysics = True
@@ -84,7 +87,7 @@ if __name__ == '__main__':
 
         # update convergence checker
         CONVERGED = watcher.is_converged(resid)
-        
+    stop = time()
     
     # print results
 #    post.print_solution(state)
@@ -94,4 +97,6 @@ if __name__ == '__main__':
     print(mean(rho))
     print(resid)
     
+    print("Total time: ", stop-start, " s")
+
     # Take solution and plot and save info
