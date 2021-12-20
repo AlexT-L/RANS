@@ -276,3 +276,22 @@ def test_product_2d_3d():
     print(compare)
     
     assert array_equal(product, compare)
+
+def test_product_2d_3d():
+    '''
+    Tests we can multiply (n,m) field by (n,m,p) field
+    '''
+    # Make 2 random arrays
+    dimsBig = (8,6,4)
+    dimsLittle = (8,6)
+    big = Field(dimsBig, 1)
+    small = Field(dimsLittle, 2)
+    compare = Field(dimsBig, 2)
+    
+    # Make fields
+    product = small*big
+
+    print(product)
+    print(compare)
+    
+    assert array_equal(product, compare)

@@ -12,10 +12,10 @@ Libraries/Modules
 Notes
 
 """
-from numpy.core.numeric import array_equal
+# from numpy.core.numeric import array_equal
 import pytest
 import numpy as np
-from bin.Field import Field
+from bin.Field import Field, array_equal
 import bin.Contractinator as Ctr
 
 def test_simple():
@@ -31,14 +31,15 @@ def test_simple():
         Nothing, but asserts if 'simple' deletes items from the Field as it should.
     """
     # test 2D zero field
-    input_dims = (4,4)
+    input_dims = (8,8)
     input_zeros = np.zeros(input_dims)
     input_field = Field(input_dims, input_zeros)
-    coarse_dims = (2,2)
+    coarse_dims = (4,4)
     coarse_field = Field(coarse_dims)
-    output_dims = (2,2)
+    output_dims = (4,4)
     output_zeros = np.zeros(output_dims)
     output_field = Field(output_dims, output_zeros)
+    assert array_equal(input_field.size(), input_dims)
 
     Ctr.simple(input_field, coarse_field)
     assert array_equal(coarse_field, output_field)
