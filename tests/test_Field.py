@@ -295,3 +295,18 @@ def test_product_2d_3d():
     print(compare)
     
     assert array_equal(product, compare)
+
+def test_not_equals():
+    '''
+    Tests that != operator works
+    '''
+    # Make a numpy array and a field
+    dims = (8,8)
+    twosnp = 2*np.ones(dims)
+    ones = Field(dims, 1)
+    twos = Field(dims, 2)
+
+    assert ones != twos
+    assert ones != twosnp
+    assert ones != 0
+    assert twos == twosnp
