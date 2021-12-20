@@ -25,7 +25,7 @@ def dflux(model, ws, state, dw, rfil):
         Field to store new residuals after completing fluxes
 
     rfil:
-        relaxtion factor
+        relaxation factor determining balance between viscous and artificial dissipation fluxes
         
     """
 
