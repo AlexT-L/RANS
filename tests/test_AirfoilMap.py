@@ -14,8 +14,6 @@ Notes:
     5. Check that all the required flo_param values are being read into the flo_param dictionary \n
     6. Check that all the required geo_param values are being read into the geo_param dictionary \n
 
-
-
 """
 import pytest
 from bin.AirfoilMap import AirfoilMap
