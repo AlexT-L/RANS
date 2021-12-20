@@ -13,7 +13,7 @@ import numpy as np
 import scipy as sp
 from scipy.interpolate import interpn
 
-def bilinear4way(fine, coarse):
+def bilinear4way(coarse, fine):
     print("EXPANDINATOR")
     """Bilinear interpolation function for expanding Fields. Currently does not work.
     
