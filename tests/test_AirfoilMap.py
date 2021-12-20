@@ -9,10 +9,6 @@ Notes:
     Runs the following tests:\n
     1. Checks that x,xc and vol are Field objects  \n
     2. Checks that vol is positive values\n
-    3. Check that all the required dims values are being read into the dims dictionary \n
-    4. Check that all the required solv_param values are being read into the solv_param dictionary \n
-    5. Check that all the required flo_param values are being read into the flo_param dictionary \n
-    6. Check that all the required geo_param values are being read into the geo_param dictionary \n
 
 """
 import pytest
