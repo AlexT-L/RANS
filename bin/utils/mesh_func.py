@@ -1,8 +1,19 @@
-import numpy as np
+"""This module creates the c-mesh in physical space after conformal mapping
 
+    Libraries/Modules:
+        numpy\n
+        Field\n
+        """
+import numpy as np
 from bin.Field import isfinite
 
 def mesh(self):
+    """This function maps back to physical space to create the c-mesh
+
+       a0,b0,xs and ys are mapped to an s0 array and this is used to creat the x\n
+       array which contains the vertices of the right hand side corners of all boxes\n
+       in physical space.
+    """
     #vertices x[i,j,1]=x vertex and x[i,j,2]=y vertex in physical space
     x       =self.x
 
