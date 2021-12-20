@@ -1,14 +1,13 @@
 """Flo103
 
-    Description:
-        Solves the Euler equations for an airfoil using a multigrid cycle.
-        Method of lines integration is used to solve the Partial Differential
-        Euler equations. To speed up convergence, the solution is calculated on
-        the desired mesh size, and then a new solution is found on successively 
-        smaller meshes using the solution at the previous mesh refinement as a 
-        guess at the state. The solutions found on coarser meshes are then used
-        as a correction to the state on the coarser mesh, and a new solution is found
-        on the fine mesh after applying the corrections.
+    Solves the Euler equations for an airfoil using a multigrid cycle.
+    Method of lines integration is used to solve the Partial Differential
+    Euler equations. To speed up convergence, the solution is calculated on
+    the desired mesh size, and then a new solution is found on successively 
+    smaller meshes using the solution at the previous mesh refinement as a 
+    guess at the state. The solutions found on coarser meshes are then used
+    as a correction to the state on the coarser mesh, and a new solution is found
+    on the fine mesh after applying the corrections.
 
     Libraries/Modules:
         Input\n

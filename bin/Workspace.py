@@ -33,11 +33,11 @@ class Workspace(ABC):
         self.isFinest = bool(isFinest)
 
     @abstractmethod
-    def MakeNew(self, grid, isFinest=True):
+    def make_new(self, grid):
         """
         Returns another instance of a workspace
         """
-        return Workspace(grid, isFinest)
+        return Workspace(grid, False)
 
     def get_grid(self):
         """

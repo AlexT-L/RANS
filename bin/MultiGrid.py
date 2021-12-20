@@ -67,7 +67,7 @@ class MultiGrid:
             grid = self.Workspaces[l+1].get_grid()
             newGrid = grid.from_grid(grid)
             # newGrid = workspace.get_grid()
-            self.Workspaces[l] = workspace.MakeNew(newGrid)
+            self.Workspaces[l] = workspace.make_new(newGrid)
         
         # initialize state variables
         for l in range(n_levels):
