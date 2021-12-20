@@ -14,6 +14,9 @@ We are using the Multigrid method to solve a Navier-Stokes problem. To swap out 
 ### Integrator
 The current integrator used is ImplicitEuler.py. If you implement the constructor and the step() function as a child of the Integrator class, any integration scheme should work. 
 
+## Final Paper
+The final paper (latex document) can be found [here](https://www.overleaf.com/project/61bf84dbe37b215a352b7f58)
+
 
 ## UML Diagram
 The UML Diagram can be found [here](https://github.com/andybroth/RANS/blob/e60dc63318b2e0e1277bf4da68918732ce84af3d/Git%20Stokesed%20UML%20Diagram.PNG)
