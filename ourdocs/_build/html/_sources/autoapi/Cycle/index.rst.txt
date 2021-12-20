@@ -1,0 +1,54 @@
+:py:mod:`Cycle`
+===============
+
+.. py:module:: Cycle
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Cycle.Cycle
+
+
+
+
+.. py:class:: Cycle(input)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Contains information about the shape and depth of multigrid cycle
+
+   Constructor:
+       Args:
+           input (dictionary) : placeholder for potential input
+
+       Returns:
+           A new Cycle object
+
+       Notes:
+           Could be expanded to include default options such as "V" and "W" cycle
+
+   .. attribute:: pattern
+
+      array with sequence of directions for a cycle
+
+      :type: np.ndarray
+
+   .. attribute:: levels
+
+      depth of cycle
+
+      :type: int
+
+   .. py:method:: path(self)
+
+
+   .. py:method:: depth(self)
+
+
+

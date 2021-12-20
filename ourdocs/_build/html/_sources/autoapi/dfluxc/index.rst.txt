@@ -1,0 +1,36 @@
+:py:mod:`dfluxc`
+================
+
+.. py:module:: dfluxc
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   dfluxc.dfluxc
+
+
+
+.. py:function:: dfluxc(model, ws, state, dw, rfil)
+
+   calculate artificial dissipation fluxes on coarse meshes using blended first order
+   fluxes scaled to spectral radius
+
+   :param model: physics model
+   :type model: NavierStokes
+   :param workspace: contains the relevant Fields
+   :type workspace: Workspace
+   :param state: density, x-momentum, y-momentum, and energy
+   :type state: Field
+   :param dw: to store new residuals after completing fluxes
+   :type dw: Field
+   :param rfil: relaxation factor determining balance between viscous and artificial dissipation fluxes
+   :type rfil: float
+
+

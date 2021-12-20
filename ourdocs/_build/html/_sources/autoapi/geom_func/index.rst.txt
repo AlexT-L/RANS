@@ -1,0 +1,37 @@
+:py:mod:`geom_func`
+===================
+
+.. py:module:: geom_func
+
+.. autoapi-nested-parse::
+
+   This module maps physical airfoil geometry to computational space
+
+   Libraries/Modules:
+       numpy
+
+       scipy.interpolate
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   geom_func.geom
+
+
+
+.. py:function:: geom(self)
+
+   This function performs conformal mapping to computational domain
+
+   It maps the xn and yn physical coordinates of the airfoil to xs and ys
+   coordinates in the computational domain
+
+

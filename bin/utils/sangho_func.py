@@ -1,6 +1,15 @@
+"""This module scales the values of the vertices
+
+    Libraries/Modules:
+        numpy\n
+"""
 import numpy as np
 
 def sangho(self):
+    """ Performs sanghos non-dimensionalisation method
+    
+        Scales the vertices in x to wrap around the airfoil in physical space
+    """
     il          = self.il
     jl          = self.jl
     itl         = self.itl

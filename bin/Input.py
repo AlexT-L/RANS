@@ -1,8 +1,14 @@
+"""This module unpacks the input from a .data file to dictionaries in an input object
+
+    Libraries/Modules:
+        numpy\n
+        pandas\n
+        """
 import numpy as np 
 import pandas as pd
 
 #####################################################################
-# Parameters: The various input params are seperated into dictionaries
+# Args:: The various input params are seperated into dictionaries
 ######################################################################
 # dims:         nx = number of cells in i direction
 #               ny = number of cells in j direction
@@ -42,7 +48,7 @@ import pandas as pd
 #               iprec     = turns on gauss-seidel preconditioner (psgs) when not zero
 #               epsf      = eps for fine meshes (eps is used by psgs)
 #               epsc      = eps for coarse meshes (eps is used by psgs)
-#               diag      = ? (literally not used)
+#               diag      = (never used)
 #               cflc      = the courant number for time steps on the coarse meshes
 #               hmc       = the enthalpy damping factor for the coarse meshes
 #               fbc         controls the far field boundary condition
@@ -78,25 +84,26 @@ import pandas as pd
 #               rho0      = density of free-stream
 #               p0        = pressure of the free-stream
 #               c0        = speed of sound for the the free-stream
-#               ei0       = ? (never used)
+#               ei0       = (never used)
 #               u0        = x-velocity for the free-stream
 #               v0        = y-velocity for the free-stream
 #               h0        = enthalpy for the free-stream
 #               mu0       = kinematic viscosity of the free-stream
 # 
-# geo_param:    boundx    = ??
-#               boundy    = ??
-#               bunch     = ??
-#               xte       = ??
-#               ylim1     = ??
-#               ylim2     = ??
-#               ax        = ??
-#               ay        = ??
-#               sy        = ??
-#               aplus     = ??
-#               ncut      = ??
+# geo_param:    boundx    = used by coord_strch_func to create a0
+#               boundy    = used by coord_strch_func to create b0
+#               bunch     = used by coord_strch_func
+#               xte       = x-trailing edge in computational domain
+#               ylim1     = used by coord_strch_func
+#               ylim2     = used by coord_strch_func
+#               ax        = used by coord_strch_func
+#               ay        = used by coord_strch_func
+#               sy        = used by coord_strch_func
+#               aplus     = used by vmesh in viscous simuluations
+#               ncut      = used by vmesh in viscous simuluations
 #               isym      tells us if the airfoil is symmetric about the x-axis
-#               isym      = 
+#               isym      = 0 not symmetic
+#               isym      = 1 symmetric
 #               nu        = total number of points on the upper airfoil surface
 #               nl        = total number of points on the lower airfoil surface
 #               nn        = total number of points on the airfoil surface
@@ -111,6 +118,28 @@ import pandas as pd
 #               yn        =y-coordinate of airfoil geometry in physical space
 
 class Input:
+    """Reads in .data file and unpacks the parameter into dictionaries.
+
+    Constructor:
+        Args:
+            filename (str): Input .data file with input params and airfoil geometry
+
+        Returns:
+            A new Input object containing five dicts - dims, solv_param, flo_param, geo_param and in_var 
+
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
+
+    Attributes:
+        dim_p (list): List of paramters to get from input file to dims dict.
+        solv_p (list): List of paramters to get from input file to solv_param dict.
+        flo_p (list): List of paramters to get from input file to flo_param dict.
+        geo_p (list): List of paramters to get from input file to geo_param dict.
+        in_v (list): List of paramters to get from input file to in_var dict.
+
+
+    Note:
+        Check top of Input.py file to see the contents of each of the five dictionanries."""
 
     dim_p=[["nx","ny"]]
     solv_p=[["fcyc","fprnt","fout","ftim","gprnt","hprnt","hmesh"],
@@ -126,6 +155,7 @@ class Input:
     
     # Constructor
     def __init__(self, filename):
+        
         #Reading in file
         self.max_cols=0
         self.df=pd.DataFrame()
@@ -192,12 +222,17 @@ class Input:
         #airfoil coordinated (in_var)
         self.update_geom(self.df,self.in_var,self.in_v,33)#starting a line late to remove duplicate (0.0,0.0) point 
                                                           #in upper and lower surface
-
+        
 
     #Methods
 
     #Get max number of columns in a row
     def max_no_cols(self,file):
+        """Finds max number of columns in a row in the input file.
+        
+        Args:
+            file (str):.data input file
+        """
         #Loop the data lines
         with open(file, 'r') as temp_f:
             # get No of columns in each line
@@ -205,8 +240,16 @@ class Input:
         self.max_cols=max(col_count)
         return 
     
+    
     # Read .data file
     def read(self,file,max_cols):
+        """Reads in .data file using pandas.
+        
+        Args:
+            file (str):.data input file
+        
+            max_cols: maximum number of colums of all the rows
+        """
         dfs = pd.read_csv(file, header=None, delimiter="\s+|;|:", names=range(max_cols),engine="python")
         #convert string to float
         self.df=dfs.apply(pd.to_numeric, errors='coerce')
@@ -215,6 +258,15 @@ class Input:
 
     # Update param dictionaries
     def update_dict(self,df,dict,params,strt_row):
+        """Slices through pandas dataframe to unpack input params into the a dict.
+        
+        Args:
+            file (str):.data input file
+            df: pandas data frame of .data input file
+            dict: dictionary to assing values to
+            params:list of params to assign to dictionary
+            str_row: row of df to start unpacking from 
+        """
         no_nan=np.array(df.count(axis=1))
         for i in range(len(params)):
             row=strt_row +2*i
@@ -228,6 +280,14 @@ class Input:
 
     # Update aerfoil geometry
     def update_geom(self,df,dict,params,strt_row):
+        """Slices through pandas dataframe to unpack airfoil geometry.
+        
+        Args:
+            file (str):.data input file
+            df: pandas data frame of .data input file
+            dict: dictionary to assing values to
+            params:list of params to assign to dictionary
+            str_row: row of df to start unpacking from """
         no_nan_r=np.array(df.count(axis=1))
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
@@ -243,6 +303,13 @@ class Input:
         return
 
     def add_dicts(self,dict1,dict2):
+        """Merge two dicts into on dict .
+        
+        Args:
+            dict1:first dictionary to merge
+            dict2:second dictionary to merge 
+         
+        """
         sum_dict= {**dict1, **dict2}
         return sum_dict
      

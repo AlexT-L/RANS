@@ -1,7 +1,16 @@
-from bin.Field import norm, pos_diff
+from bin.Field import Field, norm, pos_diff
 
 def wall(bcmodel, model, workspace, state):
-
+    """
+    set values at the wall
+    
+    Args:
+        bcmodel (NS_Arifoil): boundary condition object
+        model (NavierStokes): physics model
+        workspace (Workspace): the relevant fields
+        state (Field): containing the density, x-momentum, y-momentum, and energy
+        
+    """
     # retrieve variables
     w = state
     p = workspace.get_field('p', model.className)
@@ -51,8 +60,8 @@ def wall(bcmodel, model, workspace, state):
     # c     set the euler boundary condition
     # c
     else:
-        a = x[itl:itu+1,1,0] - x[itl-1:itu,1,0]
-        b = x[itl:itu+1,1,1] - x[itl-1:itu,1,1]
+        a = x[itl:itu+2,1,0] - x[itl-1:itu+1,1,0]
+        b = x[itl:itu+2,1,1] - x[itl-1:itu+1,1,1]
         sx = 1/norm(a,b)
         xx = a*sx
         yx = b*sx
@@ -60,33 +69,39 @@ def wall(bcmodel, model, workspace, state):
         # c
         # c     calculate the wall curvature
         # c
-        xxx = (xx[itl+1:itu+1] - xx[itl-1:itu-1])
-        yxx = (yx[itl+1:itu+1] - yx[itl-1:itu-1])
+        xxx = (xx[2:itu-itl+2] - xx[0:itu-itl])/2
+        yxx = (yx[2:itu-itl+2] - yx[0:itu-itl])/2
 
         # c
         # c     special treatment of a sharp leading edge
         # c
         if isym == 2:
-            ile       = int((pad+nx+pad)/2) - 1
-            a         = x(ile,2,0)  -x(ile,1,0)
+            ile       = int(ie/2)
+            a         = x[ile,2,0]  -x[ile,1,0]
             b         = x[ile,2,1]  -x[ile,1,1]
-            sxn       = 1./norm(a,b)
+            sxn       = 1/norm(a,b)
             xxn       = a*sxn
             yxn       = b*sxn
-            xxx[ile]    = .5*(xxn  -xx[ile-1])
-            yxx[ile]    = .5*(yxn  -yx[ile-1])
-            xxx[ile+1]  = .5*(xx[ile+2]  +xxn)
-            yxx[ile+1]  = .5*(yx[ile+2]  +yxn)
+            xxx[ile-itl-1]  = .5*(xxn  -xx[ile-itl-1])
+            yxx[ile-itl-1]  = .5*(yxn  -yx[ile-itl-1])
+            xxx[ile-itl]    = .5*(xx[ile-itl+2]  +xxn)
+            yxx[ile-itl]    = .5*(yx[ile-itl+2]  +yxn)
         
         # c
         # c     extrapolation using normal pressure gradient at surface
         # c
+        xx = xx.vals[1:itu-itl+1]
+        yx = yx.vals[1:itu-itl+1]
+        w = w.vals
+        p = p.vals
+        x = x.vals
+        sx = sx.vals
         qt = xx*w[itl:itu,2,1] + yx*w[itl:itu,2,2]
-        qn = yx*w[itl:itu,2,1] + xx*w[itl:itu,2,2]
+        qn = yx*w[itl:itu,2,1] - xx*w[itl:itu,2,2]
 
         w[itl:itu,1,0] = w[itl:itu,2,0]
         w[itl:itu,1,1] = xx*qt - yx*qn
-        w[itl:itu,1,2] = xx*qn - yx*qt
+        w[itl:itu,1,2] = xx*qn + yx*qt
         w[itl:itu,1,3] = w[itl:itu,2,3]
 
         rho_a   = w[itl:itu,2,0] + w[itl:itu,1,0]
@@ -99,11 +114,15 @@ def wall(bcmodel, model, workspace, state):
 
         qs      = (yy*rhoU_a - xy*rhoV_a)/rho_a
         gxy     = xx*xy + yx*yy
-        qxy     = qs*(xxx*rhoV_a - yxx*rhoU_a)/2
+        qxy     = qs*(xxx[1:itu-itl+1]*rhoV_a - yxx[1:itu-itl+1]*rhoU_a)/2
+        py        = (px*gxy  +qxy)*sx[1:itu-itl+1]
 
         if ny < 3:
             py = p[itl:itu,3] - p[itl:itu,2]
 
+        p = Field(0, p)
+        py = Field(0,py)
+        w = Field(0, w)
         p[itl:itu,1] = pos_diff(p[itl:itu,2], py)
         w[itl:itu,1,3] = w[itl:itu,2,3] + p[itl:itu,2] - p[itl:itu,1]
     
@@ -111,5 +130,5 @@ def wall(bcmodel, model, workspace, state):
     # c     update eddy viscosity boundary conditions
     # c   
     if kvis and not workspace.is_finest():
-        rev = workspace.get_field('rev', model.className)
-        rev[itl:itu,1] = -rev[itl:itu,2]
+        ev = workspace.get_field('ev', model.className)
+        ev[itl:itu,1] = - ev[itl:itu,2]

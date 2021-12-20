@@ -6,6 +6,18 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def dfluxc(model, ws, state, dw, rfil):
+    """
+    calculate artificial dissipation fluxes on coarse meshes using blended first order 
+    fluxes scaled to spectral radius
+    
+    Args:
+        model (NavierStokes): physics model
+        workspace (Workspace): contains the relevant Fields
+        state (Field): density, x-momentum, y-momentum, and energy
+        dw (Field): to store new residuals after completing fluxes 
+        rfil (float): relaxation factor determining balance between viscous and artificial dissipation fluxes
+        
+    """
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters
@@ -46,22 +58,14 @@ def dfluxc(model, ws, state, dw, rfil):
     # c
     # c     dissipation in the i direction
     # c
-    dis = fis0*minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])
+    dis = minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])*fis0
     # dis = Field(dis)
 
-    print("\ndfluxc")
-    print(dis.shape)
-    print(type(minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je]).__module__))
-    print(minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je]).vals)
-    print(type(radI).__module__)
-    print(type(dis).__module__)
-    print(type(dis.vals).__module__)
-    print(dis.shape())
-
-    fs[1:ie, jp:je]     = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
+    result = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
+    fs[1:ie, jp:je]     = result
     fs[1:ie, jp:je, 3] += dis*(p[ip:ib, jp:je] - p[1:ie, jp:je])
 
-    fw[ip:ie, jp:je] = sfil*fw[ip:ie, jp:je] - fs[ip:ie, jp:je] + fs[1:il, jp:je]
+    fw[ip:ie, jp:je] = fw[ip:ie, jp:je]*sfil - fs[ip:ie, jp:je] + fs[1:il, jp:je]
 
     if ny < 3:
         return
@@ -69,7 +73,7 @@ def dfluxc(model, ws, state, dw, rfil):
     # c
     # c     dissipation in the j direction
     # c
-    dis = fis0*porJ*minimum(radI[ip:ie, jp:jb], radI[ip:ie, 1:je])
+    dis = porJ*fis0 * minimum(radI[ip:ie, jp:jb], radI[ip:ie, 1:je])
 
     fs[ip:ie, 1:je]     = dis*(w[ip:ie, jp:jb] - w[ip:ie, 1:je])
     fs[ip:ie, 1:je, 3] += dis*(p[ip:ie, jp:jb] - p[ip:ie, 1:je])

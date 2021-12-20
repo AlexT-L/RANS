@@ -1,0 +1,34 @@
+:py:mod:`dims_func`
+===================
+
+.. py:module:: dims_func
+
+.. autoapi-nested-parse::
+
+   This module unpacks the dims dict and sets up other dimesnsions and airfoil constraints
+
+   Libraries/Modules:
+       numpy
+
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   dims_func.set_dims
+
+
+
+.. py:function:: set_dims(self)
+
+   Sets mesh dimensions,limits of the airfoil and updates dims dict
+
+

@@ -1,7 +1,13 @@
+"""This module unpacks the dims dict and sets up other dimesnsions and airfoil constraints
+
+    Libraries/Modules:
+        numpy\n
+        """
 import numpy as np
 
 # set dimesions
 def set_dims(self):
+    """Sets mesh dimensions,limits of the airfoil and updates dims dict"""
     # get dimensions
     [nx, ny] = self.divisions
 

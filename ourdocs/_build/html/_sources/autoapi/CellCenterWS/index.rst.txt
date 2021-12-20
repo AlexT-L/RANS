@@ -1,0 +1,88 @@
+:py:mod:`CellCenterWS`
+======================
+
+.. py:module:: CellCenterWS
+
+.. autoapi-nested-parse::
+
+   This module is an inherited class of workspace.
+   Libraries/Modules:
+       Workspace
+
+       numpy
+
+       Field
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   CellCenterWS.CellCenterWS
+
+
+
+
+.. py:class:: CellCenterWS
+
+   Bases: :py:obj:`bin.Workspace.Workspace`
+
+   Implements a Workspace using cell-centered discretization of the grid
+
+   Constructor:
+       Args:
+           grid (Grid): a Grid object specifying the geometry
+
+   .. attribute:: self.grid
+
+      Inputted grid
+
+   .. attribute:: self.flds
+
+      Dictionary of fields residing on grid
+
+   .. py:method:: make_new(self, grid)
+
+      Creates a new workspace corresponding to a grid of half the size
+
+      :param grid: The grid for the current workspace
+      :type grid: Grid
+      :param isFinest: Whether or not this is
+      :type isFinest: bool
+
+
+   .. py:method:: field_size(self)
+
+      Returns the 2-dimenstional size of the field __> (n, 1) for a 1-d Field
+
+
+
+
+   .. py:method:: edges(self, dim)
+
+      Returns a Field containing the edge vectors
+
+      :param dim: Which edges will be returned (0 for i, 1 for j edges)
+      :type dim: 0 or 1
+
+
+   .. py:method:: edge_normals(self, dim)
+
+      Returns a Field containing the unit normal vectors to the edges along a given dimension
+
+      :param dim: Which edges normals will be returned for (0 for i, 1 for j edges)
+      :type dim: 0 or 1
+
+
+   .. py:method:: __calc_edges(self, dim)
+
+
+   .. py:method:: __calc_normals(self, dim)
+
+
+

@@ -1,30 +1,42 @@
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import Field, max, min, isfinite
-from bin.Field import copy
+from bin.Field import Field, max, min, isfinite, pos_diff, copy
 from bin.model_funcs.eflux import eflux
 from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
 class NavierStokes(Model):
+    """Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
+    for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy. 
+    Based on a finite volume formulation with ability to compute fluxes, update scheme stable timestep, 
+    and update eddy viscocities. Contains terms for convective, artificial dissipative, and viscous fluxes. 
+
+    Constructor:
+        Args:
+            bcmodel (BoundaryConditioner): instance of BoundaryConditioner class
+            input (dictionary): dictionary with parameter values
+
+        Returns:
+            A new NavierStokes object
+
+
+    Attributes:
+      className (str): name of class for acessing it's dictionaries in the workspace
+      BCmodel (BoundaryConditioner): boundary condition model, instance of BoundaryConditioner
+      padding (int): outter padding for boundary condition implementation
+      params (dictionary): physics parameters from the input
+      dimensions (int): number of states (4)
+      cfl_fine (np.ndarray): courant number on fine mesh
+      cfl_coarse (np.ndarray): courant number on coarse mesh 
+      cfl_lim (float): upper limit on courant number
+      cfl (float): minimum cfl between fine and coarse grids
+
+    Note:
+        See report for more details on the physics"""
     
     def __init__(self, bcmodel, input):
-        """Constructor
-        
-        Parameters
-        ----------
-        bcmodel:
-            A BoundaryConditioner object
-        input:
-            Dictionary with parameter values
-
-        Returns
-        -------
-        :
-            A new NavierStokes object.
-        """
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
         self.padding = bcmodel.padding
@@ -35,19 +47,16 @@ class NavierStokes(Model):
         self.cfl_fine = abs(input['cflf'])
         self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
-        self.cfl = np.min([self.cfl_fine, self.cfl_lim])
+        self.cfl = np.minimum(self.cfl_fine, self.cfl_lim)
         
 
     # initialize state
     def init_state(self, workspace, state):
-        """Initializes state field.
+        """Finds max number of columns in a row in the input file.
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A field containing the current state
+        Args:
+            workspace (Workspace): containins relevant fields to initialize
+            state (Field): has the state variables
         """
         self.__check_vars(workspace)
 
@@ -64,19 +73,13 @@ class NavierStokes(Model):
 
 
     # flux calculations
-    # from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
-
     def get_flux(self, workspace, state, output, update_factor=1):
         """Calculates the spatial flux given the current state.
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
-        output:
-            A Field where the flux values will be stored
+        Args:
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
+            output (Field): where the flux values will be stored
             """
         assert(isfinite(state))
         self.__check_vars(workspace)
@@ -95,6 +98,9 @@ class NavierStokes(Model):
         # copy state into padded array
         self.__copy_in(state, w)
 
+        # update pressure
+        self.__update_pressure(workspace, w)
+        
         # update boundary conditions
         bcmodel = self.BCmodel
         bcmodel.bc_all(self, workspace, w)
@@ -107,11 +113,6 @@ class NavierStokes(Model):
         else:
             dfluxc(self, workspace, w, dw, rfil)
 
-        # eflux_wrap.eflux(self, workspace, w, dw)
-        # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
-        # if self.params.kvis > 0 and False:
-            # nsflux_wrap.nsflux(self, workspace, w, dw, vw, rfil)
-
         # copy residuals into output array
         self.__copy_out(dw, output)
         assert(isfinite(output))
@@ -121,14 +122,10 @@ class NavierStokes(Model):
     def get_safe_timestep(self, workspace, state, timestep):
         """Returns the local timestep such that stability is maintained.
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
-        timestep:
-            A Field where the time steps will be stored
+        Args:
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
+            timestep (Field): where the time steps will be stored
 
         """
         assert(isfinite(state))
@@ -147,16 +144,13 @@ class NavierStokes(Model):
         assert(isfinite(timestep))
 
 
-    # update rev and rlv
+    # update ev and lv
     def update_physics(self, workspace, state):
         """Updates physical properties of system based on state
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
+        Args:
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
         """
         assert(isfinite(state))
         self.__check_vars(workspace)
@@ -164,35 +158,32 @@ class NavierStokes(Model):
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
+
+        # update pressure
+        self.__update_pressure(workspace, w)
 
         self.BCmodel.update_physics(self, workspace, state)
 
 
-    # calls 'step.f' to update stability conditions
+    # calls python implementation 'step.f' to update stability conditions
     def update_stability(self, workspace, state):
         """Updates the stability parameters given the current state.
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
+        Args:
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
         """
         assert(isfinite(state))
         self.__check_vars(workspace)
-        
+
         # copy state into padded field
         w = workspace.get_field("w", self.className)
         self.__copy_in(state, w)
 
+        # update pressure
+        self.__update_pressure(workspace, w)
+        
         self.BCmodel.update_stability(self, workspace, w)
-
-    
-    # specify upper bound on cfl
-    def update_cfl_limit(self, cfl_lim):
-        self.cfl_lim = cfl_lim
-
 
     # get courant number
     def get_cfl(self, workspace):
@@ -201,21 +192,18 @@ class NavierStokes(Model):
         cfl = self.cfl_coarse
         if workspace.is_finest():
             cfl = self.cfl_fine
-        self.cfl = min(cfl, self.cfl_lim)
+        self.cfl = np.minimum(cfl, self.cfl_lim)
 
         # return courant number
         return self.cfl
             
 
     def transfer_down(self, workspace1, workspace2):
-        """Calculates the spatial flux given the current state.
+        """ Move workspace1 on fine mesh to workspace2 on coarse mesh
         
-        Parameters
-        ----------
-        workspace1:
-            The Workspace object for the finer level
-        workspace2:
-            The Workspace object for the coarser level
+        Args:
+            workspace1 (Workspace): The Workspace object for the finer level
+            workspace2 (Workspace): The Workspace object for the coarser level
         """
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
@@ -233,10 +221,7 @@ class NavierStokes(Model):
 
         # perform copy operation
         paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
-        # for i in range(0, leni):
-        #     for j in range(0, lenj):
-        #         paddedField[i+pad,j+pad] = field[i,j]
-
+        
     # extract data from a padded field
     def __copy_out(self, paddedField, field):
         # get field size
@@ -244,11 +229,8 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
-        # for i in range(0, nx):
-        #     for j in range(0, ny):
-        #         field[i,j] = paddedField[i+pad,j+pad]
-
+        field[:] = copy(paddedField[pad:nx+pad, pad:ny+pad])
+        
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
         if not workspace.has_dict(self.className):
@@ -272,7 +254,7 @@ class NavierStokes(Model):
             vars[stateName] = [shape]
 
         # add scalar variables stored at cell center with padding
-        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
+        for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol",'ev','lv']:
             shape = (nxp, nyp)
             vars[stateName] = [shape]
 
@@ -329,3 +311,18 @@ class NavierStokes(Model):
         state[:,:,2] = rho0*v0
         state[:,:,3] = rho0*h0 - p0
         p[:,:] = p0
+
+    # calculate pressure
+    def __update_pressure(self, workspace, state):
+        # retrieve variables
+        p = workspace.get_field('p', self.className)
+        w = state
+        gamma = self.params['gamma']
+        pad = self.padding
+        nx, ny = workspace.field_size()
+        ip, jp = 2, 2
+        ie, je = nx+pad, ny+pad
+
+        rqq = ( (w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0] ) / 2
+        p[ip:ie, jp:je] = pos_diff(w[ip:ie, jp:je, 3], rqq) * (gamma-1)
+

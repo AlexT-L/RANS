@@ -1,0 +1,326 @@
+:py:mod:`Field`
+===============
+
+.. py:module:: Field
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Field.Field
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   Field.is_numpy
+   Field.is_field
+   Field.array_equal
+   Field.copy
+   Field.mean
+   Field.abs
+   Field.max
+   Field.min
+   Field.sum
+   Field.sqrt
+   Field.square
+   Field.pow
+   Field.norm
+   Field.pos_diff
+   Field.isfinite
+   Field.isscalar
+   Field.minimum
+   Field.maximum
+   Field.mismatch_mul
+   Field.mismatch_truediv
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   Field.Infinity
+
+
+.. py:class:: Field(shape, vals=None)
+
+   Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array.
+       Can be indexed and operators are overloaded for basic math operations.
+
+   Constructor:
+       Args:
+           shape (tuple): n dimensional array of Field dimensions
+
+       Returns:
+           A new Field object
+
+       Notes:
+           Check top of Input.py file to see the contents of each of the five dictionanries
+
+   .. attribute:: vals
+
+      numeric values of the Field
+
+      :type: np.ndarray
+
+   .. py:method:: size(self)
+
+      2-d size of field
+
+      Returns
+
+      :
+          The 2-d size of the field.
+          This is important for fields living on a 2-d grid
+
+
+   .. py:method:: shape(self)
+
+      shape of field
+
+      Returns
+
+      :
+          The shape of the underlying numpy array.
+
+
+   .. py:method:: dim(self)
+
+      dimensions of variable
+
+      Returns
+
+      :
+          The dimensions of the field vector living at each point in a 2-d grid
+          This value is 1 for 1-d and 2-d arrays
+
+
+   .. py:method:: get_vals(self)
+
+      get the underlying numpy representation
+
+      Returns
+
+      :
+          The underlying numpy ndarray that stores the values
+
+
+   .. py:method:: astype(self, dtype=None)
+
+      return a field with data stored as the given type
+
+      Returns
+
+      :
+          A field with values stored as the given type
+
+
+   .. py:method:: T(self)
+
+      return a transposed Field
+
+      Returns
+
+      :
+          A field of the size of the transposed input
+
+
+   .. py:method:: __getitem__(self, indx)
+
+
+   .. py:method:: __setitem__(self, indx, value)
+
+
+   .. py:method:: set_val(self, new_vals)
+
+      assign values to a Field of the same size
+
+      Returns
+
+      :
+          A field with given values
+
+
+   .. py:method:: __str__(self)
+
+      Return str(self).
+
+
+   .. py:method:: __len__(self)
+
+
+   .. py:method:: __lt__(self, other)
+
+      Return self<value.
+
+
+   .. py:method:: __le__(self, other)
+
+      Return self<=value.
+
+
+   .. py:method:: __gt__(self, other)
+
+      Return self>value.
+
+
+   .. py:method:: __ge__(self, other)
+
+      Return self>=value.
+
+
+   .. py:method:: __eq__(self, other)
+
+      Return self==value.
+
+
+   .. py:method:: __ne__(self, other)
+
+      Return self!=value.
+
+
+   .. py:method:: __bool__(self)
+
+
+   .. py:method:: __add__(self, other)
+
+
+   .. py:method:: __sub__(self, other)
+
+
+   .. py:method:: __mul__(self, other)
+
+
+   .. py:method:: __pow__(self, other)
+
+
+   .. py:method:: __truediv__(self, other)
+
+
+   .. py:method:: __floordiv__(self, other)
+
+
+   .. py:method:: __mod__(self, other)
+
+
+   .. py:method:: __iadd__(self, other)
+
+
+   .. py:method:: __isub__(self, other)
+
+
+   .. py:method:: __imul__(self, other)
+
+
+   .. py:method:: __ipow__(self, other)
+
+
+   .. py:method:: __itruediv__(self, other)
+
+
+   .. py:method:: __radd__(self, other)
+
+
+   .. py:method:: __rsub__(self, other)
+
+
+   .. py:method:: __rmul__(self, other)
+
+
+   .. py:method:: __rpow__(self, other)
+
+
+   .. py:method:: __rtruediv__(self, other)
+
+
+   .. py:method:: __rfloordiv__(self, other)
+
+
+   .. py:method:: __neg__(self)
+
+
+   .. py:method:: __pos__(self)
+
+
+   .. py:method:: __mismatch_imul(self, other)
+
+
+   .. py:method:: __mismatch_itruediv(self, other)
+
+
+
+.. py:function:: is_numpy(var)
+
+
+.. py:function:: is_field(var)
+
+
+.. py:function:: array_equal(array1, array2)
+
+
+.. py:function:: copy(array)
+
+
+.. py:function:: mean(array, axis=None)
+
+
+.. py:function:: abs(array)
+
+
+.. py:function:: max(array, axis=None)
+
+
+.. py:function:: min(array, axis=None)
+
+
+.. py:function:: sum(array)
+
+
+.. py:function:: sqrt(array)
+
+
+.. py:function:: square(array)
+
+
+.. py:function:: pow(array, power)
+
+
+.. py:function:: norm(array1, array2)
+
+
+.. py:function:: pos_diff(array1, array2)
+
+
+.. py:function:: isfinite(array)
+
+
+.. py:function:: isscalar(array)
+
+
+.. py:function:: minimum(array1, array2)
+
+
+.. py:function:: maximum(array1, array2)
+
+
+.. py:function:: mismatch_mul(self, other)
+
+
+.. py:function:: mismatch_truediv(self, other)
+
+
+.. py:data:: Infinity
+   
+
+   
+

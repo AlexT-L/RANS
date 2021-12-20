@@ -1,40 +1,42 @@
 import numpy as np
 import bin.Expandinator as expand
 import bin.Contractinator as contract
-from bin.Grid import Grid
 from bin.Field import Field
 from bin.Cycle import Cycle
-from bin.Workspace import Workspace
-from bin.Integrator import Integrator
 from bin.Field import copy
 
 
 class MultiGrid:
+    """ Uses mulitple coarser grids to apply corrections to the values on the current grid.
+        Correcting the soluion this way allows for much faster convergence to be achieved
+        than if the solution were only updated with the finer grid
 
+    Constructor:
+        Args:
+            workspace (Workspace): 
+                The workspace corresponding to the grid on which the solution will be calculated
+            model (Model):
+                The physics model to be used
+            integrator (Integrator):
+                The integration scheme to be used
+            input (Dict):
+                Dictionary of parameters containing:
+                    ftim: the interval at which the stability will be updated
+                    fcoll: the relaxation factor on the residuals transferred from the finer mesh
+
+        Returns:
+            A new Input object containing five dicts - dims, solv_param, flo_param, geo_param and in_var 
+
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
+    """
+
+   
     # Constructor
     def __init__(self, workspace, model, integrator, input):
-        """Constructor.
-        
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        model:
-            A Model object
-        integrator:
-            An Integrator object
-        input:
-            Dictionary of parameter values
-
-        Returns
-        -------
-        :
-            A new Multigrid object.
-        """
-        # Parameters
+        # Args:
         self.stabilityUpdateFrequency = input['ftim']
         self.wr_relax = float(input['fcoll'])
-        self.wr_relax = 0.0
 
         # counter variable
         self.num_cycles = 0
@@ -65,7 +67,7 @@ class MultiGrid:
             grid = self.Workspaces[l+1].get_grid()
             newGrid = grid.from_grid(grid)
             # newGrid = workspace.get_grid()
-            self.Workspaces[l] = workspace.MakeNew(newGrid, False)
+            self.Workspaces[l] = workspace.make_new(newGrid)
         
         # initialize state variables
         for l in range(n_levels):
@@ -112,7 +114,7 @@ class MultiGrid:
             model.update_stability(workspace, w)
                 
         # Perform integration to get new state
-        integrator.step(workspace, w, Rw)
+        integrator.step(workspace, w)
         #####
 
         # subsequent levels
@@ -151,7 +153,7 @@ class MultiGrid:
                     model.update_stability(workspace, w)
                 
                 # Perform integration to get new state
-                integrator.step(workspace, w, Rw)
+                integrator.step(workspace, w, wr)
 
                 # Update Correction
                 wc[:] = w - w1
@@ -168,9 +170,16 @@ class MultiGrid:
                 
                 # Update Correction
                 wc[:] = w - w1
+
+            else: # stay on same grid level
+                # perform step
+                integrator.step(workspace, w, wr)
+
+                # Update Correction
+                wc[:] = w - w1
         
         # perform one last step
-        integrator.step(workspace, w, Rw)
+        integrator.step(workspace, w)
 
         # update number of cycles
         self.num_cycles += 1
@@ -180,22 +189,18 @@ class MultiGrid:
     def residuals(self, output):
         """Copies the residual values to the output Field.
         
-        Parameters
-        ----------
-        output:
-            Field that will store the values
+        Args:
+            output (Field): Field that will store the residual values
         """
         residuals = self.Fluxes[-1]
-        output = copy(residuals)
+        output[:] = copy(residuals)
         
     # copy state into output field
     def solution(self, output):
         """Copies the state values to the output Field.
         
-        Parameters
-        ----------
-        output:
-            Field that will store the values
+        Args:
+            output (Field): Field that will store the values
         """
         state = self.W[-1]
-        output = copy(state)
+        output[:] = copy(state)

@@ -1,7 +1,18 @@
+"""This module maps physical airfoil geometry to computational space
+
+    Libraries/Modules:
+        numpy\n
+        scipy.interpolate\n
+"""
 import numpy as np
 import scipy.interpolate as sc
 
 def geom(self):
+    """ This function performs conformal mapping to computational domain
+
+        It maps the xn and yn physical coordinates of the airfoil to xs and ys
+        coordinates in the computational domain
+    """
     #
     pi      = np.pi
     #use parameters from geo_param in input
@@ -16,6 +27,7 @@ def geom(self):
     
     #geo_var
     a       = self.a
+    b0      = self.b0
     s0      = self.s0
 
     #x and y coords of aerfoil in physical space

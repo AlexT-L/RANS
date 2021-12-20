@@ -1,0 +1,22 @@
+:py:mod:`halo_wrap`
+===================
+
+.. py:module:: halo_wrap
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   halo_wrap.halo
+
+
+
+.. py:function:: halo(self, model, workspace, state)
+
+

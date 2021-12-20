@@ -1,8 +1,14 @@
 import numpy as np
-
 from bin.Field import Field, copy, maximum, minimum, abs, pos_diff, sqrt, square, min
 
 def stability(self, model, workspace, state):
+    """Calculates timestep limits to maintain stability
+    
+    Args:
+        model (Model):  The physics model
+        workspace (Workspace): The current Workspace
+        state (Field): Field containing current state
+    """
 
     # padding
     pad = self.padding
@@ -53,8 +59,8 @@ def stability(self, model, workspace, state):
     # retrieve working arrays from model
     def get(varName):
             return workspace.get_field(varName, model.className)
-    rev = get("rev")
-    rlv = get("rlv")
+    ev = get('ev')
+    lv = get('lv')
     radI = get("radI")
     radJ = get("radJ")
     rfli = get("rfli")
@@ -161,8 +167,8 @@ def stability(self, model, workspace, state):
         if (kvis > 1): 
             v2 = v1
 
-        k = gamma *(v1*rlv[ip:ie, jp:je]/prn + v2*rev[ip:ie, jp:je]/prt)/w[ip:ie, jp:je,0]
-        mu = (v1*rlv[ip:ie, jp:je]+v2*rev[ip:ie, jp:je])/w[ip:ie, jp:je,0]
+        k = gamma *(lv[ip:ie, jp:je] * v1/prn + ev[ip:ie, jp:je] * v2/prt)/w[ip:ie, jp:je,0]
+        mu = (lv[ip:ie, jp:je]*v1 + ev[ip:ie, jp:je]*v2)/w[ip:ie, jp:je,0]
 
         dsi = square(djx) + square(djy)
         dsj = square(dix) + square(diy)

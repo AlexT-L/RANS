@@ -1,26 +1,29 @@
 import numpy as np
 import bin.Field as binField
+from numpy.core.numeric import Infinity
 
 class Field:
+    """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
+        Can be indexed and operators are overloaded for basic math operations.
+
+    Constructor:
+        Args:
+            shape (tuple): n dimensional array of Field dimensions
+
+        Returns:
+            A new Field object
+
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
+
+    Attributes:
+        vals (np.ndarray): numeric values of the Field
+
+    """
+
 
     def __init__(self, shape, vals=None):
-        """Creates a new Field object
-            
-            Parameters
-            ----------
-            shape:
-                Tuple (8,8,4)
-                Note: if shape is scalar (e.g. (8) or 8) then vals must not be None
-            vals:
-                (Optional) array of values, or scalar.
-            output:
-                A Field where the flux values will be stored
-
-            Returns
-            -------
-            :
-                A new Field object.
-            """
+       
         if is_field(vals):
             vals = vals.vals
 
@@ -46,7 +49,7 @@ class Field:
         """2-d size of field
             
             Returns
-            -------
+            
             :
                 The 2-d size of the field.
                 This is important for fields living on a 2-d grid
@@ -66,7 +69,7 @@ class Field:
         """shape of field
             
             Returns
-            -------
+            
             :
                 The shape of the underlying numpy array.
             """
@@ -78,7 +81,7 @@ class Field:
         """dimensions of variable
             
             Returns
-            -------
+            
             :
                 The dimensions of the field vector living at each point in a 2-d grid
                 This value is 1 for 1-d and 2-d arrays
@@ -97,7 +100,7 @@ class Field:
         """get the underlying numpy representation
             
             Returns
-            -------
+            
             :
                 The underlying numpy ndarray that stores the values
             """
@@ -108,16 +111,22 @@ class Field:
         """return a field with data stored as the given type
             
             Returns
-            -------
+            
             :
                 A field with values stored as the given type
             """
         result = self.vals.astype(dtype)
         return Field(0, result)
 
-    # matrix operations
-
+    # transpose
     def T(self):
+        """return a transposed Field 
+            
+            Returns
+            
+            :
+                A field of the size of the transposed input
+            """
         trans = Field(0, self.vals.T)
         return trans
 
@@ -148,6 +157,13 @@ class Field:
         self.vals[indx] = value
     
     def set_val(self, new_vals):
+        """assign values to a Field of the same size
+            
+            Returns
+            
+            :
+                A field with given values 
+            """
         if np.shape(new_vals) != np.shape(self.vals):
             raise ValueError('Dimensions of field do not match expected dimensions')
         self.vals = np.array(new_vals, order = 'F')  # make new fortran ordered array  
@@ -162,7 +178,6 @@ class Field:
     
 
     # comparison operatos
-
     def __lt__(self, other):
         if is_field(other):
             other = other.vals
@@ -204,7 +219,6 @@ class Field:
 
 
     # math operators
-    
     def __add__(self, other):
         if is_field(other):
             other = other.vals
@@ -423,7 +437,7 @@ class Field:
         k = self.shape()[2]
         result = self.vals[:,:,0] * other
         for i in range(1,k):
-            result += self.vals[:,:,k] * other
+            result += self.vals[:,:,i] * other
 
         self.vals = result
         return self
@@ -435,7 +449,7 @@ class Field:
         k = self.shape()[2]
         result = self.vals[:,:,0] / other
         for i in range(1,k):
-            result += self.vals[:,:,k] / other
+            result += self.vals[:,:,i] / other
 
         self.vals = result
         return self
@@ -466,7 +480,7 @@ def copy(array):
     copy = np.copy(array.vals)
     return Field(0, copy)
 
-# Field classs math methods
+# Field class math methods
 def mean(array, axis=None):
     assert is_field(array)
     result = np.mean(array.vals, axis)
@@ -646,3 +660,5 @@ def mismatch_truediv(self, other):
     assert is_field(result)
 
     return result
+
+Infinity = Infinity

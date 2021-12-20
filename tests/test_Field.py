@@ -1,15 +1,15 @@
 """
 Description
------------
+
 Tests the Field object to see if it works as expected
 
 Libraries/Modules
------------------
+
 -pytest \n
 -Field
 
 Notes
------
+
 Runs the following tests:\n
 1. Checks that a 2D Field can be created  \n
 2. Checks that a 3D field can be created \n
@@ -21,7 +21,7 @@ Runs the following tests:\n
 8. Tests / operation \n
 
 Author(s)
----------
+
 Andy Rothstein \n
 
 """
@@ -38,7 +38,7 @@ def rng(dim):
 
 def test_constructor():
     """
-    Asserts that we can create a 8x1 field
+    Asserts that we can create a 8x8 field
     
     """
     # Use dimensions for 8x8
@@ -51,7 +51,7 @@ def test_constructor():
 
 def test_isfinite():
     """
-    Asserts that we can create a 8x1 field
+    Asserts that we can create a 8x8 field
     
     """
     # Use dimensions for 8x8
@@ -59,22 +59,7 @@ def test_isfinite():
     field = Field(dims)
     
     # Assert correct shape
-    assert isfinite(field)
-    
-
-def test_isscalar():
-    """
-    Asserts that we can create a 8x1 field
-    
-    """
-    # Use dimensions for 8x8
-    dims = (8,8)
-    array = Field(dims)
-    scalar = Field(1, 0)
-
-    
-    # Assert correct shape
-    
+    assert isfinite(field)    
 
 
 def test_constructor_1d():
@@ -286,6 +271,25 @@ def test_product_2d_3d():
     
     # Make fields
     product = big*small
+
+    print(product)
+    print(compare)
+    
+    assert array_equal(product, compare)
+
+def test_product_2d_3d():
+    '''
+    Tests we can multiply (n,m) field by (n,m,p) field
+    '''
+    # Make 2 random arrays
+    dimsBig = (8,6,4)
+    dimsLittle = (8,6)
+    big = Field(dimsBig, 1)
+    small = Field(dimsLittle, 2)
+    compare = Field(dimsBig, 2)
+    
+    # Make fields
+    product = small*big
 
     print(product)
     print(compare)

@@ -1,34 +1,37 @@
+"""This module calculates boundary layer thickness for viscosity.
+
+    Libraries/Modules:
+        numpy\n
+        """
 import numpy as np
-# from Grid import Grid
 
-# class BoundaryThickness():
-def boundary_thickness(params, dims):
-    # from subroutine delt
-    # # calculates the boundary layer thickness
-    # uses dims, flo_var, mesh_var, solv_var, flo_param, solv_param
+def boundary_thickness(model, ws, state):
+    """Calculates the boundary layer thickness.
 
-    # variabes from inputs/dims/params
-    ny = dims['ny']
-    il = dims['il']
+    Notes: 
+        Adapted from subroutine delt"""
 
-    x = params['x']
-    w = params['w']
-    xc = params['xc']
+    # necessary fields
+    def mget(varName):
+        return ws.get_field(varName, model.className)
+    w = state
+    x = mget('x')
+    xc = mget('xc')
 
     # defining local variables:
-    dim_var = 500
-    qs = np.ones(dim_var)
-    ut = np.ones(dim_var)
-    dn = np.ones(dim_var)
-    dsti = np.ones(dim_var)
-    ynot = np.ones(dim_var)
-    ssmax = np.ones(dim_var)
+    [nx, ny] = ws.field_size()
+    il = nx+1
+
+    qs = np.ones(nx)
+    ut = np.ones(nx)
+    dn = np.ones(nx)
+    dsti = np.ones(nx)
+    ynot = np.ones(nx)
+    ssmax = np.ones(nx)
     
-    # js        = 2*jl/3  -2
-    js        = .75*(ny  -4)
+    js = 0.75*(ny - 4)
     js = int(np.floor(js))
 
-    # one big loop 
     for i in range(1,il):
         qs[0]     = 0.
         ut[0]     = 0.
@@ -36,7 +39,6 @@ def boundary_thickness(params, dims):
         xy        = .5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
         yy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
         qs[j]     = (yy*w[i,j,1]  -xy*w[i,j,2])/(w[i,j,0])
-        # replacing sign function in fortran with np.copysign, should be the same
         si        = np.copysign(1,qs[js])
 
         for j in range(1,js):
@@ -51,8 +53,6 @@ def boundary_thickness(params, dims):
         ynot[i]   = 0.
         ssmax[i]  = 0.
         cdu       = .98
-        # replacing function idmax(js,ut,1) with argmax
-        # purpose is to "find the index of element having max value"
         jmax      = np.argmax(ut)
         fx        = .6*ut[jmax]
         lend      = 2
@@ -92,41 +92,3 @@ def boundary_thickness(params, dims):
         ycorr     = np.sqrt((xc[i,lend,0] - xbi)**2+(xc[i,lend,1]-ybi)**2)
         ynot[i]   = 1.5*(ycorr  +dn[lend]*(fc  -ut[lend])/(ut[lend+1]  -ut[lend]))
     return
-dim_var = 500
-params = {
-  "ie": dim_var,
-  "je": dim_var,
-  "kvis": 2,
-  "gamma": 1,
-  "rm": 1,
-  "re": 1,
-  "ncyc": dim_var,
-  "rev": np.ones((dim_var+1,dim_var+1)),
-  "itl": dim_var-2, 
-  "itu": dim_var-2,
-  "x": np.random.rand(dim_var,dim_var,3),
-  "w": np.ones((dim_var,dim_var,3)),
-  "p": np.ones((dim_var,dim_var)),
-  "vol": np.ones((dim_var,dim_var)),
-  "xtran": 0,
-  # in Visc but was not needed in BL:
-  "scal": 1,
-  "chord": 1,
-  "t0": 1,
-  "rmu0": 1,
-  "p" : np.ones((dim_var,dim_var)),
-  "mode": 0,
-  "kturb": 1,
-  "xc": np.ones((dim_var,dim_var,3))*2,
-  "ynot": np.ones(dim_var),
-  "rlv": np.ones((dim_var,dim_var)),
-  "dsti": np.ones(dim_var),
-  "ib": 1
-  # 
-}
-dims = {
-    "il": dim_var - 1, 
-    "jl": dim_var - 1,
-    "ny": dim_var,
-}
-boundary_thickness(params, dims)

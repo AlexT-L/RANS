@@ -1,0 +1,99 @@
+:py:mod:`AirfoilMap`
+====================
+
+.. py:module:: AirfoilMap
+
+.. autoapi-nested-parse::
+
+   This module creates am AirfoilMap object containing x,xc and vol Field objects
+
+   Libraries/Modules:
+       numpy
+
+       typing
+
+       Field
+
+       Grid
+
+       Input
+
+       airfoil_map
+
+
+
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   AirfoilMap.AirfoilMap
+
+
+
+
+.. py:class:: AirfoilMap(num_divisions)
+
+   Bases: :py:obj:`bin.Grid.Grid`
+
+   Creates Airfoil map object containing x,xc and vol as Field objects.
+
+   Constructor (not intended to be implemented directly):
+       Args:
+           num_divisions (list):Number of cells in the x and y directions.
+
+       Returns:
+           A new AirfoilMap object.
+
+       Notes:
+           Directly use from_file() method to perform confromal mapping
+           and use from_grid() method to convert grid to coarser version
+
+   .. py:method:: from_file(thisClass, num_divisions, input)
+      :classmethod:
+
+      Initializes new AirfoilMap from datafile input.
+
+      :param num_divisions: Number of cells in the x and y directions.
+      :type num_divisions: list
+      :param input: Dictionary containing data-file values
+      :type input: dict
+
+      :returns: new AirfoilMap object
+      :rtype: grid (obj)
+
+
+   .. py:method:: from_grid(thisClass, grid)
+      :classmethod:
+
+      Initializes new AirfoilMap from existing object. The new grid will be half the size.
+
+      :param grid: AirfoilMap object
+      :type grid: obj
+
+      :returns: new AirfoilMap object
+      :rtype: newGrid (obj)
+
+
+   .. py:method:: get_dims(self)
+
+      Gets dimensions of grid
+
+
+   .. py:method:: get_geometry(self)
+
+      Gets geometry
+
+
+   .. py:method:: get_size(self)
+
+      Gets size
+
+
+

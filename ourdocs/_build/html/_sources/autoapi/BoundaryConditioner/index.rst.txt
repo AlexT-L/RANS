@@ -1,0 +1,116 @@
+:py:mod:`BoundaryConditioner`
+=============================
+
+.. py:module:: BoundaryConditioner
+
+.. autoapi-nested-parse::
+
+   This module contains an abstract base class Grid
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   BoundaryConditioner.BoundaryConditioner
+
+
+
+
+.. py:class:: BoundaryConditioner(input)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Abstract base class, never directly instantiated
+
+   NS_Airfoil is a child class of this ABC
+
+   .. py:method:: update_stability(self, model, workspace, state)
+      :abstractmethod:
+
+      updates stability parameters for time step calculations
+
+      :param model: instance of class inheriting from Model
+      :param workspace: instance of Workspace class (or child)
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: update_physics(self, model, workspace, state)
+      :abstractmethod:
+
+      updates physical parameters for calculation of boundary conditions
+
+      :param model: instance of class inheriting from Model
+      :param workspace: instance of Workspace class (or child)
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: bc_wall(self, model, workspace, state)
+      :abstractmethod:
+
+      apply boundary condition along the wall
+
+       Args:
+          model: instance of class inheriting from Model
+          workspace: instance of Workspace class (or child)
+          state (Field): current state of the system (density, momentum, energy)
+
+
+
+
+   .. py:method:: bc_far(self, model, workspace, state)
+      :abstractmethod:
+
+      apply boundary condition in the far field
+
+      :param model: instance of class inheriting from Model
+      :param workspace: instance of Workspace class (or child)
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: halo(self, model, workspace, state)
+      :abstractmethod:
+
+      set the values in the halo
+
+       Args:
+          model: instance of class inheriting from Model
+          workspace: instance of Workspace class (or child)
+          state (Field): current state of the system (density, momentum, energy)
+
+
+
+
+   .. py:method:: bc_all(self, model, workspace, state)
+      :abstractmethod:
+
+      do wall boundaries, far field and set halo values at once
+
+       Args:
+          model: instance of class inheriting from Model
+          workspace: instance of Workspace class (or child)
+          state (Field): current state of the system (density, momentum, energy)
+
+
+
+   .. py:method:: transfer_down(self, model, workspace1, workspace2)
+      :abstractmethod:
+
+      transfer boundary information between workspaces
+
+       Args:
+          model: instance of class inheriting from Model
+          workspace: instance of Workspace class (or child)
+          state (Field): current state of the system (density, momentum, energy)
+
+
+
+

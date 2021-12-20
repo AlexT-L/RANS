@@ -1,12 +1,25 @@
-# python implementation of eflux.f
+# python implementation of dflux.f
 
 from operator import pos
-from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff
+from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar, max
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np
 
 def dflux(model, ws, state, dw, rfil):
+    """
+    calculate artificial dissipation fluxes on finest mesh using blended first and 
+    third order fluxes
+    
+    Args:
+        model (NavierStokes): physics model
+        workspace (Workspace): contains the relevant Fields
+        state (Field): density, x-momentum, y-momentum, and energy
+        dw (Field): to store new residuals after completing fluxes 
+        rfil (float): relaxation factor determining balance between viscous and artificial dissipation fluxes
+        
+    """
+
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters
@@ -23,7 +36,6 @@ def dflux(model, ws, state, dw, rfil):
     porJ = mget('porJ') # porosity
     radI = mget('radI')
     radJ = mget('radJ')
-    assert is_field(radJ)
 
     # grid dimensions
     [nx, ny] = ws.field_size()
@@ -73,9 +85,10 @@ def dflux(model, ws, state, dw, rfil):
 
     max1 = maximum(dp[ip+1:nxp, jp:je], dp[ip:ib, jp:je])
     max2 = maximum(dp[1:ie, jp:je], dp[0:il, jp:je])
-    dis2[1:ie, jp:je] = fis2*rad*minimum(TOL[:,0:ny], maximum(max1, max2))
+    dpsafe = minimum(TOL[:,0:ny], maximum(max1, max2))
+    dis2[1:ie, jp:je] = dpsafe*rad*fis2
 
-    dis4[1:ie, jp:je] = fis4*rad
+    dis4[1:ie, jp:je] = rad*fis4
     dis4 = pos_diff(dis4, dis2)
 
     # forward differencing (1st order)
@@ -86,7 +99,7 @@ def dflux(model, ws, state, dw, rfil):
 
     gs = porI*(dis2[1:ie, jp:je]*d[1:ie, jp:je] - dis4[1:ie, jp:je]*e[1:ie, jp:je])
 
-    fw[ip:ie, jp:je] = sfil*fw[ip:ie, jp:je] + gs[0:nx] - gs[1:il]
+    fw[ip:ie, jp:je] = fw[ip:ie, jp:je]*sfil + gs[0:nx] - gs[1:il]
 
     # c
     # c     dissipation in the j direction
@@ -96,14 +109,13 @@ def dflux(model, ws, state, dw, rfil):
                               (p[ip:ie, jp:nyp] + 2*p[ip:ie, 1:jb] + p[ip:ie, 0:je] + plim))
 
         
-        assert is_field(radJ[ip:ie, 2])
         rad = minimum(radJ[ip:ie, 2], radJ[ip:ie, 1])
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
         max2 = dp[ip:ie, 1]
-        dis2[ip:ie, 1] = fis2*rad*minimum(TOL[0:nx,0], maximum(max1, max2))
+        dis2[ip:ie, 1] = rad*fis2*minimum(TOL[0:nx,0], maximum(max1, max2))
 
-        dis4[ip:ie, 1] = fis4*rad
+        dis4[ip:ie, 1] = rad*fis4
         dis4[ip:ie, 1] = pos_diff(dis4[ip:ie, 1], dis2[ip:ie, 1])
 
 
@@ -111,20 +123,18 @@ def dflux(model, ws, state, dw, rfil):
 
         max1 = maximum(dp[ip:ie, je], dp[ip:ie, jl])
         max2 = dp[ip:ie, ny]
-        dis2[ip:ie, jl] = fis2*rad*minimum(TOL[0:nx,0], maximum(max1, max2))
+        dis2[ip:ie, jl] = rad*fis2*minimum(TOL[0:nx,0], maximum(max1, max2))
 
-        dis4[ip:ie, jl] = fis4*rad
+        dis4[ip:ie, jl] = rad*fis4
         dis4[ip:ie, jl] = pos_diff(dis4[ip:ie, jl], dis2[ip:ie, jl])
-
-
 
         rad = min(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
 
         max1 = maximum(dp[ip:ie, jp+2:jb], dp[ip:ie, jp+1:je])
         max2 = maximum(dp[ip:ie, jp:jl], dp[ip:ie, 1:ny])
-        dis2[ip:ie, jp:jl] = fis2*rad*minimum(TOL[0:nx,0:ny-1], maximum(max1, max2))
+        dis2[ip:ie, jp:jl] = rad*fis2*minimum(TOL[0:nx,0:ny-1], maximum(max1, max2))
 
-        dis4[ip:ie, jp:jl] = fis4*rad
+        dis4[ip:ie, jp:jl] = rad*fis4
         dis4[ip:ie, jp:jl] = pos_diff(dis4[ip:ie, jp:jl], dis2[ip:ie, jp:jl])
 
 
