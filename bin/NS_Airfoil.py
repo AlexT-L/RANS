@@ -1,9 +1,10 @@
 from numpy.core.defchararray import mod
 from bin.BoundaryConditioner import BoundaryConditioner
-import bin.utils.NS_Airfoil_imp as implementation
+import bin.model_funcs.bc_transfer as tf
+from bin.model_funcs.bc_metric import halo_geom
+from bin.model_funcs.bcwall import wall
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
-from bin.model_funcs.bcwall import wall
 from bin.model_funcs.stability_fast import stability
 
 class NS_Airfoil(BoundaryConditioner):
