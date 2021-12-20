@@ -24,8 +24,8 @@ jb = jl + 2
 w = Field([ib,jb],4) # state
 w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
 P = Field([ib,jb]) # pressure
-rlv = Field([ib,jb]) # laminar viscocity
-rev = Field([ib,jb]) # eddy viscocity
+lv = Field([ib,jb]) # laminar viscocity
+ev = Field([ib,jb]) # eddy viscocity
 vw = Field([ib,jb],4) # residuals
 
 # mesh related vars
@@ -60,7 +60,7 @@ print(vw.vals[:][:][0])
 print(nsflux_fort.__doc__)
 # residuals returned in Field dw
 nsflux_fort.nsflux(il, jl, ie, je, \
-      w.vals, P.vals, rlv.vals, rev.vals,  \
+      w.vals, P.vals, lv.vals, ev.vals,  \
       x.vals, xc.vals, \
       vw.vals,
       gamma,rm,scal,re,chord,prn,prt, \
