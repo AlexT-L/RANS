@@ -1,3 +1,9 @@
+"""This module unpacks the input from a .data file to dictionaries in an input object
+
+    Libraries/Modules:
+        numpy
+        pandas
+        """
 import numpy as np 
 import pandas as pd
 
@@ -131,9 +137,6 @@ class Input:
         geo_p (list): List of paramters to get from input file to geo_param dict.
         in_v (list): List of paramters to get from input file to in_var dict.
 
-    Libraries/Modules:
-        numpy
-        pandas
 
     Note:
         Check top of Input.py file to see the contents of each of the five dictionanries."""
