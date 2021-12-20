@@ -1,5 +1,5 @@
 def halo_geom(self, model, workspace):
-        """Sets the geometry values in the halo
+    """Sets the geometry values in the halo
         
         Args:
         

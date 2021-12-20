@@ -39,7 +39,7 @@ import numpy as np
 #             fine[i,j] = temp[i,j]
 
 def bilinear4way(coarse, fine):
-    """Bilinear interpolation function for expanding Fields.
+    """Bilinear interpolation function for expanding Fields. Currently does not work.
     
     Args:
     
