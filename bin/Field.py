@@ -1,5 +1,6 @@
 import numpy as np
 import bin.Field as binField
+from numpy.core.numeric import Infinity
 
 class Field:
     """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
@@ -659,3 +660,5 @@ def mismatch_truediv(self, other):
     assert is_field(result)
 
     return result
+
+Infinity = Infinity
