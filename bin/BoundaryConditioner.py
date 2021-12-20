@@ -7,7 +7,8 @@ class BoundaryConditioner(ABC):
         pass
 
     @abstractmethod
-    def update_stability(self, model, workspace, state):"""
+    def update_stability(self, model, workspace, state):
+        """
         updates stability parameters for time step calculations
         
         Args:
