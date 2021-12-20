@@ -1,8 +1,7 @@
 
-from abc import abstractmethod
-from bin.ws_class import WorkspaceClass
+from abc import ABC, abstractmethod
 
-class Integrator(WorkspaceClass):
+class Integrator(ABC):
     
     @abstractmethod
     def __init__(self, model, input):

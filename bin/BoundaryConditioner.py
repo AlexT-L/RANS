@@ -1,7 +1,6 @@
-from abc import abstractmethod
-from bin.ws_class import WorkspaceClass
+from abc import ABC, abstractmethod
 
-class BoundaryConditioner(WorkspaceClass):
+class BoundaryConditioner(ABC):
     
     @abstractmethod
     def __init__(self, input):

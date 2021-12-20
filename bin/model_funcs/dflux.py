@@ -1,7 +1,7 @@
 # python implementation of eflux.f
 
 from operator import pos
-from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar
+from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar, max
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np

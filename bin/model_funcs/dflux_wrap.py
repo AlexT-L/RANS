@@ -4,7 +4,6 @@
 # append to path so we can access Field class
 import sys
 
-from WorkspaceClass import WorkspaceClass
 sys.path.append("../")
 
 # class dependencies

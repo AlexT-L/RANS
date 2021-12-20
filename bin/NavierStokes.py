@@ -1,3 +1,23 @@
+"""
+Example program.
+
+Description
+-----------
+Example program with proper comment styles.
+
+Libraries/Modules
+-----------------
+None.
+
+Notes
+-----
+Also none.
+
+Author(s)
+---------
+Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+
+"""
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace

@@ -1,8 +1,7 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from bin.Field import Field
-from bin.ws_class import WorkspaceClass
 
-class Model(WorkspaceClass):
+class Model(ABC):
     
     @abstractmethod
     def __init__(self, bcmodel, input):
