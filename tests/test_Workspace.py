@@ -16,7 +16,6 @@ Notes:
 """
 import sys
 sys.path.append('../../RANS/bin')
-from numpy.core.numeric import NaN
 import pytest
 from bin.Input import Input
 from bin.Field import Field
@@ -88,8 +87,7 @@ def test_vol():
     workspace = CellCenterWS(grid)
     vol = workspace.get_field('vol')
     # Asserts non zero, as np.any is true when any are non-zero
-    test_true = (vol != 0)
-    assert test_true
+    assert vol != 0
 
 def test_init_vars():
     """
@@ -159,9 +157,7 @@ def test_init_vars():
     assert min(vol[2:nx+2, 2:ny+2]) >= 0
     
     XC = workspace.get_field("xc")
-    test_true = (XC != 0)
-    test_true = True
-    assert test_true
+    assert XC != 0
 
 def test_has_dict():
     """
@@ -212,8 +208,7 @@ def test_has_dict():
 
     workspace.init_vars(className, vars)
 
-    dict_test = workspace.has_dict(model.className)
-    assert dict_test
+    assert workspace.has_dict(model.className)
 
 def test_finest():
     """
@@ -231,5 +226,4 @@ def test_finest():
     grid = AirfoilMap.from_file(grid_dim, gridInput)
     workspace = CellCenterWS(grid)
     # x = workspace.get_field('x')
-    finest_check = workspace.isFinest
-    assert finest_check
+    assert workspace.is_finest()

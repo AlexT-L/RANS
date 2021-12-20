@@ -1,6 +1,6 @@
 import numpy as np
 import bin.Field as binField
-from numpy.core.numeric import Infinity
+from numpy.core.numeric import Infinity, NaN
 
 class Field:
     """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
@@ -135,6 +135,9 @@ class Field:
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
+        if indx is int:
+            if indx >= len(self):
+                raise IndexError('End')
         
         if isscalar(self.vals):
             return self.vals
@@ -662,3 +665,4 @@ def mismatch_truediv(self, other):
     return result
 
 Infinity = Infinity
+NaN = NaN
