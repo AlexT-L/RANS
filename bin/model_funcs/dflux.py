@@ -7,6 +7,28 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def dflux(model, ws, state, dw, rfil):
+    """
+    calculate artificial dissipation fluxes on finest mesh
+    
+    Parameters
+    ----------
+    model:
+        instance of NavierStokes class
+
+    workspace:
+        instance of Workspace class with the relevant fields
+    
+    state:
+        instance of Field class containing the density, x-momentum, y-momentum, and energy
+
+    dw:
+        Field to store new residuals after completing fluxes
+
+    rfil:
+        relaxtion factor
+        
+    """
+
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters
