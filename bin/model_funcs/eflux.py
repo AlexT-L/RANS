@@ -19,6 +19,9 @@ def eflux(model, ws, state, dw):
     
     state:
         instance of Field class containing the density, x-momentum, y-momentum, and energy
+
+    dw:
+        Field to store new residuals after completing fluxes
         
     """
     
