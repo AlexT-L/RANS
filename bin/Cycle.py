@@ -2,32 +2,21 @@ from abc import ABC
 import numpy as np
 
 class Cycle(ABC):
-    """
-    Description
-    
-    Class describing multigrid cycle.
-    Contains information on cycle shape and depth.
+    """ Contains information about the shape and depth of multigrid cycle
 
-    Attributes
-    
-    pattern:
-        sequence of directions to perform a multigrid cycle
+    Constructor:
+        Args:
+            input (dictionary) : placeholder for potential input
 
-    levels:
-        depth of multigrid cycle
+        Returns:
+            A new Cycle object
 
-    Libraries/Modules
-    
-    numpy
-    abc
+        Notes:
+            Could be expanded to include default options such as "V" and "W" cycle
 
-    Notes
-    
-    Could be expanded to include standard options like "V" and "W" cycle
-
-    Author(s)
-    
-    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+    Attributes:
+        pattern (np.ndarray): array with sequence of directions for a cycle
+        levels (int):  depth of cycle
 
     """
     

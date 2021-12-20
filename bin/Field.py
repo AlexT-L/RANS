@@ -2,49 +2,27 @@ import numpy as np
 import bin.Field as binField
 
 class Field:
-    """
-    Field Class
+    """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
+        Can be indexed and operators are overloaded for basic math operations.
 
-    Description
-    
-    Field is generic object that acts like, and is implemented as, a numpy array. \n
-    Allows for storage of numeric values on a Grid. Contains ability to index for access and setting values \n
-    as well as overloaded operators for many math operations.
+    Constructor:
+        Args:
+            shape (tuple): n dimensional array of Field dimensions
 
-    Libraries/Modules
-    
-    numpy
-    Field
+        Returns:
+            A new Field object
 
-    Notes
-    
-    NA
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
 
-    Author(s)
-    
-    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+    Attributes:
+        vals (np.ndarray): numeric values of the Field
 
     """
 
 
     def __init__(self, shape, vals=None):
-        """Creates a new Field object
-            
-            Args:
-            
-            shape:
-                Tuple (8,8,4)
-            vals:
-                (Optional) array of values, or scalar.
-                If vals is a scalar, Field will set every value in the array to vals
-                Otherwise, Field ignores shape parameter and makes a new field with
-                the shape of vals
-
-            Returns
-            
-            :
-                A new Field object.
-            """
+       
         if is_field(vals):
             vals = vals.vals
 
