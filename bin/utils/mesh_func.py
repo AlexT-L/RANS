@@ -14,7 +14,7 @@ def mesh(self):
        
        Then a0,b0,xs and ys are mapped to an s0 array and this is used to creat the x 
        array which contains the vertices of the right hand side corners of all cells 
-       in physical space.
+       in the physical domain.
     """
     #vertices x[i,j,1]=x vertex and x[i,j,2]=y vertex in physical space
     x       =self.x
