@@ -8,7 +8,7 @@ import numpy as np
 
 # class BaldwinLomax():
 # @profile
-def turbulent_viscosity(params, dims):
+def turbulent_viscosity(model, ws, state):
     """ Baldwin-lomax turbulence model:  modtur = 2.
     Calculates turbulent viscosity at the cell faces.
     Averages to obtain cell center values fully vectorized routine.                                         *
@@ -26,54 +26,55 @@ def turbulent_viscosity(params, dims):
     Notes: 
         Adapted from subroutine turb2.f
     """
+    [nx, ny] = ws.field_size()
+    # necessary fields
+    def mget(varName):
+        return ws.get_field(varName, model.className)
+    ie = mget('ie') 
+    je = mget('je') 
+    gamma = mget('gamma')
+    rm = mget('rm')
+    re = mget('re')
+    ncyc = mget('ncyc')
+    rev = mget('rev')
 
-    # inputs
-    ie = params['ie'] 
-    je = params['je'] 
-    kvis = params['kvis']
-    gamma = params['gamma']
-    rm = params['rm']
-    re = params['re']
-    ncyc = params['ncyc']
-    rev = params['rev']
+    il = nx+1
+    jl = ny+1
+    dims = ws.get_dims()
+    itl = dims['itl']
+    itu = dims['itu']
+    w = state
+    x = mget('x')
+    p = mget('p')
 
-    il = dims['il']
-    jl = dims['jl']
-    itl = params['itl']
-    itu = params['itu']
-    x = params['x']
-    w = params['w']
-    p = params['p']
+    xtran = mget('xtran') 
+    vol = mget('vol') 
 
-    xtran = params['xtran'] 
-    vol = params['vol'] 
-
-    dim_var = 500
-    tauw = np.ones(dim_var)
-    yscal = np.ones(dim_var)
-    vor = np.ones((dim_var,dim_var))
-    avorm = np.ones(dim_var)
-    ravg = np.ones(dim_var)
-    amut = np.ones((dim_var,dim_var))
-    amuto = np.ones(dim_var)
-    amuti = np.ones(dim_var)
-    yvor = np.ones(dim_var)
-    yvorm = np.ones(dim_var)
-    utot = np.ones((dim_var,dim_var))
-    utotm = np.ones(dim_var)
-    utmin = np.ones(dim_var)
-    fkleb = np.ones(dim_var)
-    jedge = np.ones(dim_var)
-    utmax = np.ones(dim_var)
-    amu = np.ones((dim_var,dim_var))
-    u = np.ones((dim_var,dim_var))
-    v = np.ones((dim_var,dim_var))
-    t = np.ones((dim_var,dim_var))
-    fcros = np.ones(dim_var)
-    rinv = np.ones((dim_var,dim_var))
-    vola = np.ones((dim_var,dim_var))
-    ylen = np.ones((dim_var,dim_var))
-    ylenm = np.ones(dim_var)
+    tauw = np.ones(nx)
+    yscal = np.ones(nx)
+    vor = np.ones((nx,ny))
+    avorm = np.ones(nx)
+    ravg = np.ones(nx)
+    amut = np.ones((nx,ny))
+    amuto = np.ones(nx)
+    amuti = np.ones(nx)
+    yvor = np.ones(nx)
+    yvorm = np.ones(nx)
+    utot = np.ones((nx,ny))
+    utotm = np.ones(nx)
+    utmin = np.ones(nx)
+    fkleb = np.ones(nx)
+    jedge = np.ones(nx)
+    utmax = np.ones(nx)
+    amu = np.ones((nx,ny))
+    u = np.ones((nx,ny))
+    v = np.ones((nx,ny))
+    t = np.ones((nx,ny))
+    fcros = np.ones(nx)
+    rinv = np.ones((nx,ny))
+    vola = np.ones((nx,ny))
+    ylen = np.ones((nx,ny))
+    ylenm = np.ones(nx)
 
     j2        = je
     jlm       = jl- 1
@@ -345,35 +346,3 @@ def turbulent_viscosity(params, dims):
     return
 
 
-dim_var = 500
-params = {
-  "ie": dim_var,
-  "je": dim_var,
-  "kvis": -1,
-  "gamma": 1,
-  "rm": 1,
-  "re": 1,
-  "ncyc": dim_var,
-  "rev": np.ones((dim_var,dim_var)),
-  "itl": dim_var, 
-  "itu": dim_var,
-  "x": np.ones((dim_var,dim_var,3)),
-  "w": np.ones((dim_var,dim_var,3)),
-  "p": np.ones((dim_var,dim_var)),
-  "vol": np.ones((dim_var,dim_var)),
-  "xtran": 0,
-
-  
-}
-dims = {
-    "il": dim_var - 1, 
-    "jl": dim_var - 1,
-}
-
-import time
-t0 = time.time()
-turbulent_viscosity(params, dims)
-t1 = time.time()
-
-total = t1-t0
-print(total)

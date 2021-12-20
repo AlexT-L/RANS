@@ -13,8 +13,7 @@ import numpy as np
 from BaldwinLomax import turbulent_viscosity
 from BoundaryThickness import boundary_thickness
 
-# @profile
-def compute_viscosity(params, dims):
+def compute_viscosity(model, ws, state):
     """Computes viscosity coefficients. 
         First, computes the molecular viscosity. 
         Then continues for turbulent, Baldwin Lomax Model 
@@ -29,41 +28,41 @@ def compute_viscosity(params, dims):
     Notes:
         Adapted from subroutine viscf.f"""    
 
-    ie = params['ie'] # Mesh dimension
-    je = params['je'] # Mesh dimension
-    kvis = params['kvis']
-    gamma = params['gamma']
-    rm = params['rm']
-    re = params['re']
-    ncyc = params['ncyc']
+    [nx, ny] = ws.field_size()
+    il = nx+1
+    jl = ny+1
+    ie = nx+2
+    je = ny+2
 
-    il = dims['il']
-    jl = dims['jl']
-    itl = params['itl']
-    itu = params['itu']
-    w = params['w']
-    xtran = params['xtran'] 
-
-    scal = params['scal']
-    chord = params['chord']
-    t0 = params['t0']
-    rmu0 = params['rmu0']
-    p = params['p']
-    mode = params['mode']
-    kturb = params['kturb']
-    rev = params['rev']
-    x = params['x']
-    xc = params['xc']
-    ynot = params['ynot']
-    rlv = params['rlv']
-    dsti = params['dsti']
-    ib = params['ib']
+    kvis = model.model.params['kvis']
+    gamma = model.params['gamma']
+    rm = model.params['rm']
+    re = model.params['re']
+    ncyc = model.params['ncyc']
+    itl = model.params['itl']
+    itu = model.params['itu']
+    w = model.params['w']
+    xtran = model.params['xtran'] 
+    scal = model.params['scal']
+    chord = model.params['chord']
+    t0 = model.params['t0']
+    rmu0 = model.params['rmu0']
+    p = model.params['p']
+    mode = model.params['mode']
+    kturb = model.params['kturb']
+    rev = model.params['rev']
+    x = model.params['x']
+    xc = model.params['xc']
+    ynot = model.params['ynot']
+    rlv = model.params['rlv']
+    dsti = model.params['dsti']
+    ib = model.params['ib']
 
     # initializing, defined later
-    rev0 = np.ones((dim_var,dim_var))
-    astr = np.ones((dim_var,dim_var))
-    u = np.ones((dim_var,dim_var))
-    v = np.ones((dim_var,dim_var))
+    rev0 = np.ones((nx,ny))
+    astr = np.ones((nx,ny))
+    u = np.ones((nx,ny))
+    v = np.ones((nx,ny))
 
     # useful constants
     ckr       = .0256
@@ -205,46 +204,3 @@ def compute_viscosity(params, dims):
     rev[ie,0:je] = rev[il,0:je]
 
     return
-dim_var = 500
-params = {
-  "ie": dim_var,
-  "je": dim_var,
-  "kvis": 2,
-  "gamma": 1,
-  "rm": 1,
-  "re": 1,
-  "ncyc": dim_var,
-  "rev": np.random.rand(dim_var+1,dim_var+1),
-  "itl": dim_var-2, 
-  "itu": dim_var-2,
-  "x": np.random.rand(dim_var,dim_var,3),
-  "w": np.ones((dim_var,dim_var,3)),
-  "p": np.ones((dim_var,dim_var)),
-  "vol": np.ones((dim_var,dim_var)),
-  "xtran": 0,
-  # in Visc but was not needed in BL:
-  "scal": 1,
-  "chord": 1,
-  "t0": 1,
-  "rmu0": 1,
-  "p" : np.ones((dim_var,dim_var)),
-  "mode": 0,
-  "kturb": 1,
-  "xc": np.random.rand(dim_var,dim_var,3),
-  "ynot": np.ones(dim_var),
-  "rlv": np.ones((dim_var,dim_var)),
-  "dsti": np.ones(dim_var),
-  "ib": 1
-}
-dims = {
-    "il": dim_var - 1, 
-    "jl": dim_var - 1,
-    "ny": dim_var,
-}
-
-t0 = time.time()
-compute_viscosity(params,dims)
-t1 = time.time()
-
-total = t1-t0
-print(total)
