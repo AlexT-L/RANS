@@ -31,29 +31,15 @@ import numpy as np
 def bilinear4way(coarse, fine):
     # nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
     # #nx, ny = fine.shape() # This works
-    nx, ny, dim = 0, 0, 0
-    if(len(fine.shape()) == 3):
-        nx, ny, dim = fine.shape()
-    if(len(fine.shape()) == 2):
-        nx, ny = fine.shape()
-    if(len(fine.shape()) == 1):
-        nx = fine.shape()
-
-
-    for n in range(dim):
-        for i in range(2,nx,2):
-            for j in range(1,ny,2):
-                    fine[i  ,j,n] = .25*fine[i-1,j,n]  +.75*fine[i+1,j,n]
-                    fine[i-1,j,n] = .75*fine[i-1,j,n]  +.25*fine[i+1,j,n]
-        
-        for i in range(1,nx,2):
-            for j in range(2,ny,2):
-                    fine[i  ,j,n] = .25*fine[i,j-1,n]  +.75*fine[i,j+1,n]
-                    fine[i-1,j,n] = .75*fine[i,j-1,n]  +.25*fine[i,j+1,n]
+    nxf, nyf = fine.size()
+    nxc, nyc = coarse.size()
     
-    # Gigi did this, not sure if it's  needed, ignore for now
-    # if (mode.gt.0) then
-    #      do i=1,ie
-    #         dw(i,jb,n)  = 0.
-    #      end do
-    #   end if
+    for i in range(2,nxf,2):
+        for j in range(1,nyf,2):
+                fine[i  ,j] = .25*coarse[i-1,j]  +.75*coarse[i+1,j]
+                fine[i-1,j] = .75*coarse[i-1,j]  +.25*coarse[i+1,j]
+    
+    for i in range(1,nxf,2):
+        for j in range(2,nyf,2):
+                fine[i  ,j] = .25*coarse[i,j-1,n]  +.75*coarse[i,j+1]
+                fine[i-1,j] = .75*coarse[i,j-1,n]  +.25*coarse[i,j+1]

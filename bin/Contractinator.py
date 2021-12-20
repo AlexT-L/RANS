@@ -65,8 +65,7 @@ def sum4way(fine, coarse):
         for j in range(nyc):
             [i1, i2] = x[i:i+2]
             [j1, j2] = y[j:j+2]
-            values = fine[i1:i2, j1:j2]
-            coarse[i,j] = sum(values)
+            coarse[i,j] = sum(fine[i1:i2, j1:j2])
 
 
 

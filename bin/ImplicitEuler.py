@@ -53,7 +53,7 @@ class ImplicitEuler(Integrator):
         dt = get("dt")
 
         # store initial state
-        wn = copy(w)
+        wn[:] = copy(w)
 
         # subtract baseline residuals from forcing
         model.get_flux(workspace, w, Rw, 1)

@@ -68,3 +68,5 @@ def eflux(model, ws, state, dw):
 
     # now add everything up for j direction
     dw[ip:ie, jp:je, :] += fs[ip:ie, jp:je, :] - fs[ip:ie, 1:jl, :]
+
+    stop = 0
