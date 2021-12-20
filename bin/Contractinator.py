@@ -1,8 +1,19 @@
+"""
+Description
+-----------
+Contracts Field objects from finer meshes to coarser meshes.
+
+Libraries/Modules
+-----------------
+bin.Field \n
+numpy
+"""
+
 from bin.Field import Field, sum
 import numpy as np
 
 def simple(fine, coarse):
-    """Performs a simple contraction where every other value is deleted
+    """Performs a simple contraction where every other value is deleted.
     
     Parameters
     ----------
@@ -14,9 +25,6 @@ def simple(fine, coarse):
     if type(fine) is not Field or type(coarse) is not Field:
         raise TypeError('Fine or coarse field is not a field')
     
-    # #[x_fine, y_fine, dim] = fine.shape() # Don't need 'dim'. In fact, it causes errors
-    # # as fine.shape() only returns two items.
-    # x_fine, y_fine = fine.size()
     x_fine, y_fine, dim = 0, 0, 0
     if(len(fine.shape()) == 3):
         x_fine, y_fine, dim = fine.shape()
@@ -35,7 +43,7 @@ def simple(fine, coarse):
 
 
 def sum4way(fine, coarse):
-    """Contracts the Field by summing 4 values into 1
+    """Contracts the Field by summing 4 values into 1. Only setup for 2D Fields (?) so far.
     
     Parameters
     ----------
@@ -70,7 +78,7 @@ def sum4way(fine, coarse):
 
 
 def conservative4way(fine, coarse, weights=None):
-    """Contracts the Field by averaging 4 values into 1 with weighting terms
+    """Contracts the Field by averaging 4 values into 1 with weighting terms. Only set up for 2D Fields (?) so far.
     
     Parameters
     ----------
