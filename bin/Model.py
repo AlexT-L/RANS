@@ -3,25 +3,20 @@ from abc import ABC, abstractmethod
 from bin.Field import Infinity
 
 class Model(ABC):
-    """
-    Model Class
+    """Abstract base class for a physics model. never to be instantiated.
 
-    Description
-    
-    A generic physics model for performing a multigrid cycle. 
+    Constructor:
+        Args:
+            
 
-    Libraries/Modules
-    
-    Field
+        Returns:
+            A new Model object
 
-    Notes
-    
-    NA
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
 
-    Author(s)
-    
-    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
+    Attributes:
+       
     """
     @abstractmethod
     def __init__(self, bcmodel, input):

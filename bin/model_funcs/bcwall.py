@@ -1,7 +1,16 @@
 from bin.Field import norm, pos_diff
 
 def wall(bcmodel, model, workspace, state):
-
+    """
+    set values at the wall
+    
+    Args:
+        bcmodel (NS_Arifoil): boundary condition object
+        model (NavierStokes): physics model
+        workspace (Workspace): the relevant fields
+        state (Field): containing the density, x-momentum, y-momentum, and energy
+        
+    """
     # retrieve variables
     w = state
     p = workspace.get_field('p', model.className)
