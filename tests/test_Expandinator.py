@@ -13,10 +13,9 @@ Libraries/Modules
 Notes
 
 """
-from numpy.core.numeric import array_equal
 import pytest
 import numpy as np
-from bin.Field import Field
+from bin.Field import Field, array_equal
 import bin.Expandinator as Exp
 
 def test_bilinear4way():
@@ -65,7 +64,7 @@ def test_bilinear4way():
     print(testfine_field)
     print(testoutput_field)
 
-#    assert array_equal(testfine_field, testoutput_field)
+    assert array_equal(testfine_field, testoutput_field)
 
     #dims = (2,2,2)
     #values = np.array([[[2,2],[2,2]],[[2,2],[2,2]]])
