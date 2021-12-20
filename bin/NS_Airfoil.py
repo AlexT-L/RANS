@@ -80,8 +80,8 @@ class NS_Airfoil(BoundaryConditioner):
             current state of the system (density, momentum, energy)
     
         """
-        self.__check_vars(workspace)
-        implementation.update_physics(self, model, workspace, state)
+        ### This method should call Baldwin Lomax ###
+        # turbulent_viscosity(params, dims)
     
     # update stability
     def update_stability(self, model, workspace, state):
