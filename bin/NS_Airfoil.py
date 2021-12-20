@@ -104,28 +104,6 @@ class NS_Airfoil(BoundaryConditioner):
         self.__check_vars(workspace)
         stability(self, model, workspace, state)
     
-    # apply far-field boundary conditions
-    def bc_far(self, model, workspace, state):
-        """
-        apply boundary condition in the far field
-        
-        Args:
-        
-        model:
-            instance of NavierStokes model class
-
-        workspace:
-            instance of workspace class with the relevant fields
-
-        state:
-            current state of the system (density, momentum, energy)
-    
-        """
-        self.__check_vars(workspace)
-        far_field(self, model, workspace, state)
-        # implementation.bc_far(self, model, workspace, state)
-
-
     # apply wall boundary conditions
     def bc_wall(self, model, workspace, state):
         """
@@ -148,6 +126,26 @@ class NS_Airfoil(BoundaryConditioner):
         wall(self, model, workspace, state)
         # implementation.bc_wall(self, model, workspace, state)
 
+    # apply far-field boundary conditions
+    def bc_far(self, model, workspace, state):
+        """
+        apply boundary condition in the far field
+        
+        Args:
+        
+        model:
+            instance of NavierStokes model class
+
+        workspace:
+            instance of workspace class with the relevant fields
+
+        state:
+            current state of the system (density, momentum, energy)
+    
+        """
+        self.__check_vars(workspace)
+        far_field(self, model, workspace, state)
+        # implementation.bc_far(self, model, workspace, state)
 
     # apply halo boundary conditions
     def halo(self, model, workspace, state):

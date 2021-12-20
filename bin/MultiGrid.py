@@ -10,31 +10,36 @@ from bin.Field import copy, max
 
 
 class MultiGrid:
+    """ Uses mulitple coarser grids to apply corrections to the values on the current grid.
+        Correcting the soluion this way allows for much faster convergence to be achieved
+        than if the solution were only updated with the finer grid
 
+    Constructor:
+        Args:
+            workspace (Workspace): 
+                The workspace corresponding to the grid on which the solution will be calculated
+            model (Model):
+                The physics model to be used
+            integrator (Integrator):
+                The integration scheme to be used
+            input (Dict):
+                Dictionary of parameters containing:
+                    ftim: the interval at which the stability will be updated
+                    fcoll: the relaxation factor on the residuals transferred from the finer mesh
+
+        Returns:
+            A new Input object containing five dicts - dims, solv_param, flo_param, geo_param and in_var 
+
+        Notes:
+            Check top of Input.py file to see the contents of each of the five dictionanries 
+    """
+
+   
     # Constructor
     def __init__(self, workspace, model, integrator, input):
-        """Constructor.
-        
-        Args:
-        
-        workspace:
-            The Workspace object
-        model:
-            A Model object
-        integrator:
-            An Integrator object
-        input:
-            Dictionary of parameter values
-
-        Returns
-        
-        :
-            A new Multigrid object.
-        """
         # Args:
         self.stabilityUpdateFrequency = input['ftim']
         self.wr_relax = float(input['fcoll'])
-        self.wr_relax = 0.0
 
         # counter variable
         self.num_cycles = 0
