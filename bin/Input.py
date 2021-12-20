@@ -112,6 +112,33 @@ import pandas as pd
 #               yn        =y-coordinate of airfoil geometry in physical space
 
 class Input:
+    """
+    Description
+    -----------
+    Reads in .data file and unpacks the parameter into
+    dictionaries.
+
+    Attributes
+    -----------------
+    dim_p: 
+        List of paramters to get from input file to dims dict.
+    solv_p: 
+        List of paramters to get from input file to solv_param dict.
+    flo_p: 
+        List of paramters to get from input file to flo_param dict.
+    geo_p: 
+        List of paramters to get from input file to geo_param dict.
+    in_v: 
+        List of paramters to get from input file to in_var dict.
+
+    Libraries/Modules
+    -----------------
+    numpy
+    pandas
+
+    Notes
+    -----
+    Check top of Input.py file to see the contents of each of the five dictionanries."""
 
     dim_p=[["nx","ny"]]
     solv_p=[["fcyc","fprnt","fout","ftim","gprnt","hprnt","hmesh"],
@@ -127,6 +154,25 @@ class Input:
     
     # Constructor
     def __init__(self, filename):
+        """Constructor
+        
+        Parameters
+        ----------
+        filename:
+            Input .data file with input params and airfoil geometry
+
+        Returns
+        -------
+        A new Input object containing five dicts:
+            1. dims
+            2. solv_param
+            3. flo_param
+            4. geo_param
+            5. in_var
+        Notes
+        -----
+        Check top of Input.py file to see the contents of each of the five dictionanries 
+        """
         #Reading in file
         self.max_cols=0
         self.df=pd.DataFrame()
@@ -199,6 +245,13 @@ class Input:
 
     #Get max number of columns in a row
     def max_no_cols(self,file):
+        """Finds max number of columns in a row in the input file.
+        
+        Parameters
+        ----------
+        file:
+            .data input file
+        """
         #Loop the data lines
         with open(file, 'r') as temp_f:
             # get No of columns in each line
@@ -209,6 +262,15 @@ class Input:
     
     # Read .data file
     def read(self,file,max_cols):
+        """Reads in .data file using pandas.
+        
+        Parameters
+        ----------
+        file:
+            .data input file
+        max_cols:
+            maximum number of colums of all the rows
+        """
         dfs = pd.read_csv(file, header=None, delimiter="\s+|;|:", names=range(max_cols),engine="python")
         #convert string to float
         self.df=dfs.apply(pd.to_numeric, errors='coerce')
@@ -217,6 +279,19 @@ class Input:
 
     # Update param dictionaries
     def update_dict(self,df,dict,params,strt_row):
+        """Slices through pandas dataframe to unpack input params into the a dict.
+        
+        Parameters
+        ----------
+        df:
+            pandas data frame of .data input file
+        dict:
+            dictionary to assing values to
+        params:
+            list of params to assign to dictionary
+        str_row:
+            row of df to start unpacking from 
+        """
         no_nan=np.array(df.count(axis=1))
         for i in range(len(params)):
             row=strt_row +2*i
@@ -230,6 +305,19 @@ class Input:
 
     # Update aerfoil geometry
     def update_geom(self,df,dict,params,strt_row):
+        """Slices through pandas dataframe to unpack airfoil geometry.
+        
+        Parameters
+        ----------
+        df:
+            pandas data frame of .data input file
+        dict:
+            dictionary to assing values to
+        params:
+            list of params to assign to dictionary
+        str_row:
+            row of df to start unpacking from 
+        """
         no_nan_r=np.array(df.count(axis=1))
         no_nan_c=np.array(df.count())
         for i in range(len(params)):
@@ -245,6 +333,16 @@ class Input:
         return
 
     def add_dicts(self,dict1,dict2):
+        """Merge two dicts into on dict .
+        
+        Parameters
+        ----------
+        dict1:
+            first dictionary to merge
+        dict2:
+            second dictionary to merge 
+         
+        """
         sum_dict= {**dict1, **dict2}
         return sum_dict
      
