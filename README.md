@@ -18,3 +18,8 @@ The current integrator used is ImplicitEuler.py. If you implement the constructo
 ## Class Diagram
 Link to online source [here](https://lucid.app/lucidchart/3740e36c-b01f-494a-b61c-b08bc9aa8092/edit?invitationId=inv_f79f431d-b5df-4b4d-bf69-b01c7a08117e)
 
+
+## Documentation
+To generate documentation, `cd` into the `docs/` directory where there should be a `conf.py` file. (Install Sphinx if it is not already installed.) From there run the command `make html` to build html documentation or `make latexpdf` for latex files (you need Latex installed). 
+
+If you need to build the documentation from absolute scratch (i.e. there is no `docs/` directory), run the command `sphinx-quickstart docs` in the `RANS/` directory. Then `cd docs/` and open `conf.py`. About line 33, change `extensions = []` to `extensions = ['autoapi.extension', 'sphinx.ext.napoleon']` and add a line below that with `autoapi_dirs = ['../bin', '../tests']`. Save your changes and then you can `make html` and `make latexpdf`.
