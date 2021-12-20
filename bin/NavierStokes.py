@@ -1,34 +1,72 @@
-"""
-Example program.
-
-Description
------------
-Example program with proper comment styles.
-
-Libraries/Modules
------------------
-None.
-
-Notes
------
-Also none.
-
-Author(s)
----------
-Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
-"""
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import Field, max, min, isfinite, pos_diff
-from bin.Field import copy
+from bin.Field import Field, max, min, isfinite, pos_diff, copy
 from bin.model_funcs.eflux import eflux
 from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
 class NavierStokes(Model):
+    """
+    Description
+    -----------
+    Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
+    for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy. 
+    Based on a finite volume formulation with ability to compute fluxes, update scheme stable timestep, 
+    and update eddy viscocities. Contains terms for convective, artificial dissipative, and viscous fluxes. 
+
+
+    Attributes:
+    ----------------
+    
+    className:
+        name of class for acessing it's dictionaries in the workspace
+    
+    BCmodel:
+        boundary condition model, instance of BoundaryConditioner
+    
+    padding:
+        outter padding for boundary condition implementation
+    
+    params:
+        physics parameters from the input
+    
+    dimensions:
+        number of states (4)
+
+    cfl_fine:
+        courant number on fine mesh
+
+    cfl_coarse:
+        courant number on coarse mesh
+    
+    cfl_lim:
+        upper limit on courant number
+
+    cfl:
+        minimum cfl between fine and coarse grids
+
+
+    Libraries/Modules
+    -----------------
+    numpy
+    Model
+    Workspace
+    Field
+    eflux
+    dflux
+    dfluxc
+
+    Notes
+    -----
+    Also none.
+
+    Author(s)
+    ---------
+    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+
+    """
     
     def __init__(self, bcmodel, input):
         """Constructor
@@ -84,8 +122,6 @@ class NavierStokes(Model):
 
 
     # flux calculations
-    # from .model_funcs import eflux_wrap,nsflux_wrap, dflux_wrap, dfluxc_wrap
-
     def get_flux(self, workspace, state, output, update_factor=1):
         """Calculates the spatial flux given the current state.
         
@@ -129,11 +165,6 @@ class NavierStokes(Model):
             dflux(self, workspace, w, dw, rfil)
         else:
             dfluxc(self, workspace, w, dw, rfil)
-
-        # eflux_wrap.eflux(self, workspace, w, dw)
-        # dflux_wrap.dflux(self, workspace, w, dw, fw, rfil)
-        # if self.params.kvis > 0 and False:
-            # nsflux_wrap.nsflux(self, workspace, w, dw, vw, rfil)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -194,7 +225,7 @@ class NavierStokes(Model):
         self.BCmodel.update_physics(self, workspace, state)
 
 
-    # calls 'step.f' to update stability conditions
+    # calls python implementation 'step.f' to update stability conditions
     def update_stability(self, workspace, state):
         """Updates the stability parameters given the current state.
         
@@ -262,10 +293,7 @@ class NavierStokes(Model):
 
         # perform copy operation
         paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
-        # for i in range(0, leni):
-        #     for j in range(0, lenj):
-        #         paddedField[i+pad,j+pad] = field[i,j]
-
+        
     # extract data from a padded field
     def __copy_out(self, paddedField, field):
         # get field size
@@ -274,10 +302,7 @@ class NavierStokes(Model):
 
         # perform copy operation
         field[:] = copy(paddedField[pad:nx+pad, pad:ny+pad])
-        # for i in range(0, nx):
-        #     for j in range(0, ny):
-        #         field[i,j] = paddedField[i+pad,j+pad]
-
+        
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
         if not workspace.has_dict(self.className):

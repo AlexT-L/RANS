@@ -1,123 +1,192 @@
 from numpy.core.defchararray import mod
 from bin.BoundaryConditioner import BoundaryConditioner
-import bin.model_funcs.bc_transfer as tf
-from bin.model_funcs.bc_metric import halo_geom
-from bin.model_funcs.bcwall import wall
+import bin.utils.NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
+from bin.model_funcs.bcwall import wall
 from bin.model_funcs.stability_fast import stability
 
 class NS_Airfoil(BoundaryConditioner):
+    """
+    Description
+    -----------
+    Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
+    A halo is formed around the mesh containing ghost nodes. Two types of boundary conditions
+    are implemented: wall boundaries and far field boundaries
+
+    Attributes
+    -----------------
+    class_name: 
+        name of class for accessing Fields in the workspace
+
+    padding: 
+        number of ghost nodes on boundary
+
+    local_timestepping: 
+        parameter for use in calculating stable time step
+        
+    bc: 
+        some parameter
+
+    Libraries/Modules
+    -----------------
+    numpy
+    BoundaryConditioner
+    NS_Airfoil_imp
+    bcfar
+    bcwall
+    halo
+    stability
+
+    Notes
+    -----
+    Based on bcfar.f and bcwall.f """
     
     
     def __init__(self, input):
-        """Initializes NS_Airfoil object.
+        """Constructor
         
         Parameters
         ----------
         input:
-            Dictionary of input parameters that must contain values for:
-                - vt
-                - bc
+            dictionary of values containing vt and bc
+
+        Returns
+        -------
+        A new NS_Arifoil object 
+
         """
         self.className = "NS_Airfoil"
         self.padding = 2
         self.local_timestepping = not bool(input['vt'])
         self.bc = input['bc']
 
-    # update ev and lv
+    # Methods for applying boundary conditions
+
+    # update rev and rlv
     def update_physics(self, model, workspace, state):
-        """Updates laminar viscosity and eddy viscosity
+        """
+        updates the turbulent viscocity for calculation of boundary conditions
         
         Parameters
         ----------
         model:
-            The physics model
+            instance of NavierStokes model class
+
         workspace:
-            The Workspace
+            instance of workspace class with the relevant fields
+
         state:
-            A field containing the current state
+            current state of the system (density, momentum, energy)
+    
         """
         self.__check_vars(workspace)
-        ### This method should call Baldwin Lomax ###
-        # turbulent_viscosity(params, dims)
+        implementation.update_physics(self, model, workspace, state)
     
     # update stability
     def update_stability(self, model, workspace, state):
-        """Updates local time step bounds to ensure stability
+        """
+        updates stability parameters for time step calculations
         
         Parameters
         ----------
         model:
-            The physics model
+            instance of NavierStokes model class
+
         workspace:
-            The Workspace
+            instance of workspace class with the relevant fields
+
         state:
-            A field containing the current state
+            current state of the system (density, momentum, energy)
+    
         """
         self.__check_vars(workspace)
         stability(self, model, workspace, state)
     
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
-        """Sets the far-field boundary conditions
+        """
+        apply boundary condition in the far field
         
         Parameters
         ----------
         model:
-            The physics model
+            instance of NavierStokes model class
+
         workspace:
-            The Workspace
+            instance of workspace class with the relevant fields
+
         state:
-            A field containing the current state
+            current state of the system (density, momentum, energy)
+    
         """
         self.__check_vars(workspace)
         far_field(self, model, workspace, state)
+        # implementation.bc_far(self, model, workspace, state)
+
 
     # apply wall boundary conditions
     def bc_wall(self, model, workspace, state):
-        """Sets the wall boundary conditions
+        """
+        apply boundary condition along the wall
         
-        Parameters
-        ----------
-        model:
-            The physics model
-        workspace:
-            The Workspace
-        state:
-            A field containing the current state
+         Parameters
+         ----------
+         model:
+            instance of NavierStokes model class
+
+         workspace:
+            instance of workspace class with the relevant fields
+
+         state:
+            current state of the system (density, momentum, energy)
+        
+        
         """
         self.__check_vars(workspace)
         wall(self, model, workspace, state)
+        # implementation.bc_wall(self, model, workspace, state)
+
 
     # apply halo boundary conditions
     def halo(self, model, workspace, state):
-        """Sets the values in the outer halo
+        """
+        set the values in the ghost cells
         
-        Parameters
-        ----------
-        model:
-            The physics model
-        workspace:
-            The Workspace
-        state:
-            A field containing the current state
+         Parameters
+         ----------
+         model:
+            instance of NavierStokes model class
+
+         workspace:
+            instance of workspace class with the relevant fields
+
+         state:
+            current state of the system (density, momentum, energy)
+        
+        
         """
         self.__check_vars(workspace)
         halo(self, model, workspace, state)
+        # implementation.halo(self, model, workspace, state)
+
 
     # apply all boundary conditions
     def bc_all(self, model, workspace, state):
-        """Sets all boundary conditions (wall, far-field, outer halo)
+        """
+        do wall boundaries, far field and set halo values at once
         
-        Parameters
-        ----------
-        model:
-            The physics model
-        workspace:
-            The Workspace
-        state:
-            A field containing the current state
+         Parameters
+         ----------
+         model:
+            instance of NavierStokes model class
+
+         workspace:
+            instance of workspace class with the relevant fields
+
+         state:
+            current state of the system (density, momentum, energy)
+        
         """
         self.__check_vars(workspace)
         self.bc_wall(model, workspace, state)
@@ -126,57 +195,50 @@ class NS_Airfoil(BoundaryConditioner):
 
     # transfer data between workspaces
     def transfer_down(self, model, workspace1, workspace2):
-        """returns the porosity in the i diretion
-        
-        Parameters
-        ----------
-        model:
-            The physics model
-        workspace1:
-            The Workspace corresponding to the finer grid
-        workspace2:
-            The Workspace corresponding to the coarser grid
-        """
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
-        tf.transfer_down(self, model, workspace1, workspace2)
+        implementation.transfer_down(self, model, workspace1, workspace2)
 
     # Get porosity
     def get_pori(self, workspace):
-        """returns the porosity in the i diretion
+        """
+        grab porosity in i direction from the workspace
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace
+         Parameters
+         ----------
+         workspace:
+            instance of workspace class with the relevant field
+        
         """
         self.__check_vars(workspace)
         return workspace.get_field("pori", self.className)
 
     def get_porj(self, workspace):
-        """returns the porosity in the j diretion
+        """
+        grab porosity in j direction from the workspace
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace
+         Parameters
+         ----------
+         workspace:
+            instance of workspace class with the relevant field
+        
         """
         self.__check_vars(workspace)
-        return workspace.get_field("porj", self.className)
+        return workspace.get_field("pori", self.className)
 
     # set geometry values in the halo
     def halo_geom(self, model, workspace):
-        """Sets geometry values in the halo
+        """
+        grab porosity in i direction from the workspace
         
-        Parameters
-        ----------
-        model:
-            The physics model
-        workspace:
-            The Workspace
+         Parameters
+         ----------
+         workspace:
+            instance of workspace class with the relevant field
+        
         """
         self.__check_vars(workspace)
-        halo_geom(self, model, workspace)
+        implementation.halo_geom(self, model, workspace)
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -188,6 +250,8 @@ class NS_Airfoil(BoundaryConditioner):
         [nx, ny] = workspace.field_size()
         p = self.padding
         field_size = [p+nx+p, p+ny+p]
+        grid_size = workspace.grid_size()
+        className = self.className
 
         vars = dict()
 
@@ -203,24 +267,10 @@ class NS_Airfoil(BoundaryConditioner):
         vars["cp"] = [p+nx+p]
         vars["cf"] = [p+nx+p]
 
-        workspace.init_vars(self.className, vars)
+        workspace.init_vars(className, vars)
 
         self.__set_porosity(workspace)
 
     # set the porosity values
     def __set_porosity(self, workspace):
-        # get relevant geometry parameters
-        dims = workspace.get_dims()
-        itl = dims['itl']
-        itu = dims['itu']
-
-        # get porosity
-        pori = workspace.get_field("pori", self.className)
-        porj = workspace.get_field("porj", self.className)
-
-        # set the porosity to unity
-        pori[:] = 1.0
-        porj[:] = 1.0
-
-        # flag the wall at the j boundaries
-        porj[itl:itu,0]   = 0.0
+        implementation.set_porosity(self, workspace)

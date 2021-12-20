@@ -35,7 +35,7 @@ def test_simple():
     :
         Nothing, but asserts if 'simple' deletes items from the Field as it should.
     """
-
+    # test 2D zero field
     input_dims = (4,4)
     input_zeros = np.zeros(input_dims)
     input_field = Field(input_dims, input_zeros)
@@ -48,7 +48,21 @@ def test_simple():
     Ctr.simple(input_field, coarse_field)
     assert array_equal(coarse_field, output_field)
 
+    # test 3D zero field
+    
+    input_dims = (4,4,4)
+    input_zeros = np.zeros(input_dims)
+    input_field = Field(input_dims, input_zeros)
+    coarse_dims = (2,2,4)
+    coarse_field = Field(coarse_dims)
+    output_dims = (2,2,4)
+    output_zeros = np.zeros(output_dims)
+    output_field = Field(output_dims, output_zeros)
 
+    Ctr.simple(input_field, coarse_field)
+    assert array_equal(coarse_field, output_field)
+
+    # test 2D ones field
     input_dims = (4,4)
     input_values = np.array([[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]])
     input_field = Field(input_dims, input_values)
@@ -61,7 +75,7 @@ def test_simple():
     Ctr.simple(input_field, coarse_field)
     assert array_equal(coarse_field, output_field)
 
-
+    # test 2D one-two field
     input_dims = (4,4)
     input_values = np.array([[1,2,1,2],[1,2,1,2],[1,2,1,2],[1,2,1,2]])
     input_field = Field(input_dims, input_values)
@@ -74,7 +88,7 @@ def test_simple():
     Ctr.simple(input_field, coarse_field)
     assert array_equal(coarse_field, output_field)
 
-
+    # test 2D field
     input_dims = (4,4)
     input_values = np.array([[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4]])
     input_field = Field(input_dims, input_values)
@@ -100,7 +114,7 @@ def test_sum4way():
     :
         Nothing, but asserts if 'sum4way' properly sums items from the Field as it should.
     """
-
+    # test 2D array
     input_dims = (4,4)
     input_values = np.array([[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4]])
     input_field = Field(input_dims, input_values)
@@ -126,7 +140,7 @@ def test_conservative4way():
     :
         Nothing, but asserts if 'conservative4way' properly averages items from the Field as it should.
     """
-
+    # test 2D array
     input_dims = (4,4)
     input_values = np.array([[1,3,1,3],[1,3,1,3],[1,3,1,3],[1,3,1,3]])
     input_field = Field(input_dims, input_values)

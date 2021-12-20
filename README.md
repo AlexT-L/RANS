@@ -1,8 +1,8 @@
 # RANS
-RANS Modeling of Airfoil
+RANS Modeling of Airfoil. An overview of our project is given in the research project pdf and the code is based off of Gigi's thesis. 
 
 ## How to Run
-The main file is the flo103.py. This can be run directly without any additional inputs. 
+The main file is the flo103.py. This can be run directly without any additional inputs. There are 2 sample airfoils in the main repository and they can be changed directly by changing the name in flo103.py. 
 
 ## How to Make Changes to Model
 ### Input
