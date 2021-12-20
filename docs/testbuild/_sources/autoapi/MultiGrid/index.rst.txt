@@ -1,0 +1,68 @@
+:py:mod:`MultiGrid`
+===================
+
+.. py:module:: MultiGrid
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   MultiGrid.MultiGrid
+
+
+
+
+.. py:class:: MultiGrid(workspace, model, integrator, input)
+
+   Uses mulitple coarser grids to apply corrections to the values on the current grid.
+       Correcting the soluion this way allows for much faster convergence to be achieved
+       than if the solution were only updated with the finer grid
+
+   Constructor:
+       Args:
+           workspace (Workspace):
+               The workspace corresponding to the grid on which the solution will be calculated
+           model (Model):
+               The physics model to be used
+           integrator (Integrator):
+               The integration scheme to be used
+           input (Dict):
+               Dictionary of parameters containing:
+                   ftim: the interval at which the stability will be updated
+                   fcoll: the relaxation factor on the residuals transferred from the finer mesh
+
+       Returns:
+           A new Input object containing five dicts - dims, solv_param, flo_param, geo_param and in_var
+
+       Notes:
+           Check top of Input.py file to see the contents of each of the five dictionanries
+
+   .. py:method:: performCycle(self)
+
+      Performs one multi-grid cycle and calculates new state.
+
+
+
+
+   .. py:method:: residuals(self, output)
+
+      Copies the residual values to the output Field.
+
+      :param output: Field that will store the residual values
+      :type output: Field
+
+
+   .. py:method:: solution(self, output)
+
+      Copies the state values to the output Field.
+
+      :param output: Field that will store the values
+      :type output: Field
+
+
+

@@ -1,0 +1,33 @@
+:py:mod:`bcfar`
+===============
+
+.. py:module:: bcfar
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   bcfar.far_field
+
+
+
+.. py:function:: far_field(bcmodel, model, workspace, state)
+
+   set values in the far field
+
+   :param bcmodel: boundary condition object
+   :type bcmodel: NS_Arifoil
+   :param model: physics model
+   :type model: NavierStokes
+   :param workspace: the relevant fields
+   :type workspace: Workspace
+   :param state: containing the density, x-momentum, y-momentum, and energy
+   :type state: Field
+
+

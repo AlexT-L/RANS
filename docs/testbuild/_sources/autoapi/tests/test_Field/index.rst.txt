@@ -1,0 +1,155 @@
+:py:mod:`tests.test_Field`
+==========================
+
+.. py:module:: tests.test_Field
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Tests the Field object to see if it works as expected
+
+   Libraries/Modules
+
+   -pytest
+
+   -Field
+
+   Notes
+
+   Runs the following tests:
+
+   1. Checks that a 2D Field can be created
+
+   2. Checks that a 3D field can be created
+
+   3. Tests that we can set a whole field
+
+   4. Tests that we can set an individual elements
+
+   5. Tests + operation
+
+   6. Tests - operation
+
+   7. Tests * operation
+
+   8. Tests / operation
+
+
+   Author(s)
+
+   Andy Rothstein
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Field.rng
+   tests.test_Field.test_constructor
+   tests.test_Field.test_isfinite
+   tests.test_Field.test_constructor_1d
+   tests.test_Field.test_constructor_2d
+   tests.test_Field.test_constructor_3d
+   tests.test_Field.test_constructor_wrap_2arg
+   tests.test_Field.test_constructor_wrap_1arg
+   tests.test_Field.test_set_item
+   tests.test_Field.test_add_func
+   tests.test_Field.test_difference_func
+   tests.test_Field.test_product_func
+   tests.test_Field.test_quotient_func
+   tests.test_Field.test_dimensional_mean
+   tests.test_Field.test_copy
+   tests.test_Field.test_product_2d_3d
+
+
+
+.. py:function:: rng(dim)
+
+
+.. py:function:: test_constructor()
+
+   Asserts that we can create a 8x8 field
+
+
+
+.. py:function:: test_isfinite()
+
+   Asserts that we can create a 8x8 field
+
+
+
+.. py:function:: test_constructor_1d()
+
+   Asserts that we can create a 8x1 field
+
+
+
+.. py:function:: test_constructor_2d()
+
+   Asserts that we can create a 8x8 field
+
+
+
+.. py:function:: test_constructor_3d()
+
+   Asserts we can 8x8 field with state dimension of 4
+
+
+.. py:function:: test_constructor_wrap_2arg()
+
+   Asserts we wrap a numpy array with state dimension of 4
+
+
+.. py:function:: test_constructor_wrap_1arg()
+
+   Asserts we wrap a numpy array with state dimension of 4
+
+
+.. py:function:: test_set_item()
+
+   Asserts that we can change a single element in a field
+
+
+.. py:function:: test_add_func()
+
+   Tests that the add function works out
+
+
+.. py:function:: test_difference_func()
+
+   Tests that the difference function works out
+
+
+.. py:function:: test_product_func()
+
+   Tests that the product function works out
+
+
+.. py:function:: test_quotient_func()
+
+   Tests that the add function works out
+
+
+.. py:function:: test_dimensional_mean()
+
+   Tests that the add function works out
+
+
+.. py:function:: test_copy()
+
+   Tests we change the values of an array using the copy() method
+
+
+.. py:function:: test_product_2d_3d()
+
+   Tests we can multiply (n,m,p) field by (n,m) field
+
+

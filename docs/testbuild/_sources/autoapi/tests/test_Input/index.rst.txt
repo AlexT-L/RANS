@@ -1,0 +1,121 @@
+:py:mod:`tests.test_Input`
+==========================
+
+.. py:module:: tests.test_Input
+
+.. autoapi-nested-parse::
+
+   Tests the Input object to make sure all inputs as as expected
+
+   Libraries/Modules:
+       pytest
+
+       Input
+
+   .. rubric:: Notes
+
+   Runs the following tests:
+
+   1. Checks that the input airfoil geometry is a closed curve
+
+   2. Checks that the airfoil geomtry is of the right length
+
+   3. Check that all the required dims values are being read into the dims dictionary
+
+   4. Check that all the required solv_param values are being read into the solv_param dictionary
+
+   5. Check that all the required flo_param values are being read into the flo_param dictionary
+
+   6. Check that all the required geo_param values are being read into the geo_param dictionary
+
+   Author(s)
+
+   Vedin Dewan
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Input.test_geometry_closed
+   tests.test_Input.test_geom_length
+   tests.test_Input.test_dims
+   tests.test_Input.test_solv_param
+   tests.test_Input.test_flo_param
+   tests.test_Input.test_geo_param
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Input.input
+   tests.test_Input.xn
+   tests.test_Input.yn
+
+
+.. py:data:: input
+   
+
+   
+
+.. py:data:: xn
+   
+
+   
+
+.. py:data:: yn
+   
+
+   
+
+.. py:function:: test_geometry_closed()
+
+   Asserts that geometry is a closed curve
+
+
+
+.. py:function:: test_geom_length()
+
+   Asserts that the number of points on the geometry
+   is as expected
+
+
+
+.. py:function:: test_dims()
+
+   Asserts that the all the required values in the
+   dims dictionary are being read in
+
+
+
+.. py:function:: test_solv_param()
+
+   Asserts that the all the required values in the
+   solv_param dictionary are being read in
+
+
+
+.. py:function:: test_flo_param()
+
+   Asserts that the all the required values in the
+   flo_param dictionary are being read in
+
+
+
+.. py:function:: test_geo_param()
+
+   Asserts that the all the required values in the
+   geo_param dictionary are being read in
+
+
+

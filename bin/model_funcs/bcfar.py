@@ -1,7 +1,16 @@
 
 
 def far_field(bcmodel, model, workspace, state):
-
+    """
+    set values in the far field
+    
+    Args:
+        bcmodel (NS_Arifoil): boundary condition object
+        model (NavierStokes): physics model
+        workspace (Workspace): the relevant fields
+        state (Field): containing the density, x-momentum, y-momentum, and energy
+        
+    """
     # retrieve variables
     w = state
     p = workspace.get_field('p', model.className)

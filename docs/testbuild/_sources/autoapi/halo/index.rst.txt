@@ -1,0 +1,33 @@
+:py:mod:`halo`
+==============
+
+.. py:module:: halo
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   halo.halo
+
+
+
+.. py:function:: halo(bcmodel, model, workspace, state)
+
+   assign values in the ghost cells
+
+   :param bcmodel: boundary condition object
+   :type bcmodel: NS_Arifoil
+   :param model: physics model
+   :type model: NavierStokes
+   :param workspace: the relevant fields
+   :type workspace: Workspace
+   :param state: containing the density, x-momentum, y-momentum, and energy
+   :type state: Field
+
+

@@ -1,6 +1,11 @@
+""" This module contains an abstract base class Grid"""
 from abc import ABC, abstractmethod
 
 class BoundaryConditioner(ABC):
+    """ Abstract base class, never directly instantiated
+
+        NS_Airfoil is a child class of this ABC
+    """
     
     @abstractmethod
     def __init__(self, input):
@@ -89,4 +94,13 @@ class BoundaryConditioner(ABC):
     # Transfer information between workspaces
     @abstractmethod
     def transfer_down(self, model, workspace1, workspace2):
+        """
+        transfer boundary information between workspaces
+        
+         Args:
+            model: instance of class inheriting from Model
+            workspace: instance of Workspace class (or child)
+            state (Field): current state of the system (density, momentum, energy)
+        
+        """
         pass

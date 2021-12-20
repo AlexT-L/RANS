@@ -1,0 +1,182 @@
+:py:mod:`NavierStokes`
+======================
+
+.. py:module:: NavierStokes
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   NavierStokes.NavierStokes
+
+
+
+
+.. py:class:: NavierStokes(bcmodel, input)
+
+   Bases: :py:obj:`bin.Model.Model`
+
+   Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations
+   for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy.
+   Based on a finite volume formulation with ability to compute fluxes, update scheme stable timestep,
+   and update eddy viscocities. Contains terms for convective, artificial dissipative, and viscous fluxes.
+
+   Constructor:
+       Args:
+           bcmodel (BoundaryConditioner): instance of BoundaryConditioner class
+           input (dictionary): dictionary with parameter values
+
+       Returns:
+           A new NavierStokes object
+
+
+   .. attribute:: className
+
+      name of class for acessing it's dictionaries in the workspace
+
+      :type: str
+
+   .. attribute:: BCmodel
+
+      boundary condition model, instance of BoundaryConditioner
+
+      :type: BoundaryConditioner
+
+   .. attribute:: padding
+
+      outter padding for boundary condition implementation
+
+      :type: int
+
+   .. attribute:: params
+
+      physics parameters from the input
+
+      :type: dictionary
+
+   .. attribute:: dimensions
+
+      number of states (4)
+
+      :type: int
+
+   .. attribute:: cfl_fine
+
+      courant number on fine mesh
+
+      :type: np.ndarray
+
+   .. attribute:: cfl_coarse
+
+      courant number on coarse mesh
+
+      :type: np.ndarray
+
+   .. attribute:: cfl_lim
+
+      upper limit on courant number
+
+      :type: float
+
+   .. attribute:: cfl
+
+      minimum cfl between fine and coarse grids
+
+      :type: float
+
+   .. note:: See report for more details on the physics
+
+   .. py:method:: init_state(self, workspace, state)
+
+      Finds max number of columns in a row in the input file.
+
+      :param workspace: containins relevant fields to initialize
+      :type workspace: Workspace
+      :param state: has the state variables
+      :type state: Field
+
+
+   .. py:method:: get_flux(self, workspace, state, output, update_factor=1)
+
+      Calculates the spatial flux given the current state.
+
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: the current state
+      :type state: Field
+      :param output: where the flux values will be stored
+      :type output: Field
+
+
+   .. py:method:: get_safe_timestep(self, workspace, state, timestep)
+
+      Returns the local timestep such that stability is maintained.
+
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: the current state
+      :type state: Field
+      :param timestep: where the time steps will be stored
+      :type timestep: Field
+
+
+   .. py:method:: update_physics(self, workspace, state)
+
+      Updates physical properties of system based on state
+
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: the current state
+      :type state: Field
+
+
+   .. py:method:: update_stability(self, workspace, state)
+
+      Updates the stability parameters given the current state.
+
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: the current state
+      :type state: Field
+
+
+   .. py:method:: get_cfl(self, workspace)
+
+
+   .. py:method:: transfer_down(self, workspace1, workspace2)
+
+      Move workspace1 on fine mesh to workspace2 on coarse mesh
+
+      :param workspace1: The Workspace object for the finer level
+      :type workspace1: Workspace
+      :param workspace2: The Workspace object for the coarser level
+      :type workspace2: Workspace
+
+
+   .. py:method:: dim(self)
+
+
+   .. py:method:: __copy_in(self, field, paddedField)
+
+
+   .. py:method:: __copy_out(self, paddedField, field)
+
+
+   .. py:method:: __check_vars(self, workspace)
+
+
+   .. py:method:: __init_vars(self, workspace)
+
+
+   .. py:method:: __init_state(self, workspace, state)
+
+
+   .. py:method:: __update_pressure(self, workspace, state)
+
+
+

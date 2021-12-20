@@ -1,0 +1,42 @@
+:py:mod:`Integrator`
+====================
+
+.. py:module:: Integrator
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Integrator.Integrator
+
+
+
+
+.. py:class:: Integrator(model, input)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Abstract base class, never directly instantiated
+   NS_Airfoil is a child class of this ABC
+
+   Constructor:
+       Args:
+           model (Model): physics model
+           input: necessary input parameters
+
+   .. py:method:: step(self, workspace, state, forcing)
+      :abstractmethod:
+
+      Returns the local timestep such that stability is maintained.
+
+      :param workspace: The Workspace object
+      :param state: A Field containing the current state
+      :param forcing: Field of values on the right hand side of the equation that "force" the ODE
+
+
+

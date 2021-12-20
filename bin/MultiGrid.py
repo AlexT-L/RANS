@@ -1,12 +1,9 @@
 import numpy as np
 import bin.Expandinator as expand
 import bin.Contractinator as contract
-from bin.Grid import Grid
 from bin.Field import Field
 from bin.Cycle import Cycle
-from bin.Workspace import Workspace
-from bin.Integrator import Integrator
-from bin.Field import copy, max
+from bin.Field import copy
 
 
 class MultiGrid:
@@ -186,9 +183,7 @@ class MultiGrid:
         """Copies the residual values to the output Field.
         
         Args:
-        
-        output:
-            Field that will store the values
+            output (Field): Field that will store the residual values
         """
         residuals = self.Fluxes[-1]
         output[:] = copy(residuals)
@@ -198,9 +193,7 @@ class MultiGrid:
         """Copies the state values to the output Field.
         
         Args:
-        
-        output:
-            Field that will store the values
+            output (Field): Field that will store the values
         """
         state = self.W[-1]
         output[:] = copy(state)

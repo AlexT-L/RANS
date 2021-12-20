@@ -1,6 +1,16 @@
 
 
 def halo(bcmodel, model, workspace, state):
+    """
+    assign values in the ghost cells
+    
+    Args:
+        bcmodel (NS_Arifoil): boundary condition object
+        model (NavierStokes): physics model
+        workspace (Workspace): the relevant fields
+        state (Field): containing the density, x-momentum, y-momentum, and energy
+        
+    """
 
     # retrieve variables
     w = state

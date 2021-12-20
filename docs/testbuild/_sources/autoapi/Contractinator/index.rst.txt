@@ -1,0 +1,70 @@
+:py:mod:`Contractinator`
+========================
+
+.. py:module:: Contractinator
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Contracts Field objects from finer meshes to coarser meshes.
+
+   Libraries/Modules
+
+   bin.Field
+
+   numpy
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   Contractinator.simple
+   Contractinator.sum4way
+   Contractinator.conservative4way
+
+
+
+.. py:function:: simple(fine, coarse)
+
+   Performs a simple contraction where every other value is deleted.
+
+   Args:
+
+   fine:
+       The Field object on the finer grid
+   coarse:
+       The Field object on the coarser grid
+
+
+.. py:function:: sum4way(fine, coarse)
+
+   Contracts the Field by summing 4 values into 1. Only setup for 2D Fields (?) so far.
+
+   Args:
+
+   fine:
+       The Field object on the finer grid
+   coarse:
+       The Field object on the coarser grid
+
+
+.. py:function:: conservative4way(fine, coarse, weights=None)
+
+   Contracts the Field by averaging 4 values into 1 with weighting terms. Only set up for 2D Fields (?) so far.
+
+   Args:
+
+   fine:
+       The Field object on the finer grid
+   coarse:
+       The Field object on the coarser grid
+
+

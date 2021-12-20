@@ -185,12 +185,6 @@ class NavierStokes(Model):
         
         self.BCmodel.update_stability(self, workspace, w)
 
-    
-    # specify upper bound on cfl
-    def update_cfl_limit(self, cfl_lim):
-        self.cfl_lim = cfl_lim
-
-
     # get courant number
     def get_cfl(self, workspace):
 

@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MultiGrid &#8212; RANS test 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-MultiGrid">
+<span id="multigrid"></span><h1><a class="reference internal" href="#module-MultiGrid" title="MultiGrid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MultiGrid</span></code></a><a class="headerlink" href="#module-MultiGrid" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MultiGrid.MultiGrid" title="MultiGrid.MultiGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiGrid</span></code></a></p></td>
+<td><p>Uses mulitple coarser grids to apply corrections to the values on the current grid.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="MultiGrid.MultiGrid">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MultiGrid.</span></span><span class="sig-name descname"><span class="pre">MultiGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MultiGrid.MultiGrid" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Uses mulitple coarser grids to apply corrections to the values on the current grid.</dt><dd><p>Correcting the soluion this way allows for much faster convergence to be achieved
+than if the solution were only updated with the finer grid</p>
+</dd>
+<dt>Constructor:</dt><dd><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>workspace (Workspace):</dt><dd><p>The workspace corresponding to the grid on which the solution will be calculated</p>
+</dd>
+<dt>model (Model):</dt><dd><p>The physics model to be used</p>
+</dd>
+<dt>integrator (Integrator):</dt><dd><p>The integration scheme to be used</p>
+</dd>
+<dt>input (Dict):</dt><dd><dl class="simple">
+<dt>Dictionary of parameters containing:</dt><dd><p>ftim: the interval at which the stability will be updated
+fcoll: the relaxation factor on the residuals transferred from the finer mesh</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>A new Input object containing five dicts - dims, solv_param, flo_param, geo_param and in_var</p>
+</dd>
+<dt>Notes:</dt><dd><p>Check top of Input.py file to see the contents of each of the five dictionanries</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MultiGrid.MultiGrid.performCycle">
+<span class="sig-name descname"><span class="pre">performCycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MultiGrid.MultiGrid.performCycle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs one multi-grid cycle and calculates new state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MultiGrid.MultiGrid.residuals">
+<span class="sig-name descname"><span class="pre">residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MultiGrid.MultiGrid.residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the residual values to the output Field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output</strong> (<a class="reference internal" href="../Field/index.html#Field.Field" title="Field.Field"><em>Field</em></a>) – Field that will store the residual values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MultiGrid.MultiGrid.solution">
+<span class="sig-name descname"><span class="pre">solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MultiGrid.MultiGrid.solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the state values to the output Field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output</strong> (<a class="reference internal" href="../Field/index.html#Field.Field" title="Field.Field"><em>Field</em></a>) – Field that will store the values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">RANS test</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, SAVBNA.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/autoapi/MultiGrid/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,69 @@
+:py:mod:`Model`
+===============
+
+.. py:module:: Model
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Model.Model
+
+
+
+
+.. py:class:: Model(bcmodel, input)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Abstract base class for a physics model. never to be instantiated.
+
+   Constructor:
+       Args:
+           bcmodel (BoundaryConditioner): Boundary condition model
+
+       Returns:
+           A new Model object
+
+       Notes:
+           Check top of Input.py file to see the contents of each of the five dictionanries
+
+   Attributes:
+
+
+   .. py:method:: init_state(self, workspace, state)
+      :abstractmethod:
+
+
+   .. py:method:: get_flux(self, workspace, state, output, update_factor=1)
+      :abstractmethod:
+
+
+   .. py:method:: update_cfl_limit(self, cfl_lim=Infinity)
+
+
+   .. py:method:: get_safe_timestep(self, workspace, state, dt)
+      :abstractmethod:
+
+
+   .. py:method:: update_physics(self, workspace, state)
+      :abstractmethod:
+
+
+   .. py:method:: update_stability(self, workspace, state)
+      :abstractmethod:
+
+
+   .. py:method:: transfer_down(self, workspace1, workspace2)
+      :abstractmethod:
+
+
+   .. py:method:: dim(self)
+
+
+
