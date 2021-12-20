@@ -14,10 +14,7 @@ import numpy as np
 
 def coord_stretch(self):
     """
-       It create array a0 and b0 in x and y dirn computationally\n
-       with spacing such that when it is mapped back to physical\n
-       domain it points on the mesh are evenly spaced for a given\n
-       i/j direction."""
+       It create array a0 and b0 in x and y dirn computationally with spacing such that when it is mapped back to physica domain it points on the mesh are evenly spaced for a given i/j direction."""
     #use parameters from geo_param in input
     geo    = self.geo
     xte    = geo["xte"]
