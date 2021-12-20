@@ -11,11 +11,6 @@ Libraries/Modules
 
 Notes
 
-
-
-Author(s)
-
-Satya Butler
 """
 from numpy.core.numeric import array_equal
 import pytest
