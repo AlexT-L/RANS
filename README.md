@@ -26,3 +26,5 @@ The UML Diagram can be found [here](https://github.com/andybroth/RANS/blob/e60dc
 To generate documentation, `cd` into the `docs/` directory where there should be a `conf.py` file. (Install Sphinx if it is not already installed.) From there run the command `make html` to build html documentation or `make latexpdf` for latex files (you need Latex installed). 
 
 If you need to build the documentation from absolute scratch (i.e. there is no `docs/` directory), run the command `sphinx-quickstart docs` in the `RANS/` directory. Then `cd docs/` and open `conf.py`. About line 33, change `extensions = []` to `extensions = ['autoapi.extension', 'sphinx.ext.napoleon']` and add a line below that with `autoapi_dirs = ['../bin', '../tests']`. Save your changes and then you can `make html` and `make latexpdf`.
+
+If necessary, documentation can be found in the `ourdocs/` directory. The `html` file is in `ourdocs/_build/html/index.html` and the `latex` file is in `ourdocs/_build/latex/ransmodelingofairfoils.tex`.
