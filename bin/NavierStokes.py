@@ -8,81 +8,35 @@ from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
 class NavierStokes(Model):
-    """
-    Description
-    
-    Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
+    """Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
     for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy. 
     Based on a finite volume formulation with ability to compute fluxes, update scheme stable timestep, 
     and update eddy viscocities. Contains terms for convective, artificial dissipative, and viscous fluxes. 
 
+    Constructor:
+        Args:
+            bcmodel (BoundaryConditioner): instance of BoundaryConditioner class
+            input (dictionary): dictionary with parameter values
+
+        Returns:
+            A new NavierStokes object
+
 
     Attributes:
-    
-    
-    className:
-        name of class for acessing it's dictionaries in the workspace
-    
-    BCmodel:
-        boundary condition model, instance of BoundaryConditioner
-    
-    padding:
-        outter padding for boundary condition implementation
-    
-    params:
-        physics parameters from the input
-    
-    dimensions:
-        number of states (4)
+      className (str): name of class for acessing it's dictionaries in the workspace
+      BCmodel (BoundaryConditioner): boundary condition model, instance of BoundaryConditioner
+      padding (int): outter padding for boundary condition implementation
+      params (dictionary): physics parameters from the input
+      dimensions (int): number of states (4)
+      cfl_fine (np.ndarray): courant number on fine mesh
+      cfl_coarse (np.ndarray): courant number on coarse mesh 
+      cfl_lim (float): upper limit on courant number
+      cfl (float): minimum cfl between fine and coarse grids
 
-    cfl_fine:
-        courant number on fine mesh
-
-    cfl_coarse:
-        courant number on coarse mesh
-    
-    cfl_lim:
-        upper limit on courant number
-
-    cfl:
-        minimum cfl between fine and coarse grids
-
-
-    Libraries/Modules
-    
-    numpy
-    Model
-    Workspace
-    Field
-    eflux
-    dflux
-    dfluxc
-
-    Notes
-    
-    Also none.
-
-    Author(s)
-    
-    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
-    """
+    Note:
+        See report for more details on the physics"""
     
     def __init__(self, bcmodel, input):
-        """Constructor
-        
-        Args:
-        
-        bcmodel:
-            A BoundaryConditioner object
-        input:
-            Dictionary with parameter values
-
-        Returns
-        
-        :
-            A new NavierStokes object.
-        """
         self.className = "NavierStokes"
         self.BCmodel = bcmodel
         self.padding = bcmodel.padding
@@ -98,14 +52,11 @@ class NavierStokes(Model):
 
     # initialize state
     def init_state(self, workspace, state):
-        """Initializes state field.
+        """Finds max number of columns in a row in the input file.
         
         Args:
-        
-        workspace:
-            The Workspace object
-        state:
-            A field containing the current state
+            workspace (Workspace): containins relevant fields to initialize
+            state (Field): has the state variables
         """
         self.__check_vars(workspace)
 
@@ -126,13 +77,9 @@ class NavierStokes(Model):
         """Calculates the spatial flux given the current state.
         
         Args:
-        
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
-        output:
-            A Field where the flux values will be stored
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
+            output (Field): where the flux values will be stored
             """
         assert(isfinite(state))
         self.__check_vars(workspace)
@@ -176,13 +123,9 @@ class NavierStokes(Model):
         """Returns the local timestep such that stability is maintained.
         
         Args:
-        
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
-        timestep:
-            A Field where the time steps will be stored
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
+            timestep (Field): where the time steps will be stored
 
         """
         assert(isfinite(state))
@@ -206,11 +149,8 @@ class NavierStokes(Model):
         """Updates physical properties of system based on state
         
         Args:
-        
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
         """
         assert(isfinite(state))
         self.__check_vars(workspace)
@@ -230,11 +170,8 @@ class NavierStokes(Model):
         """Updates the stability parameters given the current state.
         
         Args:
-        
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
         """
         assert(isfinite(state))
         self.__check_vars(workspace)
@@ -268,14 +205,11 @@ class NavierStokes(Model):
             
 
     def transfer_down(self, workspace1, workspace2):
-        """Calculates the spatial flux given the current state.
+        """ Move workspace1 on fine mesh to workspace2 on coarse mesh
         
         Args:
-        
-        workspace1:
-            The Workspace object for the finer level
-        workspace2:
-            The Workspace object for the coarser level
+            workspace1 (Workspace): The Workspace object for the finer level
+            workspace2 (Workspace): The Workspace object for the coarser level
         """
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
