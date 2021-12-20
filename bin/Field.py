@@ -437,7 +437,7 @@ class Field:
         k = self.shape()[2]
         result = self.vals[:,:,0] * other
         for i in range(1,k):
-            result += self.vals[:,:,k] * other
+            result += self.vals[:,:,i] * other
 
         self.vals = result
         return self
@@ -449,7 +449,7 @@ class Field:
         k = self.shape()[2]
         result = self.vals[:,:,0] / other
         for i in range(1,k):
-            result += self.vals[:,:,k] / other
+            result += self.vals[:,:,i] / other
 
         self.vals = result
         return self

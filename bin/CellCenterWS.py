@@ -91,11 +91,13 @@ class CellCenterWS(Workspace):
 
     def __calc_normals(self, dim):
         dx = self.edges(dim)
-        nx = Field(dx.shape())
-        nx[:,:,0] = dx[:,:,1]
-        nx[:,:,1] = -dx[:,:,0]
+        n = Field(dx.shape())
+        nx = dx[:,:,1]
+        ny = -dx[:,:,0]
 
-        nx = nx/norm(nx)
+        dn = norm(nx, ny)
+        n[:,:,0] = nx/dn
+        n[:,:,1] = ny/dn
 
         varName = "nx" + str(dim)
-        self.add_field(nx, varName)
+        self.add_field(n, varName)

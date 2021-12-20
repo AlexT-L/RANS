@@ -52,13 +52,19 @@ def bilinear4way(coarse, fine):
     # #nx, ny = fine.shape() # This works
     nxf, nyf = fine.size()
     nxc, nyc = coarse.size()
+    return
     
+    ic = 0
     for i in range(2,nxf,2):
+        jc = 0
         for j in range(1,nyf,2):
-                fine[i  ,j] = .25*coarse[i-1,j]  +.75*coarse[i+1,j]
-                fine[i-1,j] = .75*coarse[i-1,j]  +.25*coarse[i+1,j]
+            fine[i  ,j] = .25*coarse[i-1,j]  +.75*coarse[i+1,j]
+            fine[i-1,j] = .75*coarse[i-1,j]  +.25*coarse[i+1,j]
+            jc += 2
+        ic += 2
+    
     
     for i in range(1,nxf,2):
         for j in range(2,nyf,2):
-                fine[i  ,j] = .25*coarse[i,j-1,n]  +.75*coarse[i,j+1]
-                fine[i-1,j] = .75*coarse[i,j-1,n]  +.25*coarse[i,j+1]
+            fine[i  ,j] = .25*coarse[i,j-1,n]  +.75*coarse[i,j+1]
+            fine[i-1,j] = .75*coarse[i,j-1,n]  +.25*coarse[i,j+1]
