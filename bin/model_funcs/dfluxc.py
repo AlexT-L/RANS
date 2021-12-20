@@ -6,6 +6,18 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def dfluxc(model, ws, state, dw, rfil):
+    """
+    calculate artificial dissipation fluxes on coarse meshes using blended first order 
+    fluxes scaled to spectral radius
+    
+    Args:
+        model (NavierStokes): physics model
+        workspace (Workspace): contains the relevant Fields
+        state (Field): density, x-momentum, y-momentum, and energy
+        dw (Field): to store new residuals after completing fluxes 
+        rfil (float): relaxation factor determining balance between viscous and artificial dissipation fluxes
+        
+    """
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters

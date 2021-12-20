@@ -1,7 +1,17 @@
+"""This module plots the c-mesh in physical space
+
+    Libraries/Modules:
+        nump\n
+        matplotlib.pyplot\n
+"""
 import numpy as np 
 import matplotlib.pyplot as plt
 
 def plot_mesh(self):
+    """ Plots the c-mesh in physical space after conformal mapping
+        
+        Uses the vertices from x to plot the mesh.
+    """
     #x-y vertices
     ver = self.fields['x']
     x=ver[:,:,0]

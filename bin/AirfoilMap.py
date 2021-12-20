@@ -33,14 +33,8 @@ class AirfoilMap(Grid):
 
         Notes:
             Directly use from_file() method to perform confromal mapping
-            and use from_grid() method to convert grid to coarser version 
+            and use from_grid() method to convert grid to coarser version """
 
-    Attributes:
-        dim_p (list): List of paramters to get from input file to dims dict.
-        solv_p (list): List of paramters to get from input file to solv_param dict.
-        flo_p (list): List of paramters to get from input file to flo_param dict.
-        geo_p (list): List of paramters to get from input file to geo_param dict.
-        in_v (list): List of paramters to get from input file to in_var dict."""
     
     def __init__(self, num_divisions):
         
@@ -53,7 +47,7 @@ class AirfoilMap(Grid):
         
         Args:
             num_divisions (list):Number of cells in the x and y directions.
-            input:Dictionary containing data-file values
+            input (dict):Dictionary containing data-file values
         Returns:
             grid (obj): new AirfoilMap object
         """
