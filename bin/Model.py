@@ -6,19 +6,19 @@ class Model(ABC):
     Model Class
 
     Description
-    -----------
+    
     A generic physics model for performing a multigrid cycle. 
 
     Libraries/Modules
-    -----------------
+    
     Field
 
     Notes
-    -----
+    
     NA
 
     Author(s)
-    ---------
+    
     Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
     """

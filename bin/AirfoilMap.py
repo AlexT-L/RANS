@@ -15,13 +15,13 @@ class AirfoilMap(Grid):
     def __init__(self, num_divisions):
         """Basic constructor for Airfoil Maps not intended for use on its own.
         
-        Parameters
-        ----------
+        Args:
+        
         num_divisions:
             Array-like: Number of cells in the x and y directions.
 
         Returns
-        -------
+        
         :
             A new AirfoilMap object.
         """
@@ -32,15 +32,15 @@ class AirfoilMap(Grid):
     def from_file(thisClass, num_divisions, input):
         """Initializes new AirfoilMap from datafile input.
         
-        Parameters
-        ----------
+        Args:
+        
         num_divisions:
             Array-like: Number of cells in the x and y directions.
         input:
             Dictionary containing data-file values
 
         Returns
-        -------
+        
         :
             A new AirfoilMap object.
         """
@@ -52,13 +52,13 @@ class AirfoilMap(Grid):
     def from_grid(thisClass, grid):
         """Initializes new AirfoilMap from existing object. The new grid will be half the size.
         
-        Parameters
-        ----------
+        Args:
+        
         grid:
             AirfoilMap object
 
         Returns
-        -------
+        
         :
             A new AirfoilMap object.
         """

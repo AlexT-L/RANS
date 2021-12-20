@@ -2,7 +2,7 @@
 Flo103
 
 Description
------------
+
 Solves the Euler equations for an airfoil using a multigrid cycle.
 Method of lines integration is used to solve the Partial Differential
 Euler equations. To speed up convergence, the solution is calculated on
@@ -13,15 +13,15 @@ as a correction to the state on the coarser mesh, and a new solution is found
 on the fine mesh after applying the corrections.
 
 Libraries/Modules
------------------
+
 None.
 
 Notes
------
+
 Also none.
 
 Author(s)
----------
+
 Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
 """

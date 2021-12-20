@@ -8,22 +8,22 @@ from bin.Field import isfinite
 class Workspace(ABC):
     '''
     Description
-    -----------
+    
     Abstract base class for workspaces. 
 
     Attributes
-    -----------------
+    
     self.grid:
         Inputted grid
     self.flds:
         Dictionary of fields for grid        
 
     Libraries/Modules
-    -----------------
+    
     numpy
 
     Notes
-    -----
+    
     Would not be directly implemented (ABC)
     '''
     def __init__(self, grid, isFinest=True):

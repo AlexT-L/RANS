@@ -1,10 +1,10 @@
 """
 Description
------------
+
 Expands Field objects from coarser meshes to finer meshes.
 
 Libraries/Modules
------------------
+
 bin.Field \n
 numpy
 """
@@ -41,8 +41,8 @@ import numpy as np
 def bilinear4way(coarse, fine):
     """Bilinear interpolation function for expanding Fields.
     
-    Parameters
-    ----------
+    Args:
+    
     coarse:
         Field on a coarser mesh.
     fine:

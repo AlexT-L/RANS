@@ -3,7 +3,7 @@
 class flo103_ConvergenceChecker:
     '''
     Description
-    -----------
+    
     Current implementation is to run a pre-determined 
     number of cycles, and decide that convergence is when that number
     of cycles has been reached. 
@@ -13,18 +13,18 @@ class flo103_ConvergenceChecker:
     certain threshold. 
 
     Attributes
-    -----------------
+    
     self.num_cycles: 
         Cycle number
     self.n_runs:
         Number of runs
     
     Libraries/Modules
-    -----------------
+    
     Would use: numpy
 
     Notes
-    -----
+    
     Later implementation would have more sophisticated convergence. 
     '''
     def __init__(self, input):

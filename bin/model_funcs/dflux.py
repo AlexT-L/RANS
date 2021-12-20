@@ -10,8 +10,8 @@ def dflux(model, ws, state, dw, rfil):
     """
     calculate artificial dissipation fluxes on finest mesh
     
-    Parameters
-    ----------
+    Args:
+    
     model:
         instance of NavierStokes class
 

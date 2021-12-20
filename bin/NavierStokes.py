@@ -10,7 +10,7 @@ import numpy as np
 class NavierStokes(Model):
     """
     Description
-    -----------
+    
     Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
     for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy. 
     Based on a finite volume formulation with ability to compute fluxes, update scheme stable timestep, 
@@ -18,7 +18,7 @@ class NavierStokes(Model):
 
 
     Attributes:
-    ----------------
+    
     
     className:
         name of class for acessing it's dictionaries in the workspace
@@ -49,7 +49,7 @@ class NavierStokes(Model):
 
 
     Libraries/Modules
-    -----------------
+    
     numpy
     Model
     Workspace
@@ -59,11 +59,11 @@ class NavierStokes(Model):
     dfluxc
 
     Notes
-    -----
+    
     Also none.
 
     Author(s)
-    ---------
+    
     Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
     """
@@ -71,15 +71,15 @@ class NavierStokes(Model):
     def __init__(self, bcmodel, input):
         """Constructor
         
-        Parameters
-        ----------
+        Args:
+        
         bcmodel:
             A BoundaryConditioner object
         input:
             Dictionary with parameter values
 
         Returns
-        -------
+        
         :
             A new NavierStokes object.
         """
@@ -100,8 +100,8 @@ class NavierStokes(Model):
     def init_state(self, workspace, state):
         """Initializes state field.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         state:
@@ -125,8 +125,8 @@ class NavierStokes(Model):
     def get_flux(self, workspace, state, output, update_factor=1):
         """Calculates the spatial flux given the current state.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         state:
@@ -175,8 +175,8 @@ class NavierStokes(Model):
     def get_safe_timestep(self, workspace, state, timestep):
         """Returns the local timestep such that stability is maintained.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         state:
@@ -205,8 +205,8 @@ class NavierStokes(Model):
     def update_physics(self, workspace, state):
         """Updates physical properties of system based on state
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         state:
@@ -229,8 +229,8 @@ class NavierStokes(Model):
     def update_stability(self, workspace, state):
         """Updates the stability parameters given the current state.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         state:
@@ -270,8 +270,8 @@ class NavierStokes(Model):
     def transfer_down(self, workspace1, workspace2):
         """Calculates the spatial flux given the current state.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace1:
             The Workspace object for the finer level
         workspace2:

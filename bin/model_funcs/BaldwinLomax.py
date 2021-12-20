@@ -109,8 +109,8 @@ def turbulent_viscosity(params, dims):
 # c     *   determination of eddy viscosity                                  *
 # c     *                                                                    *
 # c     *   turbulence model:                                                *
-# c     *     wall boundary layer --- baldwin-lomax model                    *
-# c     *     wake region         --- baldwin-lomax model (cwake= 1.0)       *
+# c     *     wall boundary layer  baldwin-lomax model                    *
+# c     *     wake region          baldwin-lomax model (cwake= 1.0)       *
 # c     *                                                                    *
 # c     *   calculate vorticity and total velocity                           *
 # c     **********************************************************************
@@ -470,7 +470,7 @@ def turbulent_viscosity(params, dims):
 #         end do
 #         end do
 
-# # ---->    finish of kwrite if
+# # >    finish of kwrite if
 #         end if
 
 #     return

@@ -10,13 +10,13 @@ from bin.model_funcs.stability_fast import stability
 class NS_Airfoil(BoundaryConditioner):
     """
     Description
-    -----------
+    
     Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
     A halo is formed around the mesh containing ghost nodes. Two types of boundary conditions
     are implemented: wall boundaries and far field boundaries
 
     Attributes
-    -----------------
+    
     class_name: 
         name of class for accessing Fields in the workspace
 
@@ -30,7 +30,7 @@ class NS_Airfoil(BoundaryConditioner):
         some parameter
 
     Libraries/Modules
-    -----------------
+    
     numpy
     BoundaryConditioner
     NS_Airfoil_imp
@@ -40,20 +40,20 @@ class NS_Airfoil(BoundaryConditioner):
     stability
 
     Notes
-    -----
+    
     Based on bcfar.f and bcwall.f """
     
     
     def __init__(self, input):
         """Constructor
         
-        Parameters
-        ----------
+        Args:
+        
         input:
             dictionary of values containing vt and bc
 
         Returns
-        -------
+        
         A new NS_Arifoil object 
 
         """
@@ -69,8 +69,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         updates the turbulent viscocity for calculation of boundary conditions
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -89,8 +89,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         updates stability parameters for time step calculations
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -109,8 +109,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         apply boundary condition in the far field
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -131,8 +131,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         apply boundary condition along the wall
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -154,8 +154,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         set the values in the ghost cells
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -177,8 +177,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         do wall boundaries, far field and set halo values at once
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -205,8 +205,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in i direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
@@ -218,8 +218,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in j direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
@@ -232,8 +232,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in i direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
