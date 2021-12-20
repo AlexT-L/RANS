@@ -2,6 +2,30 @@ import numpy as np
 import bin.Field as binField
 
 class Field:
+    """
+    Field Class
+
+    Description
+    -----------
+    Field is generic object that acts like, and is implemented as, a numpy array. \n
+    Allows for storage of numeric values on a Grid. Contains ability to index for access and setting values \n
+    as well as overloaded operators for many math operations.
+
+    Libraries/Modules
+    -----------------
+    numpy
+    Field
+
+    Notes
+    -----
+    NA
+
+    Author(s)
+    ---------
+    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+
+    """
+
 
     def __init__(self, shape, vals=None):
         """Creates a new Field object
@@ -115,9 +139,15 @@ class Field:
         result = self.vals.astype(dtype)
         return Field(0, result)
 
-    # matrix operations
-
+    # transpose
     def T(self):
+        """return a transposed Field 
+            
+            Returns
+            -------
+            :
+                A field of the size of the transposed input
+            """
         trans = Field(0, self.vals.T)
         return trans
 
@@ -148,6 +178,13 @@ class Field:
         self.vals[indx] = value
     
     def set_val(self, new_vals):
+        """assign values to a Field of the same size
+            
+            Returns
+            -------
+            :
+                A field with given values 
+            """
         if np.shape(new_vals) != np.shape(self.vals):
             raise ValueError('Dimensions of field do not match expected dimensions')
         self.vals = np.array(new_vals, order = 'F')  # make new fortran ordered array  
@@ -162,7 +199,6 @@ class Field:
     
 
     # comparison operatos
-
     def __lt__(self, other):
         if is_field(other):
             other = other.vals
@@ -204,7 +240,6 @@ class Field:
 
 
     # math operators
-    
     def __add__(self, other):
         if is_field(other):
             other = other.vals
@@ -466,7 +501,7 @@ def copy(array):
     copy = np.copy(array.vals)
     return Field(0, copy)
 
-# Field classs math methods
+# Field class math methods
 def mean(array, axis=None):
     assert is_field(array)
     result = np.mean(array.vals, axis)

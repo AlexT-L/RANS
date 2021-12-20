@@ -26,7 +26,7 @@ import bin.Expandinator as Exp
 
 def test_bilinear4way():
     """
-    Description of the Expandinator.py 'bilinear4way' method.
+    Tests the Expandinator.py 'bilinear4way' method. Does not currently assert (test) anything.
 
     Parameters
     ----------
@@ -46,12 +46,27 @@ def test_bilinear4way():
     input_values = np.array([[2,2],[2,2]])
     input_field = Field(input_dims, input_values)
 
-    dims = (2,2)
-    values = np.array([[2,2],[2,2]])
-    field = Field(dims, values)
-    print(field)
+    test_dims = (2,2,4)
+    test_values = np.zeros(test_dims)
+    test_field = Field(test_dims, test_values)
+    print(test_field)
+    Exp.bilinear4way(test_field, test_field) # As of writing, first test_field doesn't get used 
+                                             # (is redundant, but needed for function call)
+    print(test_field)
 
-#    Exp.bilinear4way(input_field, field)
+    testoutput_dims = (4,4,4)
+    testoutput_values = np.zeros(testoutput_dims)
+    testoutput_field = Field(testoutput_dims, testoutput_values)
+    print(testoutput_field)
+
+#    assert array_equal(test_field, testoutput_field)
+
+    dims = (2,2,2)
+    values = np.array([[[2,2],[2,2]],[[2,2],[2,2]]])
+    field = Field(dims, values)
+    #print(field)
+
+    #Exp.bilinear4way(input_field, field)
     #assert array_equal(coarse_field, output_field)
-    print(field)
-#    assert 1==3
+    #print(field)
+    #assert 1==3
