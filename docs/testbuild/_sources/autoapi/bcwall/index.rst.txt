@@ -1,0 +1,33 @@
+:py:mod:`bcwall`
+================
+
+.. py:module:: bcwall
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   bcwall.wall
+
+
+
+.. py:function:: wall(bcmodel, model, workspace, state)
+
+   set values at the wall
+
+   :param bcmodel: boundary condition object
+   :type bcmodel: NS_Arifoil
+   :param model: physics model
+   :type model: NavierStokes
+   :param workspace: the relevant fields
+   :type workspace: Workspace
+   :param state: containing the density, x-momentum, y-momentum, and energy
+   :type state: Field
+
+

@@ -1,0 +1,31 @@
+:py:mod:`Integrator`
+====================
+
+.. py:module:: Integrator
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Integrator.Integrator
+
+
+
+
+.. py:class:: Integrator(model, input)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: step(self, workspace, state, forcing)
+      :abstractmethod:
+
+
+

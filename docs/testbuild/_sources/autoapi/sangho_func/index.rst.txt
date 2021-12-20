@@ -1,0 +1,34 @@
+:py:mod:`sangho_func`
+=====================
+
+.. py:module:: sangho_func
+
+.. autoapi-nested-parse::
+
+   This module scales the values of the vertices
+
+   Libraries/Modules:
+       numpy
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sangho_func.sangho
+
+
+
+.. py:function:: sangho(self)
+
+   Performs sanghos non-dimensionalisation method
+
+   Scales the vertices in x to wrap around the airfoil in physical space
+
+

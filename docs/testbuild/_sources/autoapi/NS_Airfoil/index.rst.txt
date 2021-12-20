@@ -1,0 +1,180 @@
+:py:mod:`NS_Airfoil`
+====================
+
+.. py:module:: NS_Airfoil
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   NS_Airfoil.NS_Airfoil
+
+
+
+
+.. py:class:: NS_Airfoil(input)
+
+   Bases: :py:obj:`bin.BoundaryConditioner.BoundaryConditioner`
+
+   Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
+   A halo is formed around the mesh containing ghost nodes. Two types of boundary conditions
+   are implemented: wall boundaries and far field boundaries
+
+    Constructor:
+       Args:
+           input (list): input dictionary
+
+       Returns:
+           A NS_Airfoil object
+
+   .. attribute:: class_name
+
+      name of class for accessing Fields in the workspace
+
+      :type: str
+
+   .. attribute:: padding
+
+      number of ghost nodes on boundary
+
+      :type: int
+
+   .. attribute:: local_timestepping
+
+      parameter for use in calculating stable time step
+
+      :type: float
+
+   .. attribute:: bc
+
+      some parameter
+
+   .. py:method:: update_physics(self, model, workspace, state)
+
+      updates the turbulent viscocity for calculation of boundary conditions
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: update_stability(self, model, workspace, state)
+
+      updates stability parameters for time step calculations
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: bc_far(self, model, workspace, state)
+
+      apply boundary condition in the far field
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: bc_wall(self, model, workspace, state)
+
+      apply boundary condition along the wall
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: halo(self, model, workspace, state)
+
+      set the values in the ghost cells
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: bc_all(self, model, workspace, state)
+
+      do wall boundaries, far field and set halo values at once
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+      :param state: current state of the system (density, momentum, energy)
+      :type state: Field
+
+
+   .. py:method:: transfer_down(self, model, workspace1, workspace2)
+
+      transfer workspace to coarser mesh
+
+      :param workspace1: on fine mesh
+      :type workspace1: Workspace
+      :param workspace2: on coarse mesh
+      :type workspace2: Workspace
+
+
+   .. py:method:: get_pori(self, workspace)
+
+      grab porosity in i direction from the workspace
+
+      :param workspace: has pori
+      :type workspace: Workspace
+
+      :returns: porosity in i direction
+      :rtype: pori (Field)
+
+
+   .. py:method:: get_porj(self, workspace)
+
+      grab porosity in j direction from the workspace
+
+      :param workspace: has porj
+      :type workspace: Workspace
+
+      :returns: porosity in j direction
+      :rtype: porj (Field)
+
+
+   .. py:method:: halo_geom(self, model, workspace)
+
+      set values in the ghost cells
+
+      :param model: physics model
+      :type model: NavierStokes
+      :param workspace: contains the relevant fields
+      :type workspace: Workspace
+
+
+   .. py:method:: __check_vars(self, workspace)
+
+
+   .. py:method:: __init_vars(self, workspace)
+
+
+   .. py:method:: __set_porosity(self, workspace)
+
+
+

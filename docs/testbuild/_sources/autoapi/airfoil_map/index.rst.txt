@@ -1,0 +1,70 @@
+:py:mod:`airfoil_map`
+=====================
+
+.. py:module:: airfoil_map
+
+.. autoapi-nested-parse::
+
+   This module has functions that perform the conformal mapping and the coarser grid objects
+
+   Libraries/Modules:
+       numpy
+
+       Field
+
+       Contractinator
+
+       dims_funs
+
+       coord_strch_func
+
+       geom_func
+
+       sangho_func
+
+       metric_func
+
+       plot_mesh_func
+
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   airfoil_map.init_from_file
+   airfoil_map.init_from_grid
+
+
+
+.. py:function:: init_from_file(self, grid_dim, input)
+
+   Performs conformal mapping and finds x,xc and vol values in physical space.
+
+   Also plots the c-mesh/grid in phyiscal space
+
+    Args:
+        grid_dim (list):Number of cells in the x and y directions.
+        input (dict):Dictionary containing data-file values
+
+
+
+.. py:function:: init_from_grid(newGrid, grid)
+
+   Makes a grid coarser and finds new x,xc and vol values on the coarse grid
+
+   Also plots the coarser grid in physical space
+
+    Args:
+        grid (obj):finer input AirfoilMap object
+        newGrid (obj):coarser output new AirfoilMap object
+
+
+

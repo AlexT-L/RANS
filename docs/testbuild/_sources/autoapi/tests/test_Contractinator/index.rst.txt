@@ -1,0 +1,84 @@
+:py:mod:`tests.test_Contractinator`
+===================================
+
+.. py:module:: tests.test_Contractinator
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Tests the contractinator.
+
+   Libraries/Modules
+
+   -pytest
+
+   -Field
+
+   -numpy
+
+
+   Notes
+
+
+
+   Author(s)
+
+   Satya Butler
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Contractinator.test_simple
+   tests.test_Contractinator.test_sum4way
+   tests.test_Contractinator.test_conservative4way
+
+
+
+.. py:function:: test_simple()
+
+   Tests the Contractinator.py 'simple' method.
+
+   Args:
+
+
+   Returns
+
+   :
+       Nothing, but asserts if 'simple' deletes items from the Field as it should.
+
+
+.. py:function:: test_sum4way()
+
+   Tests the Contractinator.py 'sum4way' method.
+
+   Args:
+
+
+   Returns
+
+   :
+       Nothing, but asserts if 'sum4way' properly sums items from the Field as it should.
+
+
+.. py:function:: test_conservative4way()
+
+   Tests the Contractinator.py 'conservative4way' method. Note: does not test weighted averaging.
+
+   Args:
+
+
+   Returns
+
+   :
+       Nothing, but asserts if 'conservative4way' properly averages items from the Field as it should.
+
+

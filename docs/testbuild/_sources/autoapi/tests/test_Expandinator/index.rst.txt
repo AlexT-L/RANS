@@ -1,0 +1,59 @@
+:py:mod:`tests.test_Expandinator`
+=================================
+
+.. py:module:: tests.test_Expandinator
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Tests the expandinator.
+
+   Libraries/Modules
+
+   -pytest
+
+   -Field
+
+   -numpy
+
+   -scipy
+
+   Notes
+
+
+
+   Author(s)
+
+   Satya Butler
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Expandinator.test_bilinear4way
+
+
+
+.. py:function:: test_bilinear4way()
+
+   Tests the Expandinator.py 'bilinear4way' method. Does not currently assert (test) anything
+   as Expandinator.py does not currently work.
+
+   Args:
+
+
+   Returns
+
+   :
+       Nothing, but asserts if 'bilinear4way' expands a Field properly.
+
+
+

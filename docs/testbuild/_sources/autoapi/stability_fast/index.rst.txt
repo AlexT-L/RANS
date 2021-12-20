@@ -1,0 +1,22 @@
+:py:mod:`stability_fast`
+========================
+
+.. py:module:: stability_fast
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   stability_fast.stability
+
+
+
+.. py:function:: stability(self, model, workspace, state)
+
+

@@ -1,0 +1,78 @@
+:py:mod:`tests.test_Workspace`
+==============================
+
+.. py:module:: tests.test_Workspace
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Tests the Workspace object to see if it works as expected
+
+   Libraries/Modules
+
+   -pytest
+
+   -Workspace
+
+   Notes
+
+   Runs the following tests:
+
+   Verify x, xc, vol can be retrieved
+   Verify x, xc, vol are non-zero
+   Verify that init_vars works as expected
+   then check that init_vars? exists return True
+   check that has_dict? exists and has_dict return false when they should
+   check is_finest()
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_Workspace.test_x
+   tests.test_Workspace.test_xc
+   tests.test_Workspace.test_vol
+   tests.test_Workspace.test_init_vars
+   tests.test_Workspace.test_has_dict
+   tests.test_Workspace.test_finest
+
+
+
+.. py:function:: test_x()
+
+   Asserts that we can retrieve x and that it is non zero
+
+
+.. py:function:: test_xc()
+
+   Asserts that we can retrieve xc and that it is non zero
+
+
+.. py:function:: test_vol()
+
+   Asserts that we can retrieve vol and that it is non zero
+
+
+.. py:function:: test_init_vars()
+
+   Verify that init_vars works as expected
+
+
+.. py:function:: test_has_dict()
+
+   Asserts that has dict
+
+
+.. py:function:: test_finest()
+
+   Asserts isFinest
+
+

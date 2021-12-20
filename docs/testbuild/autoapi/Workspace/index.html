@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Workspace &#8212; RANS test 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-Workspace">
+<span id="workspace"></span><h1><a class="reference internal" href="#module-Workspace" title="Workspace"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Workspace</span></code></a><a class="headerlink" href="#module-Workspace" title="Permalink to this headline">¶</a></h1>
+<p>This module is the ABC for workspace.
+Libraries/Modules:</p>
+<blockquote>
+<div><p>numpy</p>
+</div></blockquote>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Workspace.Workspace" title="Workspace.Workspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Workspace</span></code></a></p></td>
+<td><p>Abstract base class for workspaces.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="Workspace.Workspace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">Workspace.</span></span><span class="sig-name descname"><span class="pre">Workspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isFinest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class for workspaces.
+Constructor initializes fields array with Grid fields</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Workspace.Workspace.self.grid">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#Workspace.Workspace.self.grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inputted grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Workspace.Workspace.self.flds">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">flds</span></span><a class="headerlink" href="#Workspace.Workspace.self.flds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of fields for grid</p>
+</dd></dl>
+
+<p>Notes: Would not be directly implemented (ABC)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.MakeNew">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">MakeNew</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isFinest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.MakeNew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns another instance of a workspace</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.get_grid">
+<span class="sig-name descname"><span class="pre">get_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.get_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns grid object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.get_dims">
+<span class="sig-name descname"><span class="pre">get_dims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.get_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns grid-level-specific geometry info</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.get_geometry">
+<span class="sig-name descname"><span class="pre">get_geometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.get_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns geometry info</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.add_field">
+<span class="sig-name descname"><span class="pre">add_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Grid'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.add_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add field method for grid. Checks if already an instance.
+Raises an error if already in list, adds new field if not.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.get_field">
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Grid'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.get_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the field. Checks if field aleady exists.
+If already exists, raises error.
+If does not exist, creats a field.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.has_dict">
+<span class="sig-name descname"><span class="pre">has_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.has_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a class dictionary exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.exists">
+<span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Grid'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a field exists in a class’s dictionary.
+Exists/returns true if the it does have a dictionary,
+and if there is a fieldName in self,flds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.init_vars">
+<span class="sig-name descname"><span class="pre">init_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">className</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.init_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize class’s stored fields,
+must give a dictionary of variables with the following structure:
+- keys are the variable name as a string (e.g. “w”)
+- values are an array of [field_dimensions, state_dim]</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>field_dim is usually the grid size in [nx, ny] format</p></li>
+<li><p>state_dim is 1 for scalars</p></li>
+</ul>
+</div></blockquote>
+<p>Creates a class dictionary.
+Creats fields and stores in dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.is_finest">
+<span class="sig-name descname"><span class="pre">is_finest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.is_finest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if finest level of mesh.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.field_size">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">field_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.field_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimensions of field (# of control volumes)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.grid_size">
+<span class="sig-name descname"><span class="pre">grid_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.grid_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dimensions of grid (# of vertices)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.volume">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.volume" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.edges">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Workspace.Workspace.edge_normals">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">edge_normals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Workspace.Workspace.edge_normals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">RANS test</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, SAVBNA.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/autoapi/Workspace/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

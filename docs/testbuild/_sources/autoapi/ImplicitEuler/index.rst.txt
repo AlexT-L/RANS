@@ -1,0 +1,62 @@
+:py:mod:`ImplicitEuler`
+=======================
+
+.. py:module:: ImplicitEuler
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ImplicitEuler.ImplicitEuler
+
+
+
+
+.. py:class:: ImplicitEuler(model, input)
+
+   Bases: :py:obj:`bin.Integrator.Integrator`
+
+   Implicit Euler mulistage integration scheme
+
+   Constructor:
+       Args:
+           model (Model): physics model
+           input (Dict): Dictionary with the following items:
+               mstage (int):   number of stages in the multistage integration scheme
+               cdis:           flux update relaxation factor --> 0: no update, 1: full update
+               cstp:           timestep relaxation factor --> 0: no timestep, 1: full step
+
+       Returns:
+           A new ImplicitEuler object
+
+   .. attribute:: Model
+
+      physics model
+
+   .. attribute:: className
+
+      name of class
+
+      :type: str
+
+   .. py:method:: step(self, workspace, state, forcing)
+
+      Returns the local timestep such that stability is maintained.
+
+      :param workspace: The Workspace object
+      :param state: A Field containing the current state
+      :param forcing: Field of values on the right hand side of the equation that "force" the ODE
+
+
+   .. py:method:: __check_vars(self, workspace)
+
+
+   .. py:method:: __init_vars(self, workspace)
+
+
+
