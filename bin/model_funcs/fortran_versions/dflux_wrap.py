@@ -35,8 +35,8 @@ def dflux(model,ws,w,dw,rfil):
     porJ = get('porJ') # porosity in j
 
     # mesh related vars
-    x = ws.x() # cell vertices
-    xc = ws.xc # cell centers
+    x = ws.get_Field('x') # cell vertices
+    xc = ws.get_Field('xc') # cell centers
 
     # solver related vars
     fw = get('fw') # storage for viscous residuals?

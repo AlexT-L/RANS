@@ -1,35 +1,51 @@
+"""This module is an inherited class of workspace. 
+    Libraries/Modules:
+        Workspace\n
+        numpy\n
+        Field\n
+"""
 import numpy as np
 from bin.Field import Field
-from bin.Grid import Grid
-from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import copy, isfinite
+from bin.Field import copy, isfinite, norm
 
 class CellCenterWS(Workspace):
+    """Implements a Workspace using cell-centered discretization of the grid
+
+    Constructor:
+        Args:
+            grid (Grid): a Grid object specifying the geometry
+
+    Attributes: 
+        self.grid: Inputted grid
+        self.flds: Dictionary of fields residing on grid        
+    """
 
     # Return another instance of CellCenterWS
-    def MakeNew(self, grid, isFinest=True):
-        return CellCenterWS(grid, isFinest)
+    def make_new(self, grid):
+        """Creates a new workspace corresponding to a grid of half the size
+        
+        Args:
+            grid (Grid):  The grid for the current workspace
+            isFinest (bool): Whether or not this is
+        """
+        return CellCenterWS(grid, False)
     
     # dimensions of field (# of control volumes)
     def field_size(self):
+        """Returns the 2-dimenstional size of the field __> (n, 1) for a 1-d Field
+        
+        """
         [xv, yv] = self.grid_size()
         return (xv-1, yv-1)
 
-    # volume of control volume
-    def volume(self, i, j):
-        vol = self.get_field('vol')
-        return vol[i,j]
-
-    # return x field
-    def x(self):
-        return self.get_field('x')
-
-    # return xc field
-    def xc(self):
-        return self.get_field('xc')
-
     def edges(self, dim):
+        """Returns a Field containing the edge vectors
+
+            Args:
+                dim (0 or 1): Which edges will be returned (0 for i, 1 for j edges)
+        
+        """
         varName = "dx" + str(dim)
         if not self.exists(varName):
             self.__calc_edges(dim)
@@ -37,6 +53,12 @@ class CellCenterWS(Workspace):
         return self.get_field(varName)
 
     def edge_normals(self, dim):
+        """Returns a Field containing the unit normal vectors to the edges along a given dimension
+
+            Args:
+                dim (0 or 1): Which edges normals will be returned for (0 for i, 1 for j edges)
+        
+        """
         varName = "nx" + str(dim)
         if not self.exists(varName):
             self.__calc_normals(dim)
@@ -73,5 +95,7 @@ class CellCenterWS(Workspace):
         nx[:,:,0] = dx[:,:,1]
         nx[:,:,1] = -dx[:,:,0]
 
+        nx = nx/norm(nx)
+
         varName = "nx" + str(dim)
-        self.add_field(dx, varName)
+        self.add_field(nx, varName)

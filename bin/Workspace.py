@@ -1,13 +1,12 @@
 """This module is the ABC for workspace. 
     Libraries/Modules:
+        abc\n
         numpy\n
-        """
+        Field
+"""
 from abc import ABC, abstractmethod
 import numpy as np
-from bin.Field import Field
-from bin.Grid import Grid
-from bin.Model import Model
-from bin.Field import isfinite
+from bin.Field import Field, isfinite
 
 class Workspace(ABC):
     """ Abstract base class for workspaces. 
@@ -147,13 +146,21 @@ class Workspace(ABC):
         return self.grid.get_size()
 
     @abstractmethod
-    def volume(self, i, j):
-        pass
-
-    @abstractmethod
     def edges(self, i, j, side):
+        """Returns a Field containing the edge vectors
+
+            Args:
+                dim (0 or 1): Which edges will be returned (0 for i, 1 for j edges)
+        
+        """
         pass
 
     @abstractmethod
     def edge_normals(self, i, j, side):
+        """Returns a Field containing the unit normal vectors to the edges along a given dimension
+
+            Args:
+                dim (0 or 1): Which edges normals will be returned for (0 for i, 1 for j edges)
+        
+        """
         pass
