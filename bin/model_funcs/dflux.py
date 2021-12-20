@@ -8,24 +8,15 @@ import numpy as np
 
 def dflux(model, ws, state, dw, rfil):
     """
-    calculate artificial dissipation fluxes on finest mesh
+    calculate artificial dissipation fluxes on finest mesh using blended first and 
+    third order fluxes
     
     Args:
-    
-    model:
-        instance of NavierStokes class
-
-    workspace:
-        instance of Workspace class with the relevant fields
-    
-    state:
-        instance of Field class containing the density, x-momentum, y-momentum, and energy
-
-    dw:
-        Field to store new residuals after completing fluxes
-
-    rfil:
-        relaxation factor determining balance between viscous and artificial dissipation fluxes
+        model (NavierStokes): physics model
+        workspace (Workspace): contains the relevant Fields
+        state (Field): density, x-momentum, y-momentum, and energy
+        dw (Field): to store new residuals after completing fluxes 
+        rfil (float): relaxation factor determining balance between viscous and artificial dissipation fluxes
         
     """
 
