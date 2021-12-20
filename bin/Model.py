@@ -2,7 +2,26 @@ from abc import ABC, abstractmethod
 from bin.Field import Field
 
 class Model(ABC):
-    
+    """
+    Model Class
+
+    Description
+    -----------
+    A generic physics model for performing a multigrid cycle. 
+
+    Libraries/Modules
+    -----------------
+    Field
+
+    Notes
+    -----
+    NA
+
+    Author(s)
+    ---------
+    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+
+    """
     @abstractmethod
     def __init__(self, bcmodel, input):
         self.dimensions = 0
