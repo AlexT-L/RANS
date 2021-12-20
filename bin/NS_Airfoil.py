@@ -8,55 +8,26 @@ from bin.model_funcs.halo import halo
 from bin.model_funcs.stability_fast import stability
 
 class NS_Airfoil(BoundaryConditioner):
-    """
-    Description
-    
-    Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
+    """Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
     A halo is formed around the mesh containing ghost nodes. Two types of boundary conditions
     are implemented: wall boundaries and far field boundaries
 
-    Attributes
-    
-    class_name: 
-        name of class for accessing Fields in the workspace
+     Constructor:
+        Args:
+            input (list): input dictionary
 
-    padding: 
-        number of ghost nodes on boundary
+        Returns:
+            A NS_Airfoil object
 
-    local_timestepping: 
-        parameter for use in calculating stable time step
-        
-    bc: 
-        some parameter
-
-    Libraries/Modules
-    
-    numpy
-    BoundaryConditioner
-    NS_Airfoil_imp
-    bcfar
-    bcwall
-    halo
-    stability
-
-    Notes
-    
-    Based on bcfar.f and bcwall.f """
+    Attributes:
+        class_name (str): name of class for accessing Fields in the workspace
+        padding (int): number of ghost nodes on boundary
+        local_timestepping (float): parameter for use in calculating stable time step
+        bc: some parameter
+    """
     
     
     def __init__(self, input):
-        """Constructor
-        
-        Args:
-        
-        input:
-            dictionary of values containing vt and bc
-
-        Returns
-        
-        A new NS_Arifoil object 
-
-        """
         self.className = "NS_Airfoil"
         self.padding = 2
         self.local_timestepping = not bool(input['vt'])
@@ -70,15 +41,9 @@ class NS_Airfoil(BoundaryConditioner):
         updates the turbulent viscocity for calculation of boundary conditions
         
         Args:
-        
-        model:
-            instance of NavierStokes model class
-
-        workspace:
-            instance of workspace class with the relevant fields
-
-        state:
-            current state of the system (density, momentum, energy)
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
     
         """
         ### This method should call Baldwin Lomax ###
@@ -90,35 +55,40 @@ class NS_Airfoil(BoundaryConditioner):
         updates stability parameters for time step calculations
         
         Args:
-        
-        model:
-            instance of NavierStokes model class
-
-        workspace:
-            instance of workspace class with the relevant fields
-
-        state:
-            current state of the system (density, momentum, energy)
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
     
         """
         self.__check_vars(workspace)
         stability(self, model, workspace, state)
     
+    # apply far-field boundary conditions
+    def bc_far(self, model, workspace, state):
+        """
+        apply boundary condition in the far field
+        
+        Args:
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
+    
+        """
+        self.__check_vars(workspace)
+        far_field(self, model, workspace, state)
+        # implementation.bc_far(self, model, workspace, state)
+
+
     # apply wall boundary conditions
     def bc_wall(self, model, workspace, state):
         """
         apply boundary condition along the wall
         
-         Args:
-         
-         model:
-            instance of NavierStokes model class
-
-         workspace:
-            instance of workspace class with the relevant fields
-
-         state:
-            current state of the system (density, momentum, energy)
+        Args:
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
+    
         
         
         """
@@ -126,43 +96,17 @@ class NS_Airfoil(BoundaryConditioner):
         wall(self, model, workspace, state)
         # implementation.bc_wall(self, model, workspace, state)
 
-    # apply far-field boundary conditions
-    def bc_far(self, model, workspace, state):
-        """
-        apply boundary condition in the far field
-        
-        Args:
-        
-        model:
-            instance of NavierStokes model class
-
-        workspace:
-            instance of workspace class with the relevant fields
-
-        state:
-            current state of the system (density, momentum, energy)
-    
-        """
-        self.__check_vars(workspace)
-        far_field(self, model, workspace, state)
-        # implementation.bc_far(self, model, workspace, state)
 
     # apply halo boundary conditions
     def halo(self, model, workspace, state):
         """
         set the values in the ghost cells
         
-         Args:
-         
-         model:
-            instance of NavierStokes model class
-
-         workspace:
-            instance of workspace class with the relevant fields
-
-         state:
-            current state of the system (density, momentum, energy)
-        
+        Args:
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
+    
         
         """
         self.__check_vars(workspace)
@@ -175,16 +119,11 @@ class NS_Airfoil(BoundaryConditioner):
         """
         do wall boundaries, far field and set halo values at once
         
-         Args:
-         
-         model:
-            instance of NavierStokes model class
-
-         workspace:
-            instance of workspace class with the relevant fields
-
-         state:
-            current state of the system (density, momentum, energy)
+        Args:
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
+            state (Field): current state of the system (density, momentum, energy)
+    
         
         """
         self.__check_vars(workspace)
@@ -194,6 +133,14 @@ class NS_Airfoil(BoundaryConditioner):
 
     # transfer data between workspaces
     def transfer_down(self, model, workspace1, workspace2):
+        """
+        transfer workspace to coarser mesh
+        
+        Args:
+            workspace1 (Workspace): on fine mesh
+            workspace2 (Workspace): on coarse mesh
+        
+        """
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
         tf.transfer_down(self, model, workspace1, workspace2)
@@ -203,10 +150,11 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in i direction from the workspace
         
-         Args:
-         
-         workspace:
-            instance of workspace class with the relevant field
+        Args:
+            workspace (Workspace): has pori
+
+        Returns: 
+            pori (Field): porosity in i direction
         
         """
         self.__check_vars(workspace)
@@ -216,10 +164,11 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in j direction from the workspace
         
-         Args:
-         
-         workspace:
-            instance of workspace class with the relevant field
+        Args:
+            workspace (Workspace): has porj
+
+        Returns: 
+            porj (Field): porosity in j direction
         
         """
         self.__check_vars(workspace)
@@ -228,12 +177,11 @@ class NS_Airfoil(BoundaryConditioner):
     # set geometry values in the halo
     def halo_geom(self, model, workspace):
         """
-        grab porosity in i direction from the workspace
+        set values in the ghost cells
         
-         Args:
-         
-         workspace:
-            instance of workspace class with the relevant field
+        Args:
+            model (NavierStokes): physics model
+            workspace (Workspace): contains the relevant fields
         
         """
         self.__check_vars(workspace)
