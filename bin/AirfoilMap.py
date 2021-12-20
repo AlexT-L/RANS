@@ -53,7 +53,7 @@ class AirfoilMap(Grid):
         
         Args:
             num_divisions (list):Number of cells in the x and y directions.
-            input:Dictionary containing data-file values
+            input (dict):Dictionary containing data-file values
         Returns:
             grid (obj): new AirfoilMap object
         """
