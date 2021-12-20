@@ -54,9 +54,10 @@
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">Model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bcmodel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Model.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class for a physics model. never to be instantiated.</p>
-<dl>
-<dt>Constructor:</dt><dd><p>Args:</p>
 <dl class="simple">
+<dt>Constructor:</dt><dd><dl class="simple">
+<dt>Args:</dt><dd><p>bcmodel (BoundaryConditioner): Boundary condition model</p>
+</dd>
 <dt>Returns:</dt><dd><p>A new Model object</p>
 </dd>
 <dt>Notes:</dt><dd><p>Check top of Input.py file to see the contents of each of the five dictionanries</p>

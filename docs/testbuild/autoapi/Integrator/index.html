@@ -45,7 +45,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Integrator.Integrator" title="Integrator.Integrator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Integrator</span></code></a></p></td>
-<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+<td><p>Abstract base class, never directly instantiated</p></td>
 </tr>
 </tbody>
 </table>
@@ -53,12 +53,30 @@
 <dt class="sig sig-object py" id="Integrator.Integrator">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">Integrator.</span></span><span class="sig-name descname"><span class="pre">Integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Integrator.Integrator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>Abstract base class, never directly instantiated
+NS_Airfoil is a child class of this ABC</p>
+<dl class="simple">
+<dt>Constructor:</dt><dd><dl class="simple">
+<dt>Args:</dt><dd><p>model (Model): physics model
+input: necessary input parameters</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="Integrator.Integrator.step">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Integrator.Integrator.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the local timestep such that stability is maintained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>workspace</strong> – The Workspace object</p></li>
+<li><p><strong>state</strong> – A Field containing the current state</p></li>
+<li><p><strong>forcing</strong> – Field of values on the right hand side of the equation that “force” the ODE</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

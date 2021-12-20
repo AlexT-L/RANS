@@ -53,20 +53,16 @@ Classes
 
       Copies the residual values to the output Field.
 
-      Args:
-
-      output:
-          Field that will store the values
+      :param output: Field that will store the residual values
+      :type output: Field
 
 
    .. py:method:: solution(self, output)
 
       Copies the state values to the output Field.
 
-      Args:
-
-      output:
-          Field that will store the values
+      :param output: Field that will store the values
+      :type output: Field
 
 
 
