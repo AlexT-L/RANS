@@ -114,7 +114,7 @@ class MultiGrid:
             model.update_stability(workspace, w)
                 
         # Perform integration to get new state
-        integrator.step(workspace, w, Rw)
+        integrator.step(workspace, w)
         #####
 
         # subsequent levels
@@ -153,7 +153,7 @@ class MultiGrid:
                     model.update_stability(workspace, w)
                 
                 # Perform integration to get new state
-                integrator.step(workspace, w, Rw)
+                integrator.step(workspace, w, wr)
 
                 # Update Correction
                 wc[:] = w - w1
@@ -170,9 +170,16 @@ class MultiGrid:
                 
                 # Update Correction
                 wc[:] = w - w1
+
+            else: # stay on same grid level
+                # perform step
+                integrator.step(workspace, w, wr)
+
+                # Update Correction
+                wc[:] = w - w1
         
         # perform one last step
-        integrator.step(workspace, w, Rw)
+        integrator.step(workspace, w)
 
         # update number of cycles
         self.num_cycles += 1

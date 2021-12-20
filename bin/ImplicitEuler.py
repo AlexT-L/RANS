@@ -31,7 +31,7 @@ class ImplicitEuler(Integrator):
         self.c_step = input['cstp']
 
     
-    def step(self, workspace, state, forcing):
+    def step(self, workspace, state, forcing=0):
         """Returns the local timestep such that stability is maintained.
         
         Args:
