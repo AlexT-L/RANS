@@ -1,0 +1,31 @@
+:py:mod:`stability_fast`
+========================
+
+.. py:module:: stability_fast
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   stability_fast.stability
+
+
+
+.. py:function:: stability(self, model, workspace, state)
+
+   Calculates timestep limits to maintain stability
+
+   :param model: The physics model
+   :type model: Model
+   :param workspace: The current Workspace
+   :type workspace: Workspace
+   :param state: Field containing current state
+   :type state: Field
+
+

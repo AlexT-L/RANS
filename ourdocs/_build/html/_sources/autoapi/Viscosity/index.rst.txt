@@ -1,0 +1,54 @@
+:py:mod:`Viscosity`
+===================
+
+.. py:module:: Viscosity
+
+.. autoapi-nested-parse::
+
+   This module computes viscosity coefficients
+
+   Libraries/Modules:
+   numpy
+
+   BaldwinLomax
+
+   BoundaryThickness
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   Viscosity.compute_viscosity
+
+
+
+.. py:function:: compute_viscosity(model, ws, state)
+
+   Computes viscosity coefficients.
+       First, computes the molecular viscosity.
+       Then continues for turbulent, Baldwin Lomax Model
+       or runs the RNG algebraic model.
+       Next, calculates the boundary layer thickness
+       Solves for the eddy viscosity.
+
+   .. attribute:: rlv
+
+      laminar viscosity
+
+   .. attribute:: rev
+
+      eddy viscosity
+
+   .. rubric:: Notes
+
+   Adapted from subroutine viscf.f
+
+

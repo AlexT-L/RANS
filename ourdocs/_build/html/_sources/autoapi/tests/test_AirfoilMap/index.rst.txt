@@ -1,0 +1,98 @@
+:py:mod:`tests.test_AirfoilMap`
+===============================
+
+.. py:module:: tests.test_AirfoilMap
+
+.. autoapi-nested-parse::
+
+   Tests the AirfoilMap object to make sure all the outputs are as expected
+
+   Libraries/Modules:
+       pytest
+
+       AerfoilMap
+
+   .. rubric:: Notes
+
+   Runs the following tests:
+
+   1. Checks that x,xc and vol are Field objects
+
+   2. Checks that vol is positive values
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_AirfoilMap.test_if_field_object
+   tests.test_AirfoilMap.test_vol_postive
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_AirfoilMap.input
+   tests.test_AirfoilMap.gridInput
+   tests.test_AirfoilMap.grid_dim
+   tests.test_AirfoilMap.grid
+   tests.test_AirfoilMap.x
+   tests.test_AirfoilMap.xc
+   tests.test_AirfoilMap.vol
+
+
+.. py:data:: input
+   
+
+   
+
+.. py:data:: gridInput
+   
+
+   
+
+.. py:data:: grid_dim
+   
+
+   
+
+.. py:data:: grid
+   
+
+   
+
+.. py:data:: x
+   
+
+   
+
+.. py:data:: xc
+   
+
+   
+
+.. py:data:: vol
+   
+
+   
+
+.. py:function:: test_if_field_object()
+
+   Assert that x,xc and vol are Field
+   objects
+
+
+.. py:function:: test_vol_postive()
+
+   Assert that vol is all non-negative values
+
+

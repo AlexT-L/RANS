@@ -1,0 +1,35 @@
+:py:mod:`Expandinator`
+======================
+
+.. py:module:: Expandinator
+
+.. autoapi-nested-parse::
+
+   Description
+
+   Expands Field objects from coarser meshes to finer meshes.
+
+   Libraries/Modules
+
+   bin.Field
+
+   numpy
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   Expandinator.bilinear4way
+
+
+
+.. py:function:: bilinear4way(coarse, fine)
+
+

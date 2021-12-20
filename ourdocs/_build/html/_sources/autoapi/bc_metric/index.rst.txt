@@ -1,0 +1,27 @@
+:py:mod:`bc_metric`
+===================
+
+.. py:module:: bc_metric
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   bc_metric.halo_geom
+
+
+
+.. py:function:: halo_geom(self, model, workspace)
+
+   Sets the geometry values in the halo
+
+   :param model: The physics model
+   :param workspace: The Workspace
+
+
