@@ -2,6 +2,13 @@
 from bin.Field import mean
 
 def transfer_down(self, model, workspace1, workspace2):
+    """Sets the geometry values in the halo
+        
+        Args:
+            model: The physics model
+            workspace1: The finer Workspace
+            workspace2: The coarser Workspace
+        """
     # get padding
     pad = self.padding
 

@@ -1,32 +1,30 @@
-"""
-Flo103
+"""Flo103
 
-Description:
-    Solves the Euler equations for an airfoil using a multigrid cycle.
-    Method of lines integration is used to solve the Partial Differential
-    Euler equations. To speed up convergence, the solution is calculated on
-    the desired mesh size, and then a new solution is found on successively 
-    smaller meshes using the solution at the previous mesh refinement as a 
-    guess at the state. The solutions found on coarser meshes are then used
-    as a correction to the state on the coarser mesh, and a new solution is found
-    on the fine mesh after applying the corrections.
+    Description:
+        Solves the Euler equations for an airfoil using a multigrid cycle.
+        Method of lines integration is used to solve the Partial Differential
+        Euler equations. To speed up convergence, the solution is calculated on
+        the desired mesh size, and then a new solution is found on successively 
+        smaller meshes using the solution at the previous mesh refinement as a 
+        guess at the state. The solutions found on coarser meshes are then used
+        as a correction to the state on the coarser mesh, and a new solution is found
+        on the fine mesh after applying the corrections.
 
-Libraries/Modules:
-    Input\n
-    Field\n
-    AirfoilMap\n
-    CellCenterWS\n
-    NavierStokes\n
-    ImplicitEuler\n
-    MultiGrid\n
+    Libraries/Modules:
+        Input\n
+        Field\n
+        AirfoilMap\n
+        CellCenterWS\n
+        NavierStokes\n
+        ImplicitEuler\n
+        MultiGrid\n
 
-Notes:
-    Currently in development
+    Notes:
+        Currently in development
 
-Authors:
-    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
-
-"""
+    Authors:
+        Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+        """
 from bin.Field import Field, max, mean
 from bin.Input import Input
 from bin.flo103_PostProcessor import flo103_PostProcessor
@@ -109,14 +107,14 @@ if __name__ == '__main__':
         mg.residuals(resid)
 
         # output the convergence
-#        post.print_convergence(resid)
+        #post.print_convergence(resid)
 
         # update convergence checker
         CONVERGED = watcher.is_converged(resid)
     stop = time()
     
     # print results
-#    post.print_solution(state)
+    #post.print_solution(state)
 
     rho = state[:,:,0]
     print(max(rho))

@@ -2,11 +2,8 @@ def halo_geom(self, model, workspace):
     """Sets the geometry values in the halo
         
         Args:
-        
-        model:
-            The physics model
-        workspace:
-            The Workspace
+            model: The physics model
+            workspace: The Workspace
         """
     # get dimensions
     dims = workspace.get_dims()

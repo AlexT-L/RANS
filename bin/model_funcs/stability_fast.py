@@ -1,8 +1,14 @@
 import numpy as np
-
 from bin.Field import Field, copy, maximum, minimum, abs, pos_diff, sqrt, square, min
 
 def stability(self, model, workspace, state):
+    """Calculates timestep limits to maintain stability
+    
+    Args:
+        model (Model):  The physics model
+        workspace (Workspace): The current Workspace
+        state (Field): Field containing current state
+    """
 
     # padding
     pad = self.padding

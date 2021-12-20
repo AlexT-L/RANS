@@ -1,6 +1,14 @@
 import numpy as np
 
 def stability(self, model, workspace, state):
+    """Calculates timestep limits to maintain stability
+    
+    Args:
+        model (Model):  The physics model
+        workspace (Workspace): The current Workspace
+        state (Field): Field containing current state
+    """
+
 
     # padding
     pad = self.padding
@@ -261,7 +269,7 @@ def stability(self, model, workspace, state):
 
 
 # edge vector of control volume in positive i or j direction
-def edge(self, i, j, side):
+def edge(workspace, i, j, side):
     i1 = i; i1 = i; j2 = j; j2 = j
     
     if side == "n":
@@ -277,7 +285,7 @@ def edge(self, i, j, side):
         i1 = i+1; j1 = j
         i2 = i+1; j2 = j+1
 
-    X = self.get_field('x')
+    X = workspace.get_field('x')
     x = X[:,:,0]
     y = X[:,:,1]
 
