@@ -1,0 +1,112 @@
+:py:mod:`tests.test_NavierStokes`
+=================================
+
+.. py:module:: tests.test_NavierStokes
+
+.. autoapi-nested-parse::
+
+   Tests the NavierStokes object to make sure it behaves as expected
+
+   Libraries/Modules:
+       pytest
+       Input
+       NavierStokes
+       AirfoilMap
+       CellCenterWS
+       NS_Airfoil
+
+   .. rubric:: Notes
+
+   Runs the following tests:
+   1. Checks that the constructor works
+   2. Checks that the airfoil geomtry is of the right length
+
+   3. Check that all the required dims values are being read into the dims dictionary
+
+   4. Check that all the required solv_param values are being read into the solv_param dictionary
+
+   5. Check that all the required flo_param values are being read into the flo_param dictionary
+
+   6. Check that all the required geo_param values are being read into the geo_param dictionary
+
+   Author(s)
+
+   Vedin Dewan
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_NavierStokes.test_constructor
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   tests.test_NavierStokes.filename
+   tests.test_NavierStokes.input
+   tests.test_NavierStokes.gridInput
+   tests.test_NavierStokes.grid_dim
+   tests.test_NavierStokes.modelInput
+   tests.test_NavierStokes.grid
+   tests.test_NavierStokes.workspace
+   tests.test_NavierStokes.bcmodel
+
+
+.. py:data:: filename
+   :annotation: = rae9-s1.data
+
+   
+
+.. py:data:: input
+   
+
+   
+
+.. py:data:: gridInput
+   
+
+   
+
+.. py:data:: grid_dim
+   
+
+   
+
+.. py:data:: modelInput
+   
+
+   
+
+.. py:data:: grid
+   
+
+   
+
+.. py:data:: workspace
+   
+
+   
+
+.. py:data:: bcmodel
+   
+
+   
+
+.. py:function:: test_constructor()
+
+   Asserts that we can create a NavierStokes object
+
+
+

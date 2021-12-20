@@ -12,7 +12,6 @@ Libraries/Modules
 Notes
 
 """
-# from numpy.core.numeric import array_equal
 import pytest
 import numpy as np
 from bin.Field import Field, array_equal

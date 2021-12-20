@@ -12,15 +12,7 @@ Libraries/Modules:
 Notes:
     Runs the following tests:
     1. Checks that the constructor works
-    2. Checks that the airfoil geomtry is of the right length \n
-    3. Check that all the required dims values are being read into the dims dictionary \n
-    4. Check that all the required solv_param values are being read into the solv_param dictionary \n
-    5. Check that all the required flo_param values are being read into the flo_param dictionary \n
-    6. Check that all the required geo_param values are being read into the geo_param dictionary \n
 
-Author(s)
-
-Vedin Dewan \n
 
 """
 from bin.Input import Input

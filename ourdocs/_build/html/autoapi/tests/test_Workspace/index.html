@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>tests.test_Workspace &#8212; RANS Modeling of Airfoils 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-tests.test_Workspace">
+<span id="tests-test-workspace"></span><h1><a class="reference internal" href="#module-tests.test_Workspace" title="tests.test_Workspace"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tests.test_Workspace</span></code></a><a class="headerlink" href="#module-tests.test_Workspace" title="Permalink to this headline">¶</a></h1>
+<p>Tests the Workspace object to see if it works as expected</p>
+<dl>
+<dt>Libraries/Modules:</dt><dd><p>pytest</p>
+<p>Workspace</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Runs the following tests:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Verify x, xc, vol can be retrieved</p></li>
+<li><p>Verify x, xc, vol are non-zero</p></li>
+<li><p>Verify that init_vars works as expected</p></li>
+<li><p>Checks that has_dict exists and has_dict return as expected</p></li>
+<li><p>Checks is_finest method</p></li>
+</ol>
+</div></blockquote>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Workspace.test_x" title="tests.test_Workspace.test_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_x</span></code></a>()</p></td>
+<td><p>Asserts that we can retrieve x and that it is non zero</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Workspace.test_xc" title="tests.test_Workspace.test_xc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_xc</span></code></a>()</p></td>
+<td><p>Asserts that we can retrieve xc and that it is non zero</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Workspace.test_vol" title="tests.test_Workspace.test_vol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_vol</span></code></a>()</p></td>
+<td><p>Asserts that we can retrieve vol and that it is non zero</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Workspace.test_init_vars" title="tests.test_Workspace.test_init_vars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_init_vars</span></code></a>()</p></td>
+<td><p>Verify that init_vars works as expected</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Workspace.test_has_dict" title="tests.test_Workspace.test_has_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_has_dict</span></code></a>()</p></td>
+<td><p>Asserts that has dict</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Workspace.test_finest" title="tests.test_Workspace.test_finest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_finest</span></code></a>()</p></td>
+<td><p>Asserts isFinest</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_x">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that we can retrieve x and that it is non zero</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_xc">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_xc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_xc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that we can retrieve xc and that it is non zero</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_vol">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_vol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_vol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that we can retrieve vol and that it is non zero</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_init_vars">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_init_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_init_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that init_vars works as expected</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_has_dict">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_has_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_has_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that has dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Workspace.test_finest">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Workspace.</span></span><span class="sig-name descname"><span class="pre">test_finest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Workspace.test_finest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts isFinest</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">RANS Modeling of Airfoils</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alex Taylor-Lash, Andy Rothstein, Brian Wynne, Nick Conlin, Satya Butler, Vedin Dewan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/tests/test_Workspace/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

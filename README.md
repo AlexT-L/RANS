@@ -1,5 +1,5 @@
 # RANS
-RANS Modeling of Airfoil. An overview of our project is given in the research project pdf and the code is based off of Gigi's thesis. 
+RANS Modeling of Airfoil. An overview of our project is given in the research project pdf and the code is based off of Gigi's (Luigi Martinelli) thesis. 
 
 ## How to Run
 The main file is the flo103.py. This can be run directly without any additional inputs. There are 2 sample airfoils in the main repository and they can be changed directly by changing the name in flo103.py. 
@@ -14,7 +14,17 @@ We are using the Multigrid method to solve a Navier-Stokes problem. To swap out 
 ### Integrator
 The current integrator used is ImplicitEuler.py. If you implement the constructor and the step() function as a child of the Integrator class, any integration scheme should work. 
 
+## Final Paper
+The final paper (latex document) can be found [here](https://www.overleaf.com/project/61bf84dbe37b215a352b7f58)
 
-## Class Diagram
-Link to online source [here](https://lucid.app/lucidchart/3740e36c-b01f-494a-b61c-b08bc9aa8092/edit?invitationId=inv_f79f431d-b5df-4b4d-bf69-b01c7a08117e)
 
+## UML Diagram
+The UML Diagram can be found [here](https://github.com/andybroth/RANS/blob/e60dc63318b2e0e1277bf4da68918732ce84af3d/Git%20Stokesed%20UML%20Diagram.PNG)
+
+
+## Documentation
+To generate documentation, `cd` into the `docs/` directory where there should be a `conf.py` file. (Install Sphinx if it is not already installed.) From there run the command `make html` to build html documentation or `make latexpdf` for latex files (you need Latex installed). 
+
+If you need to build the documentation from absolute scratch (i.e. there is no `docs/` directory), run the command `sphinx-quickstart docs` in the `RANS/` directory. Then `cd docs/` and open `conf.py`. About line 33, change `extensions = []` to `extensions = ['autoapi.extension', 'sphinx.ext.napoleon']` and add a line below that with `autoapi_dirs = ['../bin', '../tests']`. Save your changes and then you can `make html` and `make latexpdf`.
+
+If necessary, documentation can be found in the `ourdocs/` directory. The `html` file is in `ourdocs/_build/html/index.html` and the `latex` file is in `ourdocs/_build/latex/ransmodelingofairfoils.tex`.

@@ -1,10 +1,10 @@
-.. RANS test documentation master file, created by
-   sphinx-quickstart on Mon Dec 20 01:31:04 2021.
+.. RANS documentation master file, created by
+   sphinx-quickstart on Mon Dec 20 14:21:20 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to RANS test's documentation!
-=====================================
+Welcome to RANS's documentation!
+================================
 
 .. toctree::
    :maxdepth: 2

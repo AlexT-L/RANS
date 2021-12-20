@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>tests.test_Input &#8212; RANS Modeling of Airfoils 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-tests.test_Input">
+<span id="tests-test-input"></span><h1><a class="reference internal" href="#module-tests.test_Input" title="tests.test_Input"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tests.test_Input</span></code></a><a class="headerlink" href="#module-tests.test_Input" title="Permalink to this headline">¶</a></h1>
+<p>Tests the Input object to make sure all inputs as as expected</p>
+<dl>
+<dt>Libraries/Modules:</dt><dd><p>pytest</p>
+<p>Input</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Runs the following tests:</p>
+<ol class="arabic simple">
+<li><p>Checks that the input airfoil geometry is a closed curve</p></li>
+<li><p>Checks that the airfoil geomtry is of the right length</p></li>
+<li><p>Check that all the required dims values are being read into the dims dictionary</p></li>
+<li><p>Check that all the required solv_param values are being read into the solv_param dictionary</p></li>
+<li><p>Check that all the required flo_param values are being read into the flo_param dictionary</p></li>
+<li><p>Check that all the required geo_param values are being read into the geo_param dictionary</p></li>
+</ol>
+<p>Author(s)</p>
+<p>Vedin Dewan</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Input.test_geometry_closed" title="tests.test_Input.test_geometry_closed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_geometry_closed</span></code></a>()</p></td>
+<td><p>Asserts that geometry is a closed curve</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Input.test_geom_length" title="tests.test_Input.test_geom_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_geom_length</span></code></a>()</p></td>
+<td><p>Asserts that the number of points on the geometry</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Input.test_dims" title="tests.test_Input.test_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_dims</span></code></a>()</p></td>
+<td><p>Asserts that the all the required values in the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Input.test_solv_param" title="tests.test_Input.test_solv_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_solv_param</span></code></a>()</p></td>
+<td><p>Asserts that the all the required values in the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Input.test_flo_param" title="tests.test_Input.test_flo_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_flo_param</span></code></a>()</p></td>
+<td><p>Asserts that the all the required values in the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Input.test_geo_param" title="tests.test_Input.test_geo_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_geo_param</span></code></a>()</p></td>
+<td><p>Asserts that the all the required values in the</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Input.input" title="tests.test_Input.input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_Input.xn" title="tests.test_Input.xn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xn</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_Input.yn" title="tests.test_Input.yn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yn</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_Input.input">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">input</span></span><a class="headerlink" href="#tests.test_Input.input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_Input.xn">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">xn</span></span><a class="headerlink" href="#tests.test_Input.xn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_Input.yn">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">yn</span></span><a class="headerlink" href="#tests.test_Input.yn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_geometry_closed">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_geometry_closed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_geometry_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that geometry is a closed curve</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_geom_length">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_geom_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_geom_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the number of points on the geometry
+is as expected</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_dims">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_dims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the all the required values in the
+dims dictionary are being read in</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_solv_param">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_solv_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_solv_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the all the required values in the
+solv_param dictionary are being read in</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_flo_param">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_flo_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_flo_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the all the required values in the
+flo_param dictionary are being read in</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_Input.test_geo_param">
+<span class="sig-prename descclassname"><span class="pre">tests.test_Input.</span></span><span class="sig-name descname"><span class="pre">test_geo_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_Input.test_geo_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that the all the required values in the
+geo_param dictionary are being read in</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">RANS Modeling of Airfoils</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alex Taylor-Lash, Andy Rothstein, Brian Wynne, Nick Conlin, Satya Butler, Vedin Dewan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/tests/test_Input/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

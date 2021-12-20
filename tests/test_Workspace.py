@@ -1,25 +1,20 @@
 """
-Description
-
 Tests the Workspace object to see if it works as expected
 
-Libraries/Modules
+Libraries/Modules:
+    pytest \n
+    Workspace\n
 
--pytest \n
--Workspace
+Notes:
+    Runs the following tests:\n
+        1. Verify x, xc, vol can be retrieved\n
+        2. Verify x, xc, vol are non-zero\n
+        3. Verify that init_vars works as expected\n
+        4. Checks that has_dict exists and has_dict return as expected\n
+        5. Checks is_finest method\n
 
-Notes
-
-Runs the following tests:\n
-Verify x, xc, vol can be retrieved
-Verify x, xc, vol are non-zero
-Verify that init_vars works as expected
-then check that init_vars? exists return True
-check that has_dict? exists and has_dict return false when they should
-check is_finest()
 """
 import sys
-# sys.path.append('../../)
 sys.path.append('../../RANS/bin')
 from numpy.core.numeric import NaN
 import pytest
@@ -91,9 +86,9 @@ def test_vol():
     assert np.any(vol)
 
 def test_init_vars():
-    '''
+    """
     Verify that init_vars works as expected
-    '''
+    """
     # input = Input('rae9-s1.data') # Will actually take all command line inputs
     filename = 'rae9-s1.data'
     # read in input
@@ -213,9 +208,9 @@ def test_has_dict():
     assert dict_test
 
 def test_finest():
-    '''
+    """
     Asserts isFinest 
-    '''
+    """
     # input = Input('rae9-s1.data') # Will actually take all command line inputs
     filename = 'rae9-s1.data'
     # read in input

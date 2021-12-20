@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>tests.test_NavierStokes &#8212; RANS Modeling of Airfoils 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-tests.test_NavierStokes">
+<span id="tests-test-navierstokes"></span><h1><a class="reference internal" href="#module-tests.test_NavierStokes" title="tests.test_NavierStokes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tests.test_NavierStokes</span></code></a><a class="headerlink" href="#module-tests.test_NavierStokes" title="Permalink to this headline">¶</a></h1>
+<p>Tests the NavierStokes object to make sure it behaves as expected</p>
+<dl class="simple">
+<dt>Libraries/Modules:</dt><dd><p>pytest
+Input
+NavierStokes
+AirfoilMap
+CellCenterWS
+NS_Airfoil</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Runs the following tests:
+1. Checks that the constructor works
+2. Checks that the airfoil geomtry is of the right length</p>
+<ol class="arabic simple" start="3">
+<li><p>Check that all the required dims values are being read into the dims dictionary</p></li>
+<li><p>Check that all the required solv_param values are being read into the solv_param dictionary</p></li>
+<li><p>Check that all the required flo_param values are being read into the flo_param dictionary</p></li>
+<li><p>Check that all the required geo_param values are being read into the geo_param dictionary</p></li>
+</ol>
+<p>Author(s)</p>
+<p>Vedin Dewan</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_NavierStokes.test_constructor" title="tests.test_NavierStokes.test_constructor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_constructor</span></code></a>()</p></td>
+<td><p>Asserts that we can create a NavierStokes object</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_NavierStokes.filename" title="tests.test_NavierStokes.filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_NavierStokes.input" title="tests.test_NavierStokes.input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_NavierStokes.gridInput" title="tests.test_NavierStokes.gridInput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridInput</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_NavierStokes.grid_dim" title="tests.test_NavierStokes.grid_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_dim</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_NavierStokes.modelInput" title="tests.test_NavierStokes.modelInput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modelInput</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_NavierStokes.grid" title="tests.test_NavierStokes.grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tests.test_NavierStokes.workspace" title="tests.test_NavierStokes.workspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">workspace</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tests.test_NavierStokes.bcmodel" title="tests.test_NavierStokes.bcmodel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bcmodel</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.filename">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">filename</span></span><em class="property"> <span class="pre">=</span> <span class="pre">rae9-s1.data</span></em><a class="headerlink" href="#tests.test_NavierStokes.filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.input">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">input</span></span><a class="headerlink" href="#tests.test_NavierStokes.input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.gridInput">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">gridInput</span></span><a class="headerlink" href="#tests.test_NavierStokes.gridInput" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.grid_dim">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">grid_dim</span></span><a class="headerlink" href="#tests.test_NavierStokes.grid_dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.modelInput">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">modelInput</span></span><a class="headerlink" href="#tests.test_NavierStokes.modelInput" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.grid">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">grid</span></span><a class="headerlink" href="#tests.test_NavierStokes.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.workspace">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">workspace</span></span><a class="headerlink" href="#tests.test_NavierStokes.workspace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.bcmodel">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">bcmodel</span></span><a class="headerlink" href="#tests.test_NavierStokes.bcmodel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_NavierStokes.test_constructor">
+<span class="sig-prename descclassname"><span class="pre">tests.test_NavierStokes.</span></span><span class="sig-name descname"><span class="pre">test_constructor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_NavierStokes.test_constructor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts that we can create a NavierStokes object</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">RANS Modeling of Airfoils</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Alex Taylor-Lash, Andy Rothstein, Brian Wynne, Nick Conlin, Satya Butler, Vedin Dewan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/tests/test_NavierStokes/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

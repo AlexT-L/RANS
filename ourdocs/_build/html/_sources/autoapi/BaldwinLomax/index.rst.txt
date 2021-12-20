@@ -1,0 +1,66 @@
+:py:mod:`BaldwinLomax`
+======================
+
+.. py:module:: BaldwinLomax
+
+.. autoapi-nested-parse::
+
+   This module calculates turbulent viscosity at the cell faces.
+
+   Libraries/Modules:
+       numpy
+
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BaldwinLomax.turbulent_viscosity
+
+
+
+.. py:function:: turbulent_viscosity(model, ws, state)
+
+   Baldwin-lomax turbulence model:  modtur = 2.
+   Calculates turbulent viscosity at the cell faces.
+   Averages to obtain cell center values fully vectorized routine.                                         *
+   Calculates eddy viscosity, vorticity, total velocity, normal distance.
+   Also calculates outer and innner eddy viscosity.
+
+   .. attribute:: rev
+
+      eddy viscocity
+
+   .. attribute:: ylen
+
+      normal distance
+
+   .. attribute:: vor
+
+      vorticity
+
+   .. attribute:: vol
+
+      control volume
+
+   .. attribute:: amuto
+
+      outer eddy viscosity
+
+   .. attribute:: amuti
+
+      inner eddy viscosity
+
+   .. rubric:: Notes
+
+   Adapted from subroutine turb2.f
+
+
