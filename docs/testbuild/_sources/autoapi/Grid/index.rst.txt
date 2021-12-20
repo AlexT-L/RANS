@@ -1,0 +1,41 @@
+:py:mod:`Grid`
+==============
+
+.. py:module:: Grid
+
+.. autoapi-nested-parse::
+
+   This module contains an abstract base class Grid
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Grid.Grid
+
+
+
+
+.. py:class:: Grid
+
+   Bases: :py:obj:`abc.ABC`
+
+   Abstract base class, never directly instantiated
+
+   AirfoilMap is a child class of this ABC
+
+   .. py:method:: get_size(self)
+      :abstractmethod:
+
+
+   .. py:method:: get_geometry(self)
+      :abstractmethod:
+
+
+

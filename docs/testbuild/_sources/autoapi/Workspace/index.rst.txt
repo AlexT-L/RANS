@@ -1,0 +1,132 @@
+:py:mod:`Workspace`
+===================
+
+.. py:module:: Workspace
+
+.. autoapi-nested-parse::
+
+   This module is the ABC for workspace.
+   Libraries/Modules:
+       numpy
+
+
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   Workspace.Workspace
+
+
+
+
+.. py:class:: Workspace(grid, isFinest=True)
+
+   Bases: :py:obj:`abc.ABC`
+
+   Abstract base class for workspaces.
+   Constructor initializes fields array with Grid fields
+
+   .. attribute:: self.grid
+
+      Inputted grid
+
+   .. attribute:: self.flds
+
+      Dictionary of fields for grid
+
+   Notes: Would not be directly implemented (ABC)
+
+   .. py:method:: MakeNew(self, grid, isFinest=True)
+      :abstractmethod:
+
+      Returns another instance of a workspace
+
+
+   .. py:method:: get_grid(self)
+
+      Returns grid object
+
+
+   .. py:method:: get_dims(self)
+
+      Returns grid-level-specific geometry info
+
+
+   .. py:method:: get_geometry(self)
+
+      Returns geometry info
+
+
+   .. py:method:: add_field(self, new_field, fieldName, className='Grid')
+
+      Add field method for grid. Checks if already an instance.
+      Raises an error if already in list, adds new field if not.
+
+
+   .. py:method:: get_field(self, fieldName, className='Grid')
+
+      Returns the field. Checks if field aleady exists.
+      If already exists, raises error.
+      If does not exist, creats a field.
+
+
+   .. py:method:: has_dict(self, className)
+
+      Check if a class dictionary exists.
+
+
+   .. py:method:: exists(self, fieldName, className='Grid')
+
+      Checks if a field exists in a class's dictionary.
+      Exists/returns true if the it does have a dictionary,
+      and if there is a fieldName in self,flds.
+
+
+   .. py:method:: init_vars(self, className, vars)
+
+      Initialize class's stored fields,
+      must give a dictionary of variables with the following structure:
+      - keys are the variable name as a string (e.g. "w")
+      - values are an array of [field_dimensions, state_dim]
+          - field_dim is usually the grid size in [nx, ny] format
+          - state_dim is 1 for scalars
+      Creates a class dictionary.
+      Creats fields and stores in dictionary.
+
+
+   .. py:method:: is_finest(self)
+
+      Checks if finest level of mesh.
+
+
+   .. py:method:: field_size(self)
+      :abstractmethod:
+
+      Returns dimensions of field (# of control volumes)
+
+
+   .. py:method:: grid_size(self)
+
+      Returns dimensions of grid (# of vertices)
+
+
+   .. py:method:: volume(self, i, j)
+      :abstractmethod:
+
+
+   .. py:method:: edges(self, i, j, side)
+      :abstractmethod:
+
+
+   .. py:method:: edge_normals(self, i, j, side)
+      :abstractmethod:
+
+
+

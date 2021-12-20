@@ -1,0 +1,59 @@
+:py:mod:`flo103_ConvergenceChecker`
+===================================
+
+.. py:module:: flo103_ConvergenceChecker
+
+.. autoapi-nested-parse::
+
+   This module runs a set number of cycles.
+   Libraries/Modules:
+       Would use: numpy
+
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   flo103_ConvergenceChecker.flo103_ConvergenceChecker
+
+
+
+
+.. py:class:: flo103_ConvergenceChecker(input)
+
+   Current implementation is to run a pre-determined
+       number of cycles, and decide that convergence is when that number
+       of cycles has been reached.
+       A future improvement would be to actually implement a way to check
+       the convergence of the solution, based on residuals or errors, and
+       continue runnning until that convergence creiteria is below a
+       certain threshold.
+
+   .. attribute:: self.num_cycles
+
+      Cycle number
+
+   .. attribute:: self.n_runs
+
+      Number of runs
+
+   .. rubric:: Notes
+
+   Later implementation would have more sophisticated convergence.
+
+   .. py:method:: is_converged(self, residuals)
+
+      Cycle number is increased by 1 on each call.
+      Compared the cycle number to number of runs.
+      Returns true if all cycles have completed.
+      Ideally, would have a way to actually monitor convergence.
+      Then would return true when a certain criterion is met.
+
+
+

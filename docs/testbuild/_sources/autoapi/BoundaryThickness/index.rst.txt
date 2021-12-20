@@ -1,0 +1,63 @@
+:py:mod:`BoundaryThickness`
+===========================
+
+.. py:module:: BoundaryThickness
+
+.. autoapi-nested-parse::
+
+   This module calculates boundary layer thickness for viscosity.
+
+   Libraries/Modules:
+       numpy
+
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   BoundaryThickness.boundary_thickness
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   BoundaryThickness.dim_var
+   BoundaryThickness.params
+   BoundaryThickness.dims
+
+
+.. py:function:: boundary_thickness(params, dims)
+
+   Calculates the boundary layer thickness.
+
+   .. rubric:: Notes
+
+   Adapted from subroutine delt
+
+
+.. py:data:: dim_var
+   :annotation: = 500
+
+   
+
+.. py:data:: params
+   
+
+   
+
+.. py:data:: dims
+   
+
+   
+

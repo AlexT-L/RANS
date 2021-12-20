@@ -1,0 +1,33 @@
+:py:mod:`eflux`
+===============
+
+.. py:module:: eflux
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   eflux.eflux
+
+
+
+.. py:function:: eflux(model, ws, state, dw)
+
+   calculate convective fluxes
+
+   :param model: physics model
+   :type model: NavierStokes
+   :param workspace: the relevant fields
+   :type workspace: Workspace
+   :param state: containing the density, x-momentum, y-momentum, and energy
+   :type state: Field
+   :param dw: to store new residuals after completing fluxes
+   :type dw: Field
+
+

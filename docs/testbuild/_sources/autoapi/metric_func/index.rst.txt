@@ -1,0 +1,36 @@
+:py:mod:`metric_func`
+=====================
+
+.. py:module:: metric_func
+
+.. autoapi-nested-parse::
+
+   This module calculates cell centers xc and cell volumes vol in physical space
+
+   Libraries/Modules:
+       Field
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   metric_func.metric
+
+
+
+.. py:function:: metric(self)
+
+   This function calculates cell centers and cell volume
+
+   It uses the vertices from x to calculate xc (centers) and vol(volme)
+   of cells in physical space.
+
+
+

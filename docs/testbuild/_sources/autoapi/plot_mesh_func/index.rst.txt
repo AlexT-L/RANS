@@ -1,0 +1,36 @@
+:py:mod:`plot_mesh_func`
+========================
+
+.. py:module:: plot_mesh_func
+
+.. autoapi-nested-parse::
+
+   This module plots the c-mesh in physical space
+
+   Libraries/Modules:
+       nump
+
+       matplotlib.pyplot
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   plot_mesh_func.plot_mesh
+
+
+
+.. py:function:: plot_mesh(self)
+
+   Plots the c-mesh in physical space after conformal mapping
+
+   Uses the vertices from x to plot the mesh.
+
+

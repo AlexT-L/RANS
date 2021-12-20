@@ -1,0 +1,34 @@
+:py:mod:`coord_strch_func`
+==========================
+
+.. py:module:: coord_strch_func
+
+.. autoapi-nested-parse::
+
+   This module creates x and y array in computational space.
+
+   Libraries/Modules:
+       numpy
+
+
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   coord_strch_func.coord_stretch
+
+
+
+.. py:function:: coord_stretch(self)
+
+   It create array a0 and b0 in x and y dirn computationally with spacing such that when it is mapped back to physica domain it points on the mesh are evenly spaced for a given i/j direction.
+
+

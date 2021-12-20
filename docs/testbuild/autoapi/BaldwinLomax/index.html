@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>BaldwinLomax &#8212; RANS test 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-BaldwinLomax">
+<span id="baldwinlomax"></span><h1><a class="reference internal" href="#module-BaldwinLomax" title="BaldwinLomax"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BaldwinLomax</span></code></a><a class="headerlink" href="#module-BaldwinLomax" title="Permalink to this headline">¶</a></h1>
+<p>This module calculates turbulent viscosity at the cell faces.</p>
+<dl class="simple">
+<dt>Libraries/Modules:</dt><dd><p>numpy</p>
+</dd>
+</dl>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BaldwinLomax.turbulent_viscosity" title="BaldwinLomax.turbulent_viscosity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulent_viscosity</span></code></a>(params, dims)</p></td>
+<td><p>Baldwin-lomax turbulence model:  modtur = 2.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BaldwinLomax.dim_var" title="BaldwinLomax.dim_var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dim_var</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BaldwinLomax.params" title="BaldwinLomax.params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BaldwinLomax.dims" title="BaldwinLomax.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BaldwinLomax.t0" title="BaldwinLomax.t0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t0</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#BaldwinLomax.t1" title="BaldwinLomax.t1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#BaldwinLomax.total" title="BaldwinLomax.total"><code class="xref py py-obj docutils literal notranslate"><span class="pre">total</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="BaldwinLomax.turbulent_viscosity">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">turbulent_viscosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#BaldwinLomax.turbulent_viscosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Baldwin-lomax turbulence model:  modtur = 2.
+Calculates turbulent viscosity at the cell faces.
+Averages to obtain cell center values fully vectorized routine.                                         *
+Calculates eddy viscosity, vorticity, total velocity, normal distance.
+Also calculates outer and innner eddy viscosity.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.rev">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">rev</span></span><a class="headerlink" href="#BaldwinLomax.rev" title="Permalink to this definition">¶</a></dt>
+<dd><p>eddy viscocity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.ylen">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">ylen</span></span><a class="headerlink" href="#BaldwinLomax.ylen" title="Permalink to this definition">¶</a></dt>
+<dd><p>normal distance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.vor">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">vor</span></span><a class="headerlink" href="#BaldwinLomax.vor" title="Permalink to this definition">¶</a></dt>
+<dd><p>vorticity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.vol">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">vol</span></span><a class="headerlink" href="#BaldwinLomax.vol" title="Permalink to this definition">¶</a></dt>
+<dd><p>control volume</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.amuto">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">amuto</span></span><a class="headerlink" href="#BaldwinLomax.amuto" title="Permalink to this definition">¶</a></dt>
+<dd><p>outer eddy viscosity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BaldwinLomax.amuti">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">amuti</span></span><a class="headerlink" href="#BaldwinLomax.amuti" title="Permalink to this definition">¶</a></dt>
+<dd><p>inner eddy viscosity</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>Adapted from subroutine turb2.f</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.dim_var">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">dim_var</span></span><em class="property"> <span class="pre">=</span> <span class="pre">500</span></em><a class="headerlink" href="#BaldwinLomax.dim_var" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.params">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#BaldwinLomax.params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.dims">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">dims</span></span><a class="headerlink" href="#BaldwinLomax.dims" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.t0">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">t0</span></span><a class="headerlink" href="#BaldwinLomax.t0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.t1">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">t1</span></span><a class="headerlink" href="#BaldwinLomax.t1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BaldwinLomax.total">
+<span class="sig-prename descclassname"><span class="pre">BaldwinLomax.</span></span><span class="sig-name descname"><span class="pre">total</span></span><a class="headerlink" href="#BaldwinLomax.total" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">RANS test</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, SAVBNA.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/autoapi/BaldwinLomax/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
