@@ -1,21 +1,35 @@
+""" This module calculates turbulent viscosity at the cell faces.
+
+    Libraries/Modules:
+        numpy\n
+        """
 import numpy as np
 # from Grid import Grid
 
 # class BaldwinLomax():
 # @profile
 def turbulent_viscosity(params, dims):
-    # from subroutine turb2.f
-    
-    # baldwin-lomax turbulence model:  modtur = 2
-    # calculates turbulent viscosity at the cell faces and then
-    # averages to obtain cell center values fully vectorized routine                                         *
+    """ Baldwin-lomax turbulence model:  modtur = 2.
+    Calculates turbulent viscosity at the cell faces.
+    Averages to obtain cell center values fully vectorized routine.                                         *
+    Calculates eddy viscosity, vorticity, total velocity, normal distance.
+    Also calculates outer and innner eddy viscosity.
 
-    # "uses:" 
-    # dims, flo_var, solv_var, mesh_var, psm_var, flo_param, solv_param
+    Attributes:
+        rev: eddy viscocity
+        ylen: normal distance
+        vor: vorticity
+        vol: control volume
+        amuto: outer eddy viscosity
+        amuti: inner eddy viscosity
+
+    Notes: 
+        Adapted from subroutine turb2.f
+    """
 
     # inputs
-    ie = params['ie'] # Mesh dimension
-    je = params['je'] # Mesh dimension
+    ie = params['ie'] 
+    je = params['je'] 
     kvis = params['kvis']
     gamma = params['gamma']
     rm = params['rm']
@@ -31,10 +45,9 @@ def turbulent_viscosity(params, dims):
     w = params['w']
     p = params['p']
 
-    xtran = params['xtran'] # needs to be from flo_param
-    vol = params['vol'] # new
+    xtran = params['xtran'] 
+    vol = params['vol'] 
 
-    # initializing, defined later
     dim_var = 500
     tauw = np.ones(dim_var)
     yscal = np.ones(dim_var)
@@ -62,19 +75,12 @@ def turbulent_viscosity(params, dims):
     ylen = np.ones((dim_var,dim_var))
     ylenm = np.ones(dim_var)
 
-    i2        = ie
     j2        = je
-    # il        = i2- 1
-    # jl        = j2- 1
     jlm       = jl- 1
 
     jstop     = 3* (j2- 2)/5
-    # if (cmesh < 0.0):
-        # jstop = jl- 1
     itlp      = itl+ 1
-    iwrit     = 6
 
-    aplusi    = 1./26.
     cwk1      = 1.0
     ckleb     = 0.3
     ccp       = 1.6
@@ -82,21 +88,9 @@ def turbulent_viscosity(params, dims):
     restarr   = 0
 
     rey       = re
-    rein      = 1.0/rey
     sgam      = np.sqrt(gamma)
     sgrm      = sgam*rm
     sgrmi     = 1.0/sgrm
-
-# c     **********************************************************************
-# c     *    next 2 lines of code is activated to "test" turbulence model    *
-# c     *      effect on convergence                                         *
-# c     *                                                                    *
-# c     *    turbulent viscosity is frozen after ncyct cycles                *
-# c     **********************************************************************
-
-    # ncyct     = 10 # commented out in turb2
-    # if (ncyc > ncyct) return
-
 
     rinv[:,:] = 1.0/w[:,:,0]
     t[:,:]    = p[:,:]* rinv[:,:]
@@ -105,16 +99,13 @@ def turbulent_viscosity(params, dims):
     amu[:,:]  = t[:,:]
     amut[:,:] = 0.0
 
-# c     **********************************************************************
-# c     *   determination of eddy viscosity                                  *
-# c     *                                                                    *
-# c     *   turbulence model:                                                *
-# c     *     wall boundary layer --- baldwin-lomax model                    *
-# c     *     wake region         --- baldwin-lomax model (cwake= 1.0)       *
-# c     *                                                                    *
-# c     *   calculate vorticity and total velocity                           *
-# c     **********************************************************************
-
+    '''
+    Determination of eddy viscosity
+    Turbulence model:
+    Wall boundary layer --- baldwin-lomax model
+    Wake region         --- baldwin-lomax model (cwake= 1.0)
+    Calculates vorticity and total velocity
+    '''
 
     vola[:,:] = 0.5* (vol[:,:]+ vol[:,:+1])
 
@@ -136,18 +127,20 @@ def turbulent_viscosity(params, dims):
 
     utot[1:,1] = np.sqrt(utotal)
 
-    # i>1:il, i+1>2:il+1, i-1>0:il-1
-    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
+
     xxa       = x[1:il,1:jlm,0]-x[0:il-1,1:jlm,0] 
     yxa       = x[1:il,1:jlm,1]-x[0:il-1,1:jlm,1] 
     uy        = u[1:il,2:jlm+1]- u[1:il,1:jlm]
     vy        = v[1:il,2:jlm+1]- v[1:il,1:jlm]
     uavg      = 0.5* (u[1:il,1:jlm]+ u[1:il,2:jlm+1])
     vavg      = 0.5* (v[1:il,1:jlm]+ v[1:il,2:jlm+1])
-#  thin-layer navier-stokes contribution to vorticity
+    '''
+    thin-layer navier-stokes contribution to vorticity
+    '''
     vor1      = (xxa*uy + yxa*vy)/vola[1:il,1:jlm]
-
-#  additional contributions to vorticity
+    '''
+    additional contributions to vorticity
+    '''
     xyw       = 0.5* (x[0:il-1,2:jlm+1,0]- x[0:il-1,0:jlm-1,0])
     xye       = 0.5* (x[1:il,2:jlm+1,0]- x[1:il,0:jlm-1,0])
     yyw       = 0.5* (x[0:il-1,2:jlm+1,1]- x[0:il-1,0:jlm-1,1])
@@ -166,7 +159,9 @@ def turbulent_viscosity(params, dims):
     utotal    = uavg* uavg+ vavg* vavg
     utot[1:il,1:jlm] = np.sqrt(utotal)
 
-    #  determine transition index
+    '''
+    Determine transition index
+    '''
     itr1      = 0
     itr2      = 0
     j         = 1
@@ -182,14 +177,12 @@ def turbulent_viscosity(params, dims):
             break
 
     for i in range(1,il):
-    
-        # for j in range(0,jlm):
         avor   = vor[i,0:jlm]
         utot1  = utot[i,0:jlm]
 
-        jmaxv     = np.argmax(avor) # replacing ismax with np.argmax.
+        jmaxv     = np.argmax(avor) 
         if (jmaxv == 0): 
-            jmaxv = 1 # Seems weird to me
+            jmaxv = 1 
 
         jminut    = np.argmin(utot1)
         jmaxut    = np.argmax(utot1)
@@ -199,7 +192,6 @@ def turbulent_viscosity(params, dims):
         utmax[i]  = max(utot1[jmaxut],1.e-3)
         utotm[i]  = utmax[i]
         yscal[i]  = 1000000.
-    # i loop ends here
 
     if (modbl == 1):
         tur1    = 1.0
@@ -226,14 +218,10 @@ def turbulent_viscosity(params, dims):
     avorc     = avorm[itlp-1:itu]
     avor2     = tur1*avora + tur2*avorb + tur3*avorc
     yscal[itlp-1:itu]  = np.sqrt(rey* sgrmi* amub* avor2* w[itlp-1:itu,1,0])/(26.*amub)
-
-        # **********************************************************************
-        # *   compute normal distance ylen[i,j] and function  yvor             *
-        # *   (yvor = y* vorticity)                                            *
-        # **********************************************************************
-
-    # i>1:il, i+1>2:il+1, i-1>0:il-1 (for j in range(1,jlm)/for i in range( 1,il):)
-    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
+    '''
+    Compute normal distance ylen[i,j] and function 'yvor'
+    (yvor = y* vorticity)
+    '''
     ylen[1:il,1] = 0.0
     xc2       = .50* (x[1:il,1:jlm,0]+ x[0:il-1,1:jlm,0]-x[1:il,0:jlm-1,0]- x[0:il-1,0:jlm-1,0])
     yc2       = .50* (x[1:il,1:jlm,1]+ x[0:il-1,1:jlm,1]-x[1:il,0:jlm-1,1]- x[0:il-1,0:jlm-1,1])
@@ -247,15 +235,10 @@ def turbulent_viscosity(params, dims):
             y1        = yscal[i]* ylen[i,j]
             damp      = 1.0- np.exp(-y1)
             yvor[j]   = ylen[i,j]* vor[i,j]* damp
-        # end j loop
 
-        # i loop continues
         jmaxyv    = np.argmax(yvor)
         jmaxyv    = max(jmaxyv,2)
         jedge[i]  = jmaxyv
-
-        # next line of code replaced because it caused convergence
-        # stall when m = 0.001 - 12/10/05 (check this further !!!!)
 
         yvorm[i]  = max(yvor[jmaxyv],1.e-6)
         ylenm[i]  = max(ylen[i,jmaxyv],ylen1)
@@ -278,18 +261,13 @@ def turbulent_viscosity(params, dims):
         else:
             ylenm[i]  = ylenm1
 
-        # end i loop
-
-        # **********************************************************************
-        # *   compute outer eddy viscosity                                     *
-        # *                                                                    *
-        # *   outer do loop                                                    *
-        # **********************************************************************
-
-    for i in range(1,il): #start of outer i loop #####################
+    '''
+    Compute outer eddy viscosity
+    '''
+    for i in range(1,il): 
         udiff     = abs(utmax[i]- utmin[i])
         udiff1    = cwk1* udiff
-        for j in range(1,int(np.floor(jstop))): # loop 60
+        for j in range(1,int(np.floor(jstop))): 
             ravg[j]   = 0.5* (w[i,j,0]+ w[i,j+1,0])
             coeff     = 0.0168* ccp
             fwake1    = coeff* yvorm[i]* ylenm[i]
@@ -301,67 +279,55 @@ def turbulent_viscosity(params, dims):
             fkleb[j]  = 1.0/(1.0+ 5.5* fkleb1**6)
             amuto[j]  = rey* sgrmi* ravg[j]* fwake* fkleb[j]
             amuto[j]  = abs(amuto[j])
-        # end loop 60
         amuto[1]  = amuto[2]
 
-        # **********************************************************************
-        # *   compute inner eddy viscosity                                     *
-        # **********************************************************************
+        '''
+        Compute inner eddy viscosity
+        '''
         j=int(np.floor(jstop))
-        # for j in range(1,int(np.floor(jstop))): # loop 70
         y1        = yscal[i]* ylen[i,1:j]
         damp      = 1.0- np.exp(-y1)
         tscali    = 0.4* ylen[i,1:j]* damp
         amuti1    = tscali* tscali* vor[i,1:j]
         amuti[1:j]   = rey* sgrmi* ravg[1:j]* amuti1
         amuti[1:j]   = abs(amuti[1:j])
-        # end of loop 70
         amuti[1]  = 0.0
         if (i<=itl or i>itu):
             amuti[1] = amuti[2]
 
-        # load viscosity coeffs. into array, use inner value until
-        # match point is reached
-        # scalar coding
-
+        '''
+        Load viscosity coeffs. into array, use inner value until
+        match point is reached
+        '''
         ivect     = 1
-        if (ivect == 0): # start of big if statement
+        if (ivect == 0): 
             icross    = 0
             amut[i,0] = amuti[0]
-            for j in range(1,int(np.floor(jstop))): # loop 75
-                if (amuti[j]<=amuto[j] and icross==0): # nested if
+            for j in range(1,int(np.floor(jstop))): 
+                if (amuti[j]<=amuto[j] and icross==0): 
                     amut[i,j] = amuti[j]
                 else:
                     icross    = 1
                     amut[i,j] = amuto[j]
-                # end nested if
-            # end loop 75
-        else: # else from the big if statement
+        else: 
             amut[i,0] = amuti[0]
             ystop     = int(np.floor(jstop))
-            for j in range(0,int(np.floor(jstop))): # loop 80
+            for j in range(0,int(np.floor(jstop))): 
                 amudif    = amuti[j]- amuto[j]
-                if (amudif >= 0): # if statement instead of cvmgp function
+                if (amudif >= 0): 
                     fcros[j] = j
                 else: 
                     fcros[j] = 1000
-            # end loop 80
             jcros    = np.argmin(fcros)
             if (jcros == 1):
                 jcros = 2
             jcrosm   = jcros- 1
-    
-            # for j in range(0,jcrosm): # loop 90
             amut[i,0:jcrosm] = amuti[0:jcrosm]
-            # end loop 90
             j = int(np.floor(jstop))
             amut[i,jcros-1:j] = amuto[jcros-1:j]
-            # end loop 100
-        # end of big if statement
-
-        # **********************************************************************
-        # *   compute turbulent viscosity at cell center                       *
-        # **********************************************************************
+        '''
+        Compute turbulent viscosity at cell center
+        '''
         j=int(np.floor(jstop))
         amutc     = 0.5* (amut[i,1:j]+ amut[i,0:j-1])
         amu[i,1:j]  = amutc
@@ -370,123 +336,15 @@ def turbulent_viscosity(params, dims):
         if (i>itr1 and i<=itr2):
             amut[i,1:j] = 0.
 
-# **********************************************************************
-# *   debugging check (activate with jwrit = 1)                        *
-# **********************************************************************
-        # since jwrit is set to 0 anyways, just commenting this out for now
-        #         jwrit     = 0
-        #         if (jwrit == 1) then
-        #         write(6,8000) i
-        # 8000     format(5x,'i = ',i5)
-        #         write(6,8050)
-        # 8050     format(5x,'j,y1,fkleb,ravg,muti,muto,mut')
-        # 8100     format(i5,6e15.5)
-        #         do 195 j=2,jstop
-        #             y1        = yscal[i]*ylen[i,j]
-        #             cmuti     = amuti[j]
-        #             cmuto     = amuto[j]
-        #             write(6,8100) j,y1,fkleb[j],ravg[j],cmuti,cmuto,amut[i,j]
-        # 195     continue
-        #         end if
-
-    # end of outer i loop #####################
-
-    # copy amut to rev
+    '''
+    Copy amut to rev
+    '''
     scale     = 1.
     rev[0:ie,0:je]  = scale*amut[0:ie,0:je]
 
-    # print(np.mean(rev))
     return
 
-    # 'return' statement here in turb2. So with current implementation, would end after this
-    # therefore, commenting out rest for now
 
-#     # **********************************************************************
-#     # *   printout for boundary layer details                              *
-#     # *   nturbw  -  input for frequency of printing b.l. data             *
-#     # *              (currently set at large value)                        *
-#     # **********************************************************************
-
-#     nturbw = 5000
-
-#     if (mod(ncyc,nturbw) == 0) then
-#         do 250 i=2,il
-#         if(i == 2) write(iwrit,840)
-#         write (iwrit,850) i,jedge[i],ylenm[i],utotm[i],yvorm[i],
-#     .                      yscal[i]
-# 250   continue
-
-#         do 300 i=itlp,itu
-#         if(i==itlp) write(6,860)
-#         je      = jedge[i]
-#         delta1  = ylenm[i]
-#         dstar1  = 1.0
-#         uedge[i]= w(i,je,2)/w(i,je,1)
-#         ue1     = uedge[i]* sgrmi
-#         tauw1   = abs(tauw[i])
-#         aylen   = abs(ylen[i,2])
-#         yplus   = yscal[i]* aylen* 26.
-#         yplus   = 0.5* yplus
-#         cf1     = 2.0* rein* sgrmi* tauw1
-#         write(6,870) i,je,ue1,delta1,dstar1,tauw1,cf1,yplus
-# 300   continue
-
-#         iloc    = itu
-#         atauw   = abs(tauw(iloc))
-#         atauwr  = atauw* rinv(iloc,2)
-#         ustar   = sqrt(rein* rm* sgam* atauwr)
-#         if(ustar==0.0) ustar = 1.0
-#         ustari  = 1.0/ustar
-# c
-#         do 310 j=2,j2
-#         yval    = 0.5* (ylen(iloc,j-1)+ ylen(iloc,j))
-#         ayval   = abs(yval)
-#         yplus   = yscal(iloc)* ayval* 26.
-#         uval    = w(iloc,j,2)* rinv(iloc,j)
-#         uplus   = uval* ustari
-#         write(6,880) j,yplus,uplus,ylen(iloc,j),ylen(iloc,j-1),yval,
-#     .                 yscal(iloc),yplus
-# 310   continue
-#     end if
-
-
-#         # **********************************************************************
-#         # *   additional checks of routine (activate with kwrite = 1)          *
-#         # **********************************************************************
-
-#     kwrite1   = 0
-#     if (kwrite1==1 and ncyc==mcyc) then
-#         do i=itl,itl-4,-4
-#         do j=1,10
-#         write(970,971) i,j,amut[i,j]
-# 971     format (5x,'i,j,amut = ',2i5,e15.6)
-#         end do
-#         end do
-
-#         itup      = itu + 1
-#         do i=itup,itup+4,4
-#         do j=1,10
-#         write(970,971) i,j,amut[i,j]
-#         end do
-#         end do
-
-# # ---->    finish of kwrite if
-#         end if
-
-#     return
-
-# 800 format(1h ,'ylen,ravg,amuto1,amuto2,amuto,udiff,fkleb')
-# 810 format(1h ,5x,i5,7e15.6)
-# 820 format(1h ,'ylen,utot,vor,yvor,amuti,amuto,fkleb')
-# 830 format(1h ,5x,i5,7e15.6)
-# 840 format(1h ,'ylenm,utotm,yvorm,yscal')
-# 850 format(1h ,5x,2i5,4e15.6)
-# 860 format(1h ,1x,4h  i ,4h je ,1x,
-#     .  10h    ue    ,10h   delta  ,10h   dstar  ,
-#     .  10h   tauw   ,12h     cf     ,10h   yplus  )
-# 870 format(1x,2i4,3f10.6,2e15.6,f10.6)
-# 880 format(1h ,5x,i5,7f12.4)
-#     end
 
 dim_var = 500
 params = {

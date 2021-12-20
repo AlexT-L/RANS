@@ -1,21 +1,34 @@
+"""This module computes viscosity coefficients
+
+    Libraries/Modules:
+    numpy\n
+    BaldwinLomax\n
+    BoundaryThickness\n
+    """
 import sys
 sys.path.append('../RANS/bin')
 import time
 
 import numpy as np
-# from Grid import Grid
 from BaldwinLomax import turbulent_viscosity
 from BoundaryThickness import boundary_thickness
 
 # @profile
 def compute_viscosity(params, dims):
-    z=0
-    '''
-     from subroutine viscf.f
-    '''
-    '''
-    computes viscosity coefficients  
-    '''             
+    """Computes viscosity coefficients. 
+        First, computes the molecular viscosity. 
+        Then continues for turbulent, Baldwin Lomax Model 
+        or runs the RNG algebraic model. 
+        Next, calculates the boundary layer thickness
+        Solves for the eddy viscosity. 
+
+    Attributes:
+        rlv: laminar viscosity
+        rev: eddy viscosity
+
+    Notes:
+        Adapted from subroutine viscf.f"""    
+
     ie = params['ie'] # Mesh dimension
     je = params['je'] # Mesh dimension
     kvis = params['kvis']
@@ -29,9 +42,8 @@ def compute_viscosity(params, dims):
     itl = params['itl']
     itu = params['itu']
     w = params['w']
-    xtran = params['xtran'] # needs to be from flo_param
+    xtran = params['xtran'] 
 
-    # other parameters needed in this 
     scal = params['scal']
     chord = params['chord']
     t0 = params['t0']
@@ -54,20 +66,13 @@ def compute_viscosity(params, dims):
     v = np.ones((dim_var,dim_var))
 
     # useful constants
-    # ckr       = (.062/(2.*pi)**4)
-    # ckr       = .01915
     ckr       = .0256
-    # cwk       = .225
     cwk       = 0.
-    #  scf       = re/(np.sqrt(gamma)*rm)
     scf       = (scal*re/chord)/(np.sqrt(gamma)*rm)
     visc_const_C1 = 1.461e-06
     visc_const_C2 = 110.3
 
     # compute the molecular viscosity
-    # i>1:il, i+1>2:il+1, i-1>0:il-1
-    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
-
     tt       = p[0:ie,0:je]/w[0:ie,0:je,0]*t0
     rlv[0:ie,0:je] = visc_const_C1*tt*np.sqrt(tt)/((tt+visc_const_C2)*rmu0)
 
@@ -77,31 +82,25 @@ def compute_viscosity(params, dims):
 
     if (kvis <= 1) or (mode!=0):
         return
-    # if we are using the baldwin and lomax model call turbbl and return
 
     aturb     = 1.
     if (ncyc > 25):
         aturb = .5
-    if (kturb == 1): # if kturb is one, else  
+    if (kturb == 1): 
         rev0[0:ie,0:je] = rev[0:ie,0:je]
-        # call turbbl
-        # call turb2
+
         '''
         If running laminar flows, calculation is more simple.
-        '''
-        # runs the tubr visc calculations
-        '''
         Call either the Baldwin Lomax Model or run the RNG algebraic model.
         '''
         turbulent_viscosity(params, dims)
 
 
         rev[0:ie,0:je] = aturb*rev[0:ie,0:je]  +(1.  -aturb)*rev0[0:ie,0:je]
-    #  else start the rng algebraic model
     else:
-    # i>1:il, i+1>2:il+1, i-1>0:il-1
-    # j>1:jlm, j+1>2:jlm+1, j-1>0:jlm-1
-
+        '''
+        Otherwise, start the rng algebraic model.
+        '''
         u[0:ie,0:je]   = w[0:ie,0:je,1]/w[0:ie,0:je,0]
         v[0:ie,0:je]   = w[0:ie,0:je,2]/w[0:ie,0:je,0]
 
@@ -116,8 +115,6 @@ def compute_viscosity(params, dims):
         dv13      = v[0:il,0:jl] - v[1:il+1,1:jl+1]
         du24      = u[1:il+1,0:jl] - u[0:il,1:jl+1]
         dv24      = v[1:il+1,0:jl] - v[0:il,1:jl+1]
-        # ua        = .25*(u[i,j] + u[i+1,j+1] + u[i+1,j] + u[i,j+1])
-        # va        = .25*(v[i,j] + v[i+1,j+1] + v[i+1,j] + v[i,j+1])
         dsij      = 1./(dx13*dy24 - dx24*dy13)
         dvdx      =  dsij * (dv13*dy24 - dv24*dy13)
         dudy      = -dsij * (du13*dx24 - du24*dx13)
@@ -125,8 +122,6 @@ def compute_viscosity(params, dims):
         dvdy      = -dsij * (dv13*dx24 - dv24*dx13)
         astr[0:il,0:jl] = (dudy+dvdx)**2. +2.*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.)
 
-        #   to add: 
-        # call delt
     '''
     Calculates the boundary layer thickness.
     '''
@@ -147,12 +142,8 @@ def compute_viscosity(params, dims):
             else:
                 csc       = (cwk*ynot[i])**2
 
-
-        #     set some parameters
-
             rnul      = rlv[i,j]/w[i,j,0]
             rnut0     = rev[i,j]/w[i,j,0]
-            # rnul3     = rnul**3
             a11       = ckr*(csc*csc*scf*scf)/rnul**2
             a2        = 75.
             a1        = a11*(astra)
@@ -161,8 +152,6 @@ def compute_viscosity(params, dims):
             '''
             Solves for the eddy viscosity
             '''
-            # DIM(X,Y) function in fortran: returns the difference X-Y if the result is positive; otherwise returns zero.
-            # Replacing with: max(X-Y, 0) for python
             
             if (max(rnut0*a1-a2,0) == 0.):
                 rev[i,j]  = 0.
@@ -174,13 +163,12 @@ def compute_viscosity(params, dims):
             fac    = a2 - 1.
 
             while k<201: 
-                z=z+1
                 den    = 1./(4.*rnut*rnut*rnut + fac)
                 rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
                 
                 if (abs((rnut1  -rnut))<=1.e-3):
                     rev[i,j] = w[i,j,1]*max(rnut1-rnul,0)
-                    break # exits the while loop, then continues
+                    break 
                 else:
                     k      = k  +1
                     if (k>199):
@@ -188,7 +176,7 @@ def compute_viscosity(params, dims):
                         print([' rnut = ',rnut,' rnut1 =',rnut1])
 
                         rev[i,j]  = w[i,j,0]*max(rnut1-rnul,0)
-                        break # exits the while loop, then continues
+                        break 
 
                     rnut   = rnut1
 
