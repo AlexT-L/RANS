@@ -42,7 +42,7 @@ import pandas as pd
 #               iprec     = turns on gauss-seidel preconditioner (psgs) when not zero
 #               epsf      = eps for fine meshes (eps is used by psgs)
 #               epsc      = eps for coarse meshes (eps is used by psgs)
-#               diag      = ? (literally not used)
+#               diag      = (never used)
 #               cflc      = the courant number for time steps on the coarse meshes
 #               hmc       = the enthalpy damping factor for the coarse meshes
 #               fbc         controls the far field boundary condition
@@ -78,25 +78,26 @@ import pandas as pd
 #               rho0      = density of free-stream
 #               p0        = pressure of the free-stream
 #               c0        = speed of sound for the the free-stream
-#               ei0       = ? (never used)
+#               ei0       = (never used)
 #               u0        = x-velocity for the free-stream
 #               v0        = y-velocity for the free-stream
 #               h0        = enthalpy for the free-stream
 #               mu0       = kinematic viscosity of the free-stream
 # 
-# geo_param:    boundx    = ??
-#               boundy    = ??
-#               bunch     = ??
-#               xte       = ??
-#               ylim1     = ??
-#               ylim2     = ??
-#               ax        = ??
-#               ay        = ??
-#               sy        = ??
-#               aplus     = ??
-#               ncut      = ??
+# geo_param:    boundx    = used by coord_strch_func to create a0
+#               boundy    = used by coord_strch_func to create b0
+#               bunch     = used by coord_strch_func
+#               xte       = x-trailing edge in computational domain
+#               ylim1     = used by coord_strch_func
+#               ylim2     = used by coord_strch_func
+#               ax        = used by coord_strch_func
+#               ay        = used by coord_strch_func
+#               sy        = used by coord_strch_func
+#               aplus     = used by vmesh in viscous simuluations
+#               ncut      = used by vmesh in viscous simuluations
 #               isym      tells us if the airfoil is symmetric about the x-axis
-#               isym      = 
+#               isym      = 0 not symmetic
+#               isym      = 1 symmetric
 #               nu        = total number of points on the upper airfoil surface
 #               nl        = total number of points on the lower airfoil surface
 #               nn        = total number of points on the airfoil surface
