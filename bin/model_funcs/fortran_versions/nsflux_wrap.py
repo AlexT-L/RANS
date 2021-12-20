@@ -31,8 +31,8 @@ def nsflux(self,ws,w,vw,rfil):
 
     # flow related variabless
     P = ws.get('P',self.className) # pressure
-    rlv = ws.get('rlv',self.className) # laminar viscocity
-    rev = ws.get('rev',self.className) # eddy viscocity
+    lv = ws.get('lv',self.className) # laminar viscocity
+    ev = ws.get('ev',self.className) # eddy viscocity
     #vw = ws.get('vw',self.className) # storage for viscous residuals
     #w = ws.get('w',self.className) # state
 
@@ -42,7 +42,7 @@ def nsflux(self,ws,w,vw,rfil):
 
     # residuals returned in Field vw
     nsflux_fort.nsflux(il, jl, ie, je, \
-                       w.vals, P.vals, rlv.vals, rev.vals,  \
+                       w.vals, P.vals, lv.vals, ev.vals,  \
                        x.vals, xc.vals, \
                        vw.vals,
                        self.flo_params['gamma'],self.flo_params['rm'],self.flo_params['scal'], \

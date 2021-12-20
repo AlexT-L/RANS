@@ -1,4 +1,30 @@
-import numpy as np
+"""
+Flo103
+
+Description
+-----------
+Solves the Euler equations for an airfoil using a multigrid cycle.
+Method of lines integration is used to solve the Partial Differential
+Euler equations. To speed up convergence, the solution is calculated on
+the desired mesh size, and then a new solution is found on successively 
+smaller meshes using the solution at the previous mesh refinement as a 
+guess at the state. The solutions found on coarser meshes are then used
+as a correction to the state on the coarser mesh, and a new solution is found
+on the fine mesh after applying the corrections.
+
+Libraries/Modules
+-----------------
+None.
+
+Notes
+-----
+Also none.
+
+Author(s)
+---------
+Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+
+"""
 from numpy.core.numeric import Infinity
 from bin.Field import Field, max, mean
 from bin.Input import Input
@@ -64,7 +90,7 @@ if __name__ == '__main__':
 
     start = time()
     while not CONVERGED:
-        # update rev and rlv at specified interval
+        # update ev and lv at specified interval
         updatePhysics = True
         if num_iterations != 0:
             if (num_iterations % physicsUpdateFrequency) != 0:

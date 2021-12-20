@@ -111,5 +111,5 @@ def wall(bcmodel, model, workspace, state):
     # c     update eddy viscosity boundary conditions
     # c   
     if kvis and not workspace.is_finest():
-        rev = workspace.get_field('rev', model.className)
-        rev[itl:itu,1] = -rev[itl:itu,2]
+        ev = workspace.get_field('ev', model.className)
+        ev[itl:itu,1] = - ev[itl:itu,2]
