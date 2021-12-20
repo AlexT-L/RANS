@@ -1,4 +1,4 @@
-from bin.Field import norm, pos_diff
+from bin.Field import Field, norm, pos_diff
 
 def wall(bcmodel, model, workspace, state):
     """
@@ -90,13 +90,18 @@ def wall(bcmodel, model, workspace, state):
         # c
         # c     extrapolation using normal pressure gradient at surface
         # c
-        return
-        qt = xx[0:itu-itl]*w[itl:itu,2,1] + yx[0:itu-itl]*w[itl:itu, 2,2]
-        qn = yx[0:itu-itl]*w[itl:itu,2,1] - xx[0:itu-itl]*w[itl:itu,2,2]
+        xx = xx.vals[1:itu-itl+1]
+        yx = yx.vals[1:itu-itl+1]
+        w = w.vals
+        p = p.vals
+        x = x.vals
+        sx = sx.vals
+        qt = xx*w[itl:itu,2,1] + yx*w[itl:itu,2,2]
+        qn = yx*w[itl:itu,2,1] - xx*w[itl:itu,2,2]
 
         w[itl:itu,1,0] = w[itl:itu,2,0]
-        w[itl:itu,1,1] = xx[0:itu-itl]*qt - yx[0:itu-itl]*qn
-        w[itl:itu,1,2] = xx[0:itu-itl]*qn + yx[0:itu-itl]*qt
+        w[itl:itu,1,1] = xx*qt - yx*qn
+        w[itl:itu,1,2] = xx*qn + yx*qt
         w[itl:itu,1,3] = w[itl:itu,2,3]
 
         rho_a   = w[itl:itu,2,0] + w[itl:itu,1,0]
@@ -109,11 +114,15 @@ def wall(bcmodel, model, workspace, state):
 
         qs      = (yy*rhoU_a - xy*rhoV_a)/rho_a
         gxy     = xx*xy + yx*yy
-        qxy     = qs*(xxx*rhoV_a - yxx*rhoU_a)/2
+        qxy     = qs*(xxx[1:itu-itl+1]*rhoV_a - yxx[1:itu-itl+1]*rhoU_a)/2
+        py        = (px*gxy  +qxy)*sx[1:itu-itl+1]
 
         if ny < 3:
             py = p[itl:itu,3] - p[itl:itu,2]
 
+        p = Field(0, p)
+        py = Field(0,py)
+        w = Field(0, w)
         p[itl:itu,1] = pos_diff(p[itl:itu,2], py)
         w[itl:itu,1,3] = w[itl:itu,2,3] + p[itl:itu,2] - p[itl:itu,1]
     
