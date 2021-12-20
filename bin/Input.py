@@ -1,8 +1,8 @@
 """This module unpacks the input from a .data file to dictionaries in an input object
 
     Libraries/Modules:
-        numpy
-        pandas
+        numpy\n
+        pandas\n
         """
 import numpy as np 
 import pandas as pd
