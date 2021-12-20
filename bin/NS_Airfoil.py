@@ -271,4 +271,18 @@ class NS_Airfoil(BoundaryConditioner):
 
     # set the porosity values
     def __set_porosity(self, workspace):
-        implementation.set_porosity(self, workspace)
+        # get relevant geometry parameters
+        dims = workspace.get_dims()
+        itl = dims['itl']
+        itu = dims['itu']
+
+        # get porosity
+        pori = workspace.get_field("pori", self.className)
+        porj = workspace.get_field("porj", self.className)
+
+        # set the porosity to unity
+        pori[:] = 1.0
+        porj[:] = 1.0
+
+        # flag the wall at the j boundaries
+        porj[itl:itu,0]   = 0.0
