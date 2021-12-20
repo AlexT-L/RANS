@@ -1,31 +1,32 @@
 """
 Flo103
 
-Description
+Description:
+    Solves the Euler equations for an airfoil using a multigrid cycle.
+    Method of lines integration is used to solve the Partial Differential
+    Euler equations. To speed up convergence, the solution is calculated on
+    the desired mesh size, and then a new solution is found on successively 
+    smaller meshes using the solution at the previous mesh refinement as a 
+    guess at the state. The solutions found on coarser meshes are then used
+    as a correction to the state on the coarser mesh, and a new solution is found
+    on the fine mesh after applying the corrections.
 
-Solves the Euler equations for an airfoil using a multigrid cycle.
-Method of lines integration is used to solve the Partial Differential
-Euler equations. To speed up convergence, the solution is calculated on
-the desired mesh size, and then a new solution is found on successively 
-smaller meshes using the solution at the previous mesh refinement as a 
-guess at the state. The solutions found on coarser meshes are then used
-as a correction to the state on the coarser mesh, and a new solution is found
-on the fine mesh after applying the corrections.
+Libraries/Modules:
+    Input\n
+    Field\n
+    AirfoilMap\n
+    CellCenterWS\n
+    NavierStokes\n
+    ImplicitEuler\n
+    MultiGrid\n
 
-Libraries/Modules
+Notes:
+    Currently in development
 
-None.
-
-Notes
-
-Also none.
-
-Author(s)
-
-Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
+Authors:
+    Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
 """
-from numpy.core.numeric import Infinity
 from bin.Field import Field, max, mean
 from bin.Input import Input
 from bin.flo103_PostProcessor import flo103_PostProcessor
@@ -36,7 +37,6 @@ from bin.AirfoilMap import AirfoilMap
 from bin.CellCenterWS import CellCenterWS
 from bin.NavierStokes import NavierStokes
 from bin.MultiGrid import MultiGrid
-import bin.Contractinator as con
 from time import time
 
 if __name__ == '__main__':
@@ -99,7 +99,7 @@ if __name__ == '__main__':
             model.update_physics(workspace, state)
 
         # after the first few cycles, relax restriction on cfl
-        model.update_cfl_limit(Infinity)
+        model.update_cfl_limit()
         
         # perform an interation of the multigrid cycle
         mg.performCycle()

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from bin.Field import Field
+
+from bin.Field import Infinity
 
 class Model(ABC):
     """Abstract base class for a physics model. never to be instantiated.
@@ -28,6 +29,9 @@ class Model(ABC):
     @abstractmethod
     def get_flux(self, workspace, state, output, update_factor=1):
         pass
+
+    def update_cfl_limit(self, cfl_lim=Infinity):
+        self.cfl_lim = cfl_lim
 
     @abstractmethod
     def get_safe_timestep(self, workspace, state, dt):
