@@ -6,12 +6,31 @@ from bin.Model import Model
 from bin.Field import isfinite
 
 class Workspace(ABC):
-    
-    # Constructor
-    def __init__(self, grid, isFinest=True):
-        self.grid = grid
+    '''
+    Description
+    -----------
+    Abstract base class for workspaces. 
 
-        # initialize fields array with Grid fields
+    Attributes
+    -----------------
+    self.grid:
+        Inputted grid
+    self.flds:
+        Dictionary of fields for grid        
+
+    Libraries/Modules
+    -----------------
+    numpy
+
+    Notes
+    -----
+    Would not be directly implemented (ABC)
+    '''
+    def __init__(self, grid, isFinest=True):
+        '''
+        Constructor initializes fields array with Grid fields
+        '''
+        self.grid = grid
         self.flds = { 'Grid': {} }
         gridFields = self.flds['Grid']
         for fieldName in grid.fields:
@@ -21,75 +40,89 @@ class Workspace(ABC):
 
         self.isFinest = bool(isFinest)
 
-    # Return another instance of a workspace
     @abstractmethod
     def MakeNew(self, grid, isFinest=True):
+        '''
+        Returns another instance of a workspace
+        '''
         return Workspace(grid, isFinest)
 
-    # return grid object
     def get_grid(self):
+        '''
+        Returns grid object
+        '''
         return self.grid
 
-    # get grid-level-specific geometry info
     def get_dims(self):
+        '''
+        Returns grid-level-specific geometry info
+        '''
         return self.grid.get_dims()
 
-    # return geometry info
     def get_geometry(self):
+        '''
+        Returns geometry info
+        '''
         return self.grid.get_geometry()
 
-    # add field method
     def add_field(self, new_field, fieldName, className='Grid'):
-
-        # check if we already have it
+        '''
+        Add field method for grid. Checks if already an instance.
+        Raises an error if already in list, adds new field if not.  
+        '''
         if fieldName in list(self.flds[className].keys()):
             raise ValueError('Field already exists: '+fieldName)
         else: 
-            # Add new field to workspace 
             classWorkspace = self.flds[className]
             classWorkspace[fieldName] = new_field
     
     # get field method
     def get_field(self, fieldName, className='Grid'):
-
-        # check that field exists
+        '''
+        Returns the field. Checks if field aleady exists.
+        If already exists, raises error. 
+        If does not exist, creats a field. 
+        '''
         if fieldName not in list(self.flds[className].keys()):
             raise ValueError('Field does not exist: ' + fieldName) 
         else: 
-            # Return field
             classWorkspace = self.flds[className]
             field = classWorkspace[fieldName]
         return field
     
-    # check if a class dictionary exists
     def has_dict(self, className):
+        '''
+        Check if a class dictionary exists.
+        '''
         return className in self.flds
 
-    # check if a field exists in a class's dictionary
     def exists(self, fieldName, className='Grid'):
-
-        # check that class dictionary exists
+        '''
+        Checks if a field exists in a class's dictionary.
+        Exists/returns true if the it does have a dictionary,
+        and if there is a fieldName in self,flds. 
+        '''
         if not self.has_dict(className):
             return False
-
-        # check that field exists
         if not fieldName in self.flds[className]:
             return False
-
         return True
 
-    # initialize class's stored fields
-    # must give a dictionary of variables with the following structure:
-    #   - keys are the variable name as a string (e.g. "w")
-    #   - values are an array of [field_dimensions, state_dim]
-    #       - field_dim is usually the grid size in [nx, ny] format
-    #       - state_dim is 1 for scalars
     def init_vars(self, className, vars):
-        # create class dictionary
+        '''
+        Initialize class's stored fields,
+        must give a dictionary of variables with the following structure:
+        - keys are the variable name as a string (e.g. "w")
+        - values are an array of [field_dimensions, state_dim]
+            - field_dim is usually the grid size in [nx, ny] format
+            - state_dim is 1 for scalars   
+        Creates a class dictionary. 
+        Creats fields and stores in dictionary.  
+        '''
+        
         classDict = dict()
         self.flds[className] = classDict
 
-        # create fields and store in dictionary
         for varName in vars:
             [shape] = vars[varName]
             if np.isscalar(shape):
@@ -99,17 +132,25 @@ class Workspace(ABC):
 
 
     def is_finest(self):
+        '''
+        Checks if finest level of mesh. 
+        '''
         return self.isFinest
 
     # Methods for getting geometric info
 
-    # dimensions of field (# of control volumes)
+
     @abstractmethod
     def field_size(self):
+        '''
+        Returns dimensions of field (# of control volumes)
+        '''
         pass
 
-    # dimensions of grid (# of vertices)
     def grid_size(self):
+        '''
+        Returns dimensions of grid (# of vertices)
+        '''
         return self.grid.get_size()
 
     @abstractmethod
