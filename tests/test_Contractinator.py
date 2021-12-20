@@ -1,20 +1,20 @@
 """
 Description
------------
+
 Tests the contractinator.
 
 Libraries/Modules
------------------
+
 -pytest \n
 -Field \n
 -numpy \n
 
 Notes
------
+
 
 
 Author(s)
----------
+
 Satya Butler
 """
 from numpy.core.numeric import array_equal
@@ -27,11 +27,11 @@ def test_simple():
     """
     Tests the Contractinator.py 'simple' method.
 
-    Parameters
-    ----------
+    Args:
+    
     
     Returns
-    -------
+    
     :
         Nothing, but asserts if 'simple' deletes items from the Field as it should.
     """
@@ -106,11 +106,11 @@ def test_sum4way():
     """
     Tests the Contractinator.py 'sum4way' method.
 
-    Parameters
-    ----------
+    Args:
+    
     
     Returns
-    -------
+    
     :
         Nothing, but asserts if 'sum4way' properly sums items from the Field as it should.
     """
@@ -132,11 +132,11 @@ def test_conservative4way():
     """
     Tests the Contractinator.py 'conservative4way' method. Note: does not test weighted averaging.
 
-    Parameters
-    ----------
+    Args:
+    
     
     Returns
-    -------
+    
     :
         Nothing, but asserts if 'conservative4way' properly averages items from the Field as it should.
     """

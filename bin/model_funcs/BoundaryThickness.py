@@ -1,11 +1,15 @@
-import numpy as np
-# from Grid import Grid
+"""This module calculates boundary layer thickness for viscosity.
 
-# class BoundaryThickness():
+    Libraries/Modules:
+        numpy\n
+        """
+import numpy as np
+
 def boundary_thickness(params, dims):
-    # from subroutine delt
-    # # calculates the boundary layer thickness
-    # uses dims, flo_var, mesh_var, solv_var, flo_param, solv_param
+    """Calculates the boundary layer thickness.
+
+    Notes: 
+        Adapted from subroutine delt"""
 
     # variabes from inputs/dims/params
     ny = dims['ny']
@@ -28,7 +32,6 @@ def boundary_thickness(params, dims):
     js        = .75*(ny  -4)
     js = int(np.floor(js))
 
-    # one big loop 
     for i in range(1,il):
         qs[0]     = 0.
         ut[0]     = 0.
@@ -36,7 +39,6 @@ def boundary_thickness(params, dims):
         xy        = .5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
         yy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
         qs[j]     = (yy*w[i,j,1]  -xy*w[i,j,2])/(w[i,j,0])
-        # replacing sign function in fortran with np.copysign, should be the same
         si        = np.copysign(1,qs[js])
 
         for j in range(1,js):
@@ -51,8 +53,6 @@ def boundary_thickness(params, dims):
         ynot[i]   = 0.
         ssmax[i]  = 0.
         cdu       = .98
-        # replacing function idmax(js,ut,1) with argmax
-        # purpose is to "find the index of element having max value"
         jmax      = np.argmax(ut)
         fx        = .6*ut[jmax]
         lend      = 2

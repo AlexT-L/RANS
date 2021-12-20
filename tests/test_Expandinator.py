@@ -1,21 +1,21 @@
 """
 Description
------------
+
 Tests the expandinator.
 
 Libraries/Modules
------------------
+
 -pytest \n
 -Field \n
 -numpy \n
 -scipy
 
 Notes
------
+
 
 
 Author(s)
----------
+
 Satya Butler
 """
 from numpy.core.numeric import array_equal
@@ -29,11 +29,11 @@ def test_bilinear4way():
     Tests the Expandinator.py 'bilinear4way' method. Does not currently assert (test) anything
     as Expandinator.py does not currently work.
 
-    Parameters
-    ----------
+    Args:
+    
     
     Returns
-    -------
+    
     :
         Nothing, but asserts if 'bilinear4way' expands a Field properly.
     

@@ -1,15 +1,15 @@
 """
 Description
------------
+
 Tests the Field object to see if it works as expected
 
 Libraries/Modules
------------------
+
 -pytest \n
 -Field
 
 Notes
------
+
 Runs the following tests:\n
 1. Checks that a 2D Field can be created  \n
 2. Checks that a 3D field can be created \n
@@ -21,7 +21,7 @@ Runs the following tests:\n
 8. Tests / operation \n
 
 Author(s)
----------
+
 Andy Rothstein \n
 
 """

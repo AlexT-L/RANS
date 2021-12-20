@@ -6,22 +6,22 @@ class Field:
     Field Class
 
     Description
-    -----------
+    
     Field is generic object that acts like, and is implemented as, a numpy array. \n
     Allows for storage of numeric values on a Grid. Contains ability to index for access and setting values \n
     as well as overloaded operators for many math operations.
 
     Libraries/Modules
-    -----------------
+    
     numpy
     Field
 
     Notes
-    -----
+    
     NA
 
     Author(s)
-    ---------
+    
     Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
     """
@@ -30,8 +30,8 @@ class Field:
     def __init__(self, shape, vals=None):
         """Creates a new Field object
             
-            Parameters
-            ----------
+            Args:
+            
             shape:
                 Tuple (8,8,4)
             vals:
@@ -41,7 +41,7 @@ class Field:
                 the shape of vals
 
             Returns
-            -------
+            
             :
                 A new Field object.
             """
@@ -70,7 +70,7 @@ class Field:
         """2-d size of field
             
             Returns
-            -------
+            
             :
                 The 2-d size of the field.
                 This is important for fields living on a 2-d grid
@@ -90,7 +90,7 @@ class Field:
         """shape of field
             
             Returns
-            -------
+            
             :
                 The shape of the underlying numpy array.
             """
@@ -102,7 +102,7 @@ class Field:
         """dimensions of variable
             
             Returns
-            -------
+            
             :
                 The dimensions of the field vector living at each point in a 2-d grid
                 This value is 1 for 1-d and 2-d arrays
@@ -121,7 +121,7 @@ class Field:
         """get the underlying numpy representation
             
             Returns
-            -------
+            
             :
                 The underlying numpy ndarray that stores the values
             """
@@ -132,7 +132,7 @@ class Field:
         """return a field with data stored as the given type
             
             Returns
-            -------
+            
             :
                 A field with values stored as the given type
             """
@@ -144,7 +144,7 @@ class Field:
         """return a transposed Field 
             
             Returns
-            -------
+            
             :
                 A field of the size of the transposed input
             """
@@ -181,7 +181,7 @@ class Field:
         """assign values to a Field of the same size
             
             Returns
-            -------
+            
             :
                 A field with given values 
             """

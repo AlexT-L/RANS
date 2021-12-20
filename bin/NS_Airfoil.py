@@ -1,21 +1,22 @@
 from numpy.core.defchararray import mod
 from bin.BoundaryConditioner import BoundaryConditioner
-import bin.utils.NS_Airfoil_imp as implementation
+import bin.model_funcs.bc_transfer as tf
+from bin.model_funcs.bc_metric import halo_geom
+from bin.model_funcs.bcwall import wall
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
-from bin.model_funcs.bcwall import wall
 from bin.model_funcs.stability_fast import stability
 
 class NS_Airfoil(BoundaryConditioner):
     """
     Description
-    -----------
+    
     Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
     A halo is formed around the mesh containing ghost nodes. Two types of boundary conditions
     are implemented: wall boundaries and far field boundaries
 
     Attributes
-    -----------------
+    
     class_name: 
         name of class for accessing Fields in the workspace
 
@@ -29,7 +30,7 @@ class NS_Airfoil(BoundaryConditioner):
         some parameter
 
     Libraries/Modules
-    -----------------
+    
     numpy
     BoundaryConditioner
     NS_Airfoil_imp
@@ -39,20 +40,20 @@ class NS_Airfoil(BoundaryConditioner):
     stability
 
     Notes
-    -----
+    
     Based on bcfar.f and bcwall.f """
     
     
     def __init__(self, input):
         """Constructor
         
-        Parameters
-        ----------
+        Args:
+        
         input:
             dictionary of values containing vt and bc
 
         Returns
-        -------
+        
         A new NS_Arifoil object 
 
         """
@@ -68,8 +69,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         updates the turbulent viscocity for calculation of boundary conditions
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -80,16 +81,16 @@ class NS_Airfoil(BoundaryConditioner):
             current state of the system (density, momentum, energy)
     
         """
-        self.__check_vars(workspace)
-        implementation.update_physics(self, model, workspace, state)
+        ### This method should call Baldwin Lomax ###
+        # turbulent_viscosity(params, dims)
     
     # update stability
     def update_stability(self, model, workspace, state):
         """
         updates stability parameters for time step calculations
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -108,8 +109,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         apply boundary condition in the far field
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             instance of NavierStokes model class
 
@@ -130,8 +131,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         apply boundary condition along the wall
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -153,8 +154,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         set the values in the ghost cells
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -176,8 +177,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         do wall boundaries, far field and set halo values at once
         
-         Parameters
-         ----------
+         Args:
+         
          model:
             instance of NavierStokes model class
 
@@ -197,15 +198,15 @@ class NS_Airfoil(BoundaryConditioner):
     def transfer_down(self, model, workspace1, workspace2):
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
-        implementation.transfer_down(self, model, workspace1, workspace2)
+        tf.transfer_down(self, model, workspace1, workspace2)
 
     # Get porosity
     def get_pori(self, workspace):
         """
         grab porosity in i direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
@@ -217,8 +218,8 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in j direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
@@ -231,14 +232,14 @@ class NS_Airfoil(BoundaryConditioner):
         """
         grab porosity in i direction from the workspace
         
-         Parameters
-         ----------
+         Args:
+         
          workspace:
             instance of workspace class with the relevant field
         
         """
         self.__check_vars(workspace)
-        implementation.halo_geom(self, model, workspace)
+        halo_geom(self, model, workspace)
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -250,9 +251,6 @@ class NS_Airfoil(BoundaryConditioner):
         [nx, ny] = workspace.field_size()
         p = self.padding
         field_size = [p+nx+p, p+ny+p]
-        grid_size = workspace.grid_size()
-        className = self.className
-
         vars = dict()
 
         # edge porosities
@@ -267,10 +265,24 @@ class NS_Airfoil(BoundaryConditioner):
         vars["cp"] = [p+nx+p]
         vars["cf"] = [p+nx+p]
 
-        workspace.init_vars(className, vars)
+        workspace.init_vars(self.className, vars)
 
         self.__set_porosity(workspace)
 
     # set the porosity values
     def __set_porosity(self, workspace):
-        implementation.set_porosity(self, workspace)
+        # get relevant geometry parameters
+        dims = workspace.get_dims()
+        itl = dims['itl']
+        itu = dims['itu']
+
+        # get porosity
+        pori = workspace.get_field("pori", self.className)
+        porj = workspace.get_field("porj", self.className)
+
+        # set the porosity to unity
+        pori[:] = 1.0
+        porj[:] = 1.0
+
+        # flag the wall at the j boundaries
+        porj[itl:itu,0]   = 0.0

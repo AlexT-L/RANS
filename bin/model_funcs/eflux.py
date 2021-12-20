@@ -6,11 +6,28 @@ from bin.Workspace import Workspace
 import numpy as np
 
 def eflux(model, ws, state, dw):
+    """
+    calculate convective fluxes 
+    
+    Args:
+    
+    model:
+        instance of NavierStokes class
+
+    workspace:
+        instance of Workspace class with the relevant fields
+    
+    state:
+        instance of Field class containing the density, x-momentum, y-momentum, and energy
+
+    dw:
+        Field to store new residuals after completing fluxes
+        
+    """
+    
     # take a workspace ws and calculate convective fluxes
 
     pad = model.padding
-
-
     w = state # state vector
     porJ = ws.get_field('porJ', model.className) # porosity
     p = ws.get_field('p', model.className)   # pressure

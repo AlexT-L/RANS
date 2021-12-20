@@ -1,3 +1,14 @@
+"""This module creates am AirfoilMap object containing x,xc and vol Field objects
+
+    Libraries/Modules:
+        numpy\n
+        typing\n
+        Field\n
+        Grid\n
+        Input\n
+        airfoil_map\n
+    
+        """
 from typing import Dict
 import numpy as np
 from numpy.core.numeric import isclose
@@ -11,20 +22,28 @@ from bin.utils.airfoil_map import init_from_file
 from bin.utils.airfoil_map import init_from_grid
         
 class AirfoilMap(Grid):
+    """Creates Airfoil map object containing x,xc and vol as Field objects.
+
+    Constructor (not intended to be implemented directly):
+        Args:
+            num_divisions (list):Number of cells in the x and y directions.
+
+        Returns:
+            A new AirfoilMap object. 
+
+        Notes:
+            Directly use from_file() method to perform confromal mapping
+            and use from_grid() method to convert grid to coarser version 
+
+    Attributes:
+        dim_p (list): List of paramters to get from input file to dims dict.
+        solv_p (list): List of paramters to get from input file to solv_param dict.
+        flo_p (list): List of paramters to get from input file to flo_param dict.
+        geo_p (list): List of paramters to get from input file to geo_param dict.
+        in_v (list): List of paramters to get from input file to in_var dict."""
     
     def __init__(self, num_divisions):
-        """Basic constructor for Airfoil Maps not intended for use on its own.
         
-        Parameters
-        ----------
-        num_divisions:
-            Array-like: Number of cells in the x and y directions.
-
-        Returns
-        -------
-        :
-            A new AirfoilMap object.
-        """
         [nx, ny] = num_divisions
         self.divisions = (int(nx), int(ny))
 
@@ -32,17 +51,11 @@ class AirfoilMap(Grid):
     def from_file(thisClass, num_divisions, input):
         """Initializes new AirfoilMap from datafile input.
         
-        Parameters
-        ----------
-        num_divisions:
-            Array-like: Number of cells in the x and y directions.
-        input:
-            Dictionary containing data-file values
-
-        Returns
-        -------
-        :
-            A new AirfoilMap object.
+        Args:
+            num_divisions (list):Number of cells in the x and y directions.
+            input (dict):Dictionary containing data-file values
+        Returns:
+            grid (obj): new AirfoilMap object
         """
         grid = AirfoilMap(num_divisions)
         init_from_file(grid, num_divisions, input)
@@ -52,16 +65,13 @@ class AirfoilMap(Grid):
     def from_grid(thisClass, grid):
         """Initializes new AirfoilMap from existing object. The new grid will be half the size.
         
-        Parameters
-        ----------
-        grid:
-            AirfoilMap object
-
-        Returns
-        -------
-        :
-            A new AirfoilMap object.
+        Args:
+            grid (obj): AirfoilMap object
+            
+        Returns:
+            newGrid (obj): new AirfoilMap object
         """
+
         assert type(grid) is AirfoilMap
 
         [nx, ny] = grid.divisions
@@ -70,12 +80,15 @@ class AirfoilMap(Grid):
         return newGrid
 
     def get_dims(self):
+        """ Gets dimensions of grid"""
         return self.dims 
    
     def get_geometry(self):
+        """Gets geometry """
         return self.geo
 
     def get_size(self):
+        """Gets size"""
         [nx, ny] = self.divisions
         return (int(nx+1), int(ny+1))
 

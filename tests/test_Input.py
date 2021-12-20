@@ -1,16 +1,16 @@
 
 """
 Description
------------
+
 Tests the Input object to make sure all inputs as as expected
 
 Libraries/Modules
------------------
+
 -pytest \n
 -Input
 
 Notes
------
+
 Runs the following tests:\n
 1. Checks that the input airfoil geometry is a closed curve  \n
 2. Checks that the airfoil geomtry is of the right length \n
@@ -20,7 +20,7 @@ Runs the following tests:\n
 6. Check that all the required geo_param values are being read into the geo_param dictionary \n
 
 Author(s)
----------
+
 Vedin Dewan \n
 
 """

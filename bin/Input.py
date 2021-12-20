@@ -1,14 +1,14 @@
 """This module unpacks the input from a .data file to dictionaries in an input object
 
     Libraries/Modules:
-        numpy
-        pandas
+        numpy\n
+        pandas\n
         """
 import numpy as np 
 import pandas as pd
 
 #####################################################################
-# Parameters: The various input params are seperated into dictionaries
+# Args:: The various input params are seperated into dictionaries
 ######################################################################
 # dims:         nx = number of cells in i direction
 #               ny = number of cells in j direction

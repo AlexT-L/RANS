@@ -1,13 +1,13 @@
 def halo_geom(self, model, workspace):
     """Sets the geometry values in the halo
         
-    Parameters
-    ----------
-    model:
-        The physics model
-    workspace:
-        The Workspace
-    """
+        Args:
+        
+        model:
+            The physics model
+        workspace:
+            The Workspace
+        """
     # get dimensions
     dims = workspace.get_dims()
     itl = dims['itl']
