@@ -126,7 +126,7 @@ def test_init_vars():
         vars[stateName] = [shape]
 
     # add scalar variables stored at cell center with padding
-    for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
+    for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol",'ev','lv']:
         shape = (nxp, nyp)
         vars[stateName] = [shape]
 
@@ -196,7 +196,7 @@ def test_has_dict():
         vars[stateName] = [shape]
 
     # add scalar variables stored at cell center with padding
-    for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol","rev","rlv"]:
+    for stateName in ["p","radI","radJ","rfl","dtl","rfli","rflj","vol",'ev','lv']:
         shape = (nxp, nyp)
         vars[stateName] = [shape]
 

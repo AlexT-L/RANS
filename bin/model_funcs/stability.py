@@ -48,8 +48,8 @@ def stability(self, model, workspace, state):
     # retrieve working arrays from model
     def get(varName):
             return workspace.get_field(varName, model.className)
-    rev = get("rev").vals
-    rlv = get("rlv").vals
+    ev = get('ev').vals
+    lv = get('lv').vals
     radI = get("radI").vals
     radJ = get("radJ").vals
     rfli = get("rfli").vals
@@ -186,8 +186,8 @@ def stability(self, model, workspace, state):
 
         for j in range(pad,ny+pad):
             for i in range(pad,nx+pad):
-                rk        = gamma *(v1*rlv[i,j]/prn + v2*rev[i,j]/prt)/w[i,j,0]
-                rmu       = (v1*rlv[i,j]+v2*rev[i,j])/w[i,j,0]
+                rk        = gamma *(lv[i,j]* v1/prn + ev[i,j] * v2/prt)/w[i,j,0]
+                rmu       = (lv[i,j]*v1 + ev[i,j]*v2)/w[i,j,0]
             
                 # get side lengths
                 [xn, yn] = edge(i,j,'n')

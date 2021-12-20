@@ -24,8 +24,8 @@ jb = jl + 2
 w = Field([ib,jb],4) # state
 w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
 P = Field([ib,jb]) # pressure
-rlv = Field([ib,jb]) # laminar viscocity
-rev = Field([ib,jb]) # eddy viscocity
+lv = Field([ib,jb]) # laminar viscocity
+ev = Field([ib,jb]) # eddy viscocity
 
 # mesh related vars
 porI = Field([ib,jb],2) # mesh vertices
@@ -59,7 +59,7 @@ print(w.vals[0][0][0])
 print(bcfar_fort.__doc__)
 # residuals returned in Field dw
 bcfar_fort.bcfar(il, jl, ie, je, itl, itu, \
-      w.vals, P.vals, rlv.vals, rev.vals,  \
+      w.vals, P.vals, lv.vals, ev.vals,  \
       x.vals, xc.vals, \
       gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm, \
       ym,kvis, \
