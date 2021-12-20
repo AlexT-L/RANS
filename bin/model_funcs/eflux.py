@@ -9,8 +9,8 @@ def eflux(model, ws, state, dw):
     """
     calculate convective fluxes 
     
-    Parameters
-    ----------
+    Args:
+    
     model:
         instance of NavierStokes class
 

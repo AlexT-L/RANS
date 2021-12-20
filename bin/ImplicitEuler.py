@@ -3,41 +3,41 @@ from bin.Workspace import Workspace
 from bin.Integrator import Integrator
 
 class ImplicitEuler(Integrator):
-    # Constructor
-    def __init__(self, model, input):
-        """Constructor
-        
-        Parameters
-        ----------
-        model:
-            Model object
-        input:
-            Dictionary of parameter values
+    """Implicit Euler mulistage integration scheme
 
-        Returns
-        -------
-        :
-            A new ImplicitEuler integrator object.
-        """
+    Constructor:
+        Args:
+            model (Model): physics model
+            input (Dict): Dictionary with the following items:
+                mstage (int):   number of stages in the multistage integration scheme
+                cdis:           flux update relaxation factor --> 0: no update, 1: full update
+                cstp:           timestep relaxation factor --> 0: no timestep, 1: full step
+
+        Returns:
+            A new ImplicitEuler object
+
+    Attributes:
+        Model:          physics model
+        className (str): name of class
+    """
+
+
+    def __init__(self, model, input):
         # set attributes
         self.Model = model
         self.className = "ImplicitEuler"
         self.numStages = input['mstage']
-        self.Flux_update = input['cdis'] # relaxation/update factor for flux --> 0: no update, 1: full update
-        self.c_step = input['cstp']    # fraction of timestep to use
+        self.Flux_update = input['cdis']
+        self.c_step = input['cstp']
 
     
     def step(self, workspace, state, forcing):
         """Returns the local timestep such that stability is maintained.
         
-        Parameters
-        ----------
-        workspace:
-            The Workspace object
-        state:
-            A Field containing the current state
-        forcing:
-            Field of values on the right hand side of the equation that "force" the ODE
+        Args:
+            workspace:  The Workspace object
+            state:      A Field containing the current state
+            forcing:    Field of values on the right hand side of the equation that "force" the ODE
         """
         model = self.Model
 

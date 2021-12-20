@@ -1,10 +1,10 @@
 # """
 # Description
-# -----------
+# 
 # Tests the flux calculations
 
 # Libraries/Modules
-# -----------------
+# 
 # -pytest \n
 # -Field
 # -Model
@@ -12,7 +12,7 @@
 # -
 
 # Notes
-# -----
+# 
 # Runs the following tests:\n
 # 1. Checks that a 2D Field can be created  \n
 # 2. Checks that a 3D field can be created \n

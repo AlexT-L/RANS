@@ -4,12 +4,12 @@ import numpy as np
 class Cycle(ABC):
     """
     Description
-    -----------
+    
     Class describing multigrid cycle.
     Contains information on cycle shape and depth.
 
     Attributes
-    ----------------
+    
     pattern:
         sequence of directions to perform a multigrid cycle
 
@@ -17,16 +17,16 @@ class Cycle(ABC):
         depth of multigrid cycle
 
     Libraries/Modules
-    -----------------
+    
     numpy
     abc
 
     Notes
-    -----
+    
     Could be expanded to include standard options like "V" and "W" cycle
 
     Author(s)
-    ---------
+    
     Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
 
     """

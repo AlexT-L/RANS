@@ -1,10 +1,10 @@
 """
 Description
------------
+
 Contracts Field objects from finer meshes to coarser meshes.
 
 Libraries/Modules
------------------
+
 bin.Field \n
 numpy
 """
@@ -15,8 +15,8 @@ import numpy as np
 def simple(fine, coarse):
     """Performs a simple contraction where every other value is deleted.
     
-    Parameters
-    ----------
+    Args:
+    
     fine:
         The Field object on the finer grid
     coarse:
@@ -45,8 +45,8 @@ def simple(fine, coarse):
 def sum4way(fine, coarse):
     """Contracts the Field by summing 4 values into 1. Only setup for 2D Fields (?) so far.
     
-    Parameters
-    ----------
+    Args:
+    
     fine:
         The Field object on the finer grid
     coarse:
@@ -80,8 +80,8 @@ def sum4way(fine, coarse):
 def conservative4way(fine, coarse, weights=None):
     """Contracts the Field by averaging 4 values into 1 with weighting terms. Only set up for 2D Fields (?) so far.
     
-    Parameters
-    ----------
+    Args:
+    
     fine:
         The Field object on the finer grid
     coarse:

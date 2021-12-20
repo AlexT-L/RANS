@@ -345,7 +345,6 @@ def turbulent_viscosity(params, dims):
     return
 
 
-
 dim_var = 500
 params = {
   "ie": dim_var,

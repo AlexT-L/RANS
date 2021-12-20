@@ -15,8 +15,8 @@ class MultiGrid:
     def __init__(self, workspace, model, integrator, input):
         """Constructor.
         
-        Parameters
-        ----------
+        Args:
+        
         workspace:
             The Workspace object
         model:
@@ -27,11 +27,11 @@ class MultiGrid:
             Dictionary of parameter values
 
         Returns
-        -------
+        
         :
             A new Multigrid object.
         """
-        # Parameters
+        # Args:
         self.stabilityUpdateFrequency = input['ftim']
         self.wr_relax = float(input['fcoll'])
         self.wr_relax = 0.0
@@ -180,8 +180,8 @@ class MultiGrid:
     def residuals(self, output):
         """Copies the residual values to the output Field.
         
-        Parameters
-        ----------
+        Args:
+        
         output:
             Field that will store the values
         """
@@ -192,8 +192,8 @@ class MultiGrid:
     def solution(self, output):
         """Copies the state values to the output Field.
         
-        Parameters
-        ----------
+        Args:
+        
         output:
             Field that will store the values
         """

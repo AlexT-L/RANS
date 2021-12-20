@@ -1,8 +1,8 @@
 def halo_geom(self, model, workspace):
         """Sets the geometry values in the halo
         
-        Parameters
-        ----------
+        Args:
+        
         model:
             The physics model
         workspace:
