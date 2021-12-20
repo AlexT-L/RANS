@@ -1,6 +1,17 @@
+"""This module calculates cell centers xc and cell volumes vol in physical space
+
+    Libraries/Modules:
+        Field\n
+"""
 from bin.Field import mean
 
 def metric(self):
+    """ This function calculates cell centers and cell volume
+
+        It uses the vertices from x to calculate xc (centers) and vol(volme) 
+        of cells in physical space.
+        
+    """
     # parameters
     [nx, ny] = self.divisions
 
