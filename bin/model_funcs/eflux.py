@@ -10,18 +10,10 @@ def eflux(model, ws, state, dw):
     calculate convective fluxes 
     
     Args:
-    
-    model:
-        instance of NavierStokes class
-
-    workspace:
-        instance of Workspace class with the relevant fields
-    
-    state:
-        instance of Field class containing the density, x-momentum, y-momentum, and energy
-
-    dw:
-        Field to store new residuals after completing fluxes
+        model (NavierStokes): physics model
+        workspace (Workspace): the relevant fields
+        state (Field): containing the density, x-momentum, y-momentum, and energy
+        dw (Field): to store new residuals after completing fluxes
         
     """
     
