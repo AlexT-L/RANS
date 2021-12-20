@@ -1,3 +1,16 @@
+"""This module has functions that perform the conformal mapping and the coarser grid objects
+
+    Libraries/Modules:
+        numpy\n
+        Field\n
+        Contractinator\n
+        dims_funs\n
+        coord_strch_func\n
+        geom_func\n
+        sangho_func\n
+        metric_func\n
+        plot_mesh_func\n
+        """
 # libraries
 import numpy as np
 from bin.Field import isfinite
@@ -14,6 +27,14 @@ from bin.utils.metric_func import metric
 from bin.utils.plot_mesh_func import plot_mesh
 
 def init_from_file(self, grid_dim, input):
+    """Performs conformal mapping and finds x,xc and vol values in physical space.
+       
+       Also plots the c-mesh/grid in phyiscal space
+        
+        Args:
+            grid_dim (list):Number of cells in the x and y directions.
+            input (dict):Dictionary containing data-file values
+        """
     # read in number of divisions
     [nx, ny] = grid_dim
     nx = int(nx)
@@ -68,10 +89,18 @@ def init_from_file(self, grid_dim, input):
     metric(self)
 
     #plot mesh
-    # plot_mesh(self)
+    plot_mesh(self)
     
 
 def init_from_grid(newGrid, grid):
+    """Makes a grid coarser and finds new x,xc and vol values on the coarse grid
+       
+       Also plots the coarser grid in physical space
+        
+        Args:
+            grid (obj):finer input AirfoilMap object
+            newGrid (obj):coarser output new AirfoilMap object
+        """
     # transfer geometry info and set new dimensions
     newGrid.geo = grid.geo
     set_dims(newGrid)
@@ -102,4 +131,4 @@ def init_from_grid(newGrid, grid):
     newGrid.fields = newFields
 
     #plot mesh
-    # plot_mesh(newGrid)
+    plot_mesh(newGrid)
