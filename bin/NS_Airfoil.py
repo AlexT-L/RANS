@@ -198,7 +198,7 @@ class NS_Airfoil(BoundaryConditioner):
     def transfer_down(self, model, workspace1, workspace2):
         self.__check_vars(workspace1)
         self.__check_vars(workspace2)
-        implementation.transfer_down(self, model, workspace1, workspace2)
+        tf.transfer_down(self, model, workspace1, workspace2)
 
     # Get porosity
     def get_pori(self, workspace):
@@ -239,7 +239,7 @@ class NS_Airfoil(BoundaryConditioner):
         
         """
         self.__check_vars(workspace)
-        implementation.halo_geom(self, model, workspace)
+        halo_geom(self, model, workspace)
 
     # check if dictionary has been initialized
     def __check_vars(self, workspace):
@@ -251,9 +251,6 @@ class NS_Airfoil(BoundaryConditioner):
         [nx, ny] = workspace.field_size()
         p = self.padding
         field_size = [p+nx+p, p+ny+p]
-        grid_size = workspace.grid_size()
-        className = self.className
-
         vars = dict()
 
         # edge porosities
@@ -268,7 +265,7 @@ class NS_Airfoil(BoundaryConditioner):
         vars["cp"] = [p+nx+p]
         vars["cf"] = [p+nx+p]
 
-        workspace.init_vars(className, vars)
+        workspace.init_vars(self.className, vars)
 
         self.__set_porosity(workspace)
 
