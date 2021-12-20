@@ -7,7 +7,7 @@ class Model(ABC):
 
     Constructor:
         Args:
-            
+            bcmodel (BoundaryConditioner): Boundary condition model
 
         Returns:
             A new Model object
