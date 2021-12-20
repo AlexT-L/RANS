@@ -1,4 +1,4 @@
-# python implementation of eflux.f
+# python implementation of dflux.f
 
 from operator import pos
 from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar, max
