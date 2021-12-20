@@ -1,3 +1,13 @@
+"""
+Description
+-----------
+Expands Field objects from coarser meshes to finer meshes.
+
+Libraries/Modules
+-----------------
+bin.Field \n
+numpy
+"""
 from bin.Field import Field
 import numpy as np
 #from scipy.interpolate import griddata
@@ -29,6 +39,15 @@ import numpy as np
 #             fine[i,j] = temp[i,j]
 
 def bilinear4way(coarse, fine):
+    """Bilinear interpolation function for expanding Fields.
+    
+    Parameters
+    ----------
+    coarse:
+        Field on a coarser mesh.
+    fine:
+        Field on a finer mesh.
+    """
     # nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
     # #nx, ny = fine.shape() # This works
     nxf, nyf = fine.size()
