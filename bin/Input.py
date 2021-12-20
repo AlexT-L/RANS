@@ -113,8 +113,6 @@ import pandas as pd
 
 class Input:
     """
-    Description
-    -----------
     Reads in .data file and unpacks the parameter into
     dictionaries.
 

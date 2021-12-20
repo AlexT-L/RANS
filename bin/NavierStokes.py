@@ -1,6 +1,4 @@
 """
-Example program.
-
 Description
 -----------
 Example program with proper comment styles.
