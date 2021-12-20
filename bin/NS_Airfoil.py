@@ -1,6 +1,6 @@
 from numpy.core.defchararray import mod
 from bin.BoundaryConditioner import BoundaryConditioner
-import bin.NS_Airfoil_imp as implementation
+import bin.utils.NS_Airfoil_imp as implementation
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.bcwall import wall
