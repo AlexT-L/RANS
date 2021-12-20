@@ -253,7 +253,7 @@ class NavierStokes(Model):
         pad = self.padding
 
         # perform copy operation
-        paddedField[pad:nx+pad, pad:ny+pad] = copy(field)
+        field[:] = copy(paddedField[pad:nx+pad, pad:ny+pad])
         # for i in range(0, nx):
         #     for j in range(0, ny):
         #         field[i,j] = paddedField[i+pad,j+pad]

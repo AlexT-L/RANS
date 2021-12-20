@@ -6,7 +6,7 @@ from bin.Field import Field
 from bin.Cycle import Cycle
 from bin.Workspace import Workspace
 from bin.Integrator import Integrator
-from bin.Field import copy
+from bin.Field import copy, max
 
 
 class MultiGrid:
@@ -186,7 +186,7 @@ class MultiGrid:
             Field that will store the values
         """
         residuals = self.Fluxes[-1]
-        output = copy(residuals)
+        output[:] = copy(residuals)
         
     # copy state into output field
     def solution(self, output):
@@ -198,4 +198,4 @@ class MultiGrid:
             Field that will store the values
         """
         state = self.W[-1]
-        output = copy(state)
+        output[:] = copy(state)
