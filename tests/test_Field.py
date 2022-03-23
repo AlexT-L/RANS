@@ -43,7 +43,7 @@ def test_constructor():
     """
     # Use dimensions for 8x8
     dims = (8,8)
-    field = Field(dims)
+    field = Field.create(dims)
 
     # Assert correct shape
     assert type(field) is Field
@@ -56,7 +56,7 @@ def test_isfinite():
     """
     # Use dimensions for 8x8
     dims = (8,8)
-    field = Field(dims)
+    field = Field.create(dims)
     
     # Assert correct shape
     assert isfinite(field)    
@@ -69,7 +69,7 @@ def test_constructor_1d():
     """
     # Use dimensions for 8x8
     dims = (8)
-    field = Field(dims, 0)
+    field = Field.create(dims, 0)
     
     # Assert correct shape
     assert array_equal(Field.size(field), (dims,1))
@@ -82,7 +82,7 @@ def test_constructor_2d():
     """
     # Use dimensions for 8x8
     dims = (8,8)
-    field = Field(dims)
+    field = Field.create(dims)
     
     # Assert correct shape
     assert array_equal(Field.size(field), dims)
@@ -94,10 +94,10 @@ def test_constructor_3d():
     # Use dimensions for 8x8
     stateDim = 4
     dims = (8,8,stateDim)
-    field = Field(dims)
+    field = Field.create(dims)
     
     # Assert correct shape
-    assert array_equal(field.shape(), dims)
+    assert array_equal(field.shape, dims)
     
 def test_constructor_wrap_2arg():
     '''
@@ -107,7 +107,7 @@ def test_constructor_wrap_2arg():
     stateDim =  4
     dims = (8,8,stateDim)
     test = rng(dims)
-    field = Field(dims, test)
+    field = Field.create(dims, test)
     
     # Assert correct shape
     assert array_equal(field, test)
@@ -120,7 +120,7 @@ def test_constructor_wrap_1arg():
     stateDim =  4
     dims = (8,8,stateDim)
     test = rng(dims)
-    field = Field(0, test)
+    field = Field.create(0, test)
     
     # Assert correct shape
     assert array_equal(field, test)
@@ -134,7 +134,7 @@ def test_set_item():
     zeros = np.zeros(dims)
     
     # Create field initially all 0's
-    field = Field(dims, zeros)
+    field = Field.create(dims, zeros)
     
     # Set index to 1 in zeros
     indx = 3
@@ -157,8 +157,8 @@ def test_add_func():
     rand2 = rng(dims)
     
     # Make fields
-    field1 = Field(dims, rand1)
-    field2 = Field(dims, rand2)
+    field1 = Field.create(dims, rand1)
+    field2 = Field.create(dims, rand2)
     
     # Add arrays
     newfield = field1 + field2
@@ -177,8 +177,8 @@ def test_difference_func():
     rand2 = rng(dims)
     
     # Make fields
-    field1 = Field(dims, rand1)
-    field2 = Field(dims, rand2)
+    field1 = Field.create(dims, rand1)
+    field2 = Field.create(dims, rand2)
     
     # Add arrays
     newfield = field1 - field2
@@ -196,8 +196,8 @@ def test_product_func():
     rand2 = rng(dims)
     
     # Make fields
-    field1 = Field(dims, rand1)
-    field2 = Field(dims, rand2)
+    field1 = Field.create(dims, rand1)
+    field2 = Field.create(dims, rand2)
     
     # Add arrays
     newfield = field1 * field2
@@ -215,8 +215,8 @@ def test_quotient_func():
     rand2 = np.ones(dims)*2
     
     # Make fields
-    field1 = Field(dims, rand1)
-    field2 = Field(dims, rand2)
+    field1 = Field.create(dims, rand1)
+    field2 = Field.create(dims, rand2)
     
     # Add arrays
     newfield = field1 / field2
@@ -231,8 +231,8 @@ def test_dimensional_mean():
     
     # Make 2 random arrays
     dims = (8,8)
-    field = Field(dims)
-    compare = Field(8,0)
+    field = Field.create(dims)
+    compare = Field.create(8,0)
     for i in range(np.max(dims)):
         field[i,:] = i
         compare[i] = i
@@ -249,8 +249,8 @@ def test_copy():
     # Make a numpy array and a field
     dims = (8,8)
     twosnp = 2*np.ones(dims)
-    ones = Field(dims, 1)
-    twos = Field(dims, 2)
+    ones = Field.create(dims, 1)
+    twos = Field.create(dims, 2)
 
     # copy values from ones into twos
     pointer = ones
@@ -265,9 +265,9 @@ def test_product_2d_3d():
     # Make 2 random arrays
     dimsBig = (8,6,4)
     dimsLittle = (8,6)
-    big = Field(dimsBig, 1)
-    small = Field(dimsLittle, 2)
-    compare = Field(dimsBig, 2)
+    big = Field.create(dimsBig, 1)
+    small = Field.create(dimsLittle, 2)
+    compare = Field.create(dimsBig, 2)
     
     # Make fields
     product = big*small
@@ -284,9 +284,9 @@ def test_product_2d_3d():
     # Make 2 random arrays
     dimsBig = (8,6,4)
     dimsLittle = (8,6)
-    big = Field(dimsBig, 1)
-    small = Field(dimsLittle, 2)
-    compare = Field(dimsBig, 2)
+    big = Field.create(dimsBig, 1)
+    small = Field.create(dimsLittle, 2)
+    compare = Field.create(dimsBig, 2)
     
     # Make fields
     product = small*big
@@ -303,8 +303,8 @@ def test_not_equals():
     # Make a numpy array and a field
     dims = (8,8)
     twosnp = 2*np.ones(dims)
-    ones = Field(dims, 1)
-    twos = Field(dims, 2)
+    ones = Field.create(dims, 1)
+    twos = Field.create(dims, 2)
 
     assert ones != twos
     assert ones != twosnp

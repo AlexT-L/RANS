@@ -62,9 +62,9 @@
 # # create faux fields
 # np.random.seed(100)
 # w_init = np.random.standard_normal([grid.dims['nx'],grid.dims['ny'],model.dim()])
-# w = Field(0, w_init)
+# w = Field.create(0, w_init)
 # res = np.zeros([grid.dims['nx'],grid.dims['ny'],model.dim()])
-# dw = Field(0, res)
+# dw = Field.create(0, res)
 
 # #print(dw)
 # model.init_state(ws,w)

@@ -60,12 +60,12 @@ def dflux(model, ws, state, dw, rfil):
     tol       = 0.25
 
     # working arrays
-    dp = Field((nxp,nyp))
-    dis2 = Field((nxp, nyp))
-    dis4 = Field((nxp, nyp))
-    d    = Field((nxp, nyp, n))
-    e    = Field((nxp, nyp, n))
-    TOL  = Field((nx+1, ny+1), tol)
+    dp = Field.create((nxp,nyp))
+    dis2 = Field.create((nxp, nyp))
+    dis4 = Field.create((nxp, nyp))
+    d    = Field.create((nxp, nyp, n))
+    e    = Field.create((nxp, nyp, n))
+    TOL  = Field.create((nx+1, ny+1), tol)
 
     # c
     # c     replace the energy by the enthalpy

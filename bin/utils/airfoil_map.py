@@ -56,8 +56,8 @@ def init_from_file(self, grid_dim, input):
     # initialize x-y vertex, center, and volume fields
     il = nx+1
     jl = ny+1
-    self.x  = Field((il,jl,2))
-    self.xc = Field((nx,ny,2))
+    self.x  = Field.create((il,jl,2))
+    self.xc = Field.create((nx,ny,2))
     self.vol= Field((nx,ny))
 
     # store relevant fields
@@ -114,9 +114,9 @@ def init_from_grid(newGrid, grid):
     # create new arrays
     [il, jl] = newGrid.get_size()
     [nx, ny] = [il-1, jl-1]
-    xNew = Field((il,jl,2))
-    xcNew = Field((nx,ny,2))
-    volNew = Field((nx,ny))
+    xNew = Field.create((il,jl,2))
+    xcNew = Field.create((nx,ny,2))
+    volNew = Field.create((nx,ny))
 
     # condense mesh
     simple(x, xNew)

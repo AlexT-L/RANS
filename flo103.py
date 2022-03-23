@@ -76,8 +76,8 @@ if __name__ == '__main__':
     [nx, ny] = workspace.field_size()
     stateDim = model.dim()
     shape = (nx, ny, stateDim)
-    state = Field(shape)
-    resid = Field(shape)
+    state = Field.create(shape)
+    resid = Field.create(shape)
 
     # get initial state
     mg.solution(state)

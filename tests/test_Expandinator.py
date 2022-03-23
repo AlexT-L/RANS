@@ -34,21 +34,21 @@ def test_bilinear4way():
     """
     #output_dims = (4,4)
     #output_values = np.array([[1,3,1,3],[1,3,1,3],[1,3,1,3],[1,3,1,3]])
-    #output_field = Field(output_dims, output_values)
+    #output_field = Field.create(output_dims, output_values)
     ##coarse_dims = (2,2)
-    ##coarse_field = Field(coarse_dims)
+    ##coarse_field = Field.create(coarse_dims)
     #input_dims = (2,2)
     #input_values = np.array([[2,2],[2,2]])
-    #input_field = Field(input_dims, input_values)
+    #input_field = Field.create(input_dims, input_values)
 
 
     test_dims = (4,4,4)
-    test_field = Field(test_dims, 1)
+    test_field = Field.create(test_dims, 1)
 
     testfine_dims = (8,8,4)
-    testfine_field = Field(testfine_dims, 2)
+    testfine_field = Field.create(testfine_dims, 2)
 
-    testoutput_field = Field(testfine_dims, 1)
+    testoutput_field = Field.create(testfine_dims, 1)
     testoutput_field[:,0] = 0
     Exp.bilinear4way(test_field, testfine_field)
     # print(testoutput_field)
@@ -57,7 +57,7 @@ def test_bilinear4way():
 
     #dims = (2,2,2)
     #values = np.array([[[2,2],[2,2]],[[2,2],[2,2]]])
-    #ield = Field(dims, values)
+    #ield = Field.create(dims, values)
     #print(field)
 
     #Exp.bilinear4way(input_field, field)

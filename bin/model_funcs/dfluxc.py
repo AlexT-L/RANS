@@ -53,13 +53,13 @@ def dfluxc(model, ws, state, dw, rfil):
     sfil      = 1.  -rfil
 
     # working array
-    fs = Field((nxp, nyp, n))
+    fs = Field.create((nxp, nyp, n))
 
     # c
     # c     dissipation in the i direction
     # c
     dis = minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])*fis0
-    # dis = Field(dis)
+    # dis = Field.create(dis)
 
     result = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
     fs[1:ie, jp:je]     = result

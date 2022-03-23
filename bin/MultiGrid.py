@@ -75,11 +75,11 @@ class MultiGrid:
             [nx, ny] = workspace.field_size()
             shape = (nx, ny, stateDim)
 
-            self.W[l]            = Field(shape)
-            self.W1st[l]         = Field(shape)
-            self.WCorrections[l] = Field(shape)
-            self.Residuals[l]    = Field(shape)
-            self.Fluxes[l]       = Field(shape)
+            self.W[l]            = Field.create(shape)
+            self.W1st[l]         = Field.create(shape)
+            self.WCorrections[l] = Field.create(shape)
+            self.Residuals[l]    = Field.create(shape)
+            self.Fluxes[l]       = Field.create(shape)
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])

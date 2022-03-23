@@ -6854,28 +6854,28 @@ jb = jl + 2
 
 \sphinxAtStartPar
 \# flow related vars
-w = Field({[}ib,jb{]},4) \# state
+w = Field.create({[}ib,jb{]},4) \# state
 w.vals = np.array(w.vals + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
-P = Field({[}ib,jb{]}) \# pressure
-lv = Field({[}ib,jb{]}) \# laminar viscocity
-ev = Field({[}ib,jb{]}) \# eddy viscocity
+P = Field.create({[}ib,jb{]}) \# pressure
+lv = Field.create({[}ib,jb{]}) \# laminar viscocity
+ev = Field.create({[}ib,jb{]}) \# eddy viscocity
 
 \sphinxAtStartPar
 \# mesh related vars
-porI = Field({[}ib,jb{]},2) \# mesh vertices
+porI = Field.create({[}ib,jb{]},2) \# mesh vertices
 porI.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-porJ = Field({[}ib,jb{]},2) \# mesh centers
+porJ = Field.create({[}ib,jb{]},2) \# mesh centers
 porJ.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-xc = Field({[}ib,jb{]},2) \# mesh vertices
+xc = Field.create({[}ib,jb{]},2) \# mesh vertices
 xc.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-x = Field({[}ib,jb{]},2) \# mesh centers
+x = Field.create({[}ib,jb{]},2) \# mesh centers
 x.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 
 \sphinxAtStartPar
 \# solver related vars
-fw = Field({[}ib,jb{]},4)
-radI = Field({[}ib,jb{]},2) \# stability I
-radJ = Field({[}ib,jb{]},2) \# stability J
+fw = Field.create({[}ib,jb{]},4)
+radI = Field.create({[}ib,jb{]},2) \# stability I
+radJ = Field.create({[}ib,jb{]},2) \# stability J
 
 \sphinxAtStartPar
 gamma = 1.4
@@ -6983,29 +6983,29 @@ jb = jl + 2
 
 \sphinxAtStartPar
 \# flow related vars
-w = Field({[}ib,jb{]},4) \# state
+w = Field.create({[}ib,jb{]},4) \# state
 w.vals = np.array(w.vals + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
-P = Field({[}ib,jb{]}) \# pressure
-lv = Field({[}ib,jb{]}) \# laminar viscocity
-ev = Field({[}ib,jb{]}) \# eddy viscocity
-vw = Field({[}ib,jb{]},4) \# residuals
+P = Field.create({[}ib,jb{]}) \# pressure
+lv = Field.create({[}ib,jb{]}) \# laminar viscocity
+ev = Field.create({[}ib,jb{]}) \# eddy viscocity
+vw = Field.create({[}ib,jb{]},4) \# residuals
 
 \sphinxAtStartPar
 \# mesh related vars
-porI = Field({[}ib,jb{]},2) \# mesh vertices
+porI = Field.create({[}ib,jb{]},2) \# mesh vertices
 porI.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-porJ = Field({[}ib,jb{]},2) \# mesh centers
+porJ = Field.create({[}ib,jb{]},2) \# mesh centers
 porJ.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-xc = Field({[}ib,jb{]},2) \# mesh vertices
+xc = Field.create({[}ib,jb{]},2) \# mesh vertices
 xc.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
-x = Field({[}ib,jb{]},2) \# mesh centers
+x = Field.create({[}ib,jb{]},2) \# mesh centers
 x.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 
 \sphinxAtStartPar
 \# solver related vars
-fw = Field({[}ib,jb{]},4)
-radI = Field({[}ib,jb{]},2) \# stability I
-radJ = Field({[}ib,jb{]},2) \# stability J
+fw = Field.create({[}ib,jb{]},4)
+radI = Field.create({[}ib,jb{]},2) \# stability I
+radJ = Field.create({[}ib,jb{]},2) \# stability J
 
 \sphinxAtStartPar
 gamma = 1.4

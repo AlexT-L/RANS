@@ -37,7 +37,7 @@ def eflux(model, ws, state, dw):
     jb = ny+3
 
     # flux array
-    fs = Field((ib+1, jb+1, n))
+    fs = Field.create((ib+1, jb+1, n))
 
     # i direction
     dx = ws.edge_normals(0)

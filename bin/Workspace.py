@@ -118,9 +118,9 @@ class Workspace(ABC):
         for varName in vars:
             [shape] = vars[varName]
             if np.isscalar(shape):
-                classDict[varName] = Field(shape, 0)
+                classDict[varName] = Field.create(shape, 0)
             else:
-                classDict[varName] = Field(shape)
+                classDict[varName] = Field.create(shape)
 
 
     def is_finest(self):

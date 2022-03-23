@@ -91,7 +91,7 @@ class CellCenterWS(Workspace):
 
     def __calc_normals(self, dim):
         dx = self.edges(dim)
-        n = Field(dx.shape())
+        n = Field.create(dx.shape)
         nx = dx[:,:,1]
         ny = -dx[:,:,0]
 

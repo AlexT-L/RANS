@@ -90,7 +90,7 @@ def stability(self, model, workspace, state):
     # c
     # c     permissible time step
     # c
-    RLIM = Field((nx,ny), rlim)
+    RLIM = Field.create((nx,ny), rlim)
 
     cc = gamma*p[ip:ie,jp:je]/maximum(w[ip:ie,jp:je,0],RLIM)
 
@@ -123,7 +123,7 @@ def stability(self, model, workspace, state):
     # c
     # c     adaptive time step
     # c
-    CFL = Field((nx, ny), dim(cfl, 1))
+    CFL = Field.create((nx, ny), dim(cfl, 1))
 
     dpi = abs((s[ip+1:ib, jp:je] - 2*s[ip:ie, jp:je] + s[1:il, jp:je]) / \
               (s[ip+1:ib, jp:je] + 2*s[ip:ie, jp:je] + s[1:il, jp:je] + slim))

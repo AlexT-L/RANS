@@ -24,8 +24,8 @@ def bilinear4way(coarse, fine):
     fine:
         Field on a finer mesh.
     """
-    # nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
-    # #nx, ny = fine.shape() # This works
+    # nx, ny, dim = fine.shape # Doesn't work, fine.shape only returns two items.
+    # #nx, ny = fine.shape # This works
     nxf, nyf = Field.size(fine)
 
     fine[:] = 0
