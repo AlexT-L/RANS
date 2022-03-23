@@ -10,8 +10,8 @@ sys.path.append('../RANS/bin')
 import time
 
 import numpy as np
-from BaldwinLomax import turbulent_viscosity
-from BoundaryThickness import boundary_thickness
+from bin.model_funcs.BaldwinLomax import turbulent_viscosity
+from bin.model_funcs.BoundaryThickness import boundary_thickness
 
 def compute_viscosity(model, ws, state):
     """Computes viscosity coefficients. 
@@ -28,35 +28,60 @@ def compute_viscosity(model, ws, state):
     Notes:
         Adapted from subroutine viscf.f"""    
 
-    [nx, ny] = ws.field_size()
-    il = nx+1
-    jl = ny+1
-    ie = nx+2
-    je = ny+2
+    # set state
+    w = state
+    
+    # get coordinates
+    x = ws.get_field('x')
+    xc = ws.get_field('xc')
 
-    kvis = model.model.params['kvis']
+    # get pressure
+    p = ws.get_field('p', model.className)
+    
+    # get eddy viscosity
+    ev = ws.get_field('ev', model.className)
+    lv = ws.get_field('lv', model.className)
+    rlv = lv
+    rev = ev
+
+    # set geometry parameters
+    pad = model.padding
+    [nx, ny] = ws.field_size()
+    [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
+
+    dims = ws.get_dims()
+    itl = dims['itl'] + pad
+    itu = dims['itu'] + pad
+    ile = int(ie/2) + pad
+    chord = x[itl,pad,1] - x[ile,pad,1] # Not sure if correct FIX!!
+    
+    geom = ws.get_geometry()
+    scal = geom['scal']
+    
+    # physics parameters
+    kvis = model.params['kvis']
     gamma = model.params['gamma']
     rm = model.params['rm']
     re = model.params['re']
-    ncyc = model.params['ncyc']
-    itl = model.params['itl']
-    itu = model.params['itu']
-    w = model.params['w']
     xtran = model.params['xtran'] 
-    scal = model.params['scal']
-    chord = model.params['chord']
     t0 = model.params['t0']
-    rmu0 = model.params['rmu0']
-    p = model.params['p']
-    mode = model.params['mode']
-    kturb = model.params['kturb']
-    rev = model.params['rev']
-    x = model.params['x']
-    xc = model.params['xc']
-    ynot = model.params['ynot']
-    rlv = model.params['rlv']
-    dsti = model.params['dsti']
-    ib = model.params['ib']
+    rmu0 = model.params['mu0']
+    
+    # boundary layer parameters
+    ynot = np.ones(nx)
+    dsti = np.ones(nx)
+
+    
+    # select model
+    kturb = 1
+    
+    # mg_param
+    mode = 1
+    if ws.is_finest():
+        mode = 0
 
     # initializing, defined later
     rev0 = np.ones((nx,ny))
@@ -83,8 +108,8 @@ def compute_viscosity(model, ws, state):
         return
 
     aturb     = 1.
-    if (ncyc > 25):
-        aturb = .5
+    #if (ncyc > 25): commented out bc don't know how to implement
+    #    aturb = .5
     if (kturb == 1): 
         rev0[0:ie,0:je] = rev[0:ie,0:je]
 
@@ -124,7 +149,7 @@ def compute_viscosity(model, ws, state):
     '''
     Calculates the boundary layer thickness.
     '''
-    boundary_thickness(params, dims) 
+    boundary_thickness(model, ws, state, ynot, dsti) 
 
 
 

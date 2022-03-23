@@ -5,7 +5,7 @@
         Field\n
 """
 import numpy as np
-from bin.Field import Field
+from bin.Field import Field, max
 from bin.Workspace import Workspace
 from bin.Field import copy, isfinite, norm
 
@@ -84,8 +84,8 @@ class CellCenterWS(Workspace):
         if dim == 1:
             dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
 
-        assert(max(dx) != 0)
-        assert(isfinite(dx))
+        assert (max(dx) != 0).all()
+        assert (isfinite(dx))
 
         self.add_field(dx, varName)
 

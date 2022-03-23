@@ -1,7 +1,7 @@
 # python implementation of dflux.f
 
 from operator import pos
-from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar, max
+from bin.Field import Field, is_field, maximum, minimum, abs, pos_diff, isscalar, min, max, mismatch_mul
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np
@@ -97,7 +97,7 @@ def dflux(model, ws, state, dw, rfil):
     # central differencing (third order)
     e[1:ie, jp:je] = d[ip:ib, jp:je] - 2*d[1:ie, jp:je] + d[0:il, jp:je]
 
-    gs = porI*(dis2[1:ie, jp:je]*d[1:ie, jp:je] - dis4[1:ie, jp:je]*e[1:ie, jp:je])
+    gs = mismatch_mul(porI, (mismatch_mul(dis2[1:ie, jp:je], d[1:ie, jp:je]) - mismatch_mul(dis4[1:ie, jp:je],e[1:ie, jp:je])))
 
     fw[ip:ie, jp:je] = fw[ip:ie, jp:je]*sfil + gs[0:nx] - gs[1:il]
 
@@ -128,7 +128,7 @@ def dflux(model, ws, state, dw, rfil):
         dis4[ip:ie, jl] = rad*fis4
         dis4[ip:ie, jl] = pos_diff(dis4[ip:ie, jl], dis2[ip:ie, jl])
 
-        rad = min(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
+        rad = minimum(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
 
         max1 = maximum(dp[ip:ie, jp+2:jb], dp[ip:ie, jp+1:je])
         max2 = maximum(dp[ip:ie, jp:jl], dp[ip:ie, 1:ny])
@@ -144,7 +144,7 @@ def dflux(model, ws, state, dw, rfil):
         # central difference (third order)
         e[ip:ie, 1:je] = d[ip:ie, jp:jb] - 2*d[ip:ie, 1:je] + d[ip:ie, 0:jl]
 
-        gs = porJ*(dis2[ip:ie, 1:je]*d[ip:ie, 1:je] - dis4[ip:ie, 1:je]*e[ip:ie, 1:je])
+        gs = mismatch_mul(porJ, mismatch_mul(dis2[ip:ie, 1:je],d[ip:ie, 1:je]) - mismatch_mul(dis4[ip:ie, 1:je],e[ip:ie, 1:je]))
 
         fw[ip:ie, jp:je] += gs[:, 0:ny] - gs[:, 1:jl]
 

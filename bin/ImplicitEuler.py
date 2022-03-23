@@ -1,4 +1,4 @@
-from bin.Field import max, copy
+from bin.Field import max, copy, mismatch_mul
 from bin.Workspace import Workspace
 from bin.Integrator import Integrator
 
@@ -78,7 +78,7 @@ class ImplicitEuler(Integrator):
             dt *= c_dt
 
             # take step
-            dw[:] = Rw*dt
+            dw[:] = mismatch_mul(Rw, dt)
 
             # update state
             w[:] = wn - dw

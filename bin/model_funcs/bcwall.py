@@ -114,7 +114,7 @@ def wall(bcmodel, model, workspace, state):
 
         qs      = (yy*rhoU_a - xy*rhoV_a)/rho_a
         gxy     = xx*xy + yx*yy
-        qxy     = qs*(xxx[1:itu-itl+1]*rhoV_a - yxx[1:itu-itl+1]*rhoU_a)/2
+        qxy     = qs*(xxx*rhoV_a - yxx*rhoU_a)/2
         py        = (px*gxy  +qxy)*sx[1:itu-itl+1]
 
         if ny < 3:

@@ -116,10 +116,20 @@ if __name__ == '__main__':
     #post.print_solution(state)
 
     rho = state[:,:,0]
-    print(max(rho))
-    print(mean(rho))
+    print("\n")
+    print("maximum rho:")
+    
+    print("\n")
+    print("maximum rho: " + str(max(rho)))
+    
+    print("\n")
+    print("mean rho: " + str(mean(rho)))
+    
+    print("\n")
+    print("residual rho:")
     print(resid)
     
+    print("\n")
     print("Total time: ", stop-start, " s")
 
     # Take solution and plot and save info

@@ -1,6 +1,6 @@
 # python implementation of eflux.f
 
-from bin.Field import Field, max, minimum
+from bin.Field import Field, max, minimum, mismatch_mul
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np
@@ -61,7 +61,7 @@ def dfluxc(model, ws, state, dw, rfil):
     dis = minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])*fis0
     # dis = Field.create(dis)
 
-    result = dis*(w[ip:ib, jp:je] - w[1:ie, jp:je])
+    result = mismatch_mul(dis, (w[ip:ib, jp:je] - w[1:ie, jp:je]))
     fs[1:ie, jp:je]     = result
     fs[1:ie, jp:je, 3] += dis*(p[ip:ib, jp:je] - p[1:ie, jp:je])
 
@@ -73,9 +73,9 @@ def dfluxc(model, ws, state, dw, rfil):
     # c
     # c     dissipation in the j direction
     # c
-    dis = porJ*fis0 * minimum(radI[ip:ie, jp:jb], radI[ip:ie, 1:je])
+    dis = fis0 * (porJ * minimum(radI[ip:ie, jp:jb], radI[ip:ie, 1:je]))
 
-    fs[ip:ie, 1:je]     = dis*(w[ip:ie, jp:jb] - w[ip:ie, 1:je])
+    fs[ip:ie, 1:je]     = mismatch_mul(dis, (w[ip:ie, jp:jb] - w[ip:ie, 1:je]))
     fs[ip:ie, 1:je, 3] += dis*(p[ip:ie, jp:jb] - p[ip:ie, 1:je])
 
     fw[ip:ie, jp:je] += fs[ip:ie, jp:je] + fs[ip:ie, 1:jl]

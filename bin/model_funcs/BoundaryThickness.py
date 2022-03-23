@@ -5,7 +5,7 @@
         """
 import numpy as np
 
-def boundary_thickness(model, ws, state):
+def boundary_thickness(model, ws, state, ynot, dsti):
     """Calculates the boundary layer thickness.
 
     Notes: 
@@ -25,8 +25,6 @@ def boundary_thickness(model, ws, state):
     qs = np.ones(nx)
     ut = np.ones(nx)
     dn = np.ones(nx)
-    dsti = np.ones(nx)
-    ynot = np.ones(nx)
     ssmax = np.ones(nx)
     
     js = 0.75*(ny - 4)

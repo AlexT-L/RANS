@@ -1,5 +1,4 @@
 import numpy as np
-import bin.Field as binField
 from numpy.core.numeric import Infinity, NaN
 
 class Field:
@@ -476,8 +475,7 @@ def is_numpy(var):
 
 def is_field(var):
     isField = type(var).__module__ is Field.__name__
-    isBinField = type(var).__module__ is binField.__name__
-    return isField or isBinField
+    return isField
 
 def array_equal(array1, array2):
     if is_field(array1):

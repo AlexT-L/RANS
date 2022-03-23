@@ -9,7 +9,7 @@ bin.Field \n
 numpy
 """
 
-from bin.Field import Field, sum
+from bin.Field import Field, sum, mismatch_mul
 import numpy as np
 
 def simple(fine, coarse):
@@ -102,6 +102,7 @@ def conservative4way(fine, coarse, weights=None):
 
     for i in range(nxc):
         for j in range(nyc):
-            num = sum(fine[x[i]:x[i+1], y[j]:y[j+1]] * weights[x[i]:x[i+1], y[j]:y[j+1]])
+            numi = mismatch_mul(fine[x[i]:x[i+1], y[j]:y[j+1]], weights[x[i]:x[i+1], y[j]:y[j+1]])
+            num = sum(numi)
             den = sum(weights[x[i]:x[i+1], y[j]:y[j+1]])
             coarse[i,j] = num / den

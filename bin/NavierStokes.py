@@ -162,7 +162,7 @@ class NavierStokes(Model):
         # update pressure
         self.__update_pressure(workspace, w)
 
-        self.BCmodel.update_physics(self, workspace, state)
+        self.BCmodel.update_physics(self, workspace, w)
 
 
     # calls python implementation 'step.f' to update stability conditions

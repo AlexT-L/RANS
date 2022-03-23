@@ -6,6 +6,7 @@ from bin.model_funcs.bcwall import wall
 from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.stability_fast import stability
+from bin.model_funcs.Viscosity import compute_viscosity
 
 class NS_Airfoil(BoundaryConditioner):
     """Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
@@ -47,7 +48,7 @@ class NS_Airfoil(BoundaryConditioner):
     
         """
         ### This method should call Baldwin Lomax ###
-        # turbulent_viscosity(params, dims)
+        compute_viscosity(model, workspace, state)
     
     # update stability
     def update_stability(self, model, workspace, state):
