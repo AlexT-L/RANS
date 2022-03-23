@@ -23,7 +23,7 @@ def eflux(model, ws, state, dw):
     w = state # state vector
     porJ = ws.get_field('porJ', model.className) # porosity
     p = ws.get_field('p', model.className)   # pressure
-    n = state.dim() # number of quantities being convected
+    n = Field.dim(state) # number of quantities being convected
 
     [nx, ny] = ws.field_size()
     [nxp, nyp] = [pad+nx+pad, pad+ny+pad]

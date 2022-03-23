@@ -26,7 +26,7 @@ def bilinear4way(coarse, fine):
     """
     # nx, ny, dim = fine.shape() # Doesn't work, fine.shape() only returns two items.
     # #nx, ny = fine.shape() # This works
-    nxf, nyf = fine.size()
+    nxf, nyf = Field.size(fine)
 
     fine[:] = 0
 

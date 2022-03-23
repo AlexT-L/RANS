@@ -25,7 +25,7 @@ def simple(fine, coarse):
     if type(fine) is not Field or type(coarse) is not Field:
         raise TypeError('Fine or coarse field is not a field')
     
-    x_fine, y_fine = fine.size()
+    x_fine, y_fine = Field.size(fine)
 
     # get slice indices
     xSlice = range(0,x_fine,2)
@@ -49,12 +49,12 @@ def sum4way(fine, coarse):
         raise TypeError('Fine or coarse field is not a field')
     
     # Check that fine grid is divisible by 2 in both dims
-    nxf, nyf = fine.size()
+    nxf, nyf = Field.size(fine)
     # if (x_fine % 2) == 1 or (y_fine % 2) == 1:
     #     raise ValueError('Fine field dimensions do not allow for 4 way sum')
 
     # Check that dimensions of coarse grid are half of fine grid
-    nxc, nyc = coarse.size()
+    nxc, nyc = Field.size(coarse)
     # if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
     #     raise ValueError('Coarse grid size different from expected reduction from fine grid')
     
@@ -93,12 +93,12 @@ def conservative4way(fine, coarse, weights=None):
     #     raise TypeError('Fine or coarse field is not a field')
     
     # Check that fine grid is divisible by 2 in both dims
-    nxf, nyf = fine.size()
+    nxf, nyf = Field.size(fine)
     # if (x_fine % 2) == 1 or (y_fine % 2) == 1:
     #     raise ValueError('Fine field dimensions do not allow for 4 way sum')
 
     # Check that dimensions of coarse grid are half of fine grid
-    nxc, nyc = coarse.size()
+    nxc, nyc = Field.size(coarse)
     # if (x_fine / 2) != x_coarse or (y_fine / 2) != y_coarse:
     #     raise ValueError('Coarse grid size different from expected reduction from fine grid')
     

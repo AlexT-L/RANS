@@ -72,7 +72,7 @@ def test_constructor_1d():
     field = Field(dims, 0)
     
     # Assert correct shape
-    assert array_equal(field.size(), (dims,1))
+    assert array_equal(Field.size(field), (dims,1))
     
 
 def test_constructor_2d():
@@ -85,7 +85,7 @@ def test_constructor_2d():
     field = Field(dims)
     
     # Assert correct shape
-    assert array_equal(field.size(), dims)
+    assert array_equal(Field.size(field), dims)
     
 def test_constructor_3d():
     '''

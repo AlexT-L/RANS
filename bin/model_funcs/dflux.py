@@ -24,7 +24,7 @@ def dflux(model, ws, state, dw, rfil):
 
     # model parameters
     pad = model.padding
-    n = state.dim() # number of quantities being convected
+    n = Field.dim(state) # number of quantities being convected
 
     # necessary fields
     def mget(varName):

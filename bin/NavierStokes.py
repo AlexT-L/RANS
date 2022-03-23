@@ -216,7 +216,7 @@ class NavierStokes(Model):
     # copy non-padded fields into padded fields
     def __copy_in(self, field, paddedField):
         # get field size
-        [nx, ny] = field.size()
+        [nx, ny] = Field.size(field)
         pad = self.padding
 
         # perform copy operation
@@ -225,7 +225,7 @@ class NavierStokes(Model):
     # extract data from a padded field
     def __copy_out(self, paddedField, field):
         # get field size
-        [nx, ny] = field.size()
+        [nx, ny] = Field.size(field)
         pad = self.padding
 
         # perform copy operation
