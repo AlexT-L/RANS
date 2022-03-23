@@ -58,7 +58,7 @@ def init_from_file(self, grid_dim, input):
     jl = ny+1
     self.x  = Field.create((il,jl,2))
     self.xc = Field.create((nx,ny,2))
-    self.vol= Field((nx,ny))
+    self.vol= Field.create((nx,ny))
 
     # store relevant fields
     fields = dict()

@@ -49,11 +49,11 @@ def dflux(model,ws,w,dw,rfil):
 
     # residuals returned in Field vw
     dflux_fort.dflux(ny,il,jl,ie,je, \
-                    w.vals,P.vals, \
-                    porI.vals,porJ.vals, \
-                    fw.vals, radI.vals, radJ.vals, \
+                    w,P, \
+                    porI,porJ, \
+                    fw, radI, radJ, \
                     rfil,vis2,vis4)
 
 
     # put in residuals
-    dw = dw + fw.vals
+    dw = dw + fw

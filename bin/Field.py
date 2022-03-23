@@ -17,12 +17,12 @@ class Field:
             Check top of Input.py file to see the contents of each of the five dictionanries 
 
     Attributes:
-        vals (np.ndarray): numeric values of the Field
+        vals (np.array): numeric values of the Field
 
     """
 
 
-    def create(self, shape, vals=None):
+    def create(shape, vals=None):
        
         if vals is not None:
             if np.isscalar(vals):
@@ -99,7 +99,7 @@ class Field:
             Returns
             
             :
-                The underlying numpy ndarray that stores the values
+                The underlying numpy array that stores the values
             """
         return self
 
@@ -113,7 +113,7 @@ class Field:
                 A field with values stored as the given type
             """
         result = self.astype(dtype)
-        return np.ndarray(0, result)
+        return np.array(0, result)
 
     # transpose
     def T(self):
@@ -124,7 +124,7 @@ class Field:
             :
                 A field of the size of the transposed input
             """
-        trans = np.ndarray(0, self.T)
+        trans = np.array(0, self.T)
         return trans
 
     
@@ -137,7 +137,7 @@ class Field:
         # if isscalar(array):
         #     return array
         
-        # return np.ndarray(array)
+        # return np.array(array)
 
 
         if indx is int:
@@ -152,7 +152,7 @@ class Field:
         if np.isscalar(vals):
             return vals
 
-        return np.ndarray(0, vals)
+        return np.array(0, vals)
 
     # Allow fields values to be set
     def __setitem__(self,indx,value):
@@ -193,37 +193,37 @@ class Field:
         if is_field(other):
             other = other
         result = self < other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
     
     def __le__(self, other):
         if is_field(other):
             other = other
         result =  self <= other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
     
     def __gt__(self, other):
         if is_field(other):
             other = other
         result = self > other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
     
     def __ge__(self, other):
         if is_field(other):
             other = other
         result = self >= other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
     
     def __eq__(self, other):
         if is_field(other):
             other = other
         result = self == other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
     
     def __ne__(self, other):
         if is_field(other):
             other = other
         result = self != other
-        return np.ndarray(self.shape(), result)
+        return np.array(self.shape(), result)
 
     def __bool__(self):
         return bool(self.any())
@@ -236,7 +236,7 @@ class Field:
 
         result = self + other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -246,7 +246,7 @@ class Field:
 
         result = self - other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -261,7 +261,7 @@ class Field:
 
         result = self * other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
         assert is_field(output)
 
         return output
@@ -272,7 +272,7 @@ class Field:
 
         result = self ** other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -287,7 +287,7 @@ class Field:
 
         result = self / other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -297,7 +297,7 @@ class Field:
 
         result = self // other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -307,7 +307,7 @@ class Field:
 
         result = self % other
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
 
@@ -367,7 +367,7 @@ class Field:
 
         result = other + self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -377,7 +377,7 @@ class Field:
 
         result = other - self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
     
@@ -392,7 +392,7 @@ class Field:
 
         result =  other * self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         assert is_field(output)
 
@@ -404,7 +404,7 @@ class Field:
 
         result = other ^ self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
 
@@ -419,7 +419,7 @@ class Field:
 
         result = other / self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
 
@@ -429,13 +429,13 @@ class Field:
 
         result = other // self
 
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
 
         return output
 
     def __neg__(self):
         result = -self
-        output = np.ndarray(self.shape(), result)
+        output = np.array(self.shape(), result)
         return output
 
     def __pos__(self):
@@ -487,7 +487,7 @@ def array_equal(array1, array2):
     return np.array_equal(array1, array2)
 
 def copy(array):
-    return np.ndarray(array)
+    return np.array(array)
 
 # Field class math methods
 def mean(array, axis=None):
@@ -523,7 +523,7 @@ def pos_diff(array1, array2):
     return np.maximum(diff, zeros)
 
 def isfinite(array):
-    return np.isfinite(array)
+    return np.isfinite(array).any()
 
 def isscalar(array):
     return np.isscalar(array)
@@ -568,13 +568,13 @@ def mismatch_truediv(self, other):
     result = 0
 
     if len(other.shape) == 3:
-        result = np.ndarray(other.shape)
+        result = np.array(other.shape)
         k = other.shape[2]
         for i in range(k):
             result[:,:,i] = other[:,:,i] / self
     else:
         k = self.shape[2]
-        result = np.ndarray(self.shape)
+        result = np.array(self.shape)
         for i in range(k):
             result[:,:,i] = self[:,:,i] / other
 

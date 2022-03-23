@@ -22,13 +22,13 @@ def bc_wall(self, model, workspace, state):
     itu = dims['itu']
     
     # flo_var
-    w = state.get_vals()
-    p = get("p").get_vals()
-    rev = get("rev").get_vals()
+    w = state
+    p = get("p")
+    rev = get("rev")
     
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.get_vals()
+    x = coords
     
     # flo_param
     rm = model.params['rm']

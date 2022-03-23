@@ -36,19 +36,6 @@ def rng(dim):
     limit = np.max(dim)
     return np.random.randint(0, limit, dim)
 
-def test_constructor():
-    """
-    Asserts that we can create a 8x8 field
-    
-    """
-    # Use dimensions for 8x8
-    dims = (8,8)
-    field = Field.create(dims)
-
-    # Assert correct shape
-    assert type(field) is Field
-
-
 def test_isfinite():
     """
     Asserts that we can create a 8x8 field
@@ -258,44 +245,6 @@ def test_copy():
     
     assert array_equal(ones, twosnp)
 
-def test_product_2d_3d():
-    '''
-    Tests we can multiply (n,m,p) field by (n,m) field
-    '''
-    # Make 2 random arrays
-    dimsBig = (8,6,4)
-    dimsLittle = (8,6)
-    big = Field.create(dimsBig, 1)
-    small = Field.create(dimsLittle, 2)
-    compare = Field.create(dimsBig, 2)
-    
-    # Make fields
-    product = big*small
-
-    print(product)
-    print(compare)
-    
-    assert array_equal(product, compare)
-
-def test_product_2d_3d():
-    '''
-    Tests we can multiply (n,m) field by (n,m,p) field
-    '''
-    # Make 2 random arrays
-    dimsBig = (8,6,4)
-    dimsLittle = (8,6)
-    big = Field.create(dimsBig, 1)
-    small = Field.create(dimsLittle, 2)
-    compare = Field.create(dimsBig, 2)
-    
-    # Make fields
-    product = small*big
-
-    print(product)
-    print(compare)
-    
-    assert array_equal(product, compare)
-
 def test_not_equals():
     '''
     Tests that != operator works
@@ -306,7 +255,7 @@ def test_not_equals():
     ones = Field.create(dims, 1)
     twos = Field.create(dims, 2)
 
-    assert ones != twos
-    assert ones != twosnp
-    assert ones != 0
-    assert twos == twosnp
+    assert (ones != twos).all()
+    assert (ones != twosnp).all()
+    assert (ones != 0).all()
+    assert (twos == twosnp).all()

@@ -56,23 +56,23 @@ def stability(self, model, workspace, state):
     # retrieve working arrays from model
     def get(varName):
             return workspace.get_field(varName, model.className)
-    ev = get('ev').vals
-    lv = get('lv').vals
-    radI = get("radI").vals
-    radJ = get("radJ").vals
-    rfli = get("rfli").vals
-    rflj = get("rflj").vals
-    rfl = get("rfl").vals
-    dtl = get("dtl").vals
-    w = state.vals
-    p = get("p").vals
-    vol = get("vol").vals
+    ev = get('ev')
+    lv = get('lv')
+    radI = get("radI")
+    radJ = get("radJ")
+    rfli = get("rfli")
+    rflj = get("rflj")
+    rfl = get("rfl")
+    dtl = get("dtl")
+    w = state
+    p = get("p")
+    vol = get("vol")
 
     # local working arrays
     def get_local(varName):
             return workspace.get_field(varName, self.className)
-    s = get_local("s").vals
-    dtlc = get_local("dtlc").vals
+    s = get_local("s")
+    dtlc = get_local("dtlc")
 
     # dim helper function
     def dim(a, b):

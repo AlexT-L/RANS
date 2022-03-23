@@ -829,7 +829,7 @@ array with sequence of directions for a cycle
 \begin{quote}\begin{description}
 \item[{Type}] \leavevmode
 \sphinxAtStartPar
-np.ndarray
+np.array
 
 \end{description}\end{quote}
 
@@ -1178,13 +1178,13 @@ Check top of Input.py file to see the contents of each of the five dictionanries
 \index{vals (Field.Field attribute)@\spxentry{vals}\spxextra{Field.Field attribute}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{autoapi/Field/index:Field.Field.vals}}\pysigline{\sphinxbfcode{\sphinxupquote{vals}}}
+\phantomsection\label{\detokenize{autoapi/Field/index:Field.Field}}\pysigline{\sphinxbfcode{\sphinxupquote{vals}}}
 \sphinxAtStartPar
 numeric values of the Field
 \begin{quote}\begin{description}
 \item[{Type}] \leavevmode
 \sphinxAtStartPar
-np.ndarray
+np.array
 
 \end{description}\end{quote}
 
@@ -1258,7 +1258,7 @@ Returns
 \begin{description}
 \item[{:}] \leavevmode
 \sphinxAtStartPar
-The underlying numpy ndarray that stores the values
+The underlying numpy array that stores the values
 
 \end{description}
 
@@ -2812,7 +2812,7 @@ courant number on fine mesh
 \begin{quote}\begin{description}
 \item[{Type}] \leavevmode
 \sphinxAtStartPar
-np.ndarray
+np.array
 
 \end{description}\end{quote}
 
@@ -2827,7 +2827,7 @@ courant number on coarse mesh
 \begin{quote}\begin{description}
 \item[{Type}] \leavevmode
 \sphinxAtStartPar
-np.ndarray
+np.array
 
 \end{description}\end{quote}
 
@@ -6855,7 +6855,7 @@ jb = jl + 2
 \sphinxAtStartPar
 \# flow related vars
 w = Field.create({[}ib,jb{]},4) \# state
-w.vals = np.array(w.vals + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
+w = np.array(w + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
 P = Field.create({[}ib,jb{]}) \# pressure
 lv = Field.create({[}ib,jb{]}) \# laminar viscocity
 ev = Field.create({[}ib,jb{]}) \# eddy viscocity
@@ -6863,13 +6863,13 @@ ev = Field.create({[}ib,jb{]}) \# eddy viscocity
 \sphinxAtStartPar
 \# mesh related vars
 porI = Field.create({[}ib,jb{]},2) \# mesh vertices
-porI.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+porI = np.array(porI + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 porJ = Field.create({[}ib,jb{]},2) \# mesh centers
-porJ.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+porJ = np.array(porJ + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 xc = Field.create({[}ib,jb{]},2) \# mesh vertices
-xc.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+xc = np.array(porI + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 x = Field.create({[}ib,jb{]},2) \# mesh centers
-x.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+x = np.array(porJ + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 
 \sphinxAtStartPar
 \# solver related vars
@@ -6892,13 +6892,13 @@ rho0 = 1
 p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
 
 \sphinxAtStartPar
-print(w.vals{[}0{]}{[}0{]}{[}0{]})
+print(w{[}0{]}{[}0{]}{[}0{]})
 print(bcfar\_fort.\_\_doc\_\_)
 \# residuals returned in Field dw
-bcfar\_fort.bcfar(il, jl, ie, je, itl, itu,       w.vals, P.vals, lv.vals, ev.vals,        x.vals, xc.vals,       gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,       ym,kvis,       bc,       mode)
+bcfar\_fort.bcfar(il, jl, ie, je, itl, itu,       w, P, lv, ev,        x, xc,       gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,       ym,kvis,       bc,       mode)
 
 \sphinxAtStartPar
-print(w.vals{[}0{]}{[}0{]}{[}0{]})
+print(w{[}0{]}{[}0{]}{[}0{]})
 
 
 \subsubsection{\sphinxstyleliteralintitle{\sphinxupquote{tests.test\_bcwall}}}
@@ -6984,7 +6984,7 @@ jb = jl + 2
 \sphinxAtStartPar
 \# flow related vars
 w = Field.create({[}ib,jb{]},4) \# state
-w.vals = np.array(w.vals + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
+w = np.array(w + 15*np.random.standard\_normal({[}ib,jb,4{]}),order = ‘f’)
 P = Field.create({[}ib,jb{]}) \# pressure
 lv = Field.create({[}ib,jb{]}) \# laminar viscocity
 ev = Field.create({[}ib,jb{]}) \# eddy viscocity
@@ -6993,13 +6993,13 @@ vw = Field.create({[}ib,jb{]},4) \# residuals
 \sphinxAtStartPar
 \# mesh related vars
 porI = Field.create({[}ib,jb{]},2) \# mesh vertices
-porI.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+porI = np.array(porI + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 porJ = Field.create({[}ib,jb{]},2) \# mesh centers
-porJ.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+porJ = np.array(porJ + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 xc = Field.create({[}ib,jb{]},2) \# mesh vertices
-xc.vals = np.array(porI.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+xc = np.array(porI + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 x = Field.create({[}ib,jb{]},2) \# mesh centers
-x.vals = np.array(porJ.vals + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
+x = np.array(porJ + 15*np.random.standard\_normal({[}ib,jb,2{]}),order = ‘f’)
 
 \sphinxAtStartPar
 \# solver related vars
@@ -7022,10 +7022,10 @@ rho0 = 1
 p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
 
 \sphinxAtStartPar
-print(vw.vals{[}:{]}{[}:{]}{[}0{]})
+print(vw{[}:{]}{[}:{]}{[}0{]})
 print(nsflux\_fort.\_\_doc\_\_)
 \# residuals returned in Field dw
-nsflux\_fort.nsflux(il, jl, ie, je,       w.vals, P.vals, lv.vals, ev.vals,        x.vals, xc.vals,       vw.vals,
+nsflux\_fort.nsflux(il, jl, ie, je,       w, P, lv, ev,        x, xc,       vw,
 \begin{quote}
 
 \sphinxAtStartPar
@@ -7033,7 +7033,7 @@ gamma,rm,scal,re,chord,prn,prt,       rfil)
 \end{quote}
 
 \sphinxAtStartPar
-print(vw.vals{[}:{]}{[}:{]}{[}0{]})
+print(vw{[}:{]}{[}:{]}{[}0{]})
 
 
 \chapter{Indices and tables}

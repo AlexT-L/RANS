@@ -28,8 +28,8 @@ class NavierStokes(Model):
       padding (int): outter padding for boundary condition implementation
       params (dictionary): physics parameters from the input
       dimensions (int): number of states (4)
-      cfl_fine (np.ndarray): courant number on fine mesh
-      cfl_coarse (np.ndarray): courant number on coarse mesh 
+      cfl_fine (np.array): courant number on fine mesh
+      cfl_coarse (np.array): courant number on coarse mesh 
       cfl_lim (float): upper limit on courant number
       cfl (float): minimum cfl between fine and coarse grids
 

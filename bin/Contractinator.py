@@ -22,8 +22,6 @@ def simple(fine, coarse):
     coarse:
         The Field object on the coarser grid
     """
-    if type(fine) is not Field or type(coarse) is not Field:
-        raise TypeError('Fine or coarse field is not a field')
     
     x_fine, y_fine = Field.size(fine)
 
@@ -45,8 +43,6 @@ def sum4way(fine, coarse):
     coarse:
         The Field object on the coarser grid
     """
-    if type(fine) is not Field or type(coarse) is not Field:
-        raise TypeError('Fine or coarse field is not a field')
     
     # Check that fine grid is divisible by 2 in both dims
     nxf, nyf = Field.size(fine)
@@ -80,8 +76,6 @@ def conservative4way(fine, coarse, weights=None):
     coarse:
         The Field object on the coarser grid
     """
-    if type(fine) is not Field or type(coarse) is not Field:
-        raise TypeError('Fine or coarse field is not a field')
     
     if weights is None:
         sum4way(fine, coarse)

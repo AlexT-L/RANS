@@ -42,9 +42,9 @@ def nsflux(self,ws,w,vw,rfil):
 
     # residuals returned in Field vw
     nsflux_fort.nsflux(il, jl, ie, je, \
-                       w.vals, P.vals, lv.vals, ev.vals,  \
-                       x.vals, xc.vals, \
-                       vw.vals,
+                       w, P, lv, ev,  \
+                       x, xc, \
+                       vw,
                        self.flo_params['gamma'],self.flo_params['rm'],self.flo_params['scal'], \
                        self.flo_params['re'],self.flo_params['chord'], \
                        self.flo_params['prn'],self.flo_params['prt'], self.flo_params['mode'], \

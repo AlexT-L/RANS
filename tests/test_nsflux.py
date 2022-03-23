@@ -22,7 +22,7 @@ jb = jl + 2
 
 # flow related vars
 w = Field.create([ib,jb],4) # state
-w.vals = np.array(w.vals + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
+w = np.array(w + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
 P = Field.create([ib,jb]) # pressure
 lv = Field.create([ib,jb]) # laminar viscocity
 ev = Field.create([ib,jb]) # eddy viscocity
@@ -30,13 +30,13 @@ vw = Field.create([ib,jb],4) # residuals
 
 # mesh related vars
 porI = Field.create([ib,jb],2) # mesh vertices
-porI.vals = np.array(porI.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+porI = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
 porJ = Field.create([ib,jb],2) # mesh centers
-porJ.vals = np.array(porJ.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+porJ = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
 xc = Field.create([ib,jb],2) # mesh vertices
-xc.vals = np.array(porI.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+xc = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
 x = Field.create([ib,jb],2) # mesh centers
-x.vals = np.array(porJ.vals + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+x = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
 
 # solver related vars
 fw = Field.create([ib,jb],4)
@@ -56,15 +56,15 @@ vis0 = 0.5
 rho0 = 1
 p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
 
-print(vw.vals[:][:][0])
+print(vw[:][:][0])
 print(nsflux_fort.__doc__)
 # residuals returned in Field dw
 nsflux_fort.nsflux(il, jl, ie, je, \
-      w.vals, P.vals, lv.vals, ev.vals,  \
-      x.vals, xc.vals, \
-      vw.vals,
+      w, P, lv, ev,  \
+      x, xc, \
+      vw,
       gamma,rm,scal,re,chord,prn,prt, \
       rfil)
 
-print(vw.vals[:][:][0])
+print(vw[:][:][0])
 '''

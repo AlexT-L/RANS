@@ -69,13 +69,13 @@ Classes
 
       courant number on fine mesh
 
-      :type: np.ndarray
+      :type: np.array
 
    .. attribute:: cfl_coarse
 
       courant number on coarse mesh
 
-      :type: np.ndarray
+      :type: np.array
 
    .. attribute:: cfl_lim
 

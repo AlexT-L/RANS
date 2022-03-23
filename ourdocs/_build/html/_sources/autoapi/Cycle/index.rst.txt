@@ -37,7 +37,7 @@ Classes
 
       array with sequence of directions for a cycle
 
-      :type: np.ndarray
+      :type: np.array
 
    .. attribute:: levels
 

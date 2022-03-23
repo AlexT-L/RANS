@@ -15,7 +15,7 @@ class Cycle(ABC):
             Could be expanded to include default options such as "V" and "W" cycle
 
     Attributes:
-        pattern (np.ndarray): array with sequence of directions for a cycle
+        pattern (np.array): array with sequence of directions for a cycle
         levels (int):  depth of cycle
 
     """

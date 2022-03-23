@@ -22,13 +22,13 @@ def halo(self, model, workspace, state):
     itu = dims['itu']
     
     # flo_var
-    w = state.get_vals()
-    p = get("p").get_vals()
+    w = state
+    p = get("p")
 
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.get_vals()
-    vol = get("vol").get_vals()
+    x = coords
+    vol = get("vol")
     
     halo_fort.halo(il, jl, ie, je, ib, jb, itl+1, itu+1,
             w, p,

@@ -18,7 +18,7 @@ import sys
 sys.path.append('../../RANS/bin')
 import pytest
 from bin.Input import Input
-from bin.Field import Field
+from bin.Field import Field, min
 from bin.Field import copy
 from bin.AirfoilMap import AirfoilMap
 from bin.Workspace import Workspace
@@ -45,7 +45,7 @@ def test_x():
     x = workspace.get_field('x')
     # Asserts non zero, as np.any is true when any are non-zero
     test_true = True
-    test_true = (x != 0)
+    test_true = (x != 0).any()
     assert test_true
 
 def test_xc():
@@ -66,7 +66,7 @@ def test_xc():
     xc = workspace.get_field('xc')
     # Asserts non zero, as np.any is true when any are non-zero
 
-    test_true = (xc != 0)
+    test_true = (xc != 0).all()
     test_true = True
     assert test_true
 
@@ -87,7 +87,7 @@ def test_vol():
     workspace = CellCenterWS(grid)
     vol = workspace.get_field('vol')
     # Asserts non zero, as np.any is true when any are non-zero
-    assert vol != 0
+    assert (vol != 0).all()
 
 def test_init_vars():
     """
@@ -153,11 +153,11 @@ def test_init_vars():
     VOL = workspace.get_field("vol")
     vol = workspace.get_field("vol", model.className)
 
-    assert min(VOL) > 0
-    assert min(vol[2:nx+2, 2:ny+2]) >= 0
+    assert (min(VOL) > 0).all()
+    assert (min(vol[2:nx+2, 2:ny+2]) >= 0).all()
     
     XC = workspace.get_field("xc")
-    assert XC != 0
+    assert (XC != 0).all()
 
 def test_has_dict():
     """

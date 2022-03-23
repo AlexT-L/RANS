@@ -23,5 +23,5 @@ def eflux(self,ws,w,dw):
     x = ws.get_field('x')
 
     # residuals returned in Field dw
-    eflux_fort.eflux(w.vals,dw.vals,p.vals,x.vals,porJ.vals,il,jl)
+    eflux_fort.eflux(w,dw,p,x,porJ,il,jl)
 

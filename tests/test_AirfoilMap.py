@@ -27,15 +27,9 @@ xc=grid.fields["xc"]
 vol=grid.fields["vol"]
 
 
-def test_if_field_object():
-    """Assert that x,xc and vol are Field
-    objects"""
-
-    assert type(x) is Field, type(xc) is Field & type(vol) is Field
-
 def test_vol_postive():
     """Assert that vol is all non-negative values"""
-    vol_val=vol.get_vals() #get underlying numpy array
+    vol_val=vol #get underlying numpy array
     assert np.all(vol_val>0)
 
 

@@ -71,7 +71,7 @@ Attributes
 
       numeric values of the Field
 
-      :type: np.ndarray
+      :type: np.array
 
    .. py:method:: size(self)
 
@@ -112,7 +112,7 @@ Attributes
       Returns
 
       :
-          The underlying numpy ndarray that stores the values
+          The underlying numpy array that stores the values
 
 
    .. py:method:: astype(self, dtype=None)

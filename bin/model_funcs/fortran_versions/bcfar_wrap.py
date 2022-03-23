@@ -22,22 +22,22 @@ def bc_far(self, model, workspace, state):
     itu = dims['itu']
     
     # flo_var
-    w = state.get_vals()
-    lv = get('lv').get_vals()
-    ev = get('ev').get_vals()
-    p = get("p").get_vals()
+    w = state
+    lv = get('lv')
+    ev = get('ev')
+    p = get("p")
     
     # mesh_var
     coords = workspace.get_field("x")
-    x = coords.get_vals()
+    x = coords
     coords = workspace.get_field("xc")
-    xc = coords.get_vals()
+    xc = coords
     
     # out_var
     cp = workspace.get_field("cp", self.className)
-    cp = cp.get_vals()
+    cp = cp
     cf = workspace.get_field("cf", self.className)
-    cf = cf.get_vals()
+    cf = cf
     
     # flo_param
     gamma = model.params['gamma']

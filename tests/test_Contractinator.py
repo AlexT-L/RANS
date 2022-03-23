@@ -38,7 +38,7 @@ def test_simple():
     output_dims = (4,4)
     output_zeros = np.zeros(output_dims)
     output_field = Field.create(output_dims, output_zeros)
-    assert array_equal(input_field.size(), input_dims)
+    assert array_equal(Field.size(input_field), input_dims)
 
     Ctr.simple(input_field, coarse_field)
     assert array_equal(coarse_field, output_field)

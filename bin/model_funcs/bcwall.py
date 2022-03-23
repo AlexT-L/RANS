@@ -90,12 +90,12 @@ def wall(bcmodel, model, workspace, state):
         # c
         # c     extrapolation using normal pressure gradient at surface
         # c
-        xx = xx.vals[1:itu-itl+1]
-        yx = yx.vals[1:itu-itl+1]
-        w = w.vals
-        p = p.vals
-        x = x.vals
-        sx = sx.vals
+        xx = xx[1:itu-itl+1]
+        yx = yx[1:itu-itl+1]
+        w = w
+        p = p
+        x = x
+        sx = sx
         qt = xx*w[itl:itu,2,1] + yx*w[itl:itu,2,2]
         qn = yx*w[itl:itu,2,1] - xx*w[itl:itu,2,2]
 

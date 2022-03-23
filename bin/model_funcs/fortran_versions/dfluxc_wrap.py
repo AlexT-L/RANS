@@ -40,9 +40,9 @@ def dfluxc(model,ws,w,dw,fw,rfil):
 
     # residuals returned in Field vw
     dfluxc_fort.dfluxc(ny,il,jl, \
-                        w.vals,p.vals, \
-                        porJ.vals, \
-                        fw.vals, radI.vals, radJ.vals, \
+                        w,p, \
+                        porJ, \
+                        fw, radI, radJ, \
                         rfil,vis0)
 
 
