@@ -135,6 +135,19 @@ class Field:
 
     # Allow fields to be indexed like numpy arrays
     def __getitem__(self,indx):
+        # recursively specialize slicing
+        if isinstance(indx, slice):
+            return self.__class__(self[x] for x in xrange(*indx.indices(len(self))))
+
+        # check indx, dealing with negative indices too
+        if not isinstance(indx, int): raise TypeError
+        if indx < 0: indx += len(self)
+        if not (0 <= indx < len(self)): raise IndexError
+
+        # indx is now a correct int, within range(len(self))
+        return self.vals[indx]
+
+
         if indx is int:
             if indx >= len(self):
                 raise IndexError('End')
