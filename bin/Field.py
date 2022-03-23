@@ -2,7 +2,7 @@ import numpy as np
 import bin.Field as binField
 from numpy.core.numeric import Infinity, NaN
 
-class Field(np.ndarray):
+class Field():
     """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
         Can be indexed and operators are overloaded for basic math operations.
 
