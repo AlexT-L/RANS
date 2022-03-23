@@ -139,11 +139,6 @@ class Field:
         if isinstance(indx, slice):
             return self.__class__(self[x] for x in xrange(*indx.indices(len(self))))
 
-        # check indx, dealing with negative indices too
-        if not isinstance(indx, int): raise TypeError
-        if indx < 0: indx += len(self)
-        if not (0 <= indx < len(self)): raise IndexError
-
         # indx is now a correct int, within range(len(self))
         return self.vals[indx]
 
