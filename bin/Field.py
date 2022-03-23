@@ -2,7 +2,7 @@ import numpy as np
 import bin.Field as binField
 from numpy.core.numeric import Infinity, NaN
 
-class Field:
+class Field(np.ndarray):
     """ Holds numeric data on a Grid. Meant to be used in a similar fashion to a numpy array. 
         Can be indexed and operators are overloaded for basic math operations.
 
@@ -134,13 +134,13 @@ class Field:
     # Special methods
 
     # Allow fields to be indexed like numpy arrays
-    def __getitem__(self,indx):
-        # recursively specialize slicing
-        if isinstance(indx, slice):
-            return self.__class__(self[x] for x in xrange(*indx.indices(len(self))))
-
-        # indx is now a correct int, within range(len(self))
-        return self.vals[indx]
+    def __getitem__(self, indx):
+        # array = super(Field, self).__getitem__(indx)
+        
+        # if isscalar(array):
+        #     return array
+        
+        # return Field(array)
 
 
         if indx is int:
