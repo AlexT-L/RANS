@@ -178,6 +178,9 @@ class Field:
     # length
     def __len__(self):
         return len(self.vals)
+
+    def __iter__(self):
+        return (self[i] for i in range(len(self)))
     
 
     # comparison operatos
