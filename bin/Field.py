@@ -158,6 +158,12 @@ class Field:
             value = np.array(value, order = 'F')
         
         self.vals[indx] = value
+
+    def __iter__(self):
+        return self.vals.__iter__()
+
+    def __next__(self):
+        return self.vals.__next__()
     
     def set_val(self, new_vals):
         """assign values to a Field of the same size

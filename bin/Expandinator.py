@@ -32,7 +32,7 @@ def bilinear4way(coarse, fine):
 
     fine[1:nxf:2, 1:nyf:2] = coarse
     print("Expandinator")
-    # print(fine)
+    print(fine)
     
     for i in range(2,nxf,2):
         for j in range(1,nyf,2):
@@ -40,7 +40,7 @@ def bilinear4way(coarse, fine):
             fine[i-1,j] = .75*fine[i-1,j]  +.25*fine[i+1,j]
     
     
-    for i in range(1,nxf,2):
-        for j in range(2,nyf,2):
+    for j in range(2,nyf,2):
+        for i in range(1,nxf,2):
             fine[i,  j] = .25*fine[i,j-1]  +.75*fine[i,j+1]
             fine[i,j-1] = .75*fine[i,j-1]  +.25*fine[i,j+1]
