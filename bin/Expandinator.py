@@ -14,7 +14,6 @@ import scipy as sp
 from scipy.interpolate import interpn
 
 def bilinear4way(coarse, fine):
-    print("EXPANDINATOR")
     """Bilinear interpolation function for expanding Fields. Currently does not work.
     
     Args:
@@ -31,8 +30,6 @@ def bilinear4way(coarse, fine):
     fine[:] = 0
 
     fine[1:nxf:2, 1:nyf:2] = coarse
-    print("Expandinator")
-    print(fine)
     
     for i in range(2,nxf,2):
         for j in range(1,nyf,2):

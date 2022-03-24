@@ -28,53 +28,55 @@ def turbulent_viscosity(model, ws, state):
     """
     [nx, ny] = ws.field_size()
     # necessary fields
-    def mget(varName):
+    def wsget(varName):
         return ws.get_field(varName, model.className)
-    ie = mget('ie') 
-    je = mget('je') 
+    def mget(varName):
+        return model.params[varName]
     gamma = mget('gamma')
     rm = mget('rm')
     re = mget('re')
-    ncyc = mget('ncyc')
-    rev = mget('rev')
+    ncyc = 0
+    rev = wsget('ev')
 
     il = nx+1
     jl = ny+1
+    [ie, je] = [nx+2, ny+2]
+    [nxp, nyp] = [nx+4, ny+4]
     dims = ws.get_dims()
     itl = dims['itl']
     itu = dims['itu']
     w = state
-    x = mget('x')
-    p = mget('p')
+    x = ws.get_field('x')
+    p = wsget('p')
 
     xtran = mget('xtran') 
-    vol = mget('vol') 
+    vol = wsget('vol') 
 
-    tauw = np.ones(nx)
-    yscal = np.ones(nx)
-    vor = np.ones((nx,ny))
-    avorm = np.ones(nx)
-    ravg = np.ones(nx)
-    amut = np.ones((nx,ny))
-    amuto = np.ones(nx)
-    amuti = np.ones(nx)
-    yvor = np.ones(nx)
-    yvorm = np.ones(nx)
-    utot = np.ones((nx,ny))
-    utotm = np.ones(nx)
-    utmin = np.ones(nx)
-    fkleb = np.ones(nx)
-    jedge = np.ones(nx)
-    utmax = np.ones(nx)
-    amu = np.ones((nx,ny))
-    u = np.ones((nx,ny))
-    v = np.ones((nx,ny))
-    t = np.ones((nx,ny))
-    fcros = np.ones(nx)
-    rinv = np.ones((nx,ny))
-    vola = np.ones((nx,ny))
-    ylen = np.ones((nx,ny))
-    ylenm = np.ones(nx)
+    # tauw = np.ones(nx)
+    # yscal = np.ones(nx)
+    # vor = np.ones((nx,ny))
+    # avorm = np.ones(nx)
+    # ravg = np.ones(nx)
+    amu = np.ones((nxp,nyp))
+    amut = np.ones((nxp,nyp))
+    # amuto = np.ones(nx)
+    # amuti = np.ones(nx)
+    # yvor = np.ones(nx)
+    # yvorm = np.ones(nx)
+    # utot = np.ones((nx,ny))
+    # utotm = np.ones(nx)
+    # utmin = np.ones(nx)
+    # fkleb = np.ones(nx)
+    # jedge = np.ones(nx)
+    # utmax = np.ones(nx)
+    u = np.ones((nxp,nyp))
+    v = np.ones((nxp,nyp))
+    t = np.ones((nxp,nyp))
+    # fcros = np.ones(nx)
+    rinv = np.ones((nxp,nyp))
+    # vola = np.ones((nx,ny))
+    # ylen = np.ones((nx,ny))
+    # ylenm = np.ones(nx)
 
     j2        = je
     jlm       = jl- 1

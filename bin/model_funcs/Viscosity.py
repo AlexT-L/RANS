@@ -33,7 +33,7 @@ def compute_viscosity(model, ws, state):
     
     # get coordinates
     x = ws.get_field('x')
-    xc = ws.get_field('xc')
+    xc = ws.get_field('xc', model.className)
 
     # get pressure
     p = ws.get_field('p', model.className)
@@ -48,9 +48,9 @@ def compute_viscosity(model, ws, state):
     pad = model.padding
     [nx, ny] = ws.field_size()
     [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
-    [il, jl] = [nx+1, ny+1]
-    [ie, je] = [nx+2, ny+2]
-    [ib, jb] = [nx+3, ny+3]
+    [il, jl] = [nx, ny]
+    [ie, je] = [nx+1, ny+1]
+    [ib, jb] = [nx+2, ny+2]
 
     dims = ws.get_dims()
     itl = dims['itl'] + pad
@@ -76,7 +76,7 @@ def compute_viscosity(model, ws, state):
 
     
     # select model
-    kturb = 1
+    kturb = 0
     
     # mg_param
     mode = 1
@@ -84,10 +84,10 @@ def compute_viscosity(model, ws, state):
         mode = 0
 
     # initializing, defined later
-    rev0 = np.ones((nx,ny))
-    astr = np.ones((nx,ny))
-    u = np.ones((nx,ny))
-    v = np.ones((nx,ny))
+    rev0 = np.ones((nxp,nyp))
+    astr = np.ones((nxp,nyp))
+    u = np.ones((nxp,nyp))
+    v = np.ones((nxp,nyp))
 
     # useful constants
     ckr       = .0256
@@ -117,7 +117,7 @@ def compute_viscosity(model, ws, state):
         If running laminar flows, calculation is more simple.
         Call either the Baldwin Lomax Model or run the RNG algebraic model.
         '''
-        turbulent_viscosity(params, dims)
+        turbulent_viscosity(model, ws, w)
 
 
         rev[0:ie,0:je] = aturb*rev[0:ie,0:je]  +(1.  -aturb)*rev0[0:ie,0:je]
@@ -153,8 +153,8 @@ def compute_viscosity(model, ws, state):
 
 
 
-    for j in range(1,jl):
-        for i in range(1,il):
+    for j in range(jl):
+        for i in range(il):
             xbi       = .5*(x[i-1,0,0]  +x[i,0,0])
             ybi       = .5*(x[i-1,0,1]  +x[i,0,1])
             astra     = .25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])

@@ -4,12 +4,12 @@ import sys
 sys.path.append("../../../")
 
 # class dependencies
-from Workspace import Workspace
-from Grid import Grid
-from Field import Field
+from bin.Workspace import Workspace
+from bin.Grid import Grid
+from bin.Field import Field
 
 # fortran module
-import eflux_fort
+from bin.model_funcs.fortran_versions import eflux_fort
 
 
 def eflux(self,ws,w,dw):

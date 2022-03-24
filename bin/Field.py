@@ -225,7 +225,7 @@ class Field:
         return np.array(self.shape(), result)
 
     def __bool__(self):
-        return bool(self.any())
+        return bool(self.all())
 
 
     # math operators
@@ -521,7 +521,7 @@ def pos_diff(array1, array2):
     return np.maximum(diff, zeros)
 
 def isfinite(array):
-    return np.isfinite(array).any()
+    return np.isfinite(array).all()
 
 def isscalar(array):
     return np.isscalar(array)

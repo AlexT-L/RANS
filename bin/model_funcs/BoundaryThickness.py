@@ -15,12 +15,12 @@ def boundary_thickness(model, ws, state, ynot, dsti):
     def mget(varName):
         return ws.get_field(varName, model.className)
     w = state
-    x = mget('x')
+    x = ws.get_field('x')
     xc = mget('xc')
 
     # defining local variables:
     [nx, ny] = ws.field_size()
-    il = nx+1
+    il = nx
 
     qs = np.ones(nx)
     ut = np.ones(nx)
@@ -28,9 +28,9 @@ def boundary_thickness(model, ws, state, ynot, dsti):
     ssmax = np.ones(nx)
     
     js = 0.75*(ny - 4)
-    js = int(np.floor(js))
+    js = int(np.floor(js))-1
 
-    for i in range(1,il):
+    for i in range(il):
         qs[0]     = 0.
         ut[0]     = 0.
         j         = js
@@ -40,8 +40,8 @@ def boundary_thickness(model, ws, state, ynot, dsti):
         si        = np.copysign(1,qs[js])
 
         for j in range(1,js):
-            xy        = .5*(x[i,j,0]  -x[i,j-1,1]+x[i-1,j,0]  -x[i-1,j-1,0])
-            yy        = .5*(x[i,j,1]  -x[i,j-1,2]+x[i-1,j,1]  -x[i-1,j-1,1])
+            xy        = .5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
+            yy        = .5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
             dsi       = 1./np.sqrt(xy**2  +yy**2)
             qs[j]     = si*(yy*w[i,j,1]  -xy*w[i,j,2])
             dn[j]     = 1./dsi
@@ -57,7 +57,7 @@ def boundary_thickness(model, ws, state, ynot, dsti):
         lbig      = 2
         locke     = False
 
-        for  j in range(2,js):
+        for  j in range(1,js):
             if ( ut[j-1] < 0 and ut[j] >= 0):
                 lbig = j
 

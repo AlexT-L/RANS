@@ -325,4 +325,3 @@ class NavierStokes(Model):
 
         rqq = ( (w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0] ) / 2
         p[ip:ie, jp:je] = pos_diff(w[ip:ie, jp:je, 3], rqq) * (gamma-1)
-
