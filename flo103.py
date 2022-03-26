@@ -24,7 +24,7 @@
     Authors:
         Satya Butler, Nick Conlin, Vedin Dewan, Andy Rothstein, Alex Taylor-Lash, and Brian Wynne. \n
         """
-from bin.Field import Field, max, mean
+from bin.Field import Field, min, max, mean
 from bin.Input import Input
 from bin.flo103_PostProcessor import flo103_PostProcessor
 from bin.flo103_ConvergenceChecker import flo103_ConvergenceChecker
@@ -126,8 +126,8 @@ if __name__ == '__main__':
     print("mean rho: " + str(mean(rho)))
     
     print("\n")
-    print("residual rho:")
-    print(resid)
+    print("max residual rho:")
+    print(max(resid[:,:,0]))
     
     print("\n")
     print("Total time: ", stop-start, " s")

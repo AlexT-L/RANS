@@ -1,7 +1,7 @@
 import numpy as np
 import bin.Expandinator as expand
 import bin.Contractinator as contract
-from bin.Field import Field, isfinite
+from bin.Field import Field, isfinite, min, max
 from bin.Cycle import Cycle
 from bin.Field import copy
 
@@ -83,13 +83,17 @@ class MultiGrid:
 
         # set initial state values
         model.init_state(self.Workspaces[-1], self.W[-1])
-    
+        
 
     # perform one iteration of the given cycle
     def performCycle(self):
         """Performs one multi-grid cycle and calculates new state.
         
         """
+        w = self.W[-1]
+        print("perform cycle")
+        assert min(w[:,:,0]) > 0
+        
         n_levels = self.cycle.depth()
         model = self.Model
         integrator = self.Integrator
@@ -108,7 +112,7 @@ class MultiGrid:
         Rw = self.Fluxes[-1]
         # Update residuals
         model.get_flux(workspace, w, Rw)
-                
+                        
         # Check if stability needs to be updated
         if UPDATE_STABILITY:
             model.update_stability(workspace, w)
@@ -116,6 +120,7 @@ class MultiGrid:
         # Perform integration to get new state
         integrator.step(workspace, w)
         #####
+        assert min(w[:,:,0]) > 0
 
         # subsequent levels
         level = n_levels-1
@@ -148,6 +153,7 @@ class MultiGrid:
                 contract.sum4way(self.Fluxes[prev], wr)
 
                 assert isfinite(w)
+                assert min(w[:,:,0]) > 0
 
                 # relax transferred residuals
                 wr *= self.wr_relax

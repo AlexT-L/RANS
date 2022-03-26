@@ -1,5 +1,5 @@
 import numpy as np
-from bin.Field import Field, copy, maximum, minimum, abs, pos_diff, sqrt, square, min
+from bin.Field import Field, copy, isfinite, maximum, minimum, abs, pos_diff, sqrt, square, min
 
 def stability(self, model, workspace, state):
     """Calculates timestep limits to maintain stability
@@ -70,6 +70,10 @@ def stability(self, model, workspace, state):
     w = state
     p = get("p")
     vol = get("vol")
+    
+    lv = 1e5*np.ones(lv.shape)
+    
+    assert isfinite(radI)
 
     # local working arrays
     def get_local(varName):
@@ -155,6 +159,8 @@ def stability(self, model, workspace, state):
         rfli[ip:ie, jp:je] = radI[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
         rflj[ip:ie, jp:je] = radJ[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
     
+    assert isfinite(radI)
+
     # c
     # c
     # c     reduce the artificial dissipation for viscous flows
@@ -179,6 +185,9 @@ def stability(self, model, workspace, state):
         dtl[ip:ie, jp:je] = 1/dtv
         radI[ip:ie, jp:je] = pos_diff(radI[ip:ie, jp:je], vsi)
         radJ[ip:ie, jp:je] = pos_diff(radJ[ip:ie, jp:je], vsj)
+
+    assert isfinite(lv)
+    assert isfinite(radI)
 
     # c
     # c     set boundary values at i=1 and i=ie

@@ -9,7 +9,7 @@ import sys
 sys.path.append('../../../RANS/bin')
 
 import numpy as np
-from bin.Field import pos_diff
+from bin.Field import pos_diff, max, min
 from bin.model_funcs.BaldwinLomax import turbulent_viscosity
 from bin.model_funcs.BoundaryThickness import boundary_thickness
 
@@ -99,7 +99,6 @@ def compute_viscosity(model, ws, state):
     # compute the molecular viscosity
     tt       = p[1:ie+1,1:je+1]/w[1:ie+1,1:je+1,0]*t0
     rlv[1:ie+1,1:je+1] = visc_const_C1*tt*np.sqrt(tt)/((tt+visc_const_C2)*rmu0)
-
 
     # for laminar flows we are done.
     # for turbulent flows we are also done on the coarser grids.

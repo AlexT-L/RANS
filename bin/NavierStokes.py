@@ -147,7 +147,7 @@ class NavierStokes(Model):
 
         # default is to set dt to dtl
         dt = dtl
-
+        
         # export dt
         self.__copy_out(dt, timestep)
         assert(isfinite(timestep))
