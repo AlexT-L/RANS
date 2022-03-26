@@ -7,6 +7,9 @@ from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
+from bin.model_funcs.fortran_versions.eflux_wrap import eflux as eflux_fortran
+
+
 class NavierStokes(Model):
     """Physics model for fluid flow based on the Reynolds Averaged Navier Stokes (RANS) equations 
     for use in a multigrid scheme. The state w is composed of Fields with density, x-momentum, y-momentum and energy. 
@@ -100,18 +103,24 @@ class NavierStokes(Model):
 
         # update pressure
         self.__update_pressure(workspace, w)
+        assert isfinite(get("p"))
         
         # update boundary conditions
         bcmodel = self.BCmodel
         bcmodel.bc_all(self, workspace, w)
+        
+        assert isfinite(w)
 
         # calculate residuals
         eflux(self, workspace, w, dw)
+        assert isfinite(dw)
 
         if workspace.is_finest():
             dflux(self, workspace, w, dw, rfil)
+            assert isfinite(dw)
         else:
             dfluxc(self, workspace, w, dw, rfil)
+            assert isfinite(dw)
 
         # copy residuals into output array
         self.__copy_out(dw, output)
@@ -325,3 +334,45 @@ class NavierStokes(Model):
 
         rqq = ( (w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0] ) / 2
         p[ip:ie, jp:je] = pos_diff(w[ip:ie, jp:je, 3], rqq) * (gamma-1)
+
+
+### TESTING
+
+    ### Eflux ###
+
+    def test_eflux(self, workspace, state, output, code=''):
+        """Calculates the spatial eflux given the current state.
+        
+        Args:
+            workspace (Workspace): contains the relevant fields
+            state (Field): the current state
+            output (Field): where the flux values will be stored
+            """
+        assert(isfinite(state))
+        self.__check_vars(workspace)
+        
+        # retrieve necessary workspace fields
+        def get(varName):
+            return workspace.get_field(varName, self.className)
+        w = get("w")
+        dw = get("dw")
+
+        # copy state into padded array
+        self.__copy_in(state, w)
+
+        # update pressure
+        self.__update_pressure(workspace, w)
+        
+        # update boundary conditions
+        bcmodel = self.BCmodel
+        bcmodel.bc_all(self, workspace, w)
+
+        # calculate residuals
+        if code=='fortran':
+            eflux_fortran(self, workspace, w, dw)
+        else:
+            eflux(self, workspace, w, dw)
+        
+        # copy residuals into output array
+        self.__copy_out(dw, output)
+        assert(isfinite(output))
