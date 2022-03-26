@@ -11,7 +11,7 @@ def stability(self, model, workspace, state):
     """
 
     # padding
-    pad = self.padding
+    PAD = self.padding
     
     # set stability parameters
     slim      = 0.001
@@ -26,9 +26,9 @@ def stability(self, model, workspace, state):
     dims = workspace.get_dims()
     grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
-    [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
-    ip = pad
-    jp = pad
+    [nxp, nyp] = [PAD+nx+PAD, PAD+ny+PAD]
+    ip = PAD
+    jp = PAD
     il = nx+1
     jl = ny+1
     ie = nx+2
@@ -71,7 +71,7 @@ def stability(self, model, workspace, state):
     p = get("p")
     vol = get("vol")
     
-    lv = 1e5*np.ones(lv.shape)
+    lv = 1e-5*np.ones(lv.shape)
     
     assert isfinite(radI)
 
@@ -85,11 +85,6 @@ def stability(self, model, workspace, state):
     def dim(a, b):
         diff = a-b
         return max(diff, 0)
-
-    # edge function decorator
-    def edge(i, j, side):
-        pad = model.padding
-        return workspace.edge(i-pad, j-pad, side)
 
     # c
     # c     permissible time step
