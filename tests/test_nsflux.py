@@ -1,70 +1,72 @@
-'''
+"""This module tests the python version of eflux against the fortran version
+
+    Libraries/Modules:
+        pytest\n
+        numpy\n
+        Field\n
+        Input\n
+        AirfoilMap\n
+        CellCenterWS\n
+        NS_Airfoil\n
+        NavierStokes\n
+    
+        """
+
 import sys
-sys.path.append("../")
+sys.path.append("../../RANS/bin")
+#sys.path.append("../../../RANS/bin")
 
-import nsflux_fort
+import pytest
 import numpy as np
-#from eflux_arr import eflux
-from Field import Field
+from bin.Field import Field, isfinite, max, min, mean, abs
+from bin.Input import Input
+from bin.AirfoilMap import AirfoilMap
+from bin.CellCenterWS import CellCenterWS
+from bin.NS_Airfoil import NS_Airfoil
+from bin.NavierStokes import NavierStokes
 
-# grab grid related parameter
-#G = ws.grid
-nx = 4
-ny = 10
-il = nx+1
-jl = ny+1
-ie = il+1
-je = jl+1
-itl = 1
-itu = 3
-ib = il + 2
-jb = jl + 2
+UPDATE_FORTAN_DATA = False
 
-# flow related vars
-w = Field.create([ib,jb],4) # state
-w = np.array(w + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
-P = Field.create([ib,jb]) # pressure
-lv = Field.create([ib,jb]) # laminar viscocity
-ev = Field.create([ib,jb]) # eddy viscocity
-vw = Field.create([ib,jb],4) # residuals
+def test_nsflux_validation():    
+    # create input and grid
+    filename = 'rae9-s1.data'
 
-# mesh related vars
-porI = Field.create([ib,jb],2) # mesh vertices
-porI = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-porJ = Field.create([ib,jb],2) # mesh centers
-porJ = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-xc = Field.create([ib,jb],2) # mesh vertices
-xc = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-x = Field.create([ib,jb],2) # mesh centers
-x = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+    # read in input
+    input = Input(filename)
 
-# solver related vars
-fw = Field.create([ib,jb],4)
-radI = Field.create([ib,jb],2) # stability I
-radJ = Field.create([ib,jb],2) # stability J
+    # format input
+    input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
+    gridInput = input.add_dicts(input.geo_param, input.in_var)
+    grid_dim = [input.dims['nx'], input.dims['ny']]
+    modelInput = input.add_dicts(input.flo_param, input.solv_param)
 
-gamma = 1.4
-rm = 1.2
-scal = 1.8
-re = 50000
-chord = 2.6
-prn = 1000
-prt = 10000
-mode = 1
-rfil = 0.8
-vis0 = 0.5
-rho0 = 1
-p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
+    # create geometry objects
+    grid = AirfoilMap.from_file(grid_dim, gridInput)
+    ws = CellCenterWS(grid)
 
-print(vw[:][:][0])
-print(nsflux_fort.__doc__)
-# residuals returned in Field dw
-nsflux_fort.nsflux(il, jl, ie, je, \
-      w, P, lv, ev,  \
-      x, xc, \
-      vw,
-      gamma,rm,scal,re,chord,prn,prt, \
-      rfil)
+    # create physics objects
+    bcmodel = NS_Airfoil(modelInput)
+    model = NavierStokes(bcmodel, modelInput)
 
-print(vw[:][:][0])
-'''
+    # create faux fields
+    [nx, ny] = [grid.dims['nx'], grid.dims['ny']]
+    dim = model.dim()
+    state = np.zeros((nx, ny, dim))
+    dw = np.zeros((nx, ny, dim))
+    model.init_state(ws,state)
+    model.test(ws,state,dw,'vflux')
+
+    # compare with fortran
+    if UPDATE_FORTAN_DATA:
+        dw_fortran = np.zeros(dw.shape)
+        model.test(ws,state,dw_fortran,'vflux','fortran')
+        np.save('tests/validation/vflux.npy', dw_fortran)
+    TOL = 1e-5
+    dw_fortan = np.load('tests/validation/vflux.npy', allow_pickle=False)
+
+    print ("max(dw_fortran) = "+str(max(dw_fortan)))
+    print ("max(dw) = "+str(max(dw)))
+    print ("mean(dw_fortran-dw) = "+str(mean(dw_fortan-dw)))
+    print ("min(dw_fortran-dw) = "+str(min(abs(dw_fortan-dw))))
+    assert max(abs(dw_fortan - dw)) < TOL
+    

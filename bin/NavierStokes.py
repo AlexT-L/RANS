@@ -10,6 +10,8 @@ import numpy as np
 # Validation
 from bin.model_funcs.fortran_versions.eflux_wrap import eflux as eflux_fortran
 from bin.model_funcs.fortran_versions.dflux_wrap import dflux as dflux_fortran
+from bin.model_funcs.fortran_versions.dfluxc_wrap import dfluxc as dfluxc_fortran
+from bin.model_funcs.fortran_versions.nsflux_wrap import nsflux as nsflux_fortran
 
 
 class NavierStokes(Model):
@@ -341,7 +343,6 @@ class NavierStokes(Model):
 ### TESTING
 
     def test(self, workspace, state, output, method, code=''):
-        print("NS test: "+str(max(abs(output))))
         """Calculates the spatial eflux given the current state.
         
         Args:
@@ -379,6 +380,16 @@ class NavierStokes(Model):
                 dflux_fortran(self, workspace, w, dw, 1)
             else:
                 dflux(self, workspace, w, dw, 1)
+        if method=='dfluxc':
+            if code=='fortran':
+                dfluxc_fortran(self, workspace, w, dw, 1)
+            else:
+                dfluxc(self, workspace, w, dw, 1)
+        if method=='vfluxc':
+            if code=='fortran':
+                nsflux_fortran(self, workspace, w, dw, 1)
+            else:
+                nsflux_fortran(self, workspace, w, dw, 1)
                 
         # copy residuals into output array
         self.__copy_out(dw, output)

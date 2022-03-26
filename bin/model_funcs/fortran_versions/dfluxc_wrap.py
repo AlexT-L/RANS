@@ -6,15 +6,12 @@ import sys
 sys.path.append("../../../")
 
 # class dependencies
-from Workspace import Workspace
-from Grid import Grid
-from Field import Field
-import numpy as np
+from bin.Field import Field
 
 # fortran module
-import dfluxc_fort 
+from bin.model_funcs.fortran_versions import dfluxc_fort 
 
-def dfluxc(model,ws,w,dw,fw,rfil):
+def dfluxc(model,ws,w,dw,rfil):
 
     # calculate artificial dissipation fluxes given a workspace
 
@@ -32,11 +29,12 @@ def dfluxc(model,ws,w,dw,fw,rfil):
     porJ = get('porJ') # porosity in j
 
     # solver related vars
+    fw = get('fw') # storage for viscous residuals?
     radI = get('radI') # some kind of stability metric in i
     radJ = get('radJ') # some kind of stability metric in j
 
     # solver params
-    vis0 = model.params.vis0
+    vis0 = model.params['vis0']
 
     # residuals returned in Field vw
     dfluxc_fort.dfluxc(ny,il,jl, \

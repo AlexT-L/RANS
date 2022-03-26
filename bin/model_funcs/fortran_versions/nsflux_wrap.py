@@ -2,39 +2,50 @@
 
 # append to path so we can access Field class
 import sys
-sys.path.append("../")
+sys.path.append("../../../")
 
 # class dependencies
-from Workspace import Workspace
-from Grid import Grid
-from Field import Field
-from Model import Model
-from NavierStokes import NavierStokes
-
-import numpy as np
+from bin.Field import Field
 
 # fortran module
-import nsflux_fort 
+from bin.model_funcs.fortran_versions import nsflux_fort 
 
-def nsflux(self,ws,w,vw,rfil):
+def nsflux(self,ws,w,dw,rfil):
 
     # calculate viscous fluxes given a workspace
 
     # grab grid related parameters
-    G = ws.grid
-    il = G.dims['il']
-    jl = G.dims['jl']
-    ie = G.dims['ie']
-    je = G.dims['je']
-    itl = G.dims['itl']
-    itu = G.dims['itu']
+    dims = ws.get_dims()
+    il = dims['il']
+    jl = dims['jl']
+    ie = dims['ie']
+    je = dims['je']
+    itl = dims['itl']
+    itu = dims['itu']
+    
+    # geometric parameters
+    geom = ws.get_geometry()
+    scal = geom['scal']
+    chord = geom['chord']
 
     # flow related variabless
-    P = ws.get('P',self.className) # pressure
+    p = ws.get('p',self.className) # pressure
     lv = ws.get('lv',self.className) # laminar viscocity
     ev = ws.get('ev',self.className) # eddy viscocity
-    #vw = ws.get('vw',self.className) # storage for viscous residuals
-    #w = ws.get('w',self.className) # state
+    vw = ws.get('vw',self.className) # storage for viscous residuals
+
+    # flow parameters
+    gamma = self.params['gamma']
+    mach = self.params['rm']
+    Re = self.params['re']
+    chord = self.params['chord']
+    
+    # output params (not important)
+    prn = 0
+    prt = 0
+    
+    # mode parameter says if we are at the finest mesh
+    mode = ws.is_finest()
 
     # mesh related vars
     x = ws.get_field('x') # mesh vertices
@@ -42,10 +53,13 @@ def nsflux(self,ws,w,vw,rfil):
 
     # residuals returned in Field vw
     nsflux_fort.nsflux(il, jl, ie, je, \
-                       w, P, lv, ev,  \
+                       w, p, lv, ev,  \
                        x, xc, \
                        vw,
-                       self.flo_params['gamma'],self.flo_params['rm'],self.flo_params['scal'], \
-                       self.flo_params['re'],self.flo_params['chord'], \
-                       self.flo_params['prn'],self.flo_params['prt'], self.flo_params['mode'], \
+                       gamma, mach, scal, \
+                       Re, chord, \
+                       prn, prt, mode, \
                        rfil)
+
+    # add viscous contribution
+    dw += vw
