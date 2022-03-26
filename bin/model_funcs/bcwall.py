@@ -92,10 +92,7 @@ def wall(bcmodel, model, workspace, state):
         # c
         xx = xx[1:itu-itl+1]
         yx = yx[1:itu-itl+1]
-        w = w
-        p = p
-        x = x
-        sx = sx
+        
         qt = xx*w[itl:itu,2,1] + yx*w[itl:itu,2,2]
         qn = yx*w[itl:itu,2,1] - xx*w[itl:itu,2,2]
 

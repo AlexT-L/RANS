@@ -113,6 +113,7 @@ import pandas as pd
 #                           becomes origin after square root mapping
 #               ysing     = y-coordinate in physical space that 
 #                           becomes origin after square root mapping
+#               chord      = chord length
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space

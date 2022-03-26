@@ -20,13 +20,14 @@ def sangho(self):
     xmin        = self.x[itl,0,0]
 
     for i in range(itl-1,itu):
-        xmin       = min(xmin,x[i,1,1])
+        xmin       = min(xmin,x[i,1,0])
 
 
-    scal       = xmax  -xmin
+    chord       = xmax  -xmin
+    self.geo['chord'] = chord
 
     for  i in range(il):
         for j in range(jl):
-            x[i,j,0]   = x[i,j,0]/scal
-            x[i,j,1]   = x[i,j,1]/scal
+            x[i,j,0]   = x[i,j,0]/chord
+            x[i,j,1]   = x[i,j,1]/chord
     return
