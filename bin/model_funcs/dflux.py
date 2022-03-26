@@ -165,4 +165,4 @@ def dflux(model, ws, state, dw, rfil):
     # add to flux field
     dw += fw
     
-    assert max(abs(fw)) > 0
+    # assert max(abs(fw)) > 0
