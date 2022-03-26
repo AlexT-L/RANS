@@ -1,8 +1,7 @@
 # python implementation of dflux.f
 
 from genericpath import isfile
-from operator import pos
-from bin.Field import Field, is_field, isfinite, maximum, minimum, abs, pos_diff, isscalar, min, max, mismatch_mul
+from bin.Field import Field, isfinite, maximum, minimum, abs, pos_diff, isscalar, min, max, mismatch_mul
 from bin.Grid import Grid
 from bin.Workspace import Workspace
 import numpy as np
@@ -24,8 +23,8 @@ def dflux(model, ws, state, dw, rfil):
     # take a workspace ws and calculate dissipative fluxes
 
     # model parameters
-    pad = model.padding
-    n = Field.dim(state) # number of quantities being convected
+    PAD = model.padding
+    N = Field.dim(state) # number of quantities being convected
 
     # necessary fields
     def mget(varName):
@@ -42,19 +41,17 @@ def dflux(model, ws, state, dw, rfil):
 
     # grid dimensions
     [nx, ny] = ws.field_size()
-    [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
-    ip = pad
-    jp = pad
-    il = nx+1
-    jl = ny+1
-    ie = nx+2
-    je = ny+2
-    ib = nx+3
-    jb = ny+3
+    [nxp, nyp] = [PAD+nx+PAD, PAD+ny+PAD]
+    [ip, jp] = [PAD, PAD]
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
 
     # physical paramteters
     vis2 = model.params['vis2']
     vis4 = model.params['vis4']
+    
+    ### BEGIN CALCULATION ###
 
     fis2      = 2*rfil*vis2
     fis4      = rfil*vis4/16
@@ -66,8 +63,8 @@ def dflux(model, ws, state, dw, rfil):
     dp = Field.create((nxp,nyp))
     dis2 = Field.create((nxp, nyp))
     dis4 = Field.create((nxp, nyp))
-    d    = Field.create((nxp, nyp, n))
-    e    = Field.create((nxp, nyp, n))
+    d    = Field.create((nxp, nyp, N))
+    e    = Field.create((nxp, nyp, N))
     TOL  = Field.create((nx+1, ny+1), tol)
 
     # c
@@ -167,3 +164,5 @@ def dflux(model, ws, state, dw, rfil):
 
     # add to flux field
     dw += fw
+    
+    assert max(abs(fw)) > 0

@@ -18,6 +18,7 @@ sys.path.append("../../RANS/bin")
 
 import pytest
 import numpy as np
+from tests.validation.save_fortran import save_fortan
 from bin.Field import Field, isfinite, max, min, mean, abs
 from bin.Input import Input
 from bin.AirfoilMap import AirfoilMap
@@ -25,7 +26,9 @@ from bin.CellCenterWS import CellCenterWS
 from bin.NS_Airfoil import NS_Airfoil
 from bin.NavierStokes import NavierStokes
 
-def test_eflux_validation():
+def test_dflux_validation():
+    save_fortan()
+    
     # create input and grid
     filename = 'rae9-s1.data'
 
@@ -56,7 +59,7 @@ def test_eflux_validation():
 
     # compare with fortran
     TOL = 1e-5
-    dw_fortan = np.load('bin/validation/dflux.npy', allow_pickle=False)
+    dw_fortan = np.load('tests/validation/dflux.npy', allow_pickle=False)
 
     print ("max(dw_fortran) = "+str(max(dw_fortan)))
     print ("max(dw) = "+str(max(dw)))

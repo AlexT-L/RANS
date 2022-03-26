@@ -29,8 +29,8 @@ def dflux(model,ws,w,dw,rfil):
     porJ = get('porJ') # porosity in j
 
     # mesh related vars
-    x = ws.get_Field('x') # cell vertices
-    xc = ws.get_Field('xc') # cell centers
+    x = ws.get_field('x') # cell vertices
+    xc = ws.get_field('xc') # cell centers
 
     # solver related vars
     fw = get('fw') # storage for viscous residuals?
@@ -38,8 +38,8 @@ def dflux(model,ws,w,dw,rfil):
     radJ = get('radJ') # some kind of stability metric in j
 
     # solver params
-    vis2 = model.params.vis2
-    vis4 = model.params.vis4
+    vis2 = model.params['vis2']
+    vis4 = model.params['vis4']
 
     # residuals returned in Field vw
     dflux_fort.dflux(ny,il,jl,ie,je, \

@@ -7,7 +7,9 @@ from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
+# Validation
 from bin.model_funcs.fortran_versions.eflux_wrap import eflux as eflux_fortran
+from bin.model_funcs.fortran_versions.dflux_wrap import dflux as dflux_fortran
 
 
 class NavierStokes(Model):
@@ -349,22 +351,6 @@ class NavierStokes(Model):
         assert(isfinite(state))
         self.__check_vars(workspace)
         
-        f_python = 0
-        f_fortran = 0
-        
-        if method=='eflux':
-            f_python = eflux
-            f_fortran = eflux_fortran
-        elif method=='dflux':
-            f_python = dflux
-            f_fortran = eflux_fortran
-        elif method=='dfluxc':
-            f_python = dfluxc
-            f_fortran = eflux_fortran
-        elif method=='vflux':
-            f_python = eflux
-            f_fortran = eflux_fortran
-        
         # retrieve necessary workspace fields
         def get(varName):
             return workspace.get_field(varName, self.className)
@@ -382,10 +368,17 @@ class NavierStokes(Model):
         bcmodel.bc_all(self, workspace, w)
 
         # calculate residuals
-        if code=='fortran':
-            f_fortran(self, workspace, w, dw)
-        else:
-            f_python(self, workspace, w, dw)
+        if method=='eflux':
+            if code=='fortran':
+                eflux_fortran(self, workspace, w, dw)
+            else:
+                eflux(self, workspace, w, dw)
+        if method=='dflux':
+            if code=='fortran':
+                dflux_fortran(self, workspace, w, dw, 1)
+            else:
+                dflux(self, workspace, w, dw, 1)
+                print(max(dw))
         
         # copy residuals into output array
         self.__copy_out(dw, output)

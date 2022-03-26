@@ -13,6 +13,8 @@
         """
 
 import sys
+
+from tests.validation.save_fortran import save_fortan
 sys.path.append("../../RANS/bin")
 #sys.path.append("../../../RANS/bin")
 
@@ -26,6 +28,8 @@ from bin.NS_Airfoil import NS_Airfoil
 from bin.NavierStokes import NavierStokes
 
 def test_eflux_validation():
+    save_fortan()
+    
     # create input and grid
     filename = 'rae9-s1.data'
 
@@ -56,7 +60,7 @@ def test_eflux_validation():
 
     # compare with fortran
     TOL = 1e-5
-    dw_fortan = np.load('bin/validation/eflux.npy', allow_pickle=False)
+    dw_fortan = np.load('tests/validation/eflux.npy', allow_pickle=False)
 
     print ("max(dw_fortran) = "+str(max(dw_fortan)))
     print ("max(dw) = "+str(max(dw)))
