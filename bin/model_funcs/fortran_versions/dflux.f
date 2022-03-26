@@ -157,7 +157,6 @@ c
       end do
 
       if (ny.lt.3) go to 11
-      go to 11
 c
 c     dissipation in the j direction
 c

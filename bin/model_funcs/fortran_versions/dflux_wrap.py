@@ -8,7 +8,7 @@ sys.path.append("../../../")
 
 # class dependencies
 from bin.Workspace import Workspace
-from bin.Field import Field
+from bin.Field import Field, max, abs
 import numpy as np
 
 # fortran module
@@ -16,6 +16,9 @@ from bin.model_funcs.fortran_versions import dflux_fort
 
 
 def dflux(model,ws,w,dw,rfil):
+    
+    
+    print(max(abs(dw)))
     [nx, ny] = ws.field_size()
     [il, jl] = [nx+1, ny+1]
     [ie, je] = [nx+2, ny+2]

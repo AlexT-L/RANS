@@ -341,6 +341,7 @@ class NavierStokes(Model):
 ### TESTING
 
     def test(self, workspace, state, output, method, code=''):
+        print("NS test: "+str(max(abs(output))))
         """Calculates the spatial eflux given the current state.
         
         Args:
@@ -378,8 +379,7 @@ class NavierStokes(Model):
                 dflux_fortran(self, workspace, w, dw, 1)
             else:
                 dflux(self, workspace, w, dw, 1)
-                print(max(dw))
-        
+                
         # copy residuals into output array
         self.__copy_out(dw, output)
         assert(isfinite(output))

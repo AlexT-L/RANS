@@ -93,14 +93,14 @@ def dflux(model, ws, state, dw, rfil):
     dis4 = pos_diff(dis4, dis2)
 
     # forward differencing (1st order)
-    d[0:ib, jp:je] = w[1:nxp, jp:je] - w[0:ib, jp:je]
+    d[0:ib, jp:je, :] = w[1:nxp, jp:je, :] - w[0:ib, jp:je, :]
 
     # central differencing (third order)
-    e[1:ie, jp:je] = d[ip:ib, jp:je] - 2*d[1:ie, jp:je] + d[0:il, jp:je]
+    e[1:ie, jp:je, :] = d[ip:ib, jp:je, :] - 2*d[1:ie, jp:je, :] + d[0:il, jp:je, :]
 
-    gs = mismatch_mul(porI, (mismatch_mul(dis2[1:ie, jp:je], d[1:ie, jp:je]) - mismatch_mul(dis4[1:ie, jp:je],e[1:ie, jp:je])))
+    gs = mismatch_mul(porI, (mismatch_mul(dis2[1:ie, jp:je], d[1:ie, jp:je, :]) - mismatch_mul(dis4[1:ie, jp:je],e[1:ie, jp:je, :])))
 
-    fw[ip:ie, jp:je] = fw[ip:ie, jp:je]*sfil + gs[0:nx] - gs[1:il]
+    fw[ip:ie, jp:je, :] = fw[ip:ie, jp:je, :]*sfil + gs[0:nx, :, :] - gs[1:il, :, :]
 
     # c
     # c     dissipation in the j direction
@@ -164,5 +164,3 @@ def dflux(model, ws, state, dw, rfil):
 
     # add to flux field
     dw += fw
-    
-    # assert max(abs(fw)) > 0

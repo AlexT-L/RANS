@@ -13,8 +13,6 @@
         """
 
 import sys
-
-from tests.validation.save_fortran import save_fortan
 sys.path.append("../../RANS/bin")
 #sys.path.append("../../../RANS/bin")
 
@@ -27,9 +25,9 @@ from bin.CellCenterWS import CellCenterWS
 from bin.NS_Airfoil import NS_Airfoil
 from bin.NavierStokes import NavierStokes
 
-def test_eflux_validation():
-    save_fortan()
-    
+UPDATE_FORTRAN_DATA = False
+
+def test_eflux_validation():    
     # create input and grid
     filename = 'rae9-s1.data'
 
@@ -59,6 +57,10 @@ def test_eflux_validation():
     model.test(ws,state,dw,'eflux')
 
     # compare with fortran
+    if UPDATE_FORTRAN_DATA:
+        dw_fortran = np.zeros(dw.shape)
+        model.test(ws,state,dw_fortran,'eflux','fortran')
+        np.save('tests/validation/eflux.npy', dw_fortran)
     TOL = 1e-5
     dw_fortan = np.load('tests/validation/eflux.npy', allow_pickle=False)
 

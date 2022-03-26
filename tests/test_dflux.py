@@ -18,7 +18,6 @@ sys.path.append("../../RANS/bin")
 
 import pytest
 import numpy as np
-from tests.validation.save_fortran import save_fortan
 from bin.Field import Field, isfinite, max, min, mean, abs
 from bin.Input import Input
 from bin.AirfoilMap import AirfoilMap
@@ -26,9 +25,9 @@ from bin.CellCenterWS import CellCenterWS
 from bin.NS_Airfoil import NS_Airfoil
 from bin.NavierStokes import NavierStokes
 
-def test_dflux_validation():
-    save_fortan()
-    
+UPDATE_FORTAN_DATA = False
+
+def test_dflux_validation():    
     # create input and grid
     filename = 'rae9-s1.data'
 
@@ -58,6 +57,10 @@ def test_dflux_validation():
     model.test(ws,state,dw,'dflux')
 
     # compare with fortran
+    if UPDATE_FORTAN_DATA:
+        dw_fortran = np.zeros(dw.shape)
+        model.test(ws,state,dw_fortran,'dflux','fortran')
+        np.save('tests/validation/dflux.npy', dw_fortran)
     TOL = 1e-5
     dw_fortan = np.load('tests/validation/dflux.npy', allow_pickle=False)
 
@@ -65,5 +68,5 @@ def test_dflux_validation():
     print ("max(dw) = "+str(max(dw)))
     print ("mean(dw_fortran-dw) = "+str(mean(dw_fortan-dw)))
     print ("min(dw_fortran-dw) = "+str(min(abs(dw_fortan-dw))))
-    # assert max(abs(dw_fortan - dw)) < TOL
+    assert max(abs(dw_fortan - dw)) < TOL
     
