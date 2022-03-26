@@ -2,35 +2,29 @@
 # blended first and third order fluxes (calls dflux.f)
 
 # append to path so we can access Field class
-import sys
 
-sys.path.append("../")
+import sys
+sys.path.append("../../../")
 
 # class dependencies
-from Workspace import Workspace
-from Grid import Grid
-from Field import Field
+from bin.Workspace import Workspace
+from bin.Field import Field
 import numpy as np
 
 # fortran module
-import dflux_fort 
+from bin.model_funcs.fortran_versions import dflux_fort
+
 
 def dflux(model,ws,w,dw,rfil):
-
-    # calculate artificial dissipation fluxes given a workspace
-
-    # grab grid related parameters
-    G = ws.grid
-    ny = G.dims['ny']
-    il = G.dims['il']
-    jl = G.dims['jl']
-    ie = G.dims['ie']
-    je = G.dims['je']
+    [nx, ny] = ws.field_size()
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
 
     # flow related variabless
     def get(varName):
         return ws.get_field(varName, model.className)
-    P = get('p') # pressure
+    p = get('p') # pressure
     porI = get('porI') # porosity in i 
     porJ = get('porJ') # porosity in j
 
@@ -49,7 +43,7 @@ def dflux(model,ws,w,dw,rfil):
 
     # residuals returned in Field vw
     dflux_fort.dflux(ny,il,jl,ie,je, \
-                    w,P, \
+                    w,p, \
                     porI,porJ, \
                     fw, radI, radJ, \
                     rfil,vis2,vis4)

@@ -1,4 +1,4 @@
-      subroutine eflux(w,dw,p,x,porj,nx,ny,ib,jb)
+      subroutine eflux(w,dw,p,x,porj,il,jl,ib,jb)
 c
 c     ******************************************************************
 c     *                                                                *
@@ -26,11 +26,11 @@ c
       implicit none
 
 c     inputs
-      integer, intent(in) :: nx,ny,ib,jb
+      integer, intent(in) :: il,jl,ib,jb
 
 c     everything is zero indexed except for porosity
       real(8), intent(in), dimension(0:ib,0:jb,4) :: w
-      real(8), intent(in), dimension(0:nx,0:ny,2) :: x
+      real(8), intent(in), dimension(1:il,1:jl,2) :: x
       real(8), intent(in), dimension(0:ib,0:jb)   :: p
       real(8), intent(in), dimension(:,:)         :: porj
 
@@ -47,7 +47,7 @@ c     local variables
 c
 c     ******************************************************************
 c
-      integer :: i,j,n,il,jl
+      integer :: i,j,n
 c
 c     ******************************************************************
 c
@@ -61,9 +61,6 @@ c
 c     ******************************************************************
 c
 c     flux in the i direction
-
-      il = ib-2
-      jl = jb-2
 c
       do j=2,jl
       do i=1,il

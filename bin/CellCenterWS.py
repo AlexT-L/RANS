@@ -78,11 +78,11 @@ class CellCenterWS(Workspace):
 
         # i edges
         if dim == 0:
-            dx = x[0:nx+1, 1:ny+1, :] - x[0:nx+1, 0:ny, :]
+            dx = x[:, 1:ny+1, :] - x[:, 0:ny, :]
 
         # j edges
         if dim == 1:
-            dx = x[1:nx+1, 0:ny+1, :] - x[0:nx, 0:ny+1, :]
+            dx = x[1:nx+1, :, :] - x[0:nx, :, :]
 
         assert (max(dx) != 0).all()
         assert (isfinite(dx))

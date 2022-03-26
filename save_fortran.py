@@ -23,7 +23,6 @@ filename = 'rae9-s1.data'
 
 # read in input
 input = Input(filename) # Will actually take all command line inputs
-print("Input Loaded")
 
 # format input
 input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
@@ -33,20 +32,29 @@ modelInput = input.add_dicts(input.flo_param, input.solv_param)
 
 # create geometry objects
 grid = AirfoilMap.from_file(grid_dim, gridInput)
-print("Grid Created")
 ws = CellCenterWS(grid)
-print("Workspace Created")
 
 # create physics objects
 bcmodel = NS_Airfoil(modelInput)
 model = NavierStokes(bcmodel, modelInput)
-print("Model Created")
 
+### EFLUX ###
 # create faux fields
 [nx, ny] = [grid.dims['nx'], grid.dims['ny']]
 dim = model.dim()
 state = np.zeros((nx, ny, dim))
 dw = np.zeros((nx, ny, dim))
 model.init_state(ws,state)
-model.test_eflux(ws,state,dw)
+model.test(ws,state,dw,'eflux','fortran')
 np.save('bin/validation/eflux.npy', dw)
+
+
+### DFLUX ###
+# create faux fields
+[nx, ny] = [grid.dims['nx'], grid.dims['ny']]
+dim = model.dim()
+state = np.zeros((nx, ny, dim))
+dw = np.zeros((nx, ny, dim))
+model.init_state(ws,state)
+# model.test(ws,state,dw,'dflux','fortran')
+# np.save('bin/validation/eflux.npy', dw)

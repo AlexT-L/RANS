@@ -338,9 +338,7 @@ class NavierStokes(Model):
 
 ### TESTING
 
-    ### Eflux ###
-
-    def test_eflux(self, workspace, state, output, code=''):
+    def test(self, workspace, state, output, method, code=''):
         """Calculates the spatial eflux given the current state.
         
         Args:
@@ -350,6 +348,22 @@ class NavierStokes(Model):
             """
         assert(isfinite(state))
         self.__check_vars(workspace)
+        
+        f_python = 0
+        f_fortran = 0
+        
+        if method=='eflux':
+            f_python = eflux
+            f_fortran = eflux_fortran
+        elif method=='dflux':
+            f_python = dflux
+            f_fortran = eflux_fortran
+        elif method=='dfluxc':
+            f_python = dfluxc
+            f_fortran = eflux_fortran
+        elif method=='vflux':
+            f_python = eflux
+            f_fortran = eflux_fortran
         
         # retrieve necessary workspace fields
         def get(varName):
@@ -369,9 +383,9 @@ class NavierStokes(Model):
 
         # calculate residuals
         if code=='fortran':
-            eflux_fortran(self, workspace, w, dw)
+            f_fortran(self, workspace, w, dw)
         else:
-            eflux(self, workspace, w, dw)
+            f_python(self, workspace, w, dw)
         
         # copy residuals into output array
         self.__copy_out(dw, output)

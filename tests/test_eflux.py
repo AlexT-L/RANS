@@ -1,12 +1,14 @@
-"""This module creates and saves numpy arrays to files to be used in validation tests
+"""This module tests the python version of eflux against the fortran version
 
     Libraries/Modules:
+        pytest\n
         numpy\n
-        typing\n
         Field\n
-        Grid\n
         Input\n
-        airfoil_map\n
+        AirfoilMap\n
+        CellCenterWS\n
+        NS_Airfoil\n
+        NavierStokes\n
     
         """
 
@@ -16,7 +18,7 @@ sys.path.append("../../RANS/bin")
 
 import pytest
 import numpy as np
-from bin.Field import Field, isfinite, max
+from bin.Field import Field, isfinite, max, min, mean, abs
 from bin.Input import Input
 from bin.AirfoilMap import AirfoilMap
 from bin.CellCenterWS import CellCenterWS
@@ -28,8 +30,7 @@ def test_eflux_validation():
     filename = 'rae9-s1.data'
 
     # read in input
-    input = Input(filename) # Will actually take all command line inputs
-    print("Input Loaded")
+    input = Input(filename)
 
     # format input
     input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
@@ -39,28 +40,27 @@ def test_eflux_validation():
 
     # create geometry objects
     grid = AirfoilMap.from_file(grid_dim, gridInput)
-    print("Grid Created")
     ws = CellCenterWS(grid)
-    print("Workspace Created")
 
     # create physics objects
     bcmodel = NS_Airfoil(modelInput)
     model = NavierStokes(bcmodel, modelInput)
-    print("Model Created")
 
     # create faux fields
     [nx, ny] = [grid.dims['nx'], grid.dims['ny']]
     dim = model.dim()
     state = np.zeros((nx, ny, dim))
     dw = np.zeros((nx, ny, dim))
-    print(state.shape)
     model.init_state(ws,state)
-    model.test_eflux(ws,state,dw)
-    assert isfinite(dw)
-
+    model.test(ws,state,dw,'eflux')
 
     # compare with fortran
-    TOL = 1
+    TOL = 1e-5
     dw_fortan = np.load('bin/validation/eflux.npy', allow_pickle=False)
 
-    assert max(dw_fortan - dw) < TOL
+    print ("max(dw_fortran) = "+str(max(dw_fortan)))
+    print ("max(dw) = "+str(max(dw)))
+    print ("mean(dw_fortran-dw) = "+str(mean(dw_fortan-dw)))
+    print ("min(dw_fortran-dw) = "+str(min(abs(dw_fortan-dw))))
+    assert max(abs(dw_fortan - dw)) < TOL
+    

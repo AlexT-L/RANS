@@ -27,20 +27,16 @@ def eflux(model, ws, state, dw):
 
     [nx, ny] = ws.field_size()
     [nxp, nyp] = [pad+nx+pad, pad+ny+pad]
-    ip = pad
-    jp = pad
-    il = nx+1
-    jl = ny+1
-    ie = nx+2
-    je = ny+2
-    ib = nx+3
-    jb = ny+3
+    [ip, jp] = [pad, pad]
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
 
     # flux array
-    fs = Field.create((ib+1, jb+1, n))
+    fs = Field.create((nxp, nyp, n))
 
     # i direction
-    dx = ws.edge_normals(0)
+    dx = ws.edges(0)
     dyx = dx[:,:,0]
     dyy = dx[:,:,1]
     p_avg = p[1:ie, jp:je] + p[ip:ib, jp:je]
@@ -59,23 +55,22 @@ def eflux(model, ws, state, dw):
     dw[ip:ie, jp:je, :] = fs[ip:ie, jp:je, :] - fs[1:il, jp:je, :]
 
 
+    fs = fs*0.0
     # j direction
-    dx = ws.edge_normals(1)
+    dx = ws.edges(1)
     dxx = dx[:,:,0]
     dxy = dx[:,:,1]
     p_avg = p[ip:ie, 1:je] + p[ip:ie, jp:jb]
 
     # flux operator
-    qsp = porJ * (dxx*w[ip:ie, jp:jb, 1] - dxy*w[ip:ie, jp:jb, 2]) / w[ip:ie, jp:jb, 0]
-    qsm = porJ * (dxx*w[ip:ie,  1:je, 1] - dxy*w[ip:ie,  1:je, 2]) / w[ip:ie,  1:je, 0]
+    qsp = 0.0*porJ * (dxx*w[ip:ie, jp:jb, 2] - dxy*w[ip:ie, jp:jb, 1]) / w[ip:ie, jp:jb, 0]
+    qsm = 0.0*porJ * (dxx*w[ip:ie,  1:je, 2] - dxy*w[ip:ie,  1:je, 1]) / w[ip:ie,  1:je, 0]
 
     # add up on faces
     fs[ip:ie, 1:je, 0] = qsp*w[ip:ie, jp:jb, 0]                     + qsm*w[ip:ie, 1:je, 0] # density
-    fs[ip:ie, 1:je, 1] = qsp*w[ip:ie, jp:jb, 1]                     + qsm*w[ip:ie, 1:je, 1]  + dxy*p_avg # x - momentum
-    fs[ip:ie, 1:je, 2] = qsp*w[ip:ie, jp:jb, 2]                     + qsm*w[ip:ie, 1:je, 2]  - dxx*p_avg # y - momentum
+    fs[ip:ie, 1:je, 1] = qsp*w[ip:ie, jp:jb, 1]                     + qsm*w[ip:ie, 1:je, 1]  - dxy*p_avg # x - momentum
+    fs[ip:ie, 1:je, 2] = qsp*w[ip:ie, jp:jb, 2]                     + qsm*w[ip:ie, 1:je, 2]  + dxx*p_avg # y - momentum
     fs[ip:ie, 1:je, 3] = qsp*(w[ip:ie,jp:jb, 3] + p[ip:ie, jp:jb]) + qsm*(w[ip:ie, 1:je, 3] + p[ip:ie, 1:je]) # energy
 
     # now add everything up for j direction
     dw[ip:ie, jp:je, :] += fs[ip:ie, jp:je, :] - fs[ip:ie, 1:jl, :]
-
-    stop = 0
