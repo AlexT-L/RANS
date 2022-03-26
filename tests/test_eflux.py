@@ -1,10 +1,10 @@
 # """
 # Description
-# 
+
 # Tests the flux calculations
 
 # Libraries/Modules
-# 
+
 # -pytest \n
 # -Field
 # -Model
@@ -12,7 +12,7 @@
 # -
 
 # Notes
-# 
+
 # Runs the following tests:\n
 # 1. Checks that a 2D Field can be created  \n
 # 2. Checks that a 3D field can be created \n
@@ -60,9 +60,7 @@
 # print("Model Created")
 
 # # create faux fields
-# np.random.seed(100)
-# w_init = np.random.standard_normal([grid.dims['nx'],grid.dims['ny'],model.dim()])
-# w = Field.create(0, w_init)
+# w = np.zeros()
 # res = np.zeros([grid.dims['nx'],grid.dims['ny'],model.dim()])
 # dw = Field.create(0, res)
 
