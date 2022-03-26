@@ -7,7 +7,7 @@ import sys
 sys.path.append('../RANS/bin')
 
 import numpy as np
-from bin.Field import maximum, minimum, create
+from bin.Field import maximum, minimum, Field
 # from Grid import Grid
 
 # class BaldwinLomax():

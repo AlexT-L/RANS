@@ -11,6 +11,9 @@
         metric_func\n
         plot_mesh_func\n
         """
+# Toggle plotting of mesh (for visualization/debugging)
+PLOT_ON = False
+        
 # libraries
 import numpy as np
 from bin.Field import isfinite
@@ -89,7 +92,7 @@ def init_from_file(self, grid_dim, input):
     metric(self)
 
     #plot mesh
-    plot_mesh(self)
+    if PLOT_ON: plot_mesh(self)
     
 
 def init_from_grid(newGrid, grid):
@@ -131,4 +134,4 @@ def init_from_grid(newGrid, grid):
     newGrid.fields = newFields
 
     #plot mesh
-    plot_mesh(newGrid)
+    if PLOT_ON: plot_mesh(newGrid)

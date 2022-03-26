@@ -6,8 +6,7 @@
     BoundaryThickness\n
     """
 import sys
-sys.path.append('../RANS/bin')
-import time
+sys.path.append('../../../RANS/bin')
 
 import numpy as np
 from bin.Field import pos_diff
@@ -57,10 +56,10 @@ def compute_viscosity(model, ws, state):
     itl = dims['itl'] + PAD
     itu = dims['itu'] + PAD
     ile = int(ie/2) + PAD
-    chord = geom['chord']
     
     geom = ws.get_geometry()
     scal = geom['scal']
+    chord = geom['chord']
     
     # physics parameters
     kvis = model.params['kvis']
