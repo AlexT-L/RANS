@@ -1,4 +1,4 @@
-      subroutine delt
+      subroutine delt(ny,il,jl,ib,jb,w,ynot,dsti,x,xc)
 c
 c     *****************************************************************
 c     *                                                               *
@@ -6,22 +6,52 @@ c     *   calculates the boundary layer thickness                     *
 c     *                                                               *
 c     *****************************************************************
 c
-      use dims
+c     use dims
 c
 c     ******************************************************************
 c
-      use flo_var
-      use mesh_var
-      use solv_var
+c     use flo_var
+c     use mesh_var
+c     use solv_var
 c
 c     ******************************************************************
 c
-      use flo_param
-      use solv_param
+c     use flo_param
+c     use solv_param
 c
 c     ******************************************************************
 c
-      real, dimension(je)               :: qs,dn,ut
+      implicit none
+c
+c     ******************************************************************
+c
+c     input variables
+c
+c     ******************************************************************
+c     from dims
+      integer, intent(in) :: ny,il,jl,ib,jb
+
+c     from flo_var
+      real(8), intent(in), dimension(0:ib,0:jb,4) :: w
+      real(8), intent(inout), dimension(0:ib) :: ynot,dsti
+
+c     from mesh_var
+      real(8), intent(in), dimension(1:il,1:jl,2) :: x
+      real(8), intent(inout), dimension(0:ib,0:jb,2) :: xc
+c
+c     ******************************************************************
+c
+c     local variables
+c
+c     ******************************************************************
+c
+c     ******************************************************************
+c
+      integer :: i,j,js,jmax,lend,lbig,jse
+      real(8) :: xy,yy,si,dsi,cdu,fx,uinf,ra,fc,xbi,ybi,ycorr
+      real(8), dimension(0:jb)               :: qs,dn,ut
+      real(8), dimension(0:ib)               :: ssmax
+      integer, external :: idmax
 c
 c     ******************************************************************
 c
@@ -42,7 +72,7 @@ c     js        = 2*jl/3  -2
       yy        = .5*(x(i,j,2)  -x(i,j-1,2)
      .               +x(i-1,j,2)  -x(i-1,j-1,2))
       qs(j)     = (yy*w(i,j,2)  -xy*w(i,j,3))/(w(i,j,1))
-      si        = sign(1.,qs(js))
+      si        = sign(real(1.,8),qs(js))
 
       do j=2,js
          xy        = .5*(x(i,j,1)  -x(i,j-1,1)
@@ -84,6 +114,8 @@ c     js        = 2*jl/3  -2
          ssmax(i)  = ssmax(i) + ra*ut(j)*uinf*(dn(j)-qs(j)*uinf)
       end do
 
+      if (.true.) then
+
       dsti(i)   = dsti(i)*uinf
       dsti (i)  = max(dsti(i),1.e-6)
       ra        = w(i,lend,1)/w(i,2,1)
@@ -102,8 +134,64 @@ c     js        = 2*jl/3  -2
       ynot(i)   = 1.5*(ycorr  +dn(lend)*
      .                (fc  -ut(lend))/(ut(lend+1)  -ut(lend)))
 
+      end if
    20 continue
 
       return
 
-      end
+      end subroutine
+
+
+      integer function idmax(n,sx,incx)
+c
+c     ******************************************************************
+c     *                                                                *
+c     *   find the index of element having max value                   *
+c     *                                                                *
+c     ******************************************************************
+c
+      integer :: i,incx,ix,n
+c
+c     *****************************************************************
+c
+      real(8) :: smax
+      real(8), dimension(0:n-1) :: sx
+c
+c     *****************************************************************
+c
+      idmax     = 0
+      if (n.lt.1) return
+
+      idmax     = 1
+      if (n.eq.1) return
+
+      if (incx.eq.1) go to 11
+c
+c      code for increment not equal to 1
+c
+      ix        = 1
+      smax      = sx(1)
+      ix        = ix + incx
+      do i=2,n
+         if (sx(ix).gt.smax) then
+            idmax     = i
+            smax      = sx(ix)
+         end if
+         ix        = ix + incx
+      end do
+
+      return
+c
+c      code for increment equal to 1
+c
+   11 smax = sx(1)
+      do i=2,n
+         if (sx(i).gt.smax)then
+            idmax     = i
+            smax      = sx(i)
+         end if
+      end do
+
+      return
+
+      end function

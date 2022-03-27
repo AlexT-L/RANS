@@ -5,7 +5,9 @@
         """
 import numpy as np
 
-def boundary_thickness(model, ws, state, ynot, dsti):
+from bin.Field import Field
+
+def boundary_thickness(model, ws, state, ynot=None, dsti=None):
     """Calculates the boundary layer thickness.
 
     Notes: 
@@ -26,10 +28,15 @@ def boundary_thickness(model, ws, state, ynot, dsti):
     [ie, je] = [nx+2, ny+2]
     [ib, jb] = [nx+3, ny+3]
 
-    qs = np.ones(nxp)
-    ut = np.ones(nxp)
-    dn = np.ones(nxp)
-    ssmax = np.ones(nxp)
+    qs = np.zeros(nxp)
+    ut = np.zeros(nxp)
+    dn = np.zeros(nxp)
+    ssmax = np.zeros(nxp)
+    
+    if ynot is None:
+        ynot = Field.create(nxp)
+    if dsti is None:
+        dsti = Field.create(nxp)
     
     js = 0.75*(ny - 4)
     js = int(np.floor(js))
@@ -50,7 +57,7 @@ def boundary_thickness(model, ws, state, ynot, dsti):
             qs[j]     = si*(yy*w[i,j,1]  -xy*w[i,j,2])
             dn[j]     = 1.0/dsi
             ut[j]     = qs[j]*dsi
-
+            
         dsti[i]   = 0.0
         ynot[i]   = 0.0
         ssmax[i]  = 0.0
@@ -60,7 +67,7 @@ def boundary_thickness(model, ws, state, ynot, dsti):
         lend      = 2
         lbig      = 2
         locke     = False
-
+        
         for  j in range(3,js+1):
             if ( ut[j-1] < 0 and ut[j] >= 0):
                 lbig = j
@@ -69,13 +76,13 @@ def boundary_thickness(model, ws, state, ynot, dsti):
                 if ( ut[j-1] >= cdu*ut[j] and ut[j] > fx):
                     locke     = True
                     lend      = j
-
+        
         uinf      = 1./ut[lend]
         for j in range(lbig,lend+1):
             dsti [i]  = dsti[i] + (ut[lend]*dn[j] - qs[j])
             ra        = w[i,lend,0]/w[i,j,0]
             ssmax[i]  = ssmax[i] + ra*ut[j]*uinf*(dn[j]-qs[j]*uinf)
-
+        
         dsti[i]   = dsti[i]*uinf
         
         dsti[i]  = max(dsti[i],1.0e-6)
@@ -93,4 +100,5 @@ def boundary_thickness(model, ws, state, ynot, dsti):
         ybi       = 0.5*(x[i-1,0,1]+x[i-2,0,1])
         ycorr     = np.sqrt((xc[i,lend,0] - xbi)**2+(xc[i,lend,1]-ybi)**2)
         ynot[i]   = 1.5*(ycorr  +dn[lend]*(fc  -ut[lend])/(ut[lend+1]  -ut[lend]))
-    return
+    
+    return [ynot, dsti]

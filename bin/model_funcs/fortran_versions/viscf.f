@@ -1,5 +1,5 @@
       subroutine viscf(il,jl,ie,je,ib,jb,itl,itu,
-     & w,p,rlv,rev,dsti,ynot,
+     & w,p,rlv,rev,
      & gamma,rm,re,t0,rmu0,xtran,scal,chord,
      & kvis,kturb,
      & ncyc,mode)
@@ -25,7 +25,7 @@ c     use mg_param
 c
 c     ******************************************************************
 c
-      implicit none
+c     implicit none
 c
 c     ******************************************************************
 c
@@ -38,7 +38,6 @@ c     from dims
 c     from flo_var
       real(8), intent(inout), dimension(0:ib,0:jb,4) :: w
       real(8), intent(inout), dimension(0:ib,0:jb) :: p,rlv,rev
-      real(8), intent(inout), dimension(0:ib) :: dsti,ynot
 
 c     from flo_param
       real(8), intent(in)     :: gamma,rm,re,t0,rmu0,xtran,scal,chord
@@ -58,6 +57,7 @@ c     ******************************************************************
 c
 c     ******************************************************************
 c
+      real(8), dimension(ie) :: dsti,ynot,ssmax
       real, dimension(ie,je)            :: u,v,astr,rev0
       real, dimension(je)               :: qs,dn,ut
 c

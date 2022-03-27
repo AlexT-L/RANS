@@ -14,7 +14,6 @@
 
 import sys
 sys.path.append("../../RANS/bin")
-#sys.path.append("../../../RANS/bin")
 
 import pytest
 import numpy as np
@@ -63,9 +62,9 @@ def test_BL_validation():
     TOL = 1e-5
     ev_fortan = np.load('tests/validation/turb.npy', allow_pickle=False)
 
-    print ("max(dw_fortran) = "+str(max(ev_fortan)))
-    print ("max(dw) = "+str(max(ev)))
-    print ("mean(dw_fortran-dw) = "+str(mean(ev_fortan-ev)))
-    print ("min(dw_fortran-dw) = "+str(min(abs(ev_fortan-ev))))
+    print ("max(ev_fortran) = "+str(max(ev_fortan)))
+    print ("max(ev) = "+str(max(ev)))
+    print ("mean(ev_fortran-ev) = "+str(mean(ev_fortan-ev)))
+    print ("min(ev_fortran-ev) = "+str(min(abs(ev_fortan-ev))))
     assert max(abs(ev_fortan - ev)) < TOL
     

@@ -49,7 +49,7 @@ def nsflux(self,ws,w,dw,rfil):
 
     # mesh related vars
     x = ws.get_field('x') # mesh vertices
-    xc = ws.get_field('xc') # mesh centers
+    xc = ws.get_field('xc', self.className) # mesh centers
 
     # residuals returned in Field vw
     nsflux_fort.nsflux(il, jl, ie, je, \

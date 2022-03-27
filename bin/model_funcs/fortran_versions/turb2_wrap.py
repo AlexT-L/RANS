@@ -35,7 +35,7 @@ def turb_BL(model,ws,w,ncyc=0):
     def get(varName):
         return ws.get_field(varName, model.className)
     p = get('p') # pressure
-    ev = get('ev') # porosity in i 
+    ev = get('ev') # eddy viscosity
     
     # mesh vars
     vol = get('vol')
