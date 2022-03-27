@@ -23,9 +23,8 @@ from bin.Input import Input
 from bin.AirfoilMap import AirfoilMap
 from bin.CellCenterWS import CellCenterWS
 from bin.NS_Airfoil import NS_Airfoil
-from bin.NavierStokes import NavierStokes
+from bin.NavierStokes import UPDATE_FORTRAN_DATA, NavierStokes
 
-UPDATE_FORTAN_DATA = False
 
 def test_dfluxc_validation():    
     # create input and grid
@@ -57,7 +56,7 @@ def test_dfluxc_validation():
     model.test(ws,state,dw,'dfluxc')
 
     # compare with fortran
-    if UPDATE_FORTAN_DATA:
+    if UPDATE_FORTRAN_DATA:
         dw_fortran = np.zeros(dw.shape)
         model.test(ws,state,dw_fortran,'dfluxc','fortran')
         np.save('tests/validation/dfluxc.npy', dw_fortran)

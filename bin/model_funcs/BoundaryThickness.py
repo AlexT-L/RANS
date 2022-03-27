@@ -38,14 +38,14 @@ def boundary_thickness(model, ws, state, ynot, dsti):
         qs[1]     = 0.0
         ut[1]     = 0.0
         j         = js
-        xy        = 0.5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
-        yy        = 0.5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
+        xy        = 0.5*(x[i-1,j-1,0]  -x[i-1,j-2,0]+x[i-2,j-1,0]  -x[i-2,j-2,0])
+        yy        = 0.5*(x[i-1,j-1,1]  -x[i-1,j-2,1]+x[i-2,j-1,1]  -x[i-2,j-2,1])
         qs[j]     = (yy*w[i,j,1]  -xy*w[i,j,2])/(w[i,j,0])
         si        = np.copysign(1,qs[js])
 
         for j in range(2,js+1):
-            xy        = 0.5*(x[i,j,0]  -x[i,j-1,0]+x[i-1,j,0]  -x[i-1,j-1,0])
-            yy        = 0.5*(x[i,j,1]  -x[i,j-1,1]+x[i-1,j,1]  -x[i-1,j-1,1])
+            xy        = 0.5*(x[i-1,j-1,0]  -x[i-1,j-2,0]+x[i-2,j-1,0]  -x[i-2,j-2,0])
+            yy        = 0.5*(x[i-1,j-1,1]  -x[i-1,j-2,1]+x[i-2,j-1,1]  -x[i-2,j-2,1])
             dsi       = 1.0/np.sqrt(xy**2  +yy**2)
             qs[j]     = si*(yy*w[i,j,1]  -xy*w[i,j,2])
             dn[j]     = 1.0/dsi
@@ -89,8 +89,8 @@ def boundary_thickness(model, ws, state, ynot, dsti):
             if (ut[j] > fc):
                 break
 
-        xbi       = 0.5*(x[i,1,0]+x[i-1,1,0])
-        ybi       = 0.5*(x[i,1,1]+x[i-1,1,1])
+        xbi       = 0.5*(x[i-1,0,0]+x[i-2,0,0])
+        ybi       = 0.5*(x[i-1,0,1]+x[i-2,0,1])
         ycorr     = np.sqrt((xc[i,lend,0] - xbi)**2+(xc[i,lend,1]-ybi)**2)
         ynot[i]   = 1.5*(ycorr  +dn[lend]*(fc  -ut[lend])/(ut[lend+1]  -ut[lend]))
     return

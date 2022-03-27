@@ -7,11 +7,16 @@ from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
+UPDATE_FORTRAN_DATA = False
+
 # Validation
-from bin.model_funcs.fortran_versions.eflux_wrap import eflux as eflux_fortran
-from bin.model_funcs.fortran_versions.dflux_wrap import dflux as dflux_fortran
-from bin.model_funcs.fortran_versions.dfluxc_wrap import dfluxc as dfluxc_fortran
-from bin.model_funcs.fortran_versions.nsflux_wrap import nsflux as nsflux_fortran
+from bin.model_funcs.BaldwinLomax import turbulent_viscosity
+if UPDATE_FORTRAN_DATA:
+    from bin.model_funcs.fortran_versions.eflux_wrap import eflux as eflux_fortran
+    from bin.model_funcs.fortran_versions.dflux_wrap import dflux as dflux_fortran
+    from bin.model_funcs.fortran_versions.dfluxc_wrap import dfluxc as dfluxc_fortran
+    from bin.model_funcs.fortran_versions.nsflux_wrap import nsflux as nsflux_fortran
+    from bin.model_funcs.fortran_versions.turb2_wrap import turb_BL as turb2
 
 
 class NavierStokes(Model):
@@ -364,6 +369,22 @@ class NavierStokes(Model):
 
         # update pressure
         self.__update_pressure(workspace, w)
+        
+        # viscosity tests
+        if method=='turb':
+            if code=='fortran':
+                turb2(self, workspace, w)
+            else:
+                turbulent_viscosity(self, workspace, w)
+                
+            # return ev
+            self.__copy_out(get('ev'), output)
+            assert(isfinite(output))
+            return
+            
+        
+        # update viscosity
+        self.BCmodel.update_physics(self, workspace, w)
         
         # update boundary conditions
         bcmodel = self.BCmodel

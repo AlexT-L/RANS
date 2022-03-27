@@ -152,8 +152,8 @@ def compute_viscosity(model, ws, state):
 
 
 
-    for j in range(PAD,nx+PAD):
-        for i in range(PAD,ny+PAD):
+    for j in range(PAD,ny+PAD):
+        for i in range(PAD,nx+PAD):
             xbi       = 0.5*(x[i-PAD,0,0]  +x[i+1-PAD,0,0])
             ybi       = 0.5*(x[i-PAD,0,1]  +x[i+1-PAD,0,1])
             astra     = 0.25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])

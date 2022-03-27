@@ -12,7 +12,7 @@ from bin.Field import maximum, minimum, Field
 
 # class BaldwinLomax():
 # @profile
-def turbulent_viscosity(model, ws, state):
+def turbulent_viscosity(model, ws, state,ncyc=0):
     """ Baldwin-lomax turbulence model:  modtur = 2.
     Calculates turbulent viscosity at the cell faces.
     Averages to obtain cell center values fully vectorized routine.                                         *
@@ -40,11 +40,9 @@ def turbulent_viscosity(model, ws, state):
     gamma = mget('gamma')
     rm = mget('rm')
     re = mget('re')
-    ncyc = 0
     rev = wsget('ev')
-
-    il = nx+1
-    jl = ny+1
+    
+    [il, jl] = [nx+1, ny+1]
     [ie, je] = [nx+2, ny+2]
     [nxp, nyp] = [nx+4, ny+4]
     dims = ws.get_dims()
@@ -117,11 +115,11 @@ def turbulent_viscosity(model, ws, state):
     Wake region         --- baldwin-lomax model (cwake= 1.0)
     Calculates vorticity and total velocity
     '''
-
+    
     vola[1:i2+1,1:jl+1] = 0.5* (vol[1:i2+1,1:jl+1]+ vol[1:i2+1,2:jl+2])
 
-    xxa = x[2:il+1,1,1]-x[1:il,1,1] 
-    yxa = x[2:il+1,1,2]-x[1:il,1,2]
+    xxa = x[1:nx+1,1,0]-x[0:nx,1,0] 
+    yxa = x[1:nx+1,1,1]-x[0:nx,1,1]
     uy        = u[2:il+1,2]- u[2:il+1,1]
     vy        = v[2:il+1,2]- v[2:il+1,1]
     uavg      = 0.5* (u[2:il+1,1] + u[2:il+1,2])
@@ -139,8 +137,8 @@ def turbulent_viscosity(model, ws, state):
     utot[2:il+1,1] = np.sqrt(utotal)
 
 
-    xxa       = x[2:il+1,2:jlm+1,0]-x[1:il,2:jlm+1,0] 
-    yxa       = x[2:il+1,2:jlm+1,1]-x[1:il,2:jlm+1,1] 
+    xxa       = x[1:nx+1,1:jlm,0]-x[0:nx,1:jlm,0] 
+    yxa       = x[1:nx+1,1:jlm,1]-x[0:nx,1:jlm,1] 
     uy        = u[2:il+1,3:jlm+2]- u[2:il+1,2:jlm+1]
     vy        = v[2:il+1,3:jlm+2]- v[2:il+1,2:jlm+1]
     uavg      = 0.5* (u[2:il+1,2:jlm+1]+ u[2:il+1,3:jlm+2])
@@ -152,10 +150,10 @@ def turbulent_viscosity(model, ws, state):
     '''
     additional contributions to vorticity
     '''
-    xyw       = 0.5* (x[1:il,3:jlm+2,0]- x[1:il,1:jlm,0])
-    xye       = 0.5* (x[2:il+1,3:jlm+2,0]- x[2:il+1,1:jlm,0])
-    yyw       = 0.5* (x[1:il,3:jlm+2,1]- x[1:il,1:jlm,1])
-    yye       = 0.5* (x[2:il+1,3:jlm+2,1]- x[2:il+1,1:jlm,1])
+    xyw       = 0.5* (x[0:nx,2:jlm+1,0]- x[0:nx,0:jlm-1,0])
+    xye       = 0.5* (x[1:nx+1,2:jlm+1,0]- x[1:nx+1,0:jlm-1,0])
+    yyw       = 0.5* (x[0:nx,2:jlm+1,1]- x[0:nx,0:jlm-1,1])
+    yye       = 0.5* (x[1:nx+1,2:jlm+1,1]- x[1:nx+1,0:jlm-1,1])
     volawi    = 2.0/(vola[2:il+1,2:jlm+1]+ vola[1:il,2:jlm+1])
     volaei    = 2.0/(vola[2:il+1,2:jlm+1]+ vola[3:il+2,2:jlm+1])
     uxe       = 0.5* (u[3:il+2,2:jlm+1]+u[3:il+2,3:jlm+2]) - uavg
@@ -176,13 +174,13 @@ def turbulent_viscosity(model, ws, state):
     itr1      = 0
     itr2      = 0
     j         = 1
-    for i in range(1,il+1):
+    for i in range(il):
         if (x[i,j,0] <= xtran):
             itr1      = i - 1
             break 
 
     itr1p     = itr1 + 1
-    for i in range(itr1p,il+1):
+    for i in range(itr1p-1,il):
         if (x[i,j,0] >= xtran):
             itr2      = i
             break
@@ -216,8 +214,8 @@ def turbulent_viscosity(model, ws, state):
         tur2    = 0.0
         tur3    = 1.0
 
-    xxa       = x[itlp:itu,0,0]- x[itlp:itu-1,0,0]
-    yxa       = x[itlp:itu,0,1]- x[itlp:itu-1,0,1]
+    xxa       = x[itlp-1:itu-1,0,0]- x[itlp-2:itu-2,0,0]
+    yxa       = x[itlp-1:itu-1,0,1]- x[itlp-2:itu-2,0,1]
     volai     = 1.0/vola[itlp:itu,1]
     uy        = 2.0* u[itlp:itu,1]
     amub      = 0.5* (amu[itlp:itu,1]+ amu[itlp:itu,2])
@@ -232,9 +230,9 @@ def turbulent_viscosity(model, ws, state):
     Compute normal distance ylen[i,j] and function 'yvor'
     (yvor = y* vorticity)
     '''
-    ylen[PAD:nx+PAD,1] = 0.0
-    xc2       = 0.5* (x[PAD:nx+PAD,PAD:ny+PAD,0]+ x[1:nx+1,PAD:ny+PAD,0]-x[PAD:nx+PAD,1:ny+1,0]- x[1:nx+1,1:ny+1,0])
-    yc2       = 0.5* (x[PAD:nx+PAD,PAD:ny+PAD,1]+ x[1:nx+1,PAD:ny+PAD,1]-x[PAD:nx+PAD,1:ny+1,1]- x[1:nx+1,1:ny+1,1])
+    ylen[2:nx+2,1] = 0.0
+    xc2       = 0.5* (x[1:nx+1,1:ny+1,0]+ x[0:nx,1:ny+1,0]-x[1:nx+1,0:ny,0]- x[0:nx,0:ny,0])
+    yc2       = 0.5* (x[1:nx+1,1:ny+1,1]+ x[0:nx,1:ny+1,1]-x[1:nx+1,0:ny,1]- x[0:nx,0:ny,1])
 
     scalf  = np.sqrt(np.square(xc2) + np.square(yc2))
     ylen[PAD:nx+PAD,PAD:ny+PAD] = ylen[PAD:nx+PAD,1:ny+1]+ scalf

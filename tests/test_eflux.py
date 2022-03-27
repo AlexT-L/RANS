@@ -23,9 +23,8 @@ from bin.Input import Input
 from bin.AirfoilMap import AirfoilMap
 from bin.CellCenterWS import CellCenterWS
 from bin.NS_Airfoil import NS_Airfoil
-from bin.NavierStokes import NavierStokes
+from bin.NavierStokes import UPDATE_FORTRAN_DATA, NavierStokes
 
-UPDATE_FORTRAN_DATA = False
 
 def test_eflux_validation():    
     # create input and grid
