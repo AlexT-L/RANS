@@ -8,47 +8,65 @@ sys.path.append("../../../")
 
 # class dependencies
 from bin.Field import Field, max, abs
+from bin.model_funcs.Viscosity import KTURB 
 
 # fortran module
-from bin.model_funcs.fortran_versions import viscf_fort, turb_fort
+from bin.model_funcs.fortran_versions import viscf_fort, turb2_wrap
 
 
-def viscosity(model,ws,w,dw,rfil):
+def viscosity(model,ws,w,ncyc=0):
     
-    
-    print(max(abs(dw)))
+    # grid parameters
     [nx, ny] = ws.field_size()
     [il, jl] = [nx+1, ny+1]
     [ie, je] = [nx+2, ny+2]
     [ib, jb] = [nx+3, ny+3]
 
+    dims = ws.get_dims()
+    itl = dims['itl']
+    itu = dims['itu']
+    
+    geom = ws.get_geometry()
+    scal = geom['scal']
+    chord = geom['chord']
+
     # flow related variabless
     def get(varName):
         return ws.get_field(varName, model.className)
     p = get('p') # pressure
-    porI = get('porI') # porosity in i 
-    porJ = get('porJ') # porosity in j
+
+    # mesh related vars
+    x = ws.get_field('x')
+    xc = get('xc')
 
     # solver related vars
-    fw = get('fw') # storage for viscous residuals?
-    radI = get('radI') # some kind of stability metric in i
-    radJ = get('radJ') # some kind of stability metric in j
+    rev = get('ev') # eddy viscosity
+    rlv = get('lv') # laminar viscosity
 
-    # solver params
-    vis2 = model.params['vis2']
-    vis4 = model.params['vis4']
+    # flow params
+    par = model.params
+    gamma = par['gamma']
+    mach = par['rm']
+    Re = par['re']
+    t0 = par['t0']
+    rmu0 = par['mu0']
+    xtran = par['xtran']
+    kvis = par['kvis']
     
-    # call turb
+    # viscosity model toggle
+    kturb = KTURB
     
+    # mg_param
+    mode = 1
+    if ws.is_finest():
+        mode = 0
+    
+    # call turb2
+    turb2_wrap.turb_BL(model,ws,w,ncyc)
 
     # call viscf
-    viscf_fort.viscf(ny,il,jl,ie,je, \
-                    w,p, \
-                    porI,porJ, \
-                    fw, radI, radJ, \
-                    rfil,vis2,vis4)
-
-    
-
-    # put in residuals
-    dw = dw + fw
+    viscf_fort.viscf(ny,ie,je,itl,itu, \
+                    w,p,rlv,rev,x,xc, \
+                    gamma,mach,Re,t0,rmu0,xtran,scal,chord, \
+                    kvis,kturb, \
+                    ncyc,mode,[il,jl,ib,jb])

@@ -18,7 +18,8 @@ if UPDATE_FORTRAN_DATA:
     from bin.model_funcs.fortran_versions.dfluxc_wrap import dfluxc as dfluxc_fortran
     from bin.model_funcs.fortran_versions.nsflux_wrap import nsflux as nsflux_fortran
     from bin.model_funcs.fortran_versions.turb2_wrap import turb_BL as turb2
-    from bin.model_funcs.fortran_versions.delt_wrap import thickness
+    from bin.model_funcs.fortran_versions.delt_wrap import thickness as thickness_fortran
+    from bin.model_funcs.fortran_versions.viscf_wrap import viscosity as viscosity_fortran
 
 
 class NavierStokes(Model):
@@ -391,7 +392,7 @@ class NavierStokes(Model):
         
         if method=='ynot':
             if code=='fortran':
-                [ynot,dsti] = thickness(self, workspace, w)
+                [ynot,dsti] = thickness_fortran(self, workspace, w)
             else:
                 [ynot,dsti] = boundary_thickness(self, workspace, w)
                 
@@ -401,15 +402,36 @@ class NavierStokes(Model):
             return
         if method=='dsti':
             if code=='fortran':
-                [ynot,dsti] = thickness(self, workspace, w)
+                [ynot,dsti] = thickness_fortran(self, workspace, w)
             else:
                 [ynot,dsti] = boundary_thickness(self, workspace, w)
-                
+               
             # return dsti
             self.__copy_out(dsti, output)
             assert(isfinite(output))
             return
-            
+
+        if method=='ev':
+            if code=='fortran':
+                viscosity_fortran(self, workspace, w)
+            else:
+                self.BCmodel.update_physics(self, workspace, w)
+                  
+            # return ev
+            self.__copy_out(get('ev'), output)
+            assert(isfinite(output))
+            return
+        if method=='lv':
+            if code=='fortran':
+                viscosity_fortran(self, workspace, w)
+            else:
+                self.BCmodel.update_physics(self, workspace, w)
+                    
+            # return ev
+            self.__copy_out(get('lv'), output)
+            assert(isfinite(output))
+            return
+        
         
         # update viscosity
         self.BCmodel.update_physics(self, workspace, w)

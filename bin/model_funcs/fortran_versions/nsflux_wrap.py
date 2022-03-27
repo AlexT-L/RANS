@@ -44,8 +44,10 @@ def nsflux(self,ws,w,dw,rfil):
     prn = 0
     prt = 0
     
-    # mode parameter says if we are at the finest mesh
-    mode = ws.is_finest()
+    # mg_param
+    mode = 1
+    if ws.is_finest():
+        mode = 0
 
     # mesh related vars
     x = ws.get_field('x') # mesh vertices

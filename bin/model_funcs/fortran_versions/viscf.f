@@ -1,5 +1,5 @@
-      subroutine viscf(il,jl,ie,je,ib,jb,itl,itu,
-     & w,p,rlv,rev,
+      subroutine viscf(ny,il,jl,ie,je,ib,jb,itl,itu,
+     & w,p,rlv,rev,x,xc,
      & gamma,rm,re,t0,rmu0,xtran,scal,chord,
      & kvis,kturb,
      & ncyc,mode)
@@ -25,7 +25,7 @@ c     use mg_param
 c
 c     ******************************************************************
 c
-c     implicit none
+      implicit none
 c
 c     ******************************************************************
 c
@@ -33,11 +33,15 @@ c     input variables
 c
 c     ******************************************************************
 c     from dims
-      integer, intent(in) :: il,jl,ie,je,ib,jb,itl,itu
+      integer, intent(in) :: ny,il,jl,ie,je,ib,jb,itl,itu
 
 c     from flo_var
       real(8), intent(inout), dimension(0:ib,0:jb,4) :: w
       real(8), intent(inout), dimension(0:ib,0:jb) :: p,rlv,rev
+
+c     from mesh_var
+      real(8), intent(inout), dimension(1:il,1:jl,2) :: x
+      real(8), intent(inout), dimension(0:ib,0:jb,2) :: xc
 
 c     from flo_param
       real(8), intent(in)     :: gamma,rm,re,t0,rmu0,xtran,scal,chord
@@ -57,13 +61,20 @@ c     ******************************************************************
 c
 c     ******************************************************************
 c
-      real(8), dimension(ie) :: dsti,ynot,ssmax
-      real, dimension(ie,je)            :: u,v,astr,rev0
-      real, dimension(je)               :: qs,dn,ut
+      real(8), dimension(0:ib)   :: dsti,ynot,ssmax
+      real(8), dimension(0:ib,0:jb) :: u,v,astr,rev0
+      real(8), dimension(0:jb)      :: qs,dn,ut
 c
 c     ******************************************************************
 c
       logical locke
+      integer, external :: idmax
+      integer :: i,j,k,js,jmax,lend,lbig,jse,ii
+      real(8) :: pi,ckr,cwk,scf,tt,aturb
+      real(8) :: dx13,dy13,dx24,dy24,du13,dv13,du24,dv24,ua,va,dsij
+      real(8) :: dvdx,dudy,dudx,dvdy,fx,xy,yy,si,dsi,cdu,uinf,ra,fc
+      real(8) :: xbi,ybi,ycorr,astra,ysci,ysc,csc,fac,den,pex
+      real(8) :: rnul,rnut,rnut0,rnut1,rnul3,a11,a1,a2,a3
 c
 c     ******************************************************************
 c
@@ -166,7 +177,7 @@ c     ******************************************************************
       yy        = .5*(x(i,j,2)  -x(i,j-1,2)
      .               +x(i-1,j,2)  -x(i-1,j-1,2))
       qs(j)     = (yy*w(i,j,2)  -xy*w(i,j,3))/(w(i,j,1))
-      si        = sign(1.,qs(js))
+      si        = sign(real(1.,8),qs(js))
 
       do j=2,js
          xy        = .5*(x(i,j,1)  -x(i,j-1,1)
@@ -325,4 +336,59 @@ c
 
       return
 
-      end
+      end subroutine
+
+
+      integer function idmax(n,sx,incx)
+c
+c     ******************************************************************
+c     *                                                                *
+c     *   find the index of element having max value                   *
+c     *                                                                *
+c     ******************************************************************
+c
+      integer :: i,incx,ix,n
+c
+c     *****************************************************************
+c
+      real(8) :: smax
+      real(8), dimension(0:n-1) :: sx
+c
+c     *****************************************************************
+c
+      idmax     = 0
+      if (n.lt.1) return
+
+      idmax     = 1
+      if (n.eq.1) return
+
+      if (incx.eq.1) go to 11
+c
+c      code for increment not equal to 1
+c
+      ix        = 1
+      smax      = sx(1)
+      ix        = ix + incx
+      do i=2,n
+         if (sx(ix).gt.smax) then
+            idmax     = i
+            smax      = sx(ix)
+         end if
+         ix        = ix + incx
+      end do
+
+      return
+c
+c      code for increment equal to 1
+c
+   11 smax = sx(1)
+      do i=2,n
+         if (sx(i).gt.smax)then
+            idmax     = i
+            smax      = sx(i)
+         end if
+      end do
+
+      return
+
+      end function

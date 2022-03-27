@@ -13,7 +13,10 @@ from bin.Field import pos_diff, max, min
 from bin.model_funcs.BaldwinLomax import turbulent_viscosity
 from bin.model_funcs.BoundaryThickness import boundary_thickness
 
-def compute_viscosity(model, ws, state):
+# select model
+KTURB = 0
+
+def compute_viscosity(model, ws, state,ncyc=0):
     """Computes viscosity coefficients. 
         First, computes the molecular viscosity. 
         Then continues for turbulent, Baldwin Lomax Model 
@@ -74,10 +77,6 @@ def compute_viscosity(model, ws, state):
     ynot = np.ones(nxp)
     dsti = np.ones(nxp)
 
-    
-    # select model
-    kturb = 0
-    
     # mg_param
     mode = 1
     if ws.is_finest():
@@ -107,16 +106,16 @@ def compute_viscosity(model, ws, state):
         return
 
     aturb     = 1.
-    #if (ncyc > 25): commented out bc don't know how to implement FIX!!!
-    #    aturb = .5
-    if (kturb == 1): 
+    if (ncyc > 25): 
+       aturb = .5
+    if (KTURB == 1): 
         rev0[1:ie+1,1:je+1] = rev[1:ie+1,1:je+1]
 
         '''
         If running laminar flows, calculation is more simple.
         Call either the Baldwin Lomax Model or run the RNG algebraic model.
         '''
-        turbulent_viscosity(model, ws, w) # CHECK THIS FILE FIX!!!
+        turbulent_viscosity(model, ws, w)
 
 
         rev[1:ie+1,1:je+1] = aturb*rev[1:ie+1,1:je+1]  +(1.0  -aturb)*rev0[1:ie+1,1:je+1]
