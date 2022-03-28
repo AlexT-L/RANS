@@ -580,5 +580,15 @@ def mismatch_truediv(self, other):
 
     return result
 
+def save(path, data, allow_pickle=True, fix_imports=True):
+    path += ".npy"
+    np.save(path, data, allow_pickle, fix_imports)
+    
+
+def load(path, mmap_mode=None, allow_pickle=False, fix_imports=True, encoding='ASCII'):
+    path += ".npy"
+    return np.load(path, mmap_mode, allow_pickle, fix_imports, encoding)
+
+
 Infinity = Infinity
 NaN = NaN

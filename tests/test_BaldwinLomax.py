@@ -1,13 +1,8 @@
-"""This module tests the python version of eflux against the fortran version
+"""This module tests the python version of BaldwinLomax against the fortran version (turb2.f)
 
     Libraries/Modules:
         pytest\n
-        numpy\n
         Field\n
-        Input\n
-        AirfoilMap\n
-        CellCenterWS\n
-        NS_Airfoil\n
         NavierStokes\n
     
         """
@@ -16,51 +11,36 @@ import sys
 sys.path.append("../../RANS/bin")
 
 import pytest
-import numpy as np
-from bin.Field import Field, isfinite, max, min, mean, abs
-from bin.Input import Input
-from bin.AirfoilMap import AirfoilMap
-from bin.CellCenterWS import CellCenterWS
-from bin.NS_Airfoil import NS_Airfoil
-from bin.NavierStokes import UPDATE_FORTRAN_DATA, NavierStokes
+from bin.Field import Field, max, min, mean, abs, save, load
+from bin.NavierStokes import UPDATE_FORTRAN_DATA
+from tests.validation.validation import get_environment
 
 
-def test_BL_validation():    
-    # create input and grid
-    filename = 'rae9-s1.data'
-
-    # read in input
-    input = Input(filename)
-
-    # format input
-    input.geo_param["inflation_layer"] = (input.flo_param["kvis"] != 0)
-    gridInput = input.add_dicts(input.geo_param, input.in_var)
-    grid_dim = [input.dims['nx'], input.dims['ny']]
-    modelInput = input.add_dicts(input.flo_param, input.solv_param)
-
-    # create geometry objects
-    grid = AirfoilMap.from_file(grid_dim, gridInput)
-    ws = CellCenterWS(grid)
-
-    # create physics objects
-    bcmodel = NS_Airfoil(modelInput)
-    model = NavierStokes(bcmodel, modelInput)
-
+def test_turb_validation():    
+    # set up environment
+    [model, ws, state, [nx, ny]] = get_environment()
+    
     # create faux fields
-    [nx, ny] = [grid.dims['nx'], grid.dims['ny']]
-    dim = model.dim()
-    state = np.zeros((nx, ny, dim))
-    ev = np.zeros((nx, ny))
-    model.init_state(ws,state)
-    model.test(ws,state,ev,'turb')
+    ev = Field.create((nx,ny))
+    
+    # perform test of python script
+    model.test(ws,state,ev,'ev')
 
     # compare with fortran
     if UPDATE_FORTRAN_DATA:
-        ev_fortran = np.zeros(ev.shape)
+        ev_fortran = Field.create(ev.shape)
+        model.test(ws,state,ev_fortran,'ev','fortran')
+        save('tests/validation/ev', ev_fortran)
+    TOL = 1e-8
+    ev_fortan = load('tests/validation/ev')
+
+    # compare with fortran
+    if UPDATE_FORTRAN_DATA:
+        ev_fortran = Field.create(ev.shape)
         model.test(ws,state,ev_fortran,'turb','fortran')
-        np.save('tests/validation/turb.npy', ev_fortran)
+        save('tests/validation/turb', ev_fortran)
     TOL = 1e-5
-    ev_fortan = np.load('tests/validation/turb.npy', allow_pickle=False)
+    ev_fortan = load('tests/validation/turb')
 
     print ("max(ev_fortran) = "+str(max(ev_fortan)))
     print ("max(ev) = "+str(max(ev)))

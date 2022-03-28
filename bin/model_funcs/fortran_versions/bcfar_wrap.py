@@ -1,5 +1,7 @@
 # fortran module
-import bcfar_fort 
+import sys
+sys.path.append('../../../')
+from bin.model_funcs.fortran_versions import bcfar_fort 
 
 def bc_far(self, model, workspace, state):
     # define helper function for getting fields

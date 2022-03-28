@@ -7,7 +7,7 @@ from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
 import numpy as np
 
-UPDATE_FORTRAN_DATA = False
+UPDATE_FORTRAN_DATA = True
 
 # Validation
 from bin.model_funcs.BaldwinLomax import turbulent_viscosity
