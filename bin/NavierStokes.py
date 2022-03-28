@@ -371,6 +371,7 @@ class NavierStokes(Model):
             return workspace.get_field(varName, self.className)
         w = get("w")
         dw = get("dw")
+        bcmodel = self.BCmodel
 
         # copy state into padded array
         self.__copy_in(state, w)
@@ -415,7 +416,7 @@ class NavierStokes(Model):
             if code=='fortran':
                 viscosity_fortran(self, workspace, w)
             else:
-                self.BCmodel.update_physics(self, workspace, w)
+                bcmodel.update_physics(self, workspace, w)
                   
             # return ev
             self.__copy_out(get('ev'), output)
@@ -425,19 +426,42 @@ class NavierStokes(Model):
             if code=='fortran':
                 viscosity_fortran(self, workspace, w)
             else:
-                self.BCmodel.update_physics(self, workspace, w)
+                bcmodel.update_physics(self, workspace, w)
                     
             # return ev
             self.__copy_out(get('lv'), output)
             assert(isfinite(output))
             return
         
-        
         # update viscosity
-        self.BCmodel.update_physics(self, workspace, w)
+        bcmodel.update_physics(self, workspace, w)
+        
+        # test boundary conditionsif method=='bcfar':
+        if method=='bcwall':
+            if code=='fortran':
+                eflux_fortran(self, workspace, w, dw)
+            else:
+                eflux(self, workspace, w, dw)
+        if method=='bcfar':
+            bcmodel.bcwall(self, workspace, w)
+            if code=='fortran':
+                eflux_fortran(self, workspace, w, dw)
+            else:
+                eflux(self, workspace, w, dw)
+        if method=='halo':
+            bcmodel.bcwall(self, workspace, w)
+            bcmodel.bcfar(self, workspace, w)
+            if code=='fortran':
+                eflux_fortran(self, workspace, w, dw)
+            else:
+                eflux(self, workspace, w, dw)
+                
+        if method=='bcwall' or method=='bcfar' or method=='halo':
+            self.__copy_out(w, output)
+            assert isfinite(output)
+            return
         
         # update boundary conditions
-        bcmodel = self.BCmodel
         bcmodel.bc_all(self, workspace, w)
 
         # calculate residuals
@@ -456,7 +480,7 @@ class NavierStokes(Model):
                 dfluxc_fortran(self, workspace, w, dw, 1)
             else:
                 dfluxc(self, workspace, w, dw, 1)
-        if method=='vfluxc':
+        if method=='nsfluxc':
             if code=='fortran':
                 nsflux_fortran(self, workspace, w, dw, 1)
             else:

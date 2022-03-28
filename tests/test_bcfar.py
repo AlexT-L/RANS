@@ -1,70 +1,42 @@
-'''
+"""This module tests the python version of dflux against the fortran version
+
+    Libraries/Modules:
+        pytest\n
+        Field\n
+        NavierStokes\n
+    
+        """
+
 import sys
-sys.path.append("../")
+sys.path.append("../../RANS/bin")
 
-import bcfar_fort
-import numpy as np
-#from eflux_arr import eflux
-from Field import Field
+import pytest
+from bin.Field import Field, max, min, mean, abs, save, load
+from bin.NavierStokes import UPDATE_FORTRAN_DATA
+from tests.validation.validation import get_environment
 
-# grab grid related parameter
-#G = ws.grid
-nx = 4
-ny = 10
-il = nx+1
-jl = ny+1
-ie = il+1
-je = jl+1
-itl = 1
-itu = 3
-ib = il + 2
-jb = jl + 2
 
-# flow related vars
-w = Field.create([ib,jb],4) # state
-w = np.array(w + 15*np.random.standard_normal([ib,jb,4]),order = 'f')
-P = Field.create([ib,jb]) # pressure
-lv = Field.create([ib,jb]) # laminar viscocity
-ev = Field.create([ib,jb]) # eddy viscocity
+def test_bcfar_validation():    
+    # set up environment
+    [model, ws, state, [nx, ny]] = get_environment()
+    
+    # create faux fields
+    dw = Field.create((nx, ny, model.dim()))
+    
+    # perform test of python script
+    model.test(ws,state,dw,'bcfar')
 
-# mesh related vars
-porI = Field.create([ib,jb],2) # mesh vertices
-porI = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-porJ = Field.create([ib,jb],2) # mesh centers
-porJ = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-xc = Field.create([ib,jb],2) # mesh vertices
-xc = np.array(porI + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
-x = Field.create([ib,jb],2) # mesh centers
-x = np.array(porJ + 15*np.random.standard_normal([ib,jb,2]),order = 'f')
+    # compare with fortran
+    if UPDATE_FORTRAN_DATA:
+        dw_fortran = Field.create(dw.shape)
+        model.test(ws,state,dw_fortran,'bcfar','fortran')
+        save('tests/validation/bcfar', dw_fortran)
+    TOL = 1e-5
+    dw_fortan = load('tests/validation/bcfar')
 
-# solver related vars
-fw = Field.create([ib,jb],4)
-radI = Field.create([ib,jb],2) # stability I
-radJ = Field.create([ib,jb],2) # stability J
-
-gamma = 1.4
-rm = 1.2
-scal = 1.8
-re = 50000
-chord = 2.6
-prn = 1000
-prt = 10000
-mode = 1
-rfil = 0.8
-vis0 = 0.5
-rho0 = 1
-p0 = 1;h0 = 1;c0 = 1;u0 = 1;v0 = 1;ca= 1;sa = 1; xm = 1; ym = 1; kvis = 1; bc = 1
-
-print(w[0][0][0])
-print(bcfar_fort.__doc__)
-# residuals returned in Field dw
-bcfar_fort.bcfar(il, jl, ie, je, itl, itu, \
-      w, P, lv, ev,  \
-      x, xc, \
-      gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm, \
-      ym,kvis, \
-      bc, \
-      mode)
-
-print(w[0][0][0])
-'''
+    print ("max(dw_fortran) = "+str(max(dw_fortan)))
+    print ("max(dw) = "+str(max(dw)))
+    print ("mean(dw_fortran-dw) = "+str(mean(dw_fortan-dw)))
+    print ("min(dw_fortran-dw) = "+str(min(abs(dw_fortan-dw))))
+    assert max(abs(dw_fortan - dw)) < TOL
+    
