@@ -25,7 +25,7 @@ from bin.NS_Airfoil import NS_Airfoil
 from bin.NavierStokes import NavierStokes, UPDATE_FORTRAN_DATA
 
 TOLERANCE = 1.0e-6
-RANDOM_STATE = False
+RANDOM_STATE = True
 UPDATE_STATE = False
 DELTA = 0.5
 FORCE_FAIL = False
@@ -91,7 +91,6 @@ def analyze(output, output_fortran, outName="output"):
     print ("min("+outName+"_fortran - "+outName+") = "+str(min(abs(output_fortran-output))))
     print ("max("+outName+"_fortran - "+outName+") = "+str(max(abs(output_fortran-output))))
     assert max(abs((output_fortran - output)/max(abs(output)))) < TOLERANCE
-    # assert max(abs(output)) > 0
 
 
 def run_test(testName):

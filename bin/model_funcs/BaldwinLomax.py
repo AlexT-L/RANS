@@ -46,8 +46,8 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
     [ie, je] = [nx+2, ny+2]
     [nxp, nyp] = [nx+4, ny+4]
     dims = ws.get_dims()
-    itl = dims['itl']
-    itu = dims['itu']
+    itl = dims['itl']+1
+    itu = dims['itu']+1
     w = state
     x = ws.get_field('x')
     p = wsget('p')
@@ -88,7 +88,7 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
     jlm       = jl- 1
 
     jstop     = (int)(3* (j2- 2)/5)
-    itlp      = itl+ 1    
+    itlp      = itl+ 1
 
     cwk1      = 1.0
     ckleb     = 0.3
@@ -299,7 +299,7 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
         amuti[2:jstop+1]   = rey* sgrmi* ravg[2:jstop+1]* amuti1
         amuti[2:jstop+1]   = abs(amuti[2:jstop+1])
         amuti[1]  = 0.0
-        if (i<itl or i>=itu):
+        if (i<=itl or i>itu):
             amuti[1] = amuti[2]
         '''
         Load viscosity coeffs. into array, use inner value until

@@ -7,9 +7,9 @@ def halo_geom(self, model, workspace):
         """
     # get dimensions
     dims = workspace.get_dims()
-    itl = dims['itl']
-    itu = dims['itu']
     pad = self.padding
+    itl = dims['itl'] + pad
+    itu = dims['itu'] + pad
     [nx, ny] = workspace.field_size()
     nnx = pad+nx+pad
     nny = pad+ny+pad
@@ -45,7 +45,7 @@ def halo_geom(self, model, workspace):
         xc[ie,j,1]  = x[nx,j-1,1]  +x[nx,j-2,1]  -xc[il,j,1]
 
     # reflective symmetry boundary
-    for i in range(pad,itl+pad):
+    for i in range(pad,itl):
         vol[ib-i,1]   = vol[i,2]
         xc[ib-i,1,0]  = xc[i,2,0]
         xc[ib-i,1,1]  = xc[i,2,1]

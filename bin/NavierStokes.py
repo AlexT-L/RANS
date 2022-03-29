@@ -19,7 +19,9 @@ if UPDATE_FORTRAN_DATA:
     from bin.model_funcs.fortran_versions.turb2_wrap import turb_BL as turb2
     from bin.model_funcs.fortran_versions.delt_wrap import thickness as thickness_fortran
     from bin.model_funcs.fortran_versions.viscf_wrap import viscosity as viscosity_fortran
+    from bin.model_funcs.fortran_versions.bcwall_wrap import bc_wall as bcwall_fortran
     from bin.model_funcs.fortran_versions.bcfar_wrap import bc_far as bcfar_fortran
+    from bin.model_funcs.fortran_versions.halo_wrap import halo as halo_fortran
 
 
 class NavierStokes(Model):
@@ -301,8 +303,8 @@ class NavierStokes(Model):
         porj = bcmodel.get_porj(workspace)
 
         # copy over porosity values
-        pori[:] = copy(porI)
-        porj[:] = copy(porJ)
+        porI[:] = copy(pori)
+        porJ[:] = copy(porj)
 
         # copy over volume and centers
         VOL = workspace.get_field("vol")
@@ -426,20 +428,20 @@ class NavierStokes(Model):
         # test boundary conditionsif method=='bcfar':
         if method=='bcwall':
             if code=='fortran':
-                bcfar_fortran(bcmodel, self, workspace, w)
+                bcwall_fortran(bcmodel, self, workspace, w)
             else:
                 bcmodel.bc_wall(self, workspace, w)
         if method=='bcfar':
-            # bcmodel.bc_wall(self, workspace, w)
+            bcmodel.bc_wall(self, workspace, w)
             if code=='fortran':
                 bcfar_fortran(bcmodel, self, workspace, w)
             else:
                 bcmodel.bc_far(self, workspace, w)
         if method=='halo':
-            # bcmodel.bc_wall(self, workspace, w)
+            bcmodel.bc_wall(self, workspace, w)
             # bcmodel.bc_far(self, workspace, w)
             if code=='fortran':
-                bcfar_fortran(bcmodel, self, workspace, w)
+                halo_fortran(bcmodel, self, workspace, w)
             else:
                 bcmodel.halo(self, workspace, w)
                 

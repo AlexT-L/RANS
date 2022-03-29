@@ -1,7 +1,17 @@
-'''
-import halo_fort
+"""This module tests the python version of halo against the fortran version
 
-print(halo_fort.__doc__)
+    Libraries/Modules:
+        pytest\n
+        validation\n
+    
+        """
 
-halo_fort.halo(il,jl,ie,je,itl,itu,w,p,vol)
-'''
+import sys
+sys.path.append("../../RANS/bin")
+import pytest
+from tests.validation.validation import run_test
+
+
+def test_halo_validation():    
+    run_test('halo')
+    

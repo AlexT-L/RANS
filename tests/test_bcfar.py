@@ -1,18 +1,14 @@
-"""This module tests the python version of dflux against the fortran version
+"""This module tests the python version of bcfar against the fortran version
 
     Libraries/Modules:
         pytest\n
-        Field\n
-        NavierStokes\n
+        validation\n
     
         """
 
 import sys
 sys.path.append("../../RANS/bin")
-
 import pytest
-from bin.Field import Field, max, min, mean, abs, save, load
-from bin.NavierStokes import UPDATE_FORTRAN_DATA
 from tests.validation.validation import run_test
 
 

@@ -47,6 +47,7 @@ class NS_Airfoil(BoundaryConditioner):
             state (Field): current state of the system (density, momentum, energy)
     
         """
+        self.__check_vars(workspace)
         ### This method should call Baldwin Lomax ###
         compute_viscosity(model, workspace, state)
     

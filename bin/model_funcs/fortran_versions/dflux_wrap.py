@@ -15,8 +15,6 @@ from bin.model_funcs.fortran_versions import dflux_fort
 
 def dflux(model,ws,w,dw,rfil):
     
-    
-    print(max(abs(dw)))
     [nx, ny] = ws.field_size()
     [il, jl] = [nx+1, ny+1]
     [ie, je] = [nx+2, ny+2]
@@ -39,11 +37,11 @@ def dflux(model,ws,w,dw,rfil):
     vis4 = model.params['vis4']
 
     # residuals returned in Field vw
-    dflux_fort.dflux(ny,il,jl,ie,je, \
+    dflux_fort.dflux(ny,ie,je, \
                     w,p, \
                     porI,porJ, \
                     fw, radI, radJ, \
-                    rfil,vis2,vis4)
+                    rfil,vis2,vis4,[il,jl,ib,jb])
 
 
     # put in residuals

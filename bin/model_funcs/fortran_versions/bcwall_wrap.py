@@ -1,5 +1,7 @@
 # fortran module
-import bcwall_fort
+import sys
+sys.path.append('../../../')
+from bin.model_funcs.fortran_versions import bcwall_fort
 
 def bc_wall(self, model, workspace, state):
     # define helper function for getting fields
@@ -24,11 +26,10 @@ def bc_wall(self, model, workspace, state):
     # flo_var
     w = state
     p = get("p")
-    rev = get("rev")
+    rev = get("ev")
     
     # mesh_var
-    coords = workspace.get_field("x")
-    x = coords
+    x = workspace.get_field("x")
     
     # flo_param
     rm = model.params['rm']
@@ -36,10 +37,15 @@ def bc_wall(self, model, workspace, state):
     kvis = model.params['kvis']
     
     # solv_param
-    isym = geom.isym
+    isym = geom['isym']
     
-    bcwall_fort.bcwall(ny, il, ie, ib, itl+1, itu+1, 
-                        w, p, rev,
-                        x,
-                        rm, sa, kvis,
-                        isym)
+    # mg_param
+    mode = 1
+    if workspace.is_finest():
+        mode = 0
+
+    bcwall_fort.bcwall(ny, ie, itl+1, itu+1, \
+                        w, p, rev, \
+                        x, \
+                        kvis, isym, mode, \
+                        [il,jl,ie,je])

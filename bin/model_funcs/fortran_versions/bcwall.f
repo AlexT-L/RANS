@@ -1,4 +1,4 @@
-      subroutine bcwall(ny, ie, itl, itu, ib, jb,
+      subroutine bcwall(ny, il, jl, ie, itl, itu, ib, jb,
      & w, p, rev,
      & x,
      & kvis,
@@ -18,7 +18,7 @@ c
 c     ******************************************************************
       implicit none
 c     dims
-      integer, intent(in)      :: ny, ie, ib, jb
+      integer, intent(in)      :: ny, il, jl, ie, ib, jb
       integer, intent(in)         :: itl,itu      
 c
 c     ******************************************************************
@@ -28,7 +28,7 @@ c      use flo_var
       real(8), intent(inout), dimension(0:ib,0:jb) :: p, rev
 
 c      use mesh_var
-      real, dimension(0:ib,0:jb,2), intent(in) :: x
+      real(8), intent(in), dimension(1:il,1:jl,2) :: x
 
 c
 c     ******************************************************************
@@ -53,7 +53,7 @@ c
 c
 c     ******************************************************************
 c
-      real     :: a,b,sxn,xxn,yxn,xy,yy
+      real(8)     :: a,b,sxn,xxn,yxn,xy,yy
       real(8)     :: ra,rua,rva,px,py,qs,qt,qn,gxy,qxy
 c
 c     ******************************************************************

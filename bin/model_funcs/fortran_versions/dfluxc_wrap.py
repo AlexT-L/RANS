@@ -17,7 +17,9 @@ def dfluxc(model,ws,w,dw,rfil):
 
     # grab grid related parameters
     [nx, ny] = ws.field_size()
-    [il, jl] = ws.grid_size()
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
 
     # getter method for model
     def get(varName):
@@ -37,11 +39,12 @@ def dfluxc(model,ws,w,dw,rfil):
     vis0 = model.params['vis0']
 
     # residuals returned in Field vw
-    dfluxc_fort.dfluxc(ny,il,jl, \
+    dfluxc_fort.dfluxc(ny, \
                         w,p, \
                         porJ, \
                         fw, radI, radJ, \
-                        rfil,vis0)
+                        rfil,vis0,
+                        [il,jl,ib,jb])
 
 
     # put in residuals

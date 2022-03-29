@@ -62,11 +62,12 @@ c     from flo_var
       real(8), intent(inout), dimension(0:ib,0:jb) :: p
 
 c     from mesh_var
-      real(8), intent(in), dimension(:,:)   :: pori,porj
+      real(8), intent(in), dimension(1:il,2:jl)   :: pori
+      real(8), intent(in), dimension(2:il,1:jl)   :: porj
 
 c     from solv_var
-      real(8), intent(inout), dimension(:,:,:) :: fw
-      real(8), intent(inout), dimension(:,:)   :: radi,radj
+      real(8), intent(inout), dimension(0:ib,0:jb,4) :: fw
+      real(8), intent(inout), dimension(0:ib,0:jb)   :: radi,radj
 
 c     from solv_param
       real(8), intent(in)     :: rfil, vis2, vis4

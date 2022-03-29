@@ -24,11 +24,11 @@ c
 c     ******************************************************************
 c
 c      use flo_var
-      real, dimension(0:ib,0:jb,4), intent(inout)  :: w
-      real, dimension(0:ib,0:jb), intent(inout)    :: p
+      real(8), intent(inout), dimension(0:ib,0:jb,4)  :: w
+      real(8), intent(inout), dimension(0:ib,0:jb)    :: p
 
 c      use mesh_var
-      real, dimension(0:ib,0:jb), intent(inout)   :: vol
+      real(8), intent(inout), dimension(0:ib,0:jb)   :: vol
 c
 c     ******************************************************************
 c
