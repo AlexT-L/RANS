@@ -7,7 +7,7 @@ import sys
 sys.path.append('../RANS/bin')
 
 import numpy as np
-from bin.Field import maximum, minimum, Field
+from bin.Field import maximum, minimum, Field, max, abs
 # from Grid import Grid
 
 # class BaldwinLomax():
@@ -193,8 +193,8 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
         if (jmaxv == 0): 
             jmaxv = 1 
 
-        jminut    = np.argmin(utot1)
-        jmaxut    = np.argmax(utot1)
+        jminut    = np.argmin(utot1[1:jlm+1])+1
+        jmaxut    = np.argmax(utot1[1:jstop+1])+1
 
         avorm[i]  = avor[jmaxv]
         utmin[i]  = utot1[jminut]
@@ -301,7 +301,6 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
         amuti[1]  = 0.0
         if (i<itl or i>=itu):
             amuti[1] = amuti[2]
-
         '''
         Load viscosity coeffs. into array, use inner value until
         match point is reached
@@ -333,6 +332,7 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
             
             amut[i,1:jcrosm+1] = amuti[1:jcrosm+1]
             amut[i,jcros:jstop+1] = amuto[jcros:jstop+1]
+     
         '''
         Compute turbulent viscosity at cell center
         '''
@@ -347,6 +347,6 @@ def turbulent_viscosity(model, ws, state,ncyc=0):
     Copy amut to rev
     '''
     scale     = 1.0
-    rev[1:ie+1,1:je+1]  = scale*amut[1:ie+1,1:je+1]
+    rev[1:ie+1,1:je+1]  = scale*amu[1:ie+1,1:je+1]
 
     return

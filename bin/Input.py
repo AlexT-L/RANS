@@ -114,6 +114,8 @@ import pandas as pd
 #               ysing     = y-coordinate in physical space that 
 #                           becomes origin after square root mapping
 #               chord      = chord length
+#               xm        = x-coordinate of singularity
+#               ym        = y-coordinate of singularity
 
 # in_var:       xn        =x-coordinate of airfoil geometry in physical space
 #               yn        =y-coordinate of airfoil geometry in physical space

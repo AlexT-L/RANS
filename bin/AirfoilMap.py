@@ -88,7 +88,6 @@ class AirfoilMap(Grid):
 
 
 
-
 # input=Input("rae1-s1.data")
 # print("INPUT")
 # grid = AirfoilMap(input)

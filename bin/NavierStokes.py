@@ -1,11 +1,10 @@
 from numpy.core.numeric import Infinity
 from bin.Model import Model
 from bin.Workspace import Workspace
-from bin.Field import Field, max, min, isfinite, pos_diff, copy
+from bin.Field import Field, max, min, isfinite, pos_diff, copy, minimum
 from bin.model_funcs.eflux import eflux
 from bin.model_funcs.dflux import dflux
 from bin.model_funcs.dfluxc import dfluxc
-import numpy as np
 
 UPDATE_FORTRAN_DATA = True
 
@@ -20,6 +19,7 @@ if UPDATE_FORTRAN_DATA:
     from bin.model_funcs.fortran_versions.turb2_wrap import turb_BL as turb2
     from bin.model_funcs.fortran_versions.delt_wrap import thickness as thickness_fortran
     from bin.model_funcs.fortran_versions.viscf_wrap import viscosity as viscosity_fortran
+    from bin.model_funcs.fortran_versions.bcfar_wrap import bc_far as bcfar_fortran
 
 
 class NavierStokes(Model):
@@ -62,7 +62,7 @@ class NavierStokes(Model):
         self.cfl_fine = abs(input['cflf'])
         self.cfl_coarse = abs(input['cflc'])
         self.cfl_lim = Infinity
-        self.cfl = np.minimum(self.cfl_fine, self.cfl_lim)
+        self.cfl = minimum(self.cfl_fine, self.cfl_lim)
         
 
     # initialize state
@@ -213,7 +213,7 @@ class NavierStokes(Model):
         cfl = self.cfl_coarse
         if workspace.is_finest():
             cfl = self.cfl_fine
-        self.cfl = np.minimum(cfl, self.cfl_lim)
+        self.cfl = minimum(cfl, self.cfl_lim)
 
         # return courant number
         return self.cfl
@@ -355,7 +355,7 @@ class NavierStokes(Model):
 
 ### TESTING
 
-    def test(self, workspace, state, output, method, code=''):
+    def test(self, workspace, state, method, code=''):
         """Calculates the spatial eflux given the current state.
         
         Args:
@@ -385,53 +385,40 @@ class NavierStokes(Model):
                 turb2(self, workspace, w)
             else:
                 turbulent_viscosity(self, workspace, w)
-                
             # return ev
-            self.__copy_out(get('ev'), output)
-            assert(isfinite(output))
-            return
+            return copy(get('ev'))
         
         if method=='ynot':
             if code=='fortran':
                 [ynot,dsti] = thickness_fortran(self, workspace, w)
             else:
                 [ynot,dsti] = boundary_thickness(self, workspace, w)
-                
             # return ynot
-            self.__copy_out(ynot, output)
-            assert(isfinite(output))
-            return
+            return copy(ynot)
+        
         if method=='dsti':
             if code=='fortran':
                 [ynot,dsti] = thickness_fortran(self, workspace, w)
             else:
                 [ynot,dsti] = boundary_thickness(self, workspace, w)
-               
             # return dsti
-            self.__copy_out(dsti, output)
-            assert(isfinite(output))
-            return
+            return copy(dsti)
 
         if method=='ev':
             if code=='fortran':
                 viscosity_fortran(self, workspace, w)
             else:
                 bcmodel.update_physics(self, workspace, w)
-                  
             # return ev
-            self.__copy_out(get('ev'), output)
-            assert(isfinite(output))
-            return
+            return copy(get('ev'))
+
         if method=='lv':
             if code=='fortran':
                 viscosity_fortran(self, workspace, w)
             else:
-                bcmodel.update_physics(self, workspace, w)
-                    
-            # return ev
-            self.__copy_out(get('lv'), output)
-            assert(isfinite(output))
-            return
+                bcmodel.update_physics(self, workspace, w) 
+            # return lv
+            return copy(get('lv'))
         
         # update viscosity
         bcmodel.update_physics(self, workspace, w)
@@ -439,27 +426,25 @@ class NavierStokes(Model):
         # test boundary conditionsif method=='bcfar':
         if method=='bcwall':
             if code=='fortran':
-                eflux_fortran(self, workspace, w, dw)
+                bcfar_fortran(bcmodel, self, workspace, w)
             else:
-                eflux(self, workspace, w, dw)
+                bcmodel.bc_wall(self, workspace, w)
         if method=='bcfar':
-            bcmodel.bcwall(self, workspace, w)
+            # bcmodel.bc_wall(self, workspace, w)
             if code=='fortran':
-                eflux_fortran(self, workspace, w, dw)
+                bcfar_fortran(bcmodel, self, workspace, w)
             else:
-                eflux(self, workspace, w, dw)
+                bcmodel.bc_far(self, workspace, w)
         if method=='halo':
-            bcmodel.bcwall(self, workspace, w)
-            bcmodel.bcfar(self, workspace, w)
+            # bcmodel.bc_wall(self, workspace, w)
+            # bcmodel.bc_far(self, workspace, w)
             if code=='fortran':
-                eflux_fortran(self, workspace, w, dw)
+                bcfar_fortran(bcmodel, self, workspace, w)
             else:
-                eflux(self, workspace, w, dw)
+                bcmodel.halo(self, workspace, w)
                 
         if method=='bcwall' or method=='bcfar' or method=='halo':
-            self.__copy_out(w, output)
-            assert isfinite(output)
-            return
+            return copy(w)
         
         # update boundary conditions
         bcmodel.bc_all(self, workspace, w)
@@ -480,12 +465,11 @@ class NavierStokes(Model):
                 dfluxc_fortran(self, workspace, w, dw, 1)
             else:
                 dfluxc(self, workspace, w, dw, 1)
-        if method=='nsfluxc':
+        if method=='nsflux':
             if code=='fortran':
                 nsflux_fortran(self, workspace, w, dw, 1)
             else:
                 nsflux_fortran(self, workspace, w, dw, 1)
                 
-        # copy residuals into output array
-        self.__copy_out(dw, output)
-        assert(isfinite(output))
+        # return copy of residuals
+        return copy(dw)

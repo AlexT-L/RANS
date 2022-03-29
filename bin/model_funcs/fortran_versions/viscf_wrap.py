@@ -60,12 +60,14 @@ def viscosity(model,ws,w,ncyc=0):
     mode = 1
     if ws.is_finest():
         mode = 0
+        
+    assert max(abs(w)) > 0
     
     # call turb2
     turb2_wrap.turb_BL(model,ws,w,ncyc)
 
     # call viscf
-    viscf_fort.viscf(ny,ie,je,itl,itu, \
+    viscf_fort.viscf(ny,ie,je,itl+1,itu+1, \
                     w,p,rlv,rev,x,xc, \
                     gamma,mach,Re,t0,rmu0,xtran,scal,chord, \
                     kvis,kturb, \

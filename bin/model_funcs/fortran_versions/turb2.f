@@ -84,13 +84,13 @@ c
       real(8) :: ystop,amudif,amutc,scale,delta1,dstar1
       real(8) :: ue1,tauw1,aylen,yplus,cf1,atauw,atauwr,ustar,ustari
       real(8) :: yval,ayval,uval,uplus
-      integer, dimension(1:il) :: jedge
-      real(8), dimension(1:il)      :: uedge,tauw,yscal,scalf,avor
-      real(8), dimension(1:il)      :: avorm,ravg,amuto,amuti,yvor
-      real(8), dimension(1:il)      :: yvorm,utotm,ylenm,fkleb
-      real(8), dimension(1:il)      :: utmin,utmax,utot1,fcros
+      integer, dimension(0:il) :: jedge
+      real(8), dimension(0:il)      :: uedge,tauw,yscal,scalf,avor
+      real(8), dimension(0:il)      :: avorm,ravg,amuto,amuti,yvor
+      real(8), dimension(0:il)      :: yvorm,utotm,ylenm,fkleb
+      real(8), dimension(0:il)      :: utmin,utmax,utot1,fcros
       real(8), dimension(0:ib,0:jb) :: amu,u,v,vor,rinv,utot,vola,t,ylen
-      real(8), dimension(1:ie,1:je) :: amut
+      real(8), dimension(0:ib,0:jb) :: amut
 
       integer, external :: ismin,ismax
       real(8), external :: cvmgp
@@ -147,7 +147,7 @@ c
         u(i,j)    = w(i,j,2)* rinv(i,j)
         v(i,j)    = w(i,j,3)* rinv(i,j)
         amu(i,j)  = t(i,j)
-        amut(i,j) = 0.0
+        amut(i,j) = 0.
     5 continue
 c
 c     **********************************************************************
@@ -215,6 +215,7 @@ c
         utotal    = uavg* uavg+ vavg* vavg
         utot(i,j) = sqrt(utotal)
    20 continue
+
 c
 c     determine transition index
 c
@@ -400,6 +401,7 @@ c
    70   continue
         amuti(1)  = 0.0
         if (i.le.itl .or. i.gt.itu) amuti(1) = amuti(2)
+
 c
 c        load viscosity coeffs. into array, use inner value until
 c        match point is reached
@@ -479,6 +481,7 @@ c
             write(6,8100) j,y1,fkleb(j),ravg(j),cmuti,cmuto,amut(i,j)
   195     continue
         end if
+
 c
 c       finish of outer loop
   200 continue
@@ -488,7 +491,7 @@ c
       scale     = 1.
       do j=1,je
       do i=1,ie
-         rev(i,j)  = scale*amut(i,j)
+         rev(i,j)  = scale*amu(i,j)
       end do
       end do
       return
@@ -591,7 +594,7 @@ c     find the largest value of the
 c     elements of sx..if n<=0, return 0
 c
       integer, intent(in) :: n,incx
-      real(8), dimension(n) :: sx
+      real(8), dimension(0:n) :: sx
       real(8) :: sxmin
 c
       ismin = 0
@@ -615,7 +618,7 @@ c     find the largest value of the
 c     elements of sx..if n<=0, return 0
 c
       integer, intent(in) :: n,incx
-      real(8), dimension(n) :: sx
+      real(8), dimension(0:n) :: sx
       real(8) :: sxmax
 c
       ismax = 0

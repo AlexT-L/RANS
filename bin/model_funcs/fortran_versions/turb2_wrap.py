@@ -13,12 +13,7 @@ from bin.model_funcs.fortran_versions import turb2_fort
 
 
 def turb_BL(model,ws,w,ncyc=0):
-    print("turb_BL: "+str(w.shape))
-    assert np.isfortran(w)
-    assert isfinite(w)
-    print(max(w))
-    print(np.dtype(max(w)))
-    
+        
     # grid parameters
     [nx, ny] = ws.field_size()
     [il, jl] = [nx+1, ny+1]
@@ -28,8 +23,6 @@ def turb_BL(model,ws,w,ncyc=0):
     dims = ws.get_dims()
     itl = dims['itl']
     itu = dims['itu']
-
-    print("expected shape: ("+str(ib+1)+", "+str(jb+1)+", 4)")
     
     # flow related variabless
     def get(varName):
@@ -48,7 +41,7 @@ def turb_BL(model,ws,w,ncyc=0):
     xtran = model.params['xtran']
     
     # call turb
-    turb2_fort.turb2(ie,je,itl,itu, w,p,ev, x,vol, \
+    turb2_fort.turb2(ie,je,itl+1,itu+1, w,p,ev, x,vol, \
                      gamma,mach,Re,xtran, ncyc, [il,jl,ib,jb])
     print("fortran finished!")
 

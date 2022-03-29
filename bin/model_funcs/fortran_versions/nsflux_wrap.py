@@ -14,14 +14,14 @@ def nsflux(self,ws,w,dw,rfil):
 
     # calculate viscous fluxes given a workspace
 
-    # grab grid related parameters
-    dims = ws.get_dims()
-    il = dims['il']
-    jl = dims['jl']
-    ie = dims['ie']
-    je = dims['je']
-    itl = dims['itl']
-    itu = dims['itu']
+    # get geometry dictionary
+    geom = ws.get_geometry()
+    
+    # dims
+    [nx, ny] = ws.field_size()
+    [il, jl] = [nx+1, ny+1]
+    [ie, je] = [nx+2, ny+2]
+    [ib, jb] = [nx+3, ny+3]
     
     # geometric parameters
     geom = ws.get_geometry()
@@ -29,16 +29,17 @@ def nsflux(self,ws,w,dw,rfil):
     chord = geom['chord']
 
     # flow related variabless
-    p = ws.get('p',self.className) # pressure
-    lv = ws.get('lv',self.className) # laminar viscocity
-    ev = ws.get('ev',self.className) # eddy viscocity
-    vw = ws.get('vw',self.className) # storage for viscous residuals
+    def get(varName):
+        return ws.get_field(varName, self.className)
+    p = get('p') # pressure
+    lv = get('lv') # laminar viscocity
+    ev = get('ev') # eddy viscocity
+    vw = get('vw') # storage for viscous residuals
 
     # flow parameters
     gamma = self.params['gamma']
     mach = self.params['rm']
     Re = self.params['re']
-    chord = self.params['chord']
     
     # output params (not important)
     prn = 0
@@ -54,14 +55,14 @@ def nsflux(self,ws,w,dw,rfil):
     xc = ws.get_field('xc', self.className) # mesh centers
 
     # residuals returned in Field vw
-    nsflux_fort.nsflux(il, jl, ie, je, \
+    nsflux_fort.nsflux(ie, je, \
                        w, p, lv, ev,  \
                        x, xc, \
                        vw,
                        gamma, mach, scal, \
                        Re, chord, \
-                       prn, prt, mode, \
-                       rfil)
+                       prn, prt, \
+                       rfil, [il,jl,ib,jb])
 
     # add viscous contribution
     dw += vw

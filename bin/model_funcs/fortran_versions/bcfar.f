@@ -1,7 +1,6 @@
       subroutine bcfar(il, jl, ie, je, itl, itu,ib,jb,
      & w, p, rlv, rev, 
      & x, xc,
-     & 
      & gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa,re,prn,prt,scal,chord,xm,
      & ym,kvis,
      & bc,
@@ -45,7 +44,8 @@ c     flo_var
       real(8), intent(inout), dimension(0:ib,0:jb)   :: rlv, rev
 
 c     mesh_var
-      real(8), intent(in), dimension(0:ib,0:jb,2) :: x,xc
+      real(8), intent(in), dimension(1:il,1:jl,2) :: x
+      real(8), intent(in), dimension(0:ib,0:jb,2) :: xc
 
 c     flo_param
       real(8), intent(in)      :: gamma,rm,rho0,p0,h0,c0,u0,v0,ca,sa
