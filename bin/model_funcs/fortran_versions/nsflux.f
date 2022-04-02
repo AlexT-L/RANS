@@ -82,7 +82,6 @@ c
       real(8)     :: gm1,scf,sfil
       real(8)     :: ua,va,rmu,rlam,rk,rlva,reva,dq
       real(8)     :: dx,dy,dxi,dxj,dyi,dyj,dui,duj,dsj
-c      real(8)     :: sigx,sigy,tauxy (ignoring for now)
 c
 c     ******************************************************************
 c
@@ -92,11 +91,8 @@ c
 c
 c     *****************************************************************
 c
-c     if (ny.lt.3) return
-c
       sfil      = 1.  -rfil
       gm1       = gamma - 1.
-c     scf       = rfil*sqrt(gamma)*rm/re
       scf       = rfil*sqrt(gamma)*rm/(scal*re/chord)
 c
 c     calcluate the velocities and temperature
@@ -192,19 +188,6 @@ c
          end do
       end do
       end do
-
-c     (not doing this anymore)
-c     save the maximum shear stress at the wall 
-c
-c      do i=2,il
-c         dx        = x(i,1,1)  -x(i-1,1,1)
-c         dy        = x(i,1,2)  -x(i-1,1,2)
-c         sigx      = .5*(q(i,1,1,1)  +q(i-1,1,1,1))
-c         sigy      = .5*(q(i,1,2,2)  +q(i-1,1,2,2))
-c         tauxy     = .5*(q(i,1,1,2)  +q(i-1,1,1,2))
-c         tw(i)     = (dx*dy*(sigx  -sigy)  -(dx**2  -dy**2)*tauxy)/
-c     .               (dx**2  +dy**2)
-c      end do
 
       return
 

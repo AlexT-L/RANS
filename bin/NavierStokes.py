@@ -22,6 +22,7 @@ if UPDATE_FORTRAN_DATA:
     from bin.model_funcs.fortran_versions.bcwall_wrap import bc_wall as bcwall_fortran
     from bin.model_funcs.fortran_versions.bcfar_wrap import bc_far as bcfar_fortran
     from bin.model_funcs.fortran_versions.halo_wrap import halo as halo_fortran
+    from bin.model_funcs.fortran_versions.stability_wrap import stability as stability_fortran
 
 
 class NavierStokes(Model):
@@ -425,7 +426,47 @@ class NavierStokes(Model):
         # update viscosity
         bcmodel.update_physics(self, workspace, w)
         
-        # test boundary conditionsif method=='bcfar':
+        
+        # test stability
+        if method=='radi':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('radI'))
+        if method=='radj':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('radJ'))
+        if method=='rfli':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('rfli'))
+        if method=='rflj':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('rflj'))
+        if method=='dtl':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('dtl'))
+        if method=='dtlc':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                dtlc = self.BCmodel.update_stability(self, workspace, w)
+            return copy(dtlc)
+        
+        
+        # test boundary conditions
         if method=='bcwall':
             if code=='fortran':
                 bcwall_fortran(bcmodel, self, workspace, w)

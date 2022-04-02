@@ -63,7 +63,7 @@ class NS_Airfoil(BoundaryConditioner):
     
         """
         self.__check_vars(workspace)
-        stability(self, model, workspace, state)
+        return stability(self, model, workspace, state)
     
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):

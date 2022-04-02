@@ -13,7 +13,6 @@
 
 import sys
 sys.path.append("../../RANS/bin")
-#sys.path.append("../../../RANS/bin")
 
 import pytest
 import numpy as np

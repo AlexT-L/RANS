@@ -76,6 +76,7 @@ c
          w(ib-i,1,4) = w(i,2,4)
          p(ib-i,1)   = p(i,2)
       end do
+      return
 
       if (kvis.gt.0) then
 c
@@ -145,6 +146,7 @@ c
          gxy       = xx(i)*xy  +yx(i)*yy
          qxy       = .5*qs*(xxx(i)*rva  -yxx(i)*rua)
          py        = (px*gxy  +qxy)*sx(i)
+         continue
          if (ny.lt.3) py = p(i,3)  -p(i,2)
          p(i,1)    = dim(p(i,2),py)
          w(i,1,4)  = w(i,2,4)  +p(i,2)  -p(i,1)

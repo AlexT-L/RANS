@@ -24,7 +24,6 @@ def stability(self, model, workspace, state):
 
     # get relevant geometry parameters
     dims = workspace.get_dims()
-    grid = workspace.get_grid()
     [nx, ny] = workspace.field_size()
     [nxp, nyp] = [PAD+nx+PAD, PAD+ny+PAD]
     ip = PAD
@@ -41,14 +40,6 @@ def stability(self, model, workspace, state):
     # flo_param
     gamma = model.params['gamma']
     rm = model.params['rm']
-    rho0 = model.params['rho0']
-    p0 = model.params['p0']
-    h0 = model.params['h0']
-    c0 = model.params['c0']
-    u0 = model.params['u0']
-    v0 = model.params['v0']
-    ca = model.params['ca']
-    sa = model.params['sa']
     re = model.params['re']
     prn = model.params['prn']
     prt = model.params['prt']
@@ -70,11 +61,8 @@ def stability(self, model, workspace, state):
     w = state
     p = get("p")
     vol = get("vol")
+        
     
-    lv = 1e-5*np.ones(lv.shape)
-    
-    assert isfinite(radI)
-
     # local working arrays
     def get_local(varName):
             return workspace.get_field(varName, self.className)
@@ -84,7 +72,7 @@ def stability(self, model, workspace, state):
     # dim helper function
     def dim(a, b):
         diff = a-b
-        return max(diff, 0)
+        return maximum(diff, diff*0)
 
     # c
     # c     permissible time step
@@ -154,8 +142,7 @@ def stability(self, model, workspace, state):
         rfli[ip:ie, jp:je] = radI[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
         rflj[ip:ie, jp:je] = radJ[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
     
-    assert isfinite(radI)
-
+    
     # c
     # c
     # c     reduce the artificial dissipation for viscous flows
@@ -181,8 +168,6 @@ def stability(self, model, workspace, state):
         radI[ip:ie, jp:je] = pos_diff(radI[ip:ie, jp:je], vsi)
         radJ[ip:ie, jp:je] = pos_diff(radJ[ip:ie, jp:je], vsj)
 
-    assert isfinite(lv)
-    assert isfinite(radI)
 
     # c
     # c     set boundary values at i=1 and i=ie

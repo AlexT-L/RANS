@@ -40,7 +40,6 @@ def wall(bcmodel, model, workspace, state):
     h0 = mp['h0']
     kvis = mp['kvis']
 
-
     # c
     # c     set values below the cut in the c mesh
     # c
@@ -113,13 +112,10 @@ def wall(bcmodel, model, workspace, state):
         gxy     = xx*xy + yx*yy
         qxy     = qs*(xxx*rhoV_a - yxx*rhoU_a)/2
         py        = (px*gxy  +qxy)*sx[1:itu-itl+1]
-
+        
         if ny < 3:
             py = p[itl:itu,3] - p[itl:itu,2]
 
-        p = Field.create(0, p)
-        py = Field.create(0,py)
-        w = Field.create(0, w)
         p[itl:itu,1] = pos_diff(p[itl:itu,2], py)
         w[itl:itu,1,3] = w[itl:itu,2,3] + p[itl:itu,2] - p[itl:itu,1]
     

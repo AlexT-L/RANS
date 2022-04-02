@@ -1,9 +1,8 @@
-"""This module tests the python version of eflux against the fortran version
+"""This module tests the python version of viscf against the fortran version
 
     Libraries/Modules:
         pytest\n
-        Field\n
-        Validation\n
+        validation\n
     
         """
 
