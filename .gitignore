@@ -133,3 +133,9 @@ dmypy.json
 bin/.DS_Store
 .DS_Store
 *.lprof
+
+#vim files
+*~
+
+#bash scripts
+*.sh

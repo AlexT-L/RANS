@@ -89,6 +89,10 @@ def analyze(output, output_fortran, outName="output"):
     print ("mean("+outName+"_fortran - "+outName+") = "+str(mean(output_fortran-output)))
     print ("min("+outName+"_fortran - "+outName+") = "+str(min(abs(output_fortran-output))))
     print ("max("+outName+"_fortran - "+outName+") = "+str(max(abs(output_fortran-output))))
+    print("\nfortran:")
+    print(output_fortran)
+    print("\npython:")
+    print(output)
     assert max(abs((output_fortran - output)/max(abs(output)))) < TOLERANCE
 
 
@@ -103,4 +107,5 @@ def run_test(testName):
     out_fort = test_fortran(model,ws,state,testName)
 
     analyze(out, out_fort, testName)
+    print("same output!")
     if FORCE_FAIL: assert False

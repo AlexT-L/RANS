@@ -13,8 +13,12 @@ from bin.Field import pos_diff, max, min
 from bin.model_funcs.BaldwinLomax import turbulent_viscosity
 from bin.model_funcs.BoundaryThickness import boundary_thickness
 
+# debugging
+DEBUG = False
+from bin.model_funcs.fortran_versions import turb2_wrap
+
 # select model
-KTURB = 0
+KTURB = 1
 
 def compute_viscosity(model, ws, state,ncyc=0):
     """Computes viscosity coefficients. 
@@ -105,6 +109,8 @@ def compute_viscosity(model, ws, state,ncyc=0):
     if (kvis <= 1) or (mode!=0):
         return
 
+    print("kturb " + str(KTURB))
+
     aturb     = 1.
     if (ncyc > 25): 
        aturb = .5
@@ -115,8 +121,10 @@ def compute_viscosity(model, ws, state,ncyc=0):
         If running laminar flows, calculation is more simple.
         Call either the Baldwin Lomax Model or run the RNG algebraic model.
         '''
-        turbulent_viscosity(model, ws, w)
-
+        if DEBUG:
+            turb2_wrap.turb_BL(model,ws,w,ncyc)
+        else:
+            turbulent_viscosity(model, ws, w)
 
         rev[1:ie+1,1:je+1] = aturb*rev[1:ie+1,1:je+1]  +(1.0  -aturb)*rev0[1:ie+1,1:je+1]
     else:
@@ -144,85 +152,85 @@ def compute_viscosity(model, ws, state,ncyc=0):
         dvdy      = -dsij * (dv13*dx24 - dv24*dx13)
         astr[1:il+1,1:jl+1] = (dudy+dvdx)**2 +2.0*(dudx**2  +dvdy**2  -((dudx+dvdy)**2)/3.0)
 
-    '''
-    Calculates the boundary layer thickness.
-    '''
-    boundary_thickness(model, ws, state, ynot, dsti)
+        '''
+        Calculates the boundary layer thickness.
+        '''
+        boundary_thickness(model, ws, state, ynot, dsti)
 
 
 
-    for j in range(PAD,ny+PAD):
-        for i in range(PAD,nx+PAD):
-            xbi       = 0.5*(x[i-PAD,0,0]  +x[i+1-PAD,0,0])
-            ybi       = 0.5*(x[i-PAD,0,1]  +x[i+1-PAD,0,1])
-            astra     = 0.25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])
-            if (i>=itl-1) and (i<=itu):
-                a3        = 1.0/(0.225*abs(ynot[i]))
-                ysci      = np.sqrt((xc[i,j,0]  -xbi)**2  +(xc[i,j,1]  -ybi)**2)
-                ysc       = w[i,2,0]/(ysci*w[i,j,0])
-                csc       = 1.0/(ysc+a3)**2
-            else:
-                csc       = (cwk*ynot[i])**2
-
-            rnul      = rlv[i,j]/w[i,j,0]
-            rnut0     = rev[i,j]/w[i,j,0]
-            a11       = ckr*(csc*csc*scf*scf)/rnul**2
-            a2        = 75.
-            a1        = a11*(astra)
-            rnut0     = rnul+rnut0
-
-            '''
-            Solves for the eddy viscosity
-            '''
-            
-            if (pos_diff(rnut0*a1,a2) == 0.):
-                rev[i,j]  = 0.
-                continue 
-            else:
-                rnut      = np.sqrt(a1)
-            
-            fac    = a2 - 1.
-
-            MAX_ITER=200
-            for k in range(MAX_ITER):
-                den    = 1.0/(4.0*rnut**3 + fac)
-                rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
-                
-                if (abs((rnut1  -rnut))<=1.0e-3):
-                    rev[i,j] = w[i,j,0]*pos_diff(rnut1,rnul)
-                    break 
-                else:
-                    if (k==MAX_ITER-1):
-                        print(" iteration not converged ("+str(i)+", "+str(j)+")")
-                        print(" rnut = "+str(rnut)+" rnut1 = "+str(rnut1))
-                        
-                        rev[i,j]  = w[i,j,0]*pos_diff(rnut1,rnul)
-                        break 
-
-                    rnut   = rnut1
-
-    #     adjust the near wake
-    ii        = il+1
-    for i in range(PAD,itl+1):
-        ii        = ii  -1
         for j in range(PAD,ny+PAD):
-            pex       = -(xc[i,2,0]  -xc[itl,2,0])/(20.0*dsti[itl])
-            rev[i,j]  = rev[i,j]  +(rev[itl,j]  -rev[i,j])*np.exp(pex)
-            pex       = -(xc[ii,2,0]  -xc[itu-1,2,0])/(20.0*dsti[itu-1])
-            rev[ii,j] = rev[ii,j]  +(rev[itu-1,j]  -rev[ii,j])*np.exp(pex)
+            for i in range(PAD,nx+PAD):
+                xbi       = 0.5*(x[i-PAD,0,0]  +x[i+1-PAD,0,0])
+                ybi       = 0.5*(x[i-PAD,0,1]  +x[i+1-PAD,0,1])
+                astra     = 0.25*(astr[i-1,j-1]  +astr[i-1,j]+astr[i,j-1]    +astr[i,j])
+                if (i>=itl-1) and (i<=itu):
+                    a3        = 1.0/(0.225*abs(ynot[i]))
+                    ysci      = np.sqrt((xc[i,j,0]  -xbi)**2  +(xc[i,j,1]  -ybi)**2)
+                    ysc       = w[i,2,0]/(ysci*w[i,j,0])
+                    csc       = 1.0/(ysc+a3)**2
+                else:
+                    csc       = (cwk*ynot[i])**2
 
-    for i in range(PAD,nx+PAD):
-        ii           = ib  -i 
-        rev[i,je] = rev[i,jl]
-        rev[1,1]  = rev[ii,2]
+                rnul      = rlv[i,j]/w[i,j,0]
+                rnut0     = rev[i,j]/w[i,j,0]
+                a11       = ckr*(csc*csc*scf*scf)/rnul**2
+                a2        = 75.
+                a1        = a11*(astra)
+                rnut0     = rnul+rnut0
 
-    for i in range(itl,itu):
-            if (xc[i,2,0] <= xtran):
-                for j in range(1,jl+1):
-                    rev[i,j]  = 0
-            rev[i,1]  = -rev[i,2]
+                '''
+                Solves for the eddy viscosity
+                '''
+                
+                if (pos_diff(rnut0*a1,a2) == 0.):
+                    rev[i,j]  = 0.
+                    continue 
+                else:
+                    rnut      = np.sqrt(a1)
+                
+                fac    = a2 - 1.
+                
+                MAX_ITER=200
+                for k in range(MAX_ITER):
+                    den    = 1.0/(4.0*rnut**3 + fac)
+                    rnut1  = rnut - (rnut**4+rnut*fac  -rnut0*rnut0*a1)*den
+                    
+                    if (abs((rnut1  -rnut))<=1.0e-3):
+                        rev[i,j] = w[i,j,0]*pos_diff(rnut1,rnul)
+                        break 
+                    else:
+                        if (k==MAX_ITER-1):
+                            print(" iteration not converged ("+str(i)+", "+str(j)+")")
+                            print(" rnut = "+str(rnut)+" rnut1 = "+str(rnut1))
+                            
+                            rev[i,j]  = w[i,j,0]*pos_diff(rnut1,rnul)
+                            break 
 
-    rev[1 ,1:je+1] = rev[2 ,1:je+1]
-    rev[ie,1:je+1] = rev[il,1:je+1]
+                        rnut   = rnut1
 
-    return
+        #     adjust the near wake
+        ii        = il+1
+        for i in range(PAD,itl+1):
+            ii        = ii  -1
+            for j in range(PAD,ny+PAD):
+                pex       = -(xc[i,2,0]  -xc[itl,2,0])/(20.0*dsti[itl])
+                rev[i,j]  = rev[i,j]  +(rev[itl,j]  -rev[i,j])*np.exp(pex)
+                pex       = -(xc[ii,2,0]  -xc[itu-1,2,0])/(20.0*dsti[itu-1])
+                rev[ii,j] = rev[ii,j]  +(rev[itu-1,j]  -rev[ii,j])*np.exp(pex)
+
+        for i in range(PAD,nx+PAD):
+            ii           = ib  -i 
+            rev[i,je] = rev[i,jl]
+            rev[1,1]  = rev[ii,2]
+
+        for i in range(itl,itu):
+                if (xc[i,2,0] <= xtran):
+                    for j in range(1,jl+1):
+                        rev[i,j]  = 0
+                rev[i,1]  = -rev[i,2]
+
+        rev[1 ,1:je+1] = rev[2 ,1:je+1]
+        rev[ie,1:je+1] = rev[il,1:je+1]
+
+        return
