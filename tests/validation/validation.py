@@ -89,10 +89,11 @@ def analyze(output, output_fortran, outName="output"):
     print ("mean("+outName+"_fortran - "+outName+") = "+str(mean(output_fortran-output)))
     print ("min("+outName+"_fortran - "+outName+") = "+str(min(abs(output_fortran-output))))
     print ("max("+outName+"_fortran - "+outName+") = "+str(max(abs(output_fortran-output))))
-    print("\nfortran:")
-    print(output_fortran)
-    print("\npython:")
-    print(output)
+    if False:
+        print("\nfortran:")
+        print(output_fortran)
+        print("\npython:")
+        print(output)
     assert max(abs((output_fortran - output)/max(abs(output)))) < TOLERANCE
 
 

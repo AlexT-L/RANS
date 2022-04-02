@@ -109,8 +109,6 @@ def compute_viscosity(model, ws, state,ncyc=0):
     if (kvis <= 1) or (mode!=0):
         return
 
-    print("kturb " + str(KTURB))
-
     aturb     = 1.
     if (ncyc > 25): 
        aturb = .5

@@ -34,8 +34,8 @@ def stability(self, model, workspace, state):
     je = ny+2
     ib = nx+3
     jb = ny+3
-    itl = dims['itl']
-    itu = dims['itu']
+    itl = dims['itl'] + PAD
+    itu = dims['itu'] + PAD
 
     # flo_param
     gamma = model.params['gamma']
@@ -101,7 +101,6 @@ def stability(self, model, workspace, state):
     dtl[ip:ie,jp:je]    = 1/(radI[ip:ie,jp:je] + radJ[ip:ie,jp:je])
     dtlc[ip:ie,jp:je]   = radI[ip:ie,jp:je] + radJ[ip:ie,jp:je]
 
-
     # c
     # c     pressure or entropy switch
     # c
@@ -110,14 +109,14 @@ def stability(self, model, workspace, state):
     # c
     # c     adaptive time step
     # c
-    CFL = Field.create((nx, ny), dim(cfl, 1))
+    CFL = Field.create((nx, ny), pos_diff(cfl, 1))
 
     dpi = abs((s[ip+1:ib, jp:je] - 2*s[ip:ie, jp:je] + s[1:il, jp:je]) / \
               (s[ip+1:ib, jp:je] + 2*s[ip:ie, jp:je] + s[1:il, jp:je] + slim))
     dpj = abs((s[ip:ie, jp+1:jb] - 2*s[ip:ie, jp:je] + s[ip:ie, 1:jl]) / \
               (s[ip:ie, jp+1:jb] + 2*s[ip:ie, jp:je] + s[ip:ie, 1:jl] + slim))
     
-    rfl[ip:ie, jp:je] = 1/(1 + minimum(CFL, b*(dpi-dpj)))
+    rfl[ip:ie, jp:je] = 1/(1 + minimum(CFL, b*(dpi+dpj)))
 
     # c
     # c     fixed time step
@@ -134,15 +133,15 @@ def stability(self, model, workspace, state):
         rfli[ip:ie, jp:je] = (radJ[ip:ie, jp:je]/radI[ip:ie, jp:je])**(0.25)
         rflj[ip:ie, jp:je] = (radI[ip:ie, jp:je]/radJ[ip:ie, jp:je])**(0.25)
 
-    a                   = (radJ[ip:ie, jp:je]/radI[ip:ie, jp:je])**(adis)
-    radI[ip:ie, jp:je]  = radI[ip:ie, jp:je]*(1 + 1/a)
+    a                   = (radI[ip:ie, jp:je]/radJ[ip:ie, jp:je])**adis
+    radI[ip:ie, jp:je]  = radI[ip:ie, jp:je]*(1 + 1.0/a)
     radJ[ip:ie, jp:je]  = radJ[ip:ie, jp:je]*(1 + a)
 
     if iprec == 0:
         rfli[ip:ie, jp:je] = radI[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
         rflj[ip:ie, jp:je] = radJ[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
     
-    
+    print("iprec: "+str(iprec))
     # c
     # c
     # c     reduce the artificial dissipation for viscous flows
@@ -168,13 +167,12 @@ def stability(self, model, workspace, state):
         radI[ip:ie, jp:je] = pos_diff(radI[ip:ie, jp:je], vsi)
         radJ[ip:ie, jp:je] = pos_diff(radJ[ip:ie, jp:je], vsj)
 
-
     # c
     # c     set boundary values at i=1 and i=ie
     # c
     radI[1, jp:je]  = radI[2, jp:je]
     radI[ie, jp:je] = radI[il, jp:je]
-    rfl[1, jp:je]   = radI[2, jp:je]
+    rfl[1, jp:je]   = rfl[2, jp:je]
     rfl[ie, jp:je]  = rfl[il, jp:je]
     rfli[1, jp:je]  = rfli[2, jp:je]
     rfli[ie, jp:je] = rfli[il, jp:je]
@@ -200,13 +198,15 @@ def stability(self, model, workspace, state):
     # c
     # c     set boundary values along the cut
     # c
-    radJ[ie:itu+1:-1,1]  = radJ[1:itl+2, 2]
-    radJ[1:itl+2, 1]   = radJ[ie:itu+1:-1,2]
-    rfl[ie:itu+1:-1,1]   = rfl[1:itl+2, 2]
-    rfl[1:itl+2, 1]    = rfl[ie:itu+1:-1,2]
-    rfli[ie:itu+1:-1,1]  = rfli[1:itl+2, 2]
-    rfli[1:itl+2, 1]   = rfli[ie:itu+1:-1,2]
-    rflj[ie:itu+1:-1,1]  = rflj[1:itl+2, 2]
-    rflj[1:itl+2, 1]   = rflj[ie:itu+1:-1,2]
-    dtl[ie:itu+1:-1,1]   = dtl[1:itl+2, 2]
-    dtl[1:itl+2, 1]    = dtl[ie:itu+1:-1,2]
+    radJ[ie:itu-1:-1,1]  = radJ[1:itl, 2]
+    radJ[1:itl, 1]   = radJ[ie:itu-1:-1,2]
+    rfl[ie:itu-1:-1,1]   = rfl[1:itl, 2]
+    rfl[1:itl, 1]    = rfl[ie:itu-1:-1,2]
+    rfli[ie:itu-1:-1,1]  = rfli[1:itl, 2]
+    rfli[1:itl, 1]   = rfli[ie:itu-1:-1,2]
+    rflj[ie:itu-1:-1,1]  = rflj[1:itl, 2]
+    rflj[1:itl, 1]   = rflj[ie:itu-1:-1,2]
+    dtl[ie:itu-1:-1,1]   = dtl[1:itl, 2]
+    dtl[1:itl, 1]    = dtl[ie:itu-1:-1,2]
+
+    return dtlc

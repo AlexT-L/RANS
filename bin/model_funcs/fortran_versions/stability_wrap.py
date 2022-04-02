@@ -71,7 +71,7 @@ def stability(self,model,ws,w):
     vis0 = model.params['vis0']
 
     # residuals returned in Field vw
-    step_fort.step(ie,je,itl, \
+    step_fort.step(ie,je,itl+1, \
                         w,p,lv,ev, \
                         x,vol, \
                         rfl,rfli,rflj,radi,radj,dtl,dtlc, \

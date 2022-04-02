@@ -352,8 +352,8 @@ class NavierStokes(Model):
         ip, jp = 2, 2
         ie, je = nx+pad, ny+pad
 
-        rqq = ( (w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0] ) / 2
-        p[ip:ie, jp:je] = pos_diff(w[ip:ie, jp:je, 3], rqq) * (gamma-1)
+        rqq = 0.5*(w[ip:ie, jp:je, 1]**2 + w[ip:ie, jp:je, 2])/w[ip:ie, jp:je, 0]
+        p[ip:ie, jp:je] = (gamma-1)*pos_diff(w[ip:ie, jp:je, 3], rqq)
 
 
 ### TESTING
@@ -440,6 +440,12 @@ class NavierStokes(Model):
             else:
                 self.BCmodel.update_stability(self, workspace, w)
             return copy(get('radJ'))
+        if method=='rfl':
+            if code=='fortran':
+                stability_fortran(bcmodel, self, workspace, w)
+            else:
+                self.BCmodel.update_stability(self, workspace, w)
+            return copy(get('rfl'))
         if method=='rfli':
             if code=='fortran':
                 stability_fortran(bcmodel, self, workspace, w)
@@ -460,7 +466,7 @@ class NavierStokes(Model):
             return copy(get('dtl'))
         if method=='dtlc':
             if code=='fortran':
-                stability_fortran(bcmodel, self, workspace, w)
+                dtlc = stability_fortran(bcmodel, self, workspace, w)
             else:
                 dtlc = self.BCmodel.update_stability(self, workspace, w)
             return copy(dtlc)
