@@ -141,7 +141,6 @@ def stability(self, model, workspace, state):
         rfli[ip:ie, jp:je] = radI[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
         rflj[ip:ie, jp:je] = radJ[ip:ie, jp:je]/dtlc[ip:ie, jp:je]
     
-    print("iprec: "+str(iprec))
     # c
     # c
     # c     reduce the artificial dissipation for viscous flows

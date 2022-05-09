@@ -22,7 +22,7 @@ class flo103_ConvergenceChecker:
         Sets the number of cycles and number of runs. 
         """
         self.num_cycles = 0
-        self.n_runs = 20
+        self.n_runs = 5
 
     # monitor convergence
     def is_converged(self, residuals):

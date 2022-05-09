@@ -43,5 +43,3 @@ def turb_BL(model,ws,w,ncyc=0):
     # call turb
     turb2_fort.turb2(ie,je,itl+1,itu+1, w,p,ev, x,vol, \
                      gamma,mach,Re,xtran, ncyc, [il,jl,ib,jb])
-    print("fortran finished!")
-

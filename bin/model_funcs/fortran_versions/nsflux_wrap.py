@@ -40,10 +40,8 @@ def nsflux(self,ws,w,dw,rfil):
     gamma = self.params['gamma']
     mach = self.params['rm']
     Re = self.params['re']
-    
-    # output params (not important)
-    prn = 0
-    prt = 0
+    prn = self.params['prn']
+    prt = self.params['prt']
     
     # mg_param
     mode = 1

@@ -34,13 +34,13 @@ from bin.AirfoilMap import AirfoilMap
 from bin.CellCenterWS import CellCenterWS
 from bin.NavierStokes import NavierStokes
 from bin.MultiGrid import MultiGrid
-from time import time
+from time import sleep, time
 
 if __name__ == '__main__':
 
     # Comment later
     filename = 'rae9-s1.data'
-    filename = 'rae9e-s3.data'
+    # filename = 'rae9e-s3.data'
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
@@ -84,7 +84,9 @@ if __name__ == '__main__':
 
     # enforce cfl < 10 on first few cycles
     model.update_cfl_limit(10.0)
-
+    
+    # post.print_grid(model, workspace)
+    
     start = time()
     while not CONVERGED:
         # update ev and lv at specified interval
@@ -96,7 +98,7 @@ if __name__ == '__main__':
             model.update_physics(workspace, state)
 
         # after the first few cycles, relax restriction on cfl
-        model.update_cfl_limit()
+        # model.update_cfl_limit()
         
         # perform an interation of the multigrid cycle
         mg.performCycle()
@@ -107,9 +109,14 @@ if __name__ == '__main__':
 
         # output the convergence
         #post.print_convergence(resid)
+        
+        # plot the state
+        if num_iterations > 5 and False: post.print_state(workspace,state)
 
         # update convergence checker
         CONVERGED = watcher.is_converged(resid)
+        
+        num_iterations += 1
     stop = time()
     
     # print results

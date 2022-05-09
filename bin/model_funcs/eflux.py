@@ -63,8 +63,8 @@ def eflux(model, ws, state, dw):
     p_avg = p[ip:ie, 1:je] + p[ip:ie, jp:jb]
 
     # flux operator
-    qsp = 0.0*porJ * (dxx*w[ip:ie, jp:jb, 2] - dxy*w[ip:ie, jp:jb, 1]) / w[ip:ie, jp:jb, 0]
-    qsm = 0.0*porJ * (dxx*w[ip:ie,  1:je, 2] - dxy*w[ip:ie,  1:je, 1]) / w[ip:ie,  1:je, 0]
+    qsp = porJ * (dxx*w[ip:ie, jp:jb, 2] - dxy*w[ip:ie, jp:jb, 1]) / w[ip:ie, jp:jb, 0]
+    qsm = porJ * (dxx*w[ip:ie,  1:je, 2] - dxy*w[ip:ie,  1:je, 1]) / w[ip:ie,  1:je, 0]
 
     # add up on faces
     fs[ip:ie, 1:je, 0] = qsp*w[ip:ie, jp:jb, 0]                     + qsm*w[ip:ie, 1:je, 0] # density

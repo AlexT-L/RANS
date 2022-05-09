@@ -1,5 +1,6 @@
 from numpy.core.defchararray import mod
 from bin.BoundaryConditioner import BoundaryConditioner
+from bin.Field import isfinite
 import bin.model_funcs.bc_transfer as tf
 from bin.model_funcs.bc_metric import halo_geom
 from bin.model_funcs.bcwall import wall
@@ -7,6 +8,15 @@ from bin.model_funcs.bcfar import far_field
 from bin.model_funcs.halo import halo
 from bin.model_funcs.stability_fast import stability
 from bin.model_funcs.Viscosity import compute_viscosity
+
+IGNORE_NAN = True
+FORCE_LOCAL = False
+USE_FORTRAN = True
+
+if USE_FORTRAN:
+    from bin.model_funcs.fortran_versions.bcfar_wrap import bc_far
+    from bin.model_funcs.fortran_versions.bcwall_wrap import bc_wall
+    from bin.model_funcs.fortran_versions.stability_wrap import stability as stab_fort
 
 class NS_Airfoil(BoundaryConditioner):
     """Implements boundary conditions for Navier Stokes based model of flow over an airfoil.
@@ -31,7 +41,7 @@ class NS_Airfoil(BoundaryConditioner):
     def __init__(self, input):
         self.className = "NS_Airfoil"
         self.padding = 2
-        self.local_timestepping = not bool(input['vt'])
+        self.local_timestepping = not bool(input['vt']) or FORCE_LOCAL
         self.bc = input['bc']
 
     # Methods for applying boundary conditions
@@ -63,7 +73,8 @@ class NS_Airfoil(BoundaryConditioner):
     
         """
         self.__check_vars(workspace)
-        return stability(self, model, workspace, state)
+        if USE_FORTRAN: return stab_fort(self, model, workspace, state)
+        else: return stability(self, model, workspace, state)
     
     # apply far-field boundary conditions
     def bc_far(self, model, workspace, state):
@@ -77,8 +88,9 @@ class NS_Airfoil(BoundaryConditioner):
     
         """
         self.__check_vars(workspace)
-        far_field(self, model, workspace, state)
-        # implementation.bc_far(self, model, workspace, state)
+        if USE_FORTRAN: bc_far(self, model, workspace, state)
+        else: far_field(self, model, workspace, state)
+        assert isfinite(state) or IGNORE_NAN
 
 
     # apply wall boundary conditions
@@ -95,8 +107,9 @@ class NS_Airfoil(BoundaryConditioner):
         
         """
         self.__check_vars(workspace)
-        wall(self, model, workspace, state)
-        # implementation.bc_wall(self, model, workspace, state)
+        if USE_FORTRAN: bc_wall(self, model, workspace, state)
+        else: wall(self, model, workspace, state)
+        assert isfinite(state) or IGNORE_NAN
 
 
     # apply halo boundary conditions
@@ -113,7 +126,7 @@ class NS_Airfoil(BoundaryConditioner):
         """
         self.__check_vars(workspace)
         halo(self, model, workspace, state)
-        # implementation.halo(self, model, workspace, state)
+        assert isfinite(state) or IGNORE_NAN
 
 
     # apply all boundary conditions
@@ -208,7 +221,7 @@ class NS_Airfoil(BoundaryConditioner):
         # stability
         vars["s"] = [field_size]
         vars["dtlc"] = [field_size]
-
+        
         # Cp and Cf
         vars["cp"] = [p+nx+p]
         vars["cf"] = [p+nx+p]

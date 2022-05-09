@@ -5,6 +5,8 @@ from bin.Field import Field, isfinite, min, max
 from bin.Cycle import Cycle
 from bin.Field import copy
 
+from NavierStokes import IGNORE_NAN
+
 
 class MultiGrid:
     """ Uses mulitple coarser grids to apply corrections to the values on the current grid.
@@ -91,8 +93,7 @@ class MultiGrid:
         
         """
         w = self.W[-1]
-        print("perform cycle")
-        assert min(w[:,:,0]) > 0
+        assert min(w[:,:,0]) > 0 or IGNORE_NAN
         
         n_levels = self.cycle.depth()
         model = self.Model
@@ -120,7 +121,7 @@ class MultiGrid:
         # Perform integration to get new state
         integrator.step(workspace, w)
         #####
-        assert min(w[:,:,0]) > 0
+        assert min(w[:,:,0]) > 0 or IGNORE_NAN
 
         # subsequent levels
         level = n_levels-1
@@ -137,23 +138,19 @@ class MultiGrid:
             wr = self.Residuals[level]
             Rw = self.Fluxes[level]
             
-            assert isfinite(w)
+            assert isfinite(w) or IGNORE_NAN
 
             if dir < 0: # go down a level
                 vol = self.Workspaces[level-dir].get_field("vol")
                 
                 assert (vol > 0).all()
                 
-                assert isfinite(self.W[prev])
-                assert isfinite(w)
-
                 # Transfer state and residuals (fluxes) down to coarse mesh
                 model.transfer_down(self.Workspaces[prev], workspace)
                 contract.conservative4way(self.W[prev], w, vol)
                 contract.sum4way(self.Fluxes[prev], wr)
 
-                assert isfinite(w)
-                assert min(w[:,:,0]) > 0
+                assert min(w[:,:,0]) > 0 or IGNORE_NAN
 
                 # relax transferred residuals
                 wr *= self.wr_relax
@@ -164,7 +161,7 @@ class MultiGrid:
                     self.W1st[level] = w1
 
                 # Check if stability needs to be updated
-                assert isfinite(w)
+                assert isfinite(w) or IGNORE_NAN
                 if UPDATE_STABILITY:
                     model.update_stability(workspace, w)
                 
@@ -190,7 +187,7 @@ class MultiGrid:
             else: # stay on same grid level
                 # perform step
                 integrator.step(workspace, w, wr)
-                assert isfinite(w)
+                assert isfinite(w) or IGNORE_NAN
 
                 # Update Correction
                 wc[:] = w - w1

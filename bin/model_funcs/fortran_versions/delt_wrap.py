@@ -31,7 +31,6 @@ def thickness(model,ws,w):
 
     # call turb
     delt_fort.delt(ny,w,ynot,dsti,x,xc,[il,jl,ib,jb])
-    print("fortran finished!")
     
     return [ynot, dsti]
 

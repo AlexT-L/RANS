@@ -12,11 +12,11 @@ sys.path.append("../../RANS/bin")
 import pytest
 from tests.validation.validation import run_test
 
-ONE_TEST = False
+ONE_TEST = True
 
 if ONE_TEST:
     def test_one_test_validation():    
-        run_test("radj")
+        run_test("radi")
 else:
     def test_radi_validation():    
         run_test("radi")

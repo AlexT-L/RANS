@@ -1,8 +1,6 @@
-# python implementation of eflux.f
+# python implementation of dfluxc.f
 
 from bin.Field import Field, max, minimum, mismatch_mul
-from bin.Grid import Grid
-from bin.Workspace import Workspace
 import numpy as np
 
 def dfluxc(model, ws, state, dw, rfil):
@@ -49,7 +47,7 @@ def dfluxc(model, ws, state, dw, rfil):
     # physical paramteters
     vis0 = model.params['vis0']
 
-    fis0      = rfil*np.abs(vis0).item()/8
+    fis0      = rfil*np.abs(vis0)/8
     sfil      = 1.  -rfil
 
     # working array
@@ -59,7 +57,6 @@ def dfluxc(model, ws, state, dw, rfil):
     # c     dissipation in the i direction
     # c
     dis = minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])*fis0
-    # dis = Field.create(dis)
 
     result = mismatch_mul(dis, (w[ip:ib, jp:je] - w[1:ie, jp:je]))
     fs[1:ie, jp:je]     = result

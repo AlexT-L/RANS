@@ -82,7 +82,6 @@ def dflux(model, ws, state, dw, rfil):
     dp[ib, jp:je] = dp[ie, jp:je]
 
     rad = minimum(radI[ip:ib, jp:je], radI[1:ie, jp:je])
-    rad = np.ones(rad.shape) # radI is not finite FIX!!!
 
     max1 = maximum(dp[ip+1:nxp, jp:je], dp[ip:ib, jp:je])
     max2 = maximum(dp[1:ie, jp:je], dp[0:il, jp:je])
@@ -111,7 +110,6 @@ def dflux(model, ws, state, dw, rfil):
 
         
         rad = minimum(radJ[ip:ie, 2], radJ[ip:ie, 1])
-        rad = np.ones(rad.shape) # radJ is not finite FIX!!!
 
         max1 = maximum(dp[ip:ie, 3], dp[ip:ie, 2])
         max2 = dp[ip:ie, 1]
@@ -121,9 +119,7 @@ def dflux(model, ws, state, dw, rfil):
         dis4[ip:ie, 1] = pos_diff(dis4[ip:ie, 1], dis2[ip:ie, 1])
 
 
-        rad = minimum(radJ[ip:ie, je], radJ[ip:ie, jl])
-        rad = np.ones(rad.shape) # radJ is not finite FIX!!!
-        
+        rad = minimum(radJ[ip:ie, je], radJ[ip:ie, jl])        
 
         max1 = maximum(dp[ip:ie, je], dp[ip:ie, jl])
         max2 = dp[ip:ie, ny]
@@ -133,7 +129,6 @@ def dflux(model, ws, state, dw, rfil):
         dis4[ip:ie, jl] = pos_diff(dis4[ip:ie, jl], dis2[ip:ie, jl])
 
         rad = minimum(radJ[ip:ie, jp+1:je], radJ[ip:ie, jp:jl])
-        rad = np.ones(rad.shape) # radJ is not finite FIX!!!
 
         max1 = maximum(dp[ip:ie, jp+2:jb], dp[ip:ie, jp+1:je])
         max2 = maximum(dp[ip:ie, jp:jl], dp[ip:ie, 1:ny])

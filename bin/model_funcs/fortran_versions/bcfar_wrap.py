@@ -28,7 +28,6 @@ def bc_far(self, model, workspace, state):
     
     # mesh_var
     x = workspace.get_field("x")
-    print(w.shape)
     xc = get("xc")
     
     # out_var
