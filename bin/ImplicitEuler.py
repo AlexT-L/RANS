@@ -1,3 +1,4 @@
+from operator import mod
 from bin.Field import max, copy, mismatch_mul
 from bin.Workspace import Workspace
 from bin.Integrator import Integrator
@@ -31,7 +32,7 @@ class ImplicitEuler(Integrator):
         self.c_step = input['cstp']
 
     
-    def step(self, workspace, state, forcing=0):
+    def step(self, workspace, state, dwf=None):
         """Returns the local timestep such that stability is maintained.
         
         Args:
@@ -51,31 +52,39 @@ class ImplicitEuler(Integrator):
         Rw = get("Rw")
         dw = get("dw")
         dt = get("dt")
+        rfl = dt*0
 
         # store initial state
         wn[:] = copy(w)
-
-        # subtract baseline residuals from forcing
-        model.get_flux(workspace, w, Rw, 1)
-        forcing -= Rw
+        
+        # account for residual "forcing" from coarser meshes
+        forcing = True
+        if dwf is None:
+            dwf = 0
+            forcing = False
 
         # perform implicit euler step
         for stage in range(0, self.numStages):
             # calculate new flux
             model.get_flux(workspace, w, Rw, self.Flux_update[stage])
 
+            # offset forcing by initial residual
+            if forcing and stage==0:
+                print("forcing!")
+                dwf -= Rw
+
             # add forcing
-            Rw += forcing
+            Rw += dwf
 
             # get local timestep
-            model.get_safe_timestep(workspace, w, dt)
+            model.get_safe_timestep(workspace, w, dt, rfl)
 
             # get courant number
             cfl = model.get_cfl(workspace)
             
             # scale timestep
             c_dt = cfl*self.c_step[stage]/2.0
-            dt *= c_dt
+            dt *= c_dt*rfl
 
             # take step
             dw[:] = mismatch_mul(Rw, dt)

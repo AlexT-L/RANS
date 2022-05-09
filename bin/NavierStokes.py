@@ -153,7 +153,7 @@ class NavierStokes(Model):
 
 
 
-    def get_safe_timestep(self, workspace, state, timestep):
+    def get_safe_timestep(self, workspace, state, timestep, rfl_out=None):
         """Returns the local timestep such that stability is maintained.
         
         Args:
@@ -177,6 +177,10 @@ class NavierStokes(Model):
         self.__copy_out(dt, timestep)
         assert(isfinite(timestep)) or IGNORE_NAN
 
+        # export rfl
+        if rfl is not None:
+            self.__copy_out(rfl, rfl_out)
+        
 
     # update ev and lv
     def update_physics(self, workspace, state):

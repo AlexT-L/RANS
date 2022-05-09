@@ -141,6 +141,7 @@ class MultiGrid:
             assert isfinite(w) or IGNORE_NAN
 
             if dir < 0: # go down a level
+                print("oops!")
                 vol = self.Workspaces[level-dir].get_field("vol")
                 
                 assert (vol > 0).all()
@@ -172,6 +173,7 @@ class MultiGrid:
                 wc[:] = w - w1
 
             elif dir > 0: # go up a level
+                print("oops!")
                 # Transer correction(s) from coarser mesh(es)
                 expand.bilinear4way(self.WCorrections[prev], wc)
 
@@ -186,7 +188,10 @@ class MultiGrid:
 
             else: # stay on same grid level
                 # perform step
-                integrator.step(workspace, w, wr)
+                if level==n_levels-1:
+                    integrator.step(workspace, w)
+                else:
+                    integrator.step(workspace, w, wr)
                 assert isfinite(w) or IGNORE_NAN
 
                 # Update Correction

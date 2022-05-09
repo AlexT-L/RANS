@@ -28,6 +28,9 @@ class Cycle(ABC):
         
         self.pattern = [-1, 1]
         self.levels = 2
+        
+        self.pattern = [0]
+        self.levels = 1
 
     # array of directions to follow
     def path(self):

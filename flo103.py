@@ -39,8 +39,8 @@ from time import sleep, time
 if __name__ == '__main__':
 
     # Comment later
-    filename = 'rae9-s1.data'
-    # filename = 'rae9e-s3.data'
+    # filename = 'rae9-s1.data'
+    filename = 'rae9e-s1.data'
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
