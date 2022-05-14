@@ -12,7 +12,7 @@
         plot_mesh_func\n
         """
 # Toggle plotting of mesh (for visualization/debugging)
-PLOT_ON = False
+PLOT_ON = True
         
 # libraries
 import numpy as np

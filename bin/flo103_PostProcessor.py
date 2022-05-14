@@ -29,17 +29,29 @@ class flo103_PostProcessor:
         """
         pass
     
-    def print_state(self, workspace, state):
+    def print_state(self, workspace, state, pressure=None):
         xc = workspace.get_field('xc')
         x = xc[:,:,0]
         y = xc[:,:,1]
 
         names = ["density", "x-mom", "y-mom", "energy"]
+        plt.figure()
         for i in range(4):
             plt.contourf(x,y,state[:,:,i])
             plt.title(names[i])
             plt.colorbar()
+            plt.axis([-0.75,1.50,-0.8,0.8])
             plt.show()
+        
+        # Pressure contours
+        if pressure is not None:
+            plt.figure()
+            plt.contourf(x,y,pressure)
+            plt.title("Pressure contours")
+            plt.colorbar()
+            plt.axis([-0.75,1.50,-0.8,0.8])
+            plt.show()
+        
     
     def print_grid(self, model, workspace):
         xcpad = workspace.get_field('xc', model.className)

@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     # Comment later
     # filename = 'rae9-s1.data'
-    filename = 'rae9e-s1.data'
+    filename = 'rae9e-s1a.data'
     physicsUpdateFrequency = 1
     
     # Command line inputs: Cycle type, Integrator type
@@ -106,21 +106,31 @@ if __name__ == '__main__':
         # get the new state and residuals
         mg.solution(state)
         mg.residuals(resid)
+        pressure = state[:,:,0]*0
+        model.update_physics(workspace, state, pressure)
 
         # output the convergence
-        #post.print_convergence(resid)
+        # post.print_convergence(resid)
         
         # plot the state
-        if num_iterations > 5 and False: post.print_state(workspace,state)
+        if num_iterations > 5 and False: post.print_state(workspace,state,pressure)
 
         # update convergence checker
         CONVERGED = watcher.is_converged(resid)
         
         num_iterations += 1
+
+        # print density convergence data
+        print("max residual rho:")
+        print(max(resid[:,:,0]))
+                                
+        # print results (debugging)
+#        post.print_state(workspace, state)
+        
     stop = time()
     
     # print results
-    #post.print_solution(state)
+    post.print_state(workspace,state,pressure)
 
     rho = state[:,:,0]
     print("\n")

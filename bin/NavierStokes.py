@@ -183,7 +183,7 @@ class NavierStokes(Model):
         
 
     # update ev and lv
-    def update_physics(self, workspace, state):
+    def update_physics(self, workspace, state, pressure=None):
         """Updates physical properties of system based on state
         
         Args:
@@ -201,6 +201,11 @@ class NavierStokes(Model):
         self.__update_pressure(workspace, w)
 
         self.BCmodel.update_physics(self, workspace, w)
+
+        # return pressure
+        if pressure is not None:
+            p = workspace.get_field("p", self.className)
+            return self.__copy_out(p, pressure)
 
 
     # calls python implementation 'step.f' to update stability conditions
