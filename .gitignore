@@ -139,3 +139,6 @@ bin/.DS_Store
 
 #bash scripts
 *.sh
+
+# program output
+*.png

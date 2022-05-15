@@ -41,7 +41,7 @@ class flo103_PostProcessor:
             plt.title(names[i])
             plt.colorbar()
             plt.axis([-0.75,1.50,-0.8,0.8])
-            plt.show()
+            plt.savefig(names[i]+".png")
         
         # Pressure contours
         if pressure is not None:
@@ -50,7 +50,7 @@ class flo103_PostProcessor:
             plt.title("Pressure contours")
             plt.colorbar()
             plt.axis([-0.75,1.50,-0.8,0.8])
-            plt.show()
+            plt.savefig("pressure.png")
         
     
     def print_grid(self, model, workspace):
@@ -80,7 +80,7 @@ class flo103_PostProcessor:
         ax.set_ylabel('y')
         ax.set_zlabel('vol')
         ax.view_init(60, 35)
-        plt.show()
+        plt.savefig("volume.png")
         print(np.min(vol))
         assert np.max(np.abs(vol-volpad))<1e-15
         assert np.max(np.abs(xcpad[2:-2,2:-2,:]-xc))<1e-15

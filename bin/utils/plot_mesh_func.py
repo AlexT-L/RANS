@@ -25,6 +25,6 @@ def plot_mesh(self):
     plt.xlabel("x [chord lengths]",fontsize=15)
     plt.ylabel("y [chord lengths]",fontsize=15)
     plt.axis([-0.75,1.50,-0.8,0.8])
-    plt.show()
+    plt.savefig("grid.png")
 
     return
