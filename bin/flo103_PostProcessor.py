@@ -35,8 +35,8 @@ class flo103_PostProcessor:
         y = xc[:,:,1]
 
         names = ["density", "x-mom", "y-mom", "energy"]
-        plt.figure()
         for i in range(4):
+            plt.figure()
             plt.contourf(x,y,state[:,:,i])
             plt.title(names[i])
             plt.colorbar()
